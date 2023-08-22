@@ -49,6 +49,13 @@ textarea ::placeholder {
 .elements {
   width: 20%;
   padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.elements:hover {
+  background-color: #eceff4;
+  color: #2b3440;
+  transition: all 0.3s ease;
 }
 
 .s {
@@ -56,3 +63,4 @@ textarea ::placeholder {
   top: 20px;
   right: 20px;
 }
+
