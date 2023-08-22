@@ -1,3 +1,8 @@
+html {
+  height: 100vh;
+  width: 100vh;
+}
+
 body {
   background-color: #2b3440;
 }
@@ -7,6 +12,8 @@ textarea {
   height: 150px;
   background-color: transparent;
   border-color: transparent;
+  font-family: 'Darker Grotesque';
+  font-size: x-large;
 }
 textarea :hover::-moz-placeholder {
   border-color: rgb(240, 246, 255);
