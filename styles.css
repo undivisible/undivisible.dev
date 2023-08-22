@@ -1,0 +1,48 @@
+body {
+  background-color: #2b3440;
+}
+
+textarea {
+  width: 100%;
+  height: 150px;
+  background-color: transparent;
+  border-color: transparent;
+}
+textarea :hover::-moz-placeholder {
+  border-color: rgb(240, 246, 255);
+  content: "write your message here."; /* Change the placeholder text on hover */
+}
+textarea :hover::placeholder {
+  border-color: rgb(240, 246, 255);
+  content: "write your message here."; /* Change the placeholder text on hover */
+}
+textarea ::-moz-placeholder {
+  -moz-transition: all 0.3s ease;
+  transition: all 0.3s ease; /* Smooth transition */
+}
+textarea ::placeholder {
+  transition: all 0.3s ease; /* Smooth transition */
+}
+
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+}
+
+.elements {
+  width: 20%;
+  padding: 10px;
+}
+
+.s {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
