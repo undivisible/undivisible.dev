@@ -4,6 +4,7 @@ body {
 
 textarea {
   width: 100%;
+  left: 20%;
   height: 150px;
   background-color: transparent;
   border-color: transparent;
@@ -13,29 +14,22 @@ textarea {
   color: #eceff4;
 }
 
-textarea :hover::-moz-placeholder {
-  border-color: rgb(240, 246, 255);
-  content: "write your message here."; /* Change the placeholder text on hover */
+textarea :hover {
+  border-color: rgba(240, 246, 255, 0.418);
 }
 
-textarea :hover::placeholder {
-  border-color: rgb(240, 246, 255);
-  content: "write your message here."; /* Change the placeholder text on hover */
+textarea :hover {
+  border-color: rgba(240, 246, 255, 0.418);
 }
 
-textarea ::-moz-placeholder {
-  -moz-transition: all 0.3s ease;
-  transition: all 0.3s ease; /* Smooth transition */
-}
-
-textarea ::placeholder {
-  transition: all 0.3s ease; /* Smooth transition */
+textarea :active {
+  border-color: azure;
 }
 
 .centered {
   display: flex;
   align-items: center;
-  left: 30%;
+  left: 20%;
   width: 100vh;
   height: 100vh;
 }
