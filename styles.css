@@ -32,12 +32,13 @@ textarea :active {
   left: 20%;
   width: 100vh;
   height: 100vh;
+  position: absolute;
 }
 
 .row {
   display: flex;
   justify-content: space-between;
-  width: 80%;
+  width: 20%;
 }
 
 .elements {
