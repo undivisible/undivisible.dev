@@ -8,9 +8,9 @@ textarea {
   background-color: transparent;
   border-color: transparent;
   font-family: 'Darker Grotesque';
-  font-size: x-large;
+  font-size: 56px;
   resize: none;
-
+  color: #eceff4;
 }
 
 textarea :hover::-moz-placeholder {
@@ -35,7 +35,7 @@ textarea ::placeholder {
 .centered {
   display: flex;
   align-items: center;
-  justify-content: center;
+  left: 30%;
   width: 100vh;
   height: 100vh;
 }
