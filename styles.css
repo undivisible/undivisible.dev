@@ -1,8 +1,3 @@
-html {
-  height: 100vh;
-  width: 100vh;
-}
-
 body {
   background-color: #2b3440;
 }
@@ -14,19 +9,25 @@ textarea {
   border-color: transparent;
   font-family: 'Darker Grotesque';
   font-size: x-large;
+  resize: none;
+
 }
+
 textarea :hover::-moz-placeholder {
   border-color: rgb(240, 246, 255);
   content: "write your message here."; /* Change the placeholder text on hover */
 }
+
 textarea :hover::placeholder {
   border-color: rgb(240, 246, 255);
   content: "write your message here."; /* Change the placeholder text on hover */
 }
+
 textarea ::-moz-placeholder {
   -moz-transition: all 0.3s ease;
   transition: all 0.3s ease; /* Smooth transition */
 }
+
 textarea ::placeholder {
   transition: all 0.3s ease; /* Smooth transition */
 }
@@ -35,6 +36,8 @@ textarea ::placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100vh;
+  height: 100vh;
 }
 
 .row {
