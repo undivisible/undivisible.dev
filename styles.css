@@ -14,11 +14,11 @@ textarea {
   color: #eceff4;
 }
 
-textarea :hover {
+textarea:hover {
   border-color: rgba(240, 246, 255, 0.418);
 }
 
-textarea :focus {
+textarea:focus {
   border-color: azure;
   font-size: 24px;
 }
