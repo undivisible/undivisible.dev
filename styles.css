@@ -55,7 +55,7 @@ textarea :active {
   border-radius: 5px;
 }
 
-.elements:hover .submit:hover i {
+.elements:hover, .submit:hover, i {
   background-color: #eceff4;
   color: #2b3440;
   transition: all 0.3s ease;
