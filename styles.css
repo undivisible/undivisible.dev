@@ -3,6 +3,7 @@ body {
 }
 
 textarea {
+  justify-content: center;
   width: 70vh;
   left: 20%;
   height: 1.5em;
@@ -12,14 +13,19 @@ textarea {
   font-size: 24px;
   resize: none;
   color: #eceff4;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 textarea:hover {
   border-color: rgba(240, 246, 255, 0.418);
+  transition: all 0.3s ease;
 }
 
 textarea:focus {
   border-color: azure;
+  font-size: 15px;
+  transition: all 0.3s ease;
 }
 
 .centered {
