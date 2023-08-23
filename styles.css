@@ -5,11 +5,11 @@ body {
 textarea {
   width: 70vh;
   left: 20%;
-  height: 3em;
+  height: 1.5em;
   background-color: transparent;
   border: none;
   font-family: 'Darker Grotesque';
-  font-size: 24px;
+  font-size: 36px;
   resize: none;
   color: #eceff4;
 }
@@ -24,7 +24,7 @@ textarea :hover {
 
 textarea :active {
   border-color: azure;
-  font-size: 26px;
+  font-size: 24px;
 }
 
 .centered {
