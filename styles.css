@@ -55,7 +55,13 @@ textarea :active {
   border-radius: 5px;
 }
 
-.elements:hover, .submit:hover {
+.s {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.elements:hover, .submit:hover, .s:hover {
   background-color: #eceff4;
   transition: all 0.3s ease;
 }
@@ -63,12 +69,6 @@ textarea :active {
 i:hover {
   color: #2b3440;
   transition: all 0.3s ease;
-}
-
-.s {
-  position: absolute;
-  top: 20px;
-  right: 20px;
 }
 
 html::-webkit-scrollbar {
