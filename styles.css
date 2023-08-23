@@ -32,7 +32,7 @@ textarea:focus {
 .centered {
   display: flex;
   top: 50%;
-  left: 20%;
+  left: 50%;
   width: 100vh;
   height: 100vh;
   position: absolute;
