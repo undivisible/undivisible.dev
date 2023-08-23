@@ -3,13 +3,13 @@ body {
 }
 
 textarea {
-  width: 70%;
+  width: 70vh;
   left: 20%;
-  height: 150px;
+  height: 3em;
   background-color: transparent;
   border: none;
   font-family: 'Darker Grotesque';
-  font-size: 36px;
+  font-size: 24px;
   resize: none;
   color: #eceff4;
 }
@@ -62,6 +62,12 @@ textarea :active {
   top: 20px;
   right: 20px;
   border-radius: 5px;
+}
+
+.xl {
+  font-size: 3em;
+  line-height: .04167em;
+   vertical-align: -0.125em;
 }
 
 .elements:hover, .submit:hover, .s:hover {
