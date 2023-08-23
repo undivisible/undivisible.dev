@@ -29,7 +29,7 @@ textarea :active {
 
 .centered {
   display: flex;
-  align-items: center;
+  top: 50%;
   left: 20%;
   width: 100vh;
   height: 100vh;
@@ -40,6 +40,7 @@ textarea :active {
   display: flex;
   justify-content: space-between;
   width: 20%;
+  clear: both;
 }
 
 .submit {
