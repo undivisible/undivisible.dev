@@ -3,7 +3,7 @@ body {
 }
 
 textarea {
-  width: 100%;
+  width: 70%;
   left: 20%;
   height: 150px;
   background-color: transparent;
@@ -41,6 +41,12 @@ textarea :active {
   width: 20%;
 }
 
+.submit {
+  width: 10%;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
 .elements {
   width: 20%;
   padding: 10px;
@@ -48,7 +54,7 @@ textarea :active {
   border-radius: 5px;
 }
 
-.elements:hover {
+.elements:hover .submit:hover i {
   background-color: #eceff4;
   color: #2b3440;
   transition: all 0.3s ease;
