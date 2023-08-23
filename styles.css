@@ -33,7 +33,6 @@ textarea:focus {
 
 .row {
   display: flex;
-  justify-content: space-between;
   width: 20%;
 }
 
