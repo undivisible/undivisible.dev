@@ -38,7 +38,7 @@ textarea:focus {
 }
 
 .submit {
-  width: 10%;
+  width: 22px;
   padding: 10px;
   transition: all 0.3s ease;
   border-radius: 5px;
