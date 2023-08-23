@@ -7,7 +7,7 @@ textarea {
   left: 20%;
   height: 1.5em;
   background-color: transparent;
-  border: none;
+  border-color: #2b3440;
   font-family: 'Darker Grotesque';
   font-size: 36px;
   resize: none;
@@ -18,11 +18,7 @@ textarea :hover {
   border-color: rgba(240, 246, 255, 0.418);
 }
 
-textarea :hover {
-  border-color: rgba(240, 246, 255, 0.418);
-}
-
-textarea :active {
+textarea :focus {
   border-color: azure;
   font-size: 24px;
 }
