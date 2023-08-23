@@ -9,7 +9,7 @@ textarea {
   background-color: transparent;
   border-color: #2b3440;
   font-family: 'Darker Grotesque';
-  font-size: 36px;
+  font-size: 24px;
   resize: none;
   color: #eceff4;
 }
@@ -20,7 +20,6 @@ textarea:hover {
 
 textarea:focus {
   border-color: azure;
-  font-size: 24px;
 }
 
 .centered {
@@ -47,6 +46,7 @@ textarea:focus {
 
 .elements {
   width: 20%;
+  height: 20%;
   padding: 10px;
   transition: all 0.3s ease;
   border-radius: 5px;
