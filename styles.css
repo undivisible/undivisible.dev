@@ -46,7 +46,7 @@ textarea:focus {
 
 .elements {
   width: 20%;
-  height: 20%;
+  height: 22px;
   padding: 10px;
   transition: all 0.3s ease;
   border-radius: 5px;
