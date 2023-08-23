@@ -40,7 +40,6 @@ textarea :active {
   display: flex;
   justify-content: space-between;
   width: 20%;
-  clear: both;
 }
 
 .submit {
@@ -64,10 +63,9 @@ textarea :active {
   border-radius: 5px;
 }
 
-.xl {
-  font-size: 3em;
-  line-height: .04167em;
-   vertical-align: -0.125em;
+.hover {
+  color: #eceff4;
+  transition: all 0.3s ease;
 }
 
 .elements:hover, .submit:hover, .s:hover {
@@ -75,7 +73,7 @@ textarea :active {
   transition: all 0.3s ease;
 }
 
-i:hover {
+.hover:hover {
   color: #2b3440;
   transition: all 0.3s ease;
 }
