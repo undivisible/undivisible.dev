@@ -9,7 +9,7 @@ textarea {
   background-color: transparent;
   border-color: transparent;
   font-family: 'Darker Grotesque';
-  font-size: 56px;
+  font-size: 36px;
   resize: none;
   color: #eceff4;
 }
@@ -24,6 +24,7 @@ textarea :hover {
 
 textarea :active {
   border-color: azure;
+  font-size: 26px;
 }
 
 .centered {
@@ -59,6 +60,7 @@ textarea :active {
   position: absolute;
   top: 20px;
   right: 20px;
+  border-radius: 5px;
 }
 
 .elements:hover, .submit:hover, .s:hover {
