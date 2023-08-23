@@ -26,6 +26,7 @@ textarea:focus {
   border-color: azure;
   font-size: 15px;
   transition: all 0.3s ease;
+  height: 44px
 }
 
 .centered {
