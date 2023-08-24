@@ -31,11 +31,12 @@ textarea:focus {
 
 .centered {
   display: flex;
-  top: 50vh;
-  left: 50vh;
-  width: 100vh;
-  height: 100vh;
+  top: 20vh;
+  left: 20vh;
+  width: 50vh;
+  height: 50vh;
   position: absolute;
+  overflow: scroll;
 }
 
 .row {
