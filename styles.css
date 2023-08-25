@@ -31,7 +31,7 @@ textarea:focus {
 
 .centered {
   display: flex;
-  top: 20vh;
+  top: 50vh;
   left: 20vh;
   width: 50vh;
   height: 50vh;
