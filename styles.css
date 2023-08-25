@@ -36,7 +36,6 @@ textarea:focus {
   width: 50vh;
   height: 50vh;
   position: absolute;
-  overflow: scroll;
 }
 
 .row {
