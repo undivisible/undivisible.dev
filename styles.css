@@ -63,6 +63,7 @@ textarea:focus {
   padding: 10px;
   transition: all 0.3s ease;
   border-radius: 5px;
+  opacity: 0;
 }
 
 .elements {
@@ -103,6 +104,14 @@ textarea:focus {
   animation-name: rise;
   animation-duration: 1s;
   animation-delay: 2s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+}
+
+.b {
+  animation-name: rise;
+  animation-duration: 1s;
+  animation-delay: 2.8s;
   animation-fill-mode: forwards;
   animation-timing-function: ease-out;
 }
