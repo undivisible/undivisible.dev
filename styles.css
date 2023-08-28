@@ -86,10 +86,6 @@ textarea:focus {
 .title {
   font-family: 'Darker Grotesque';
   color: #eceff4;
-  animation-name: title;
-  animation-duration: 2s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease;
 }
 
 .disappear {
@@ -183,16 +179,6 @@ html::-webkit-scrollbar-track {
 html::-webkit-scrollbar-thumb {
   background-color: #ffffff;
   border-radius: 100px;
-}
-
-@keyframes title {
-  0% {
-    font-size: 120px;
-  }
-
-  100% {
-    font-size: 24px;
-  }
 }
 
 @keyframes disappear {
