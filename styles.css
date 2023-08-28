@@ -82,6 +82,8 @@ textarea:focus {
   display: flex;
   animation-name: title;
   animation-duration: 3s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
 }
 
 .disappear {
