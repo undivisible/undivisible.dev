@@ -160,9 +160,10 @@ html::-webkit-scrollbar-thumb {
     width: 80vw; 
   }
 
-  .row {
+  .centered {
     flex-direction: column;
     align-items: center;
+    left: 10vh;
   }
   
   .elements {
