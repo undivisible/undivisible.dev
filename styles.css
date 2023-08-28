@@ -1,5 +1,6 @@
 body {
-  background-color: #2b3440;
+  animation-name: background;
+  animation-duration: 3s;
 }
 
 textarea {
@@ -67,6 +68,46 @@ textarea:focus {
   border-radius: 5px;
 }
 
+.title {
+  font-family: 'Darker Grotesque';
+  top: 50vh;
+  left: 8vh;
+  position: absolute;
+  display: flex;
+  animation-name: title;
+  animation-duration: 3s;
+}
+
+.b1 {
+  animation-name: rise;
+  animation-duration: 1s;
+  animation-delay: 3s;
+}
+
+.b2 {
+  animation-name: rise;
+  animation-duration: 1s;
+  animation-delay: 4s;
+}
+
+.b3 {
+  animation-name: rise;
+  animation-duration: 1s;
+  animation-delay: 5s;
+}
+
+.b4 {
+  animation-name: rise;
+  animation-duration: 1s;
+  animation-delay: 6s;
+}
+
+.b5 {
+  animation-name: rise;
+  animation-duration: 1s;
+  animation-delay: 7s;
+}
+
 .hover {
   color: #eceff4;
   transition: all 0.3s ease;
@@ -94,4 +135,35 @@ html::-webkit-scrollbar-track {
 html::-webkit-scrollbar-thumb {
   background-color: #ffffff;
   border-radius: 100px;
+}
+
+@keyframes title {
+  0% {
+    font-size: x-large;
+  }
+
+  100% {
+    font-size: 24px;
+  }
+}
+
+@keyframes background {
+  0% {
+    background-color: black;
+  }
+
+  100% {
+    background-color: #2b3440;
+  }
+}
+
+@keyframes rise {
+  0%   { 
+    transform: translateY(0); 
+    opacity: 0;
+  }
+  100%  { 
+    transform: translateY(100px); 
+    opacity: 1;
+  }
 }
