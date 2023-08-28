@@ -1,6 +1,8 @@
 body {
   animation-name: background;
   animation-duration: 3s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
 }
 
 textarea {
@@ -82,36 +84,48 @@ textarea:focus {
   animation-delay: 3s;
   animation-name: disappear;
   animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
 }
 
 .b1 {
   animation-name: rise;
   animation-duration: 1s;
   animation-delay: 3s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
 }
 
 .b2 {
   animation-name: rise;
   animation-duration: 1s;
   animation-delay: 4s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
 }
 
 .b3 {
   animation-name: rise;
   animation-duration: 1s;
   animation-delay: 5s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
 }
 
 .b4 {
   animation-name: rise;
   animation-duration: 1s;
   animation-delay: 6s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
 }
 
 .b5 {
   animation-name: rise;
   animation-duration: 1s;
   animation-delay: 7s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
 }
 
 .hover {
@@ -175,7 +189,7 @@ html::-webkit-scrollbar-thumb {
 
 @keyframes rise {
   0%   { 
-    transform: translateY(-100px); 
+    transform: translateY(100px); 
     opacity: 0;
   }
   100%  { 
