@@ -100,6 +100,14 @@ textarea:focus {
   animation-timing-function: ease-out;
 }
 
+.titler {
+  animation-name: rise;
+  animation-duration: 1s;
+  animation-delay: 2s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+}
+
 .b2 {
   animation-name: rise;
   animation-duration: 1s;
@@ -193,7 +201,7 @@ html::-webkit-scrollbar-thumb {
 
 @keyframes rise {
   0%   { 
-    transform: translateY(3s); 
+    transform: translateY(3px); 
     opacity: 0;
   }
   100%  { 
