@@ -1,8 +1,5 @@
 body {
-  animation-name: background;
-  animation-duration: 3s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease;
+  animation: background 3s forwards ease;
   color: black;
 }
 
@@ -75,59 +72,38 @@ textarea:focus {
 }
 
 .titler {
-  animation-name: rise;
-  animation-duration: 1s;
+  animation: rise 1s ease-out forwards;
   animation-delay: 2s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
 }
 
 .b {
-  animation-name: rise;
-  animation-duration: 1s;
+  animation: rise 1s ease-out forwards;
   animation-delay: 2.8s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
 }
 
 .b1 {
-  animation-name: rise;
-  animation-duration: 1s;
+  animation: rise 1s ease-out forwards;
   animation-delay: 3s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
 }
 
 .b2 {
-  animation-name: rise;
-  animation-duration: 1s;
+  animation: rise 1s ease-out forwards;
   animation-delay: 3.2s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
 }
 
 .b3 {
-  animation-name: rise;
-  animation-duration: 1s;
+  animation: rise 1s ease-out forwards;
   animation-delay: 3.4s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
 }
 
 .b4 {
-  animation-name: rise;
-  animation-duration: 1s;
+  animation: rise 1s ease-out forwards;
   animation-delay: 3.6s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
 }
 
 .b5 {
-  animation-name: rise;
-  animation-duration: 1s;
+  animation: rise 1s ease-out forwards;
   animation-delay: 3.8s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
 }
 
 .hover {
@@ -160,22 +136,37 @@ html::-webkit-scrollbar-thumb {
 }
 
 @keyframes background {
-  0% {
+  from {
     background-color: black;
   }
 
-  100% {
+  to {
     background-color: #2b3440;
   }
 }
 
 @keyframes rise {
-  0%   { 
+  from   { 
     transform: translateY(3px); 
     opacity: 0;
   }
-  100%  { 
+  to  { 
     transform: translateY(0px); 
     opacity: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  textarea {
+    width: 80vw; 
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .elements {
+    margin: 10px 0;
   }
 }
