@@ -78,6 +78,12 @@ textarea:focus {
   animation-duration: 3s;
 }
 
+.disappear {
+  animation-delay: 3s;
+  animation-name: disappear;
+  animation-duration: 1s;
+}
+
 .b1 {
   animation-name: rise;
   animation-duration: 1s;
@@ -147,6 +153,16 @@ html::-webkit-scrollbar-thumb {
   }
 }
 
+@keyframes disappear {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
 @keyframes background {
   0% {
     background-color: black;
@@ -159,11 +175,11 @@ html::-webkit-scrollbar-thumb {
 
 @keyframes rise {
   0%   { 
-    transform: translateY(0); 
+    transform: translateY(-100px); 
     opacity: 0;
   }
   100%  { 
-    transform: translateY(100px); 
+    transform: translateY(0px); 
     opacity: 1;
   }
 }
