@@ -175,7 +175,7 @@ html::-webkit-scrollbar-thumb {
 
 @keyframes title {
   0% {
-    font-size: 240px;
+    font-size: 64x;
   }
 
   100% {
