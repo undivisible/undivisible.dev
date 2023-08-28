@@ -3,7 +3,6 @@ body {
   animation-duration: 3s;
   animation-fill-mode: forwards;
   animation-timing-function: ease;
-  animation-delay: 1s;
   color: black;
 }
 
