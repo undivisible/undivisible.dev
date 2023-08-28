@@ -81,7 +81,6 @@ textarea:focus {
   position: absolute;
   display: flex;
   animation-name: title;
-  animation-delay: 2s;
   animation-duration: 2s;
   animation-fill-mode: forwards;
   animation-timing-function: ease;
@@ -95,14 +94,6 @@ textarea:focus {
   animation-timing-function: ease;
 }
 
-.b1 {
-  animation-name: rise;
-  animation-duration: 1s;
-  animation-delay: 3s;
-  animation-fill-mode: forwards;
-  animation-timing-function: ease-out;
-}
-
 .titler {
   animation-name: rise;
   animation-duration: 1s;
@@ -111,10 +102,18 @@ textarea:focus {
   animation-timing-function: ease-out;
 }
 
+.b1 {
+  animation-name: rise;
+  animation-duration: 1s;
+  animation-delay: 3s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+}
+
 .b2 {
   animation-name: rise;
   animation-duration: 1s;
-  animation-delay: 3.5s;
+  animation-delay: 3.2s;
   animation-fill-mode: forwards;
   animation-timing-function: ease-out;
 }
@@ -122,7 +121,7 @@ textarea:focus {
 .b3 {
   animation-name: rise;
   animation-duration: 1s;
-  animation-delay: 4s;
+  animation-delay: 3.4s;
   animation-fill-mode: forwards;
   animation-timing-function: ease-out;
 }
@@ -130,7 +129,7 @@ textarea:focus {
 .b4 {
   animation-name: rise;
   animation-duration: 1s;
-  animation-delay: 4.5s;
+  animation-delay: 3.6s;
   animation-fill-mode: forwards;
   animation-timing-function: ease-out;
 }
@@ -138,7 +137,7 @@ textarea:focus {
 .b5 {
   animation-name: rise;
   animation-duration: 1s;
-  animation-delay: 5s;
+  animation-delay: 3.8s;
   animation-fill-mode: forwards;
   animation-timing-function: ease-out;
 }
