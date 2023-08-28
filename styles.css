@@ -72,6 +72,7 @@ textarea:focus {
 
 .title {
   font-family: 'Darker Grotesque';
+  color: #eceff4;
   top: 50vh;
   left: 8vh;
   position: absolute;
@@ -93,7 +94,7 @@ textarea:focus {
   animation-duration: 1s;
   animation-delay: 3s;
   animation-fill-mode: forwards;
-  animation-timing-function: ease;
+  animation-timing-function: ease-out;
 }
 
 .b2 {
@@ -101,7 +102,7 @@ textarea:focus {
   animation-duration: 1s;
   animation-delay: 3.5s;
   animation-fill-mode: forwards;
-  animation-timing-function: ease;
+  animation-timing-function: ease-out;
 }
 
 .b3 {
@@ -109,7 +110,7 @@ textarea:focus {
   animation-duration: 1s;
   animation-delay: 4s;
   animation-fill-mode: forwards;
-  animation-timing-function: ease;
+  animation-timing-function: ease-out;
 }
 
 .b4 {
@@ -117,7 +118,7 @@ textarea:focus {
   animation-duration: 1s;
   animation-delay: 4.5s;
   animation-fill-mode: forwards;
-  animation-timing-function: ease;
+  animation-timing-function: ease-out;
 }
 
 .b5 {
@@ -125,7 +126,7 @@ textarea:focus {
   animation-duration: 1s;
   animation-delay: 5s;
   animation-fill-mode: forwards;
-  animation-timing-function: ease;
+  animation-timing-function: ease-out;
 }
 
 .hover {
@@ -189,7 +190,7 @@ html::-webkit-scrollbar-thumb {
 
 @keyframes rise {
   0%   { 
-    transform: translateY(10px); 
+    transform: translateY(3s); 
     opacity: 0;
   }
   100%  { 
