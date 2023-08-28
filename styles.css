@@ -147,7 +147,7 @@ html::-webkit-scrollbar-thumb {
 
 @keyframes rise {
   from   { 
-    transform: translateY(3px); 
+    transform: translateY(10px); 
     opacity: 0;
   }
   to  { 
