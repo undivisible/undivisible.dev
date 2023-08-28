@@ -86,6 +86,7 @@ textarea:focus {
 .title {
   font-family: 'Darker Grotesque';
   color: #eceff4;
+  font-size: 96px;
 }
 
 .disappear {
