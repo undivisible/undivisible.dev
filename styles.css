@@ -19,6 +19,7 @@ textarea {
   color: #eceff4;
   overflow: hidden;
   transition: all 0.3s ease;
+  opacity: 0;
 }
 
 textarea:hover {
@@ -75,12 +76,14 @@ textarea:focus {
 .title {
   font-family: 'Darker Grotesque';
   color: #eceff4;
+  font-size: 240px;
   top: 50vh;
   left: 8vh;
   position: absolute;
   display: flex;
   animation-name: title;
-  animation-duration: 3s;
+  animation-delay: 2s;
+  animation-duration: 2s;
   animation-fill-mode: forwards;
   animation-timing-function: ease;
 }
@@ -172,7 +175,7 @@ html::-webkit-scrollbar-thumb {
 
 @keyframes title {
   0% {
-    font-size: 120px;
+    font-size: 240px;
   }
 
   100% {
