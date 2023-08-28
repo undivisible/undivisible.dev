@@ -86,7 +86,7 @@ textarea:focus {
 }
 
 .disappear {
-  animation-delay: 3s;
+  animation-delay: 2s;
   animation-name: disappear;
   animation-duration: 1s;
   animation-fill-mode: forwards;
