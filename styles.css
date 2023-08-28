@@ -30,10 +30,15 @@ textarea:focus {
   height: 44px
 }
 
+.margin {
+  margin-bottom: 20px;
+}
+
 .centered {
   display: flex;
-  top: 50vh;
-  left: 50vh;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
   width: 50vh;
   height: 50vh;
   position: absolute;
@@ -157,13 +162,18 @@ html::-webkit-scrollbar-thumb {
 
 @media (max-width: 600px) {
   textarea {
-    width: 80vw; 
+    width: 75vw; 
+  }
+
+  .margin {
+    margin-bottom: 5px;
   }
 
   .centered {
     flex-direction: column;
     align-items: center;
-    left: 10vh;
+    left: 0vh;
+    width: 40vh
   }
   
   .elements {
