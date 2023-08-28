@@ -99,7 +99,7 @@ textarea:focus {
 .b2 {
   animation-name: rise;
   animation-duration: 1s;
-  animation-delay: 4s;
+  animation-delay: 3.5s;
   animation-fill-mode: forwards;
   animation-timing-function: ease;
 }
@@ -107,7 +107,7 @@ textarea:focus {
 .b3 {
   animation-name: rise;
   animation-duration: 1s;
-  animation-delay: 5s;
+  animation-delay: 4s;
   animation-fill-mode: forwards;
   animation-timing-function: ease;
 }
@@ -115,7 +115,7 @@ textarea:focus {
 .b4 {
   animation-name: rise;
   animation-duration: 1s;
-  animation-delay: 6s;
+  animation-delay: 4.5s;
   animation-fill-mode: forwards;
   animation-timing-function: ease;
 }
@@ -123,7 +123,7 @@ textarea:focus {
 .b5 {
   animation-name: rise;
   animation-duration: 1s;
-  animation-delay: 7s;
+  animation-delay: 5s;
   animation-fill-mode: forwards;
   animation-timing-function: ease;
 }
@@ -159,7 +159,7 @@ html::-webkit-scrollbar-thumb {
 
 @keyframes title {
   0% {
-    font-size: x-large;
+    font-size: 120px;
   }
 
   100% {
@@ -189,7 +189,7 @@ html::-webkit-scrollbar-thumb {
 
 @keyframes rise {
   0%   { 
-    transform: translateY(100px); 
+    transform: translateY(10px); 
     opacity: 0;
   }
   100%  { 
