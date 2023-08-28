@@ -26,7 +26,12 @@
             <div style="margin-bottom: 20px; ">
                 <form id="email" method="post" action="mail.php" class="display: inline;">
                     <textarea type="text" class="titler" name="message" placeholder="undivisible | email me"></textarea>
-                    <script>function submit() {document.getElementById("email").submit();}</script>
+                    <script>
+                        function submit() {
+                            const form = document.getElementById('email');
+                            form.submit(); 
+                        }
+                    </script>
             </div>
             <div class="row">
                 <a href="#" onclick="submit()" class="submit b">
@@ -40,6 +45,5 @@
             </div>  
         </form>   
         </div>
-        
     </body>
 </html>
