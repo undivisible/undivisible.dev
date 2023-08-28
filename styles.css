@@ -34,6 +34,15 @@ textarea:focus {
   height: 44px
 }
 
+.center {
+  height: 100vh;
+  width: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
 .centered {
   display: flex;
   top: 50vh;
@@ -76,10 +85,6 @@ textarea:focus {
 .title {
   font-family: 'Darker Grotesque';
   color: #eceff4;
-  top: 50vh;
-  left: 8vh;
-  position: absolute;
-  display: flex;
   animation-name: title;
   animation-duration: 2s;
   animation-fill-mode: forwards;
@@ -173,7 +178,7 @@ html::-webkit-scrollbar-thumb {
 
 @keyframes title {
   0% {
-    font-size: 64x;
+    font-size: 120px;
   }
 
   100% {
