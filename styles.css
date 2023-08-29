@@ -133,7 +133,7 @@ textarea:focus {
 }
 
 .elements:hover, .submit:hover, .s:hover {
-  background-color: #eceff4;
+  background-color: #eceff45f;
   transition: all 0.3s ease;
 }
 
