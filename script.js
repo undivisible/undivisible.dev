@@ -13,6 +13,26 @@ function initCursor() {
         dotCursor.style.left = Math.min(maxX, e.pageX) + 'px';
         dotCursor.style.top = Math.min(maxY, e.pageY) + 'px';
     }
+
+    const element1 = document.querySelector('.dot-cursor');
+    const element2 = document.querySelector('.elements');
+
+    element1.addEventListener('mousemove', (event) => {
+        const element1Rect = element1.getBoundingClientRect();
+        const element2Rect = element2.getBoundingClientRect();
+
+        if (
+            event.clientX >= element2Rect.left &&
+            event.clientX <= element2Rect.right &&
+            event.clientY >= element2Rect.top &&
+            event.clientY <= element2Rect.bottom
+        ) {
+            element1.style.Color = '#3B4252'; /* Change color on hover */
+        } 
+        else {
+            element1.style.Color = '#ffffff'; /* Reset color if not hovering */
+        }
+    });
   }
   
 // Initialize the cursor after the DOM is loaded
@@ -25,22 +45,5 @@ window.dataLayer = window.dataLayer || [];
         gtag('js', new Date());
         gtag('config', 'G-3YW9C78ZXL');
 
-const element1 = document.querySelector('#cur');
-const element2 = document.querySelector('#elem');
 
-element1.addEventListener('mousemove', (event) => {
-    const element1Rect = element1.getBoundingClientRect();
-    const element2Rect = element2.getBoundingClientRect();
-
-    if (
-    event.clientX >= element2Rect.left &&
-    event.clientX <= element2Rect.right &&
-    event.clientY >= element2Rect.top &&
-    event.clientY <= element2Rect.bottom
-    ) {
-    element1.style.Color = '#3B4252'; /* Change color on hover */
-    } else {
-    element1.style.Color = '#ffffff'; /* Reset color if not hovering */
-    }
-});
         
