@@ -35,12 +35,15 @@ textarea:focus {
   height: 44px
 }
 
+#cur {
+  background-color: rgb(255, 255, 255);
+}
+
 .dot-cursor {
   width: 10px;
   height: 10px;
   border-radius: 50%; 
   position: absolute;
-  background-color: rgb(255, 255, 255);
   z-index: 99999;
   pointer-events: none;
   top: 0;
