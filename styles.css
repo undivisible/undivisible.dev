@@ -40,7 +40,7 @@ textarea:focus {
   height: 10px;
   border-radius: 50%; 
   position: absolute;
-  color: #ffffff;
+  background-color: #ffffff;
   z-index: 99999;
   pointer-events: none;
   top: 0;
