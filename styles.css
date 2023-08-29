@@ -3,6 +3,10 @@ body {
   color: black;
 }
 
+html {
+  cursor: none;
+}
+
 textarea {
   justify-content: center;
   width: 70vh;
@@ -28,6 +32,18 @@ textarea:focus {
   font-size: 15px;
   transition: all 0.3s ease;
   height: 44px
+}
+
+.dot-cursor {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%; 
+  position: absolute;
+  background-color: rgb(255, 255, 255);
+  z-index: 99999;
+  pointer-events: none;
+  top: 0;
+  left: 0;
 }
 
 .margin {
@@ -122,6 +138,10 @@ textarea:focus {
 .hover:hover {
   color: #2b3440;
   transition: all 0.3s ease;
+}
+
+#cur:hover ~ #elem {
+  color:#3B4252;
 }
 
 html::-webkit-scrollbar {
