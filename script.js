@@ -24,3 +24,23 @@ window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-3YW9C78ZXL');
+
+const element1 = document.querySelector('#cur');
+const element2 = document.querySelector('#elem');
+
+element1.addEventListener('mousemove', (event) => {
+    const element1Rect = element1.getBoundingClientRect();
+    const element2Rect = element2.getBoundingClientRect();
+
+    if (
+    event.clientX >= element2Rect.left &&
+    event.clientX <= element2Rect.right &&
+    event.clientY >= element2Rect.top &&
+    event.clientY <= element2Rect.bottom
+    ) {
+    element1.style.Color = '#3B4252'; /* Change color on hover */
+    } else {
+    element1.style.Color = '#ffffff'; /* Reset color if not hovering */
+    }
+});
+        

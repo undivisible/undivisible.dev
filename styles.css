@@ -35,15 +35,12 @@ textarea:focus {
   height: 44px
 }
 
-#cur {
-  background-color: rgb(255, 255, 255);
-}
-
 .dot-cursor {
   width: 10px;
   height: 10px;
   border-radius: 50%; 
   position: absolute;
+  color: #ffffff;
   z-index: 99999;
   pointer-events: none;
   top: 0;
@@ -143,10 +140,6 @@ textarea:focus {
 .hover:hover {
   color: #2b3440;
   transition: all 0.3s ease;
-}
-
-#elem:hover ~ #cur {
-  color:#3B4252;
 }
 
 html::-webkit-scrollbar {
