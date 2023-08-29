@@ -137,11 +137,6 @@ textarea:focus {
   transition: all 0.3s ease;
 }
 
-.hover:hover {
-  color: #2b3440;
-  transition: all 0.3s ease;
-}
-
 html::-webkit-scrollbar {
   width: 8px;
 }
