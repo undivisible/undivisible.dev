@@ -145,7 +145,7 @@ textarea:focus {
   transition: all 0.3s ease;
 }
 
-#cur:hover ~ #elem {
+#elem:hover ~ #cur {
   color:#3B4252;
 }
 
