@@ -216,36 +216,12 @@ h5 {
   opacity: 0;
 }
 
-#toggle:target #toggle {
-  animation: fall 1s ease-out forwards;
-}
-
-#toggle:target #toggle2 {
+#toggle:target #toggle2, #toggle:target #bg, #toggle2:target #toggle, #toggle2:target #centered {
   animation: rise 1s ease-out forwards;
 }
 
-#toggle:target #bg {
-  animation: rise 1s ease-out forwards;
-}
-
-#toggle:target #centered {
+#toggle2:target #toggle2, #toggle2:target #bg, #toggle:target #centered, #toggle:target #toggle {
   animation: fall 1s ease-out forwards;
-}
-
-#toggle2:target #toggle {
-  animation: rise 1s ease-out forwards;
-}
-
-#toggle2:target #toggle2 {
-  animation: fall 1s ease-out forwards;
-}
-
-#toggle2:target #bg {
-  animation: fall 1s ease-out forwards;
-}
-
-#toggle2:target #centered {
-  animation: rise 1s ease-out forwards;
 }
 
 html::-webkit-scrollbar {
