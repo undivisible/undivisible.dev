@@ -44,11 +44,3 @@ window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-3YW9C78ZXL');
-
-document.body.addEventListener('click', () => {
-    location.hash = location.hash ? '' : 'toggle';
-    });
-
-document.body.addEventListener('click', () => {
-    location.hash = location.hash ? '' : 'toggle2';
-    });

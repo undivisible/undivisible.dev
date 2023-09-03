@@ -133,6 +133,11 @@ h5 {
   animation-delay: 2s;
 }
 
+.toggle {
+  animation: rise 1s ease-out forwards;
+  animation-delay: 2.4s;
+}
+
 .b {
   animation: rise 1s ease-out forwards;
   animation-delay: 2.8s;
@@ -201,14 +206,13 @@ h5 {
 }
 
 #toggle {
-  top: 1vh;
-  left: 1vh;
-  opacity: 1;
+  top: 1.2vh;
+  left: 1.2vh;
 }
 
 #toggle2 {
-  top: 1vh;
-  left: 1vh;
+  top: 1.2vh;
+  left: 1.2vh;
   opacity: 0;
 }
 
