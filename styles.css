@@ -136,6 +136,7 @@ h5 {
 .toggle {
   animation: rise 1s ease-out forwards;
   animation-delay: 2.4s;
+  z-index: 4;
 }
 
 .b {
