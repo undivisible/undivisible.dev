@@ -203,11 +203,13 @@ h5 {
 #toggle {
   top: 1vh;
   left: 1vh;
+  opacity: 1;
 }
 
 #toggle2 {
   top: 1vh;
   left: 1vh;
+  opacity: 0;
 }
 
 #toggle:target #toggle {
