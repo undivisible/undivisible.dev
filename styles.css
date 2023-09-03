@@ -35,6 +35,31 @@ textarea:focus {
   height: 44px
 }
 
+h1 {
+  font-family: 'Darker Grotesque';
+  font-size: 72px;
+}
+
+h2 {
+  font-family: 'Darker Grotesque';
+  font-size: 28px;
+}
+
+h3 {
+  font-family: 'Darker Grotesque';
+  font-size: 24px;
+}
+
+h4 {
+  font-family: 'Darker Grotesque', 'Segoe UI Emoji';
+  font-size: 18px;
+}
+
+h5 {
+  font-family: 'Darker Grotesque';
+  font-size: 14px;
+}
+
 .dot-cursor {
   width: 10px;
   height: 10px;
@@ -58,6 +83,7 @@ textarea:focus {
   width: 50vh;
   height: 50vh;
   position: absolute;
+  z-index: 2;
 }
 
 .row {
@@ -137,6 +163,49 @@ textarea:focus {
   transition: all 0.3s ease;
 }
 
+.bg {
+  opacity: 0;
+  background-color:#2b3440;
+  height: 100vh;
+  width: 100vh;
+  z-index: 1;
+}
+
+.info {
+  height: 100vh;
+  width: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-family: 'Darker Grotesque';
+  color:#eceff4;
+}
+
+#bg {
+  opacity: 0;
+}
+
+#centered {
+  opacity: 1;
+}
+
+#toggle:target #bg {
+  animation: rise 1s ease-out forwards;
+}
+
+#toggle:target #centered {
+  animation: fall 1s ease-out forwards;
+}
+
+#toggle2:target #bg {
+  animation: fall 1s ease-out forwards;
+}
+
+#toggle2:target #centered {
+  animation: rise 1s ease-out forwards;
+}
+
 html::-webkit-scrollbar {
   width: 8px;
 }
@@ -169,6 +238,17 @@ html::-webkit-scrollbar-thumb {
   to  { 
     transform: translateY(0px); 
     opacity: 1;
+  }
+}
+
+@keyframes fall {
+  from   { 
+    transform: translateY(0px); 
+    opacity: 1;
+  }
+  to  { 
+    transform: translateY(-10px); 
+    opacity: 0;
   }
 }
 
