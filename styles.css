@@ -38,26 +38,36 @@ textarea:focus {
 h1 {
   font-family: 'Darker Grotesque';
   font-size: 72px;
+  width: 55%;
+  text-align: start;
 }
 
 h2 {
   font-family: 'Darker Grotesque';
   font-size: 28px;
+  width: 55%;
+  text-align: start;
 }
 
 h3 {
   font-family: 'Darker Grotesque';
   font-size: 24px;
+  width: 55%;
+  text-align: start;
 }
 
 h4 {
-  font-family: 'Darker Grotesque', 'Segoe UI Emoji';
+  font-family: 'Darker Grotesque';
   font-size: 18px;
+  width: 55%;
+  text-align: start;
 }
 
 h5 {
   font-family: 'Darker Grotesque';
   font-size: 14px;
+  width: 55%;
+  text-align: start;
 }
 
 .dot-cursor {
@@ -190,11 +200,39 @@ h5 {
   opacity: 1;
 }
 
+#toggle {
+  top: 5vh;
+  left: 5vh;
+  position: absolute;
+}
+
+#toggle2 {
+  top: 5vh;
+  left: 5vh;
+  position: absolute;
+}
+
+#toggle:target #toggle {
+  animation: fall 1s ease-out forwards;
+}
+
+#toggle:target #toggle2 {
+  animation: rise 1s ease-out forwards;
+}
+
 #toggle:target #bg {
   animation: rise 1s ease-out forwards;
 }
 
 #toggle:target #centered {
+  animation: fall 1s ease-out forwards;
+}
+
+#toggle2:target #toggle {
+  animation: rise 1s ease-out forwards;
+}
+
+#toggle2:target #toggle2 {
   animation: fall 1s ease-out forwards;
 }
 
