@@ -45,15 +45,10 @@ window.dataLayer = window.dataLayer || [];
         gtag('js', new Date());
         gtag('config', 'G-3YW9C78ZXL');
 
-const background = document.querySelector('body'); 
-const element = document.getElementById('#bg');
+document.body.addEventListener('click', () => {
+    location.hash = location.hash ? '' : 'toggle';
+    });
 
-background.addEventListener('click', () => {
-    element.style.opacity = 1; 
-});
-
-document.addEventListener('click', (e) => {
-    if(e.target.classList.contains('background')) {
-      document.getElementById('bg').style.opacity = 1;
-    }
-  });
+document.body.addEventListener('click', () => {
+    location.hash = location.hash ? '' : 'toggle2';
+    });
