@@ -283,7 +283,7 @@ html::-webkit-scrollbar-thumb {
   .centered {
     flex-direction: column;
     align-items: center;
-    left: 0vh;
+    left: 2vh;
     width: 40vh
   }
   
