@@ -1,11 +1,10 @@
-body {
-  animation: background 3s forwards ease;
-  color: black;
+:root {
+  --main-font: 'Darker Grotesque', sans-serif;
+  --bg-color: #2b3440;
+  --text-color: #eceff4;
 }
 
-html {
-  cursor: none;
-}
+body { animation: background 3s forwards ease; cursor: none; }
 
 textarea {
   justify-content: center;
@@ -13,7 +12,7 @@ textarea {
   height: 1.5em;
   background-color: transparent;
   border-color: #2b3440;
-  font-family: 'Darker Grotesque';
+  font-family: var(--main-font);
   font-size: 24px;
   resize: none;
   color: #eceff4;
@@ -35,71 +34,52 @@ textarea:focus {
   height: 44px
 }
 
-h1 {
-  font-family: 'Darker Grotesque';
-  font-size: 72px;
-  width: 55%;
+h1, h2, h3, h4, h5 {
+  font-family: var(--main-font);
   text-align: start;
+  width: 55%;
 }
 
-h2 {
-  font-family: 'Darker Grotesque';
-  font-size: 28px;
-  width: 55%;
-  text-align: start;
-}
-
-h3 {
-  font-family: 'Darker Grotesque';
-  font-size: 24px;
-  width: 55%;
-  text-align: start;
-}
-
-h4 {
-  font-family: 'Darker Grotesque';
-  font-size: 18px;
-  width: 55%;
-  text-align: start;
-}
-
-h5 {
-  font-family: 'Darker Grotesque';
-  font-size: 14px;
-  width: 55%;
-  text-align: start;
-}
+h1 { font-size: 72px; }
+h2 { font-size: 28px; }
+h3 { font-size: 24px; }
+h4 { font-size: 18px; }
+h5 { font-size: 14px; }
 
 .dot-cursor {
   width: 10px;
   height: 10px;
   border-radius: 50%; 
   position: absolute;
-  background-color: #ffffff;
+  background-color: var(--text-color);
   z-index: 99999;
   pointer-events: none;
   top: 0;
   left: 0;
 }
 
-.margin {
-  margin-bottom: 20px;
-}
+.margin { margin-bottom: 20px; }
 
 .centered {
-  display: flex;
+  position: absolute;
   top: 50vh;
   left: 50vh;
-  width: 50vh;
+  width: 50vh; 
   height: 50vh;
-  position: absolute;
+  display: flex;
   z-index: 2;
 }
 
-.row {
+.info {
+  height: 100vh;
+  width: 100vh;
   display: flex;
-  width: 20%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
+
+.row { display: flex; width: 20%; }
 
 .submit {
   width: 44px;
@@ -128,46 +108,25 @@ h5 {
   border-radius: 5px;
 }
 
-.titler {
-  animation: rise 1s ease-out forwards;
-  animation-delay: 2s;
-}
+.b, .b1, .b2, .b3, .b4, .b5, .toggle, .titler, #toggle:target #toggle2, #toggle:target #bg, #toggle2:target #toggle, #toggle2:target #centered { animation: rise 1s ease-out forwards; }
 
-.toggle {
-  animation: rise 1s ease-out forwards;
-  animation-delay: 2.4s;
-  z-index: 4;
-}
+#toggle2:target #toggle2, #toggle2:target #bg, #toggle:target #centered, #toggle:target #toggle { animation: fall 1s ease-out forwards; }
 
-.b {
-  animation: rise 1s ease-out forwards;
-  animation-delay: 2.8s;
-}
+.titler {animation-delay: 2s;}
 
-.b1 {
-  animation: rise 1s ease-out forwards;
-  animation-delay: 3s;
-}
+.toggle {animation-delay: 2.4s; z-index: 4;}
 
-.b2 {
-  animation: rise 1s ease-out forwards;
-  animation-delay: 3.2s;
-}
+.b { animation-delay: 2.8s; }
 
-.b3 {
-  animation: rise 1s ease-out forwards;
-  animation-delay: 3.4s;
-}
+.b1 { animation-delay: 3s; }
 
-.b4 {
-  animation: rise 1s ease-out forwards;
-  animation-delay: 3.6s;
-}
+.b2 { animation-delay: 3.2s; }
 
-.b5 {
-  animation: rise 1s ease-out forwards;
-  animation-delay: 3.8s;
-}
+.b3 { animation-delay: 3.4s; }
+
+.b4 { animation-delay: 3.6s; }
+
+.b5 { animation-delay: 3.8s; }
 
 .hover {
   color: #eceff4;
@@ -187,42 +146,16 @@ h5 {
   z-index: 1;
 }
 
-.info {
-  height: 100vh;
-  width: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  font-family: 'Darker Grotesque';
-  color:#eceff4;
-}
+#bg { opacity: 0; }
 
-#bg {
-  opacity: 0;
-}
+#centered { opacity: 1; }
 
-#centered {
-  opacity: 1;
-}
-
-#toggle {
-  top: 1.2vh;
-  left: 1.2vh;
-}
+#toggle { top: 1.2vh; left: 1.2vh; }
 
 #toggle2 {
   top: 1.2vh;
   left: 1.2vh;
   opacity: 0;
-}
-
-#toggle:target #toggle2, #toggle:target #bg, #toggle2:target #toggle, #toggle2:target #centered {
-  animation: rise 1s ease-out forwards;
-}
-
-#toggle2:target #toggle2, #toggle2:target #bg, #toggle:target #centered, #toggle:target #toggle {
-  animation: fall 1s ease-out forwards;
 }
 
 html::-webkit-scrollbar {
@@ -240,33 +173,28 @@ html::-webkit-scrollbar-thumb {
 }
 
 @keyframes background {
-  from {
-    background-color: black;
-  }
-
-  to {
-    background-color: #2b3440;
-  }
+  from { background-color: black; }
+  to { background-color: var(--bg-color); }
 }
 
 @keyframes rise {
-  from   { 
-    transform: translateY(10px); 
+  from { 
+    transform: translateY(10px);
     opacity: 0;
-  }
-  to  { 
-    transform: translateY(0px); 
+   }
+  to {
+    transform: translateY(0);
     opacity: 1;
-  }
+   }
 }
 
 @keyframes fall {
-  from   { 
-    transform: translateY(0px); 
+  from {
+    transform: translateY(0);
     opacity: 1;
   }
-  to  { 
-    transform: translateY(-10px); 
+  to {
+    transform: translateY(-10px);
     opacity: 0;
   }
 }
