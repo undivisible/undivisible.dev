@@ -61,4 +61,10 @@ document.body.addEventListener('click', () => {
         location.hash = '#toggle';
     }
     
-    });
+});
+
+function redirect(){
+    setTimeout(function(){ 
+    window.location="one.html"
+ }, 2000);
+}
