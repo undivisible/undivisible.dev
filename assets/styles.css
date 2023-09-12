@@ -96,14 +96,12 @@ h3 { font-size: 24px; }
   width: 100%;
   background-color: transparent;
   position: absolute;
-  z-index: 999;
+  z-index: 3;
 }
 
 .b, .b1, .b2, .b3, .b4, .b5, .toggle, .titler, .info, .bg { animation: rise 1s ease-out forwards; }
 
 .titler {animation-delay: 2s;}
-
-.toggle {animation-delay: 2.4s; z-index: 4;}
 
 .b { animation-delay: 2.8s; }
 
@@ -140,7 +138,7 @@ h3 { font-size: 24px; }
   font-family: var(--main-font);
   font-size: larger;
   display: inline-block;
-  z-index: 13;
+  z-index: 5;
   background-color: transparent;
   color: #eceff4;
   position: absolute;
@@ -153,7 +151,7 @@ h3 { font-size: 24px; }
   position: absolute;
   background-color: transparent;
   min-width: 160px;
-  z-index: 9;
+  z-index: 4;
 }
 
 .dropdown-content a {
