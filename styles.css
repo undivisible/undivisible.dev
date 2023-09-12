@@ -38,6 +38,7 @@ h1, h2, h3{
   text-align: start;
   width: 55%;
   margin: none;
+  opacity: 0;
   animation: rise 2s ease-out forwards;
 }
 
@@ -45,12 +46,12 @@ h1 { font-size: 72px; }
 
 h2 { 
   font-size: 28px; 
-  animation-delay: 1s;
+  animation-delay: 0.5s;
 }
 
 h3 { 
   font-size: 24px; 
-  animation-delay: 2s;
+  animation-delay: 1s;
 }
 
 .margin { margin-bottom: 20px; }
@@ -70,6 +71,9 @@ h3 {
   display: flex;
   bottom: 2vh;
   align-items: center;
+  opacity: 0;
+  animation: rise 2s ease-out forwards;
+  animation-delay: 1.5s;
 }
 
 .row { 
