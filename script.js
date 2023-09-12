@@ -33,6 +33,8 @@ function initCursor() {
             element1.style.backgroundColor = '#ffffff'; /* Reset color if not hovering */
         }
     });
+
+    setInterval(handleMove, 1000);
   }
   
 // Initialize the cursor after the DOM is loaded
