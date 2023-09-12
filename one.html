@@ -14,8 +14,18 @@
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-3YW9C78ZXL"></script>
         <script src="script.js"></script>
+        <script>
+            function redirect(){
+                document.getElementById('bg').style.animation = "fall 2s ease-out forwards"; 
+
+                setTimeout(() => {
+                window.location = "index.html"; 
+                }, 2000);
+            }
+        </script>
     </head>
     <body>
+        <a class="full" href="javascript:void(0);" onclick="redirect()"></a>
         <div class="dropdown">
             english
             <i class="fa-solid fa-angle-down fa-xs" style="color:#eceff4;"></i>
@@ -30,7 +40,7 @@
         <div class="centered" id="centered">
             <div class="margin">
                 <form id="email" method="post" action="mail.php" class="display: inline;">
-                    <textarea type="text" class="titler" name="message" placeholder="undivisible | email doesn't work don't try it, click the button for the time being"></textarea>
+                    <textarea type="text" class="titler" name="message" placeholder="undivisible | email no work, click the button for the time being"></textarea>
             </div>
             <div class="row">
                 <a href="mailto:v@undivisible.dev" class="submit elements b">

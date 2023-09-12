@@ -14,8 +14,18 @@
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-3YW9C78ZXL"></script>
         <script src="../script.js"></script>
+        <script>
+            function redirect(){
+                document.getElementById('bg').style.animation = "fall 2s ease-out forwards"; 
+
+                setTimeout(() => {
+                window.location = "index.html"; 
+                }, 2000);
+            }
+        </script>
     </head>
     <body>
+        <a class="full" href="javascript:void(0);" onclick="redirect()"></a>
         <div class="dropdown">
             bahasa indonesia
             <i class="fa-solid fa-angle-down fa-xs" style="color:#eceff4;"></i>
