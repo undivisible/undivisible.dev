@@ -7,6 +7,12 @@ window.onload = () => {
     location.hash = '#toggle';
     };
 
+// Add click event to dropdown button
+document.querySelector('.dropbtn').addEventListener('click', function(){
+    // Toggle show/hide dropdown content
+    document.querySelector('.dropdown-content').classList.toggle('show'); 
+  });
+
 var usrlang = (navigator.language || navigator.userLanguage).toLowerCase();
 
 if (usrlang === "ru") {

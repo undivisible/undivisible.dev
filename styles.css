@@ -162,6 +162,12 @@ h3 { font-size: 24px; }
   display: block;
 }
 
+.dropdown-content a:hover {background-color: #8787872e; border-radius: 5px;}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
 html::-webkit-scrollbar {
   width: 8px;
 }
