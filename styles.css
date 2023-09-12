@@ -4,9 +4,7 @@
   --text-color: #eceff4;
 }
 
-html { cursor: none; }
-
-body { animation: background 3s forwards ease; cursor: none; }
+body { animation: background 3s forwards ease; }
 
 textarea {
   justify-content: center;
@@ -21,7 +19,6 @@ textarea {
   overflow: hidden;
   transition: all 0.3s ease;
   opacity: 0;
-  cursor: none;
 }
 
 textarea:hover {
@@ -46,18 +43,6 @@ h1, h2, h3{
 h1 { font-size: 72px; }
 h2 { font-size: 28px; }
 h3 { font-size: 24px; }
-
-.dot-cursor {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%; 
-  position: absolute;
-  background-color: var(--text-color);
-  z-index: 99999;
-  pointer-events: none;
-  top: 0;
-  left: 0;
-}
 
 .margin { margin-bottom: 20px; }
 
@@ -97,7 +82,6 @@ h3 { font-size: 24px; }
   transition: all 0.3s ease;
   border-radius: 5px;
   opacity: 0;
-  cursor: none;
 }
 
 .s {
@@ -113,7 +97,6 @@ h3 { font-size: 24px; }
   background-color: transparent;
   position: absolute;
   z-index: 999;
-  cursor: none;
 }
 
 .b, .b1, .b2, .b3, .b4, .b5, .toggle, .titler, .info, .bg { animation: rise 1s ease-out forwards; }
