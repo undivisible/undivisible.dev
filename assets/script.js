@@ -10,13 +10,13 @@ window.onload = () => {
 var usrlang = (navigator.language || navigator.userLanguage).toLowerCase();
 
 if (usrlang === "ru") {
-    window.location = "ru/index.html";
+    window.location = "../ru/index.html";
 } 
 else if (usrlang === "id") {
-    window.location = "id/index.html";
+    window.location = "../id/index.html";
 } 
 else if (usrlang === "zh") {
-    window.location = "zh/index.html";
+    window.location = "../zh/index.html";
 } 
 else {
     return;
@@ -42,6 +42,6 @@ function redirect(){
     document.getElementById('bg').style.animation = "fall 2s ease-out forwards"; 
 
     setTimeout(() => {
-    window.location = "one.html"; 
+    window.location = "../one.html"; 
     }, 2000);
 }
