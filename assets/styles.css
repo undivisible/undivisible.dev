@@ -1,5 +1,5 @@
 :root {
-  --main-font: 'Darker Grotesque', sans-serif;
+  --main-font: 'Darker Grotesque', 'Rubik', 'Noto Sans SC', sans-serif;
   --bg-color: #2b3440;
   --text-color: #eceff4;
 }
@@ -134,6 +134,34 @@ h3 { font-size: 24px; }
   justify-content: center;
   flex-direction: column;
   height: 100%;
+}
+
+.dropdown {
+  font-family: var(--main-font);
+  font-size: larger;
+  display: inline-block;
+  z-index: 13;
+  background-color: transparent;
+  color: #eceff4;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: transparent;
+  min-width: 160px;
+  z-index: 9;
+}
+
+.dropdown-content a {
+  font-family: var(--main-font);
+  color: #eceff4;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
 }
 
 html::-webkit-scrollbar {
