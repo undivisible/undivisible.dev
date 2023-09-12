@@ -4,7 +4,7 @@
   --text-color: #eceff4;
 }
 
-body { animation: background 3s forwards ease; cursor: none; }
+body { animation: background 3s forwards ease; cursor: none;}
 
 textarea {
   justify-content: center;
@@ -34,17 +34,16 @@ textarea:focus {
   height: 44px
 }
 
-h1, h2, h3, h4, h5 {
+h1, h2, h3{
   font-family: var(--main-font);
   text-align: start;
   width: 55%;
+  margin: none;
 }
 
 h1 { font-size: 72px; }
 h2 { font-size: 28px; }
 h3 { font-size: 24px; }
-h4 { font-size: 18px; }
-h5 { font-size: 14px; }
 
 .dot-cursor {
   width: 10px;
@@ -68,15 +67,6 @@ h5 { font-size: 14px; }
   height: 50vh;
   display: flex;
   z-index: 2;
-}
-
-.info {
-  height: 100vh;
-  width: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
 }
 
 .text {
@@ -119,11 +109,11 @@ h5 { font-size: 14px; }
   height: 100%;
   width: 100%;
   background-color: transparent;
+  position: absolute;
+  z-index: 999;
 }
 
-.b, .b1, .b2, .b3, .b4, .b5, .toggle, .titler, .info { animation: rise 1s ease-out forwards; }
-
-.info { animation: fall 1s ease-out forwards; }
+.b, .b1, .b2, .b3, .b4, .b5, .toggle, .titler, .info, .bg { animation: rise 1s ease-out forwards; }
 
 .titler {animation-delay: 2s;}
 
@@ -152,11 +142,12 @@ h5 { font-size: 14px; }
 }
 
 .bg {
-  opacity: 0;
-  background-color:#2b3440;
-  height: 100vh;
-  width: 100vh;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
 }
 
 html::-webkit-scrollbar {
