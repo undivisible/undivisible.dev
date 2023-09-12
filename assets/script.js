@@ -1,4 +1,3 @@
-
 window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
@@ -46,9 +45,3 @@ function redirect(){
     window.location = "one.html"; 
     }, 2000);
 }
-
-document.querySelector(".dropdown").addEventListener("click", function () {
-    var dropdownContent = document.querySelector(".dropdown-content");
-    dropdownContent.style.display =
-      dropdownContent.style.display === "block" ? "none" : "block";
-  });
