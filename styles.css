@@ -38,7 +38,7 @@ h1, h2, h3{
   text-align: start;
   width: 55%;
   margin: none;
-  animation: rise 2s ease forwards;
+  animation: rise 2s ease-out forwards;
 }
 
 h1 { font-size: 72px; }
