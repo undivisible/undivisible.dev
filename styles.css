@@ -4,7 +4,9 @@
   --text-color: #eceff4;
 }
 
-body { animation: background 3s forwards ease; cursor: none;}
+html { cursor: none; }
+
+body { animation: background 3s forwards ease; cursor: none; }
 
 textarea {
   justify-content: center;
@@ -111,6 +113,7 @@ h3 { font-size: 24px; }
   background-color: transparent;
   position: absolute;
   z-index: 999;
+  cursor: none;
 }
 
 .b, .b1, .b2, .b3, .b4, .b5, .toggle, .titler, .info, .bg { animation: rise 1s ease-out forwards; }
