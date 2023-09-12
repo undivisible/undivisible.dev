@@ -43,11 +43,3 @@ document.body.addEventListener('click', () => {
     }
     
 });
-
-function redirect(){
-    document.getElementById('bg').style.animation = "fall 2s ease-out forwards"; 
-
-    setTimeout(() => {
-    window.location = "one.html"; 
-    }, 2000);
-}

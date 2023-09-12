@@ -210,9 +210,10 @@ html::-webkit-scrollbar-thumb {
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1000px) {
   textarea {
     width: 75vw; 
+    font-size: 12px;
   }
 
   .margin {
