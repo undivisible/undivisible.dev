@@ -79,6 +79,13 @@ h5 { font-size: 14px; }
   flex-direction: column;
 }
 
+.text {
+  font-family: var(--main-font);
+  display: flex;
+  bottom: 2vh;
+  align-items: center;
+}
+
 .row { display: flex; width: 20%; }
 
 .submit {
@@ -108,9 +115,15 @@ h5 { font-size: 14px; }
   border-radius: 5px;
 }
 
-.b, .b1, .b2, .b3, .b4, .b5, .toggle, .titler, #toggle:target #toggle2, #toggle:target #bg, #toggle2:target #toggle, #toggle2:target #centered { animation: rise 1s ease-out forwards; }
+.full {
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
+}
 
-#toggle2:target #toggle2, #toggle2:target #bg, #toggle:target #centered, #toggle:target #toggle { animation: fall 1s ease-out forwards; }
+.b, .b1, .b2, .b3, .b4, .b5, .toggle, .titler, .info { animation: rise 1s ease-out forwards; }
+
+.info { animation: fall 1s ease-out forwards; }
 
 .titler {animation-delay: 2s;}
 
@@ -146,18 +159,6 @@ h5 { font-size: 14px; }
   z-index: 1;
 }
 
-#bg { opacity: 0; }
-
-#centered { opacity: 1; }
-
-#toggle { top: 1.2vh; left: 1.2vh; }
-
-#toggle2 {
-  top: 1.2vh;
-  left: 1.2vh;
-  opacity: 0;
-}
-
 html::-webkit-scrollbar {
   width: 8px;
 }
@@ -173,7 +174,7 @@ html::-webkit-scrollbar-thumb {
 }
 
 @keyframes background {
-  from { background-color: black; }
+  from { background-color: #ffffff; }
   to { background-color: var(--bg-color); }
 }
 
