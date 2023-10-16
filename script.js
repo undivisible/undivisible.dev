@@ -1,45 +1,31 @@
-window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-3YW9C78ZXL');
+(function () {
+    var names = ["mack","max","maxim","maximus","祁明思","максим" ],
+    i = 0;
+    setInterval(function(){ $('#names').fadeOut(function(){
+        $(this).html(names[(i = (i + 1) % names.length)]).fadeIn();
+      }); }, 3000)
+    var greetings = ["hello!","здравствуй!","你好！","hey!","доброе день" ],
+    i2 = 0;
+    setInterval(function(){ $('#greetings').fadeOut(function(){
+        $(this).html(greetings[(i2 = (i2 + 1) % greetings.length)]).fadeIn();
+      }); }, 3000)
+    var jobs = ["student","developer","entrepreneur","video editor" ],
+    i3 = 0;
+    setInterval(function(){ $('#jobs').fadeOut(function(){
+        $(this).html(jobs[(i3 = (i3 + 1) % jobs.length)]).fadeIn();
+    }); }, 3000)
+    var langs = ["english","russian","cantonese","chinese","indonesian" ],
+    i4 = 0;
+    setInterval(function(){ $('#langs').fadeOut(function(){
+        $(this).html(langs[(i4 = (i4 + 1) % langs.length)]).fadeIn();
+    }); }, 3000)
+    var code = ["html and css","javascript","python","c#" ],
+    i5 = 0;
+    setInterval(function(){ $('#code').fadeOut(function(){
+        $(this).html(code[(i5 = (i5 + 1) % code.length)]).fadeIn();
+    }); }, 3000)
+  })();
 
-window.onload = () => {
-    location.hash = '#toggle';
-    };
-
-// Add click event to dropdown button
-document.querySelector('.dropbtn').addEventListener('click', function(){
-    // Toggle show/hide dropdown content
-    document.querySelector('.dropdown-content').classList.toggle('show'); 
-  });
-
-var usrlang = (navigator.language || navigator.userLanguage).toLowerCase();
-
-if (usrlang === "ru") {
-    window.location = "ru/index.html";
-} 
-else if (usrlang === "id") {
-    window.location = "id/index.html";
-} 
-else if (usrlang === "zh") {
-    window.location = "zh/index.html";
-} 
-else {
-    return;
-}
-
-document.body.addEventListener('click', () => {
-
-    let hash = location.hash;
-    
-    if(hash == '#toggle') {
-        location.hash = '#toggle2';
-    } 
-    else if (hash == '#toggle2') {
-        location.hash = '#toggle';
-    } 
-    else {
-        location.hash = '#toggle';
-    }
-    
-});
+window.addEventListener('scroll', () => {
+    document.body.style.setProperty('--scroll',window.pageYOffset / (document.body.offsetHeight - window.innerHeight));
+  }, false);
