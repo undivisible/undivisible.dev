@@ -50,3 +50,9 @@ span {color: var(--htext);}
         opacity: 0;
     }
 }
+
+@media (max-width: 1000px) {
+    .centered {
+        transform: scale(0.75);
+    }
+  }
