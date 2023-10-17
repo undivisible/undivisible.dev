@@ -28,7 +28,9 @@ span {color: var(--htext);}
     font-family: var(--font);
     color: var(--text);
     transition: all 1s;
-    animation: rise 1s ease-out forwards;
+    animation: rise 1s ease-out forwards, all 1s ease;
+}
+
 }
 
 @keyframes rise {
@@ -42,12 +44,16 @@ span {color: var(--htext);}
      }
   }
   
-@keyframes fade {
-    from {
-        opacity: 1;
+@keyframes links {
+    from { 
+        transform: translateY(-30px);
+        opacity: 0;
+        filter: blur(0.5rem);
     }
     to {
-        opacity: 0;
+        transform: translateY(0);
+        opacity: 1;
+        filter: blur(0em);
     }
 }
 
