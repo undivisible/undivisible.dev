@@ -1,5 +1,5 @@
 (function () {
-    var names = ["mack","max","maxim","maximus","祁明思","максим" ],
+    var names = ["max","mack","maxim","maximus","祁明思","максим" ],
     i = 0;
     setInterval(function(){ $('#names').fadeOut(function(){
         $(this).html(names[(i = (i + 1) % names.length)]).fadeIn();
