@@ -32,6 +32,8 @@ span {color: var(--htext);}
     animation: rise 1s ease-out forwards, all 1s ease;
     transition: all 1s;
     padding: 20px;
+    position: relative;
+    top: 10%;
 }
 
 .p {display: flex; justify-content: right; font-size: 11px; padding: 0;}
@@ -44,7 +46,7 @@ span {color: var(--htext);}
     flex-wrap: wrap;
     width: 400px;
     position: relative;
-    bottom: 130px;
+    bottom: 6%;
     padding: 50px;
 }
 
