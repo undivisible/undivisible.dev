@@ -23,15 +23,33 @@ span {color: var(--htext);}
     flex-direction: column;
 }
 
-
 .text {
     font-family: var(--font);
     color: var(--text);
-    transition: all 1s;
-    animation: rise 1s ease-out forwards, all 1s ease;
 }
 
+#text {
+    animation: rise 1s ease-out forwards, all 1s ease;
+    transition: all 1s;
+    padding: 20px;
 }
+
+.p {display: flex; justify-content: right; font-size: 11px; padding: 0;}
+
+.links {
+    opacity: 0;
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    flex-wrap: wrap;
+    width: 400px;
+    position: relative;
+    bottom: 130px;
+    padding: 50px;
+}
+
+#link {text-decoration: none; margin-right: 10px;}
+#link:hover {text-decoration: underline;}
 
 @keyframes rise {
     from { 
@@ -46,14 +64,23 @@ span {color: var(--htext);}
   
 @keyframes links {
     from { 
-        transform: translateY(-30px);
         opacity: 0;
         filter: blur(0.5rem);
     }
     to {
-        transform: translateY(0);
         opacity: 1;
         filter: blur(0em);
+    }
+}
+
+@keyframes linksr {
+    from { 
+        opacity: 1;
+        filter: blur(0em);
+    }
+    to {
+        opacity: 0;
+        filter: blur(0.5rem);
     }
 }
 

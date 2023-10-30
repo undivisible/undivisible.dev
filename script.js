@@ -24,5 +24,53 @@
     setInterval(function(){ $('#code').fadeOut(function(){
         $(this).html(code[(i5 = (i5 + 1) % code.length)]).fadeIn();
     }); }, 3000)
-  })();
+})();
 
+function mouseover() {
+    const letters = "abcdefghijklmnopqrstuvwxyz";
+    const link = document.querySelectorAll("#link");
+
+    link.forEach(link => {
+        let interval = null;
+
+        link.onmouseover = event => {  
+            let iteration = 0;
+            
+            clearInterval(interval);
+            
+            interval = setInterval(() => {
+                event.target.innerText = event.target.innerText
+                  .split("")
+                  .map((letter, index) => {
+                    if(index < iteration) {
+                      return event.target.dataset.value[index];
+                    }
+                  
+                    return letters[Math.floor(Math.random() * 26)]
+                  })
+                  .join("");
+                
+                if(iteration >= event.target.dataset.value.length){ 
+                  clearInterval(interval);
+                }
+                
+                iteration += 1 / 3;
+            }, 30);
+        }
+    });
+}
+
+function anim() {
+    const text = document.getElementById('text');
+    const links = document.getElementById('links');
+
+    links.addEventListener("mouseover", function(){
+        text.style.animation = "linksr 0.5s ease-in forwards";
+        links.style.animation = "links 0.5s ease-in forwards";
+    });
+
+    links.addEventListener("mouseout", function(){
+        text.style.animation = "links 0.5s ease-out forwards";
+        links.style.animation = "linksr 0.5s ease-out forwards";
+    });
+}
