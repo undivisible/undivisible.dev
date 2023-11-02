@@ -32,22 +32,18 @@ span {color: var(--htext);}
     animation: rise 1s ease-out forwards, all 1s ease;
     transition: all 1s;
     padding: 20px;
-    position: relative;
-    top: 10%;
 }
 
 .p {display: flex; justify-content: right; font-size: 11px; padding: 0;}
 
 .links {
     opacity: 0;
-    color: #ffffff;
+    color: var(--htext);
     text-decoration: none;
     display: flex;
     flex-wrap: wrap;
-    width: 400px;
-    position: relative;
-    bottom: 6%;
     padding: 50px;
+    width: 400px;
 }
 
 #link {text-decoration: none; margin-right: 10px;}
