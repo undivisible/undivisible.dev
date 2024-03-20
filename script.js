@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
         setInterval(function(){ $('#names').fadeOut(function(){
             $(this).html(names[(i = (i + 1) % names.length)]).fadeIn();
           }); }, 3000)
-        var greetings = ["hello!","здарова!","哈喽！","hey!","добрый день","你好！","heyo!","привет!","喂!" ],
+        var greetings = ["hello!","здорово!","哈喽！","hey!","добрый день","你好！","heyo!","привет!","喂!" ],
         i2 = 0;
         setInterval(function(){ $('#greetings').fadeOut(function(){
             $(this).html(greetings[(i2 = (i2 + 1) % greetings.length)]).fadeIn();
