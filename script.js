@@ -42,11 +42,24 @@ function toggleTheme() {
 
 function swap(page, backing, back) {
     var bg = document.getElementById(backing);
+    const elementIds = ["sticky", "intro", "see", "about"];
+    
+
     if (!back) {
+        elementIds.forEach(function(id) {
+            const element = document.getElementById(id);
+            element.style.animation = 'onexit 1s ease-out forwards';
+        });
         bg.style.animation = 'swap 3s ease-in forwards';
     }
+    
     else {
-        bg.style.animation = 'back 3s ease-in forwards';
+        const wrapper = document.getElementById("wrapper");
+        const body = document.getElementById("body");
+        wrapper.style.animation = 'onexit 1.5s ease-out forwards';
+        setTimeout(() => {
+            body.style.animation = 'exit 1.5s ease-in forwards'; 
+        }, 1500);
     }
     setTimeout(() => {
         window.location.href = page;
@@ -54,7 +67,7 @@ function swap(page, backing, back) {
 }
 
 function showLinks() {
-    // Add code to show all links
+    
 }
 
 function fancyText(elementIds) {

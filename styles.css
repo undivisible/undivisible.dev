@@ -1,26 +1,37 @@
 @keyframes swap {
+    1% {
+        z-index: 1;
+        text-decoration: none;
+        color: var(--bg3); 
+    }
     100% {
+        z-index: 1;
+        text-decoration: none;
+        color: var(--bg3); 
         height: 100vh;
         width: 100vw;
-        z-index: 1;
     }
 }
 
-@keyframes back {
+@keyframes popup {
+    0% {transform: translateY(3vh);}
     100% {
-        background-color: var(--bg1);
-        color: var(--bg1);
+        opacity: 1;
+        transform: translateY(0vh);
     }
 }
 
 @keyframes onload {100% {opacity: 1;}}
+@keyframes onexit {100% {opacity: 0;}}
+
+@keyframes exit {100% {background-color: var(--bg1);}}
 
 .material-symbols-rounded {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
 }
 
 :root {
@@ -66,6 +77,7 @@
 html {
     overflow: hidden;
     scroll-behavior: smooth;
+    background-color: var(--bg1);
 }
 
 body {
@@ -136,7 +148,7 @@ body::-webkit-scrollbar-thumb {
     display: flex;
     justify-content: space-between;
     top: 0;
-    z-index: 1;
+    z-index: 2;
     cursor: default;
     max-height: 7vh;
 }
@@ -147,7 +159,7 @@ body::-webkit-scrollbar-thumb {
     display: inline-block;
     left: 2vw;
     top: 2vh;
-    z-index: 1;
+    z-index: 2;
 }
 
 .greeting {
@@ -159,7 +171,7 @@ body::-webkit-scrollbar-thumb {
     display: none;
     position: absolute;
     min-width: 160px;
-    z-index: 1;
+    z-index: 2;
     background-color: #ffffff19;
     padding: 10px;
     border-radius: 5px;
@@ -184,7 +196,7 @@ body::-webkit-scrollbar-thumb {
     justify-content: space-between;
     align-items: center;
     display: flex;
-    z-index: 1;
+    z-index: 2;
 }
 
 /* First Section */
@@ -202,7 +214,7 @@ body::-webkit-scrollbar-thumb {
     transform: translateY(-50%);
     margin-left: 2%;
     text-align: start;
-    z-index: 1;
+    z-index: 2;
 }
 
 .intro {
@@ -232,9 +244,13 @@ body::-webkit-scrollbar-thumb {
 
 .icon {
     color: var(--text);
-    padding-left: 1vw;
+    padding-right: 0.5vw;
+    padding-left: 0.5vw;
     font-size: 36px;
+    transition-timing-function: ease-in;
 }
+
+.icon:hover {transform: scale(1.2);}
 
 .scroll {
     position: absolute;
@@ -405,11 +421,21 @@ body::-webkit-scrollbar-thumb {
     transform: translate(var(--loc12), var(--loctwo12)) rotate(var(--rotate12));
 }
 
-/* see.html */
+/* see and about */
 
-.see {
-    height: 100vh;
-    width: 100vw;
+.seeab {
     background-color: var(--bg3);
+    overflow: hidden;
+}
+
+.seea {
+    height: 93vh;
+    width: 100vw;
+    background-color: var(--bg2);
     color: var(--text);
+    bottom: 0;
+    position: absolute;
+    border-radius: 30px;
+    opacity: 0;
+    animation: popup 1s ease-in forwards;
 }
