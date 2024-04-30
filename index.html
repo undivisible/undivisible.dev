@@ -1,36 +1,55 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>undivisible</title>
-        
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-3YW9C78ZXL"></script>
-        <script src="script.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-        <link rel="icon" type="image/x-icon" href="https://upload.wikimedia.org/wikipedia/commons/5/59/Empty.png"/>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Space+Grotesk:wght@500&display=swap" rel="stylesheet"> 
-        <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
-        <div class="text" id="text">
-            <span id="greetings">hello!</span> 
-            my name is <span id="names">max</span>
-            <br>and I am a <span id="jobs">student</span>. 
-            I speak <span id="langs">english</span> and<br>
-            I code in <span id="code">html and css</span>.
-            <div class="p">hover over me.</div>
+<head>
+    <title>salam! | undivisible.dev</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@500&family=Space+Grotesk&family=Wix+Madefor+Display&family=Rubik&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="https://upload.wikimedia.org/wikipedia/commons/5/59/Empty.png"/>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body class="dark">
+    <div class="sticky" id="sticky">
+        <div class="dropdown">
+            <div class="greeting">salam!</div>
+            <div class="content" id="content">
+                <a onclick="swap('r.html', 'content', false)" class="link d">салам!</a><br>
+                <a onclick="swap('c.html', 'content', false)" class="link d">吃了吗？</a>
+            </div>
         </div>
-        <div class="text links" id="links">
-            <a href="https://instagram.com/undivisible_" id="link" data-value="instagram">instagram</a>
-            <a href="https://twitter.com/undivisible_" id="link" data-value="twitter">twitter</a>
-            <a href="mailto:o@undivisible.dev" id="link" data-value="email">email</a>
-            <a href="http://t.me/undivisible" id="link" data-value="telegram">telegram</a>
-            <a href="https://vk.com/undivisible" id="link" data-value="vkontakte">vkontakte</a>
-            <a href="https://volt.fm/undivisible" id="link" data-value="spotify">spotify</a>
-            <a href="https://github.com/undivisible" id="link" data-value="github">github</a>
+        <div class="toggle">
+            <a onclick="toggleTheme()" class="link" id="color">color⠀scheme</a>
         </div>
-        <script src="script.js"></script>
-    </body>
+    </div>
+    <div class="first">
+        <div class="p intro" id="intro">
+            i am <span id="names">max lee carter</span><br><br>
+            i am <span>cantonese</span> <br>
+            i am a <span id="jobs">student</span> from <span>melbourne, australia</span> <br><br>
+            i speak <span id="langs">english</span> and code in <span id="code">type/javascript</span><br>
+            and i follow <span>islam</span>
+        </div>
+        <div class="links">
+            <a href="https://t.me/undivisible/" class="link" id="tg">telegram</a><br>
+            <a href="https://instagram.com/undivisible_" class="link" id="ig">instagram</a><br>
+            <a href="https://github.com/undivisible" class="link" id="gh">github</a><br>
+            <a href="mailto:o@undivisible.dev" class="link" id="email">email</a><br><br>
+            <a onclick="showLinks()" class="link" id="all">all⠀links</a>
+        </div>
+        <div class="scroll">scroll down to learn more</div>
+    </div>
+    <div class="twob">
+        <div class="second">
+            <div class="left element"></div>
+            <a class="upright element" id="upright" onclick="swap('see.html', 'upright', false)">
+                <div class="title link">skills, education and experience</div>
+            </a>
+            <a class="downright element" id="downright" onclick="swap('about.html', 'downright', false)">
+                <div class="title link">about this site</div>
+            </a>
+        </div>
+    </div>
+</body>
 </html>

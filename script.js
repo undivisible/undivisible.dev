@@ -1,91 +1,112 @@
-function mouseover() {
-   
+let currentTheme = 'dark';
+let once2 = false;
 
-    
+function randoms() {
+    const links = document.querySelectorAll('.link');
+    links.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+            for (let i = 1; i <= 12; i++) {
+                document.documentElement.style.setProperty(`--rotate${i}`, Math.floor(Math.random() * 201) - 100 + 'deg');
+                document.documentElement.style.setProperty(`--loc${i}`, Math.floor(Math.random() * 201) - 100 + '%');
+                document.documentElement.style.setProperty(`--loctwo${i}`, Math.floor(Math.random() * 201) - 100 + '%');
+            }
+        });
+    });
+}
+
+function toggleTheme() {
+    const body = document.body;
+    switch (currentTheme) {
+        case 'dark':
+            body.classList.add('nord');
+            body.classList.remove('dark');
+            currentTheme = 'nord';
+            break;
+        case 'nord':
+            body.classList.add('sepia');
+            body.classList.remove('nord');
+            currentTheme = 'sepia';
+            break;
+        case 'sepia':
+            body.classList.add('light');
+            body.classList.remove('sepia');
+            currentTheme = 'light';
+            break;
+        case 'light':
+            body.classList.add('dark');
+            body.classList.remove('light');
+            currentTheme = 'dark';
+            break;
+    }
+}
+
+function swap(page, backing, back) {
+    var bg = document.getElementById(backing);
+    if (!back) {
+        bg.style.animation = 'swap 3s ease-in forwards';
+    }
+    else {
+        bg.style.animation = 'back 3s ease-in forwards';
+    }
+    setTimeout(() => {
+        window.location.href = page;
+    }, 3000);
+}
+
+function showLinks() {
+    // Add code to show all links
+}
+
+function fancyText(elementIds) {
+    const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+    const enhance = id => {
+        const element = document.getElementById(id);
+        if (!element) return;
+
+        const text = element.innerText.split('');
+        element.innerText = '';
+
+        text.forEach((value, index) => {
+            const outer = document.createElement('span');
+            outer.className = 'outer';
+
+            const inner = document.createElement('span');
+            inner.className = 'inner';
+            inner.style.animationDelay = `${rand(-5000, 0)}ms`;
+
+            const letter = document.createElement('span');
+            letter.className = 'letter';
+            letter.innerText = value;
+            letter.style.animationDelay = `${index * 100}ms`;
+
+            inner.appendChild(letter);
+            outer.appendChild(inner);
+            element.appendChild(outer);
+        });
+    };
+
+    elementIds.forEach(id => enhance(id));
+}
+
+function updateText() {
+    var names = ['max lee carter', 'максим ли раймондович картер', '祁明思', 'مكس لي ابن ريمون ال كعطار'];
+    var jobs = ['student', 'developer', 'entrepreneur', 'video editor'];
+    var langs = ['cantonese', 'english', 'russian', 'mandarin', 'indonesian'];
+    var code = ['type/javascript', 'python', 'c#', 'html+css'];
+
+    let n = 0, j = 0, l = 0, c = 0;
+    setInterval(() => {
+        $('#names').fadeOut(() => $('#names').html(names[(n++ % names.length)]).fadeIn());
+        $('#jobs').fadeOut(() => $('#jobs').html(jobs[(j++ % jobs.length)]).fadeIn());
+        $('#langs').fadeOut(() => $('#langs').html(langs[(l++ % langs.length)]).fadeIn());
+        $('#code').fadeOut(() => $('#code').html(code[(c++ % code.length)]).fadeIn());
+    }, 3000);
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-
-  const text = document.getElementById("text");
-  const links = document.getElementById("links");
-  const letters = "abcdefghijklmnopqrstuvwxyz";
-  const link = document.querySelectorAll("#link");
-  
-  function updateText() {
-    (function () {
-        var names = ["max","mack","maxim","maximus","maximillian","祁明思","максим", ],
-        i = 0;
-        setInterval(function(){ $('#names').fadeOut(function(){
-            $(this).html(names[(i = (i + 1) % names.length)]).fadeIn();
-          }); }, 3000)
-        var greetings = ["hello!","здорово!","哈喽！","hey!","добрый день","你好！","heyo!","привет!","喂!" ],
-        i2 = 0;
-        setInterval(function(){ $('#greetings').fadeOut(function(){
-            $(this).html(greetings[(i2 = (i2 + 1) % greetings.length)]).fadeIn();
-          }); }, 3000)
-        var jobs = ["student","developer","entrepreneur","video editor" ],
-        i3 = 0;
-        setInterval(function(){ $('#jobs').fadeOut(function(){
-            $(this).html(jobs[(i3 = (i3 + 1) % jobs.length)]).fadeIn();
-        }); }, 3000)
-        var langs = ["cantonese","english","cantonese","mandarin","indonesian"],
-        i4 = 0;
-        setInterval(function(){ $('#langs').fadeOut(function(){
-            $(this).html(langs[(i4 = (i4 + 1) % langs.length)]).fadeIn();
-        }); }, 3000)
-        var code = ["typescript","python","c#","javascipt","html+css"],
-        i5 = 0;
-        setInterval(function(){ $('#code').fadeOut(function(){
-            $(this).html(code[(i5 = (i5 + 1) % code.length)]).fadeIn();
-        }); }, 3000)
-    })();
-  }
-
-  function updateLinks() {
-    links.addEventListener("mouseover", function(){
-        text.style.animation = "linksr 0.5s ease-in forwards";
-        links.style.animation = "links 0.5s ease-in forwards";
-    });
-
-    links.addEventListener("mouseout", function(){
-        text.style.animation = "links 0.5s ease-out forwards";
-        links.style.animation = "linksr 0.5s ease-out forwards";
-    });
-  }
-
-  function updateMouseOver() {
-    link.forEach(link => {
-        let interval = null;
-
-        link.onmouseover = event => {  
-            let iteration = 0;
-            
-            clearInterval(interval);
-            
-            interval = setInterval(() => {
-                event.target.innerText = event.target.innerText
-                  .split("")
-                  .map((letter, index) => {
-                    if(index < iteration) {
-                      return event.target.dataset.value[index];
-                    }
-                  
-                    return letters[Math.floor(Math.random() * 26)]
-                  })
-                  .join("");
-                
-                if(iteration >= event.target.dataset.value.length){ 
-                  clearInterval(interval);
-                }
-                
-                iteration += 1 / 3;
-            }, 30);
-        }
-    });
-  }
-
+  fancyText(["color", "tg", "ig", "gh", "email", "all", "back"]); // Pass an array of element IDs
   updateText();
-  updateLinks();
-  updateMouseOver();
-  
+  randoms();
 });
+  
