@@ -108,7 +108,7 @@ function updateText() {
     var langs = ['cantonese', 'english', 'russian', 'mandarin', 'indonesian'];
     var code = ['type/javascript', 'python', 'c#', 'html+css'];
 
-    let n = 0, j = 0, l = 0, c = 0;
+    let n = 1, j = 1, l = 1, c = 1;
     setInterval(() => {
         $('#names').fadeOut(() => $('#names').html(names[(n++ % names.length)]).fadeIn());
         $('#jobs').fadeOut(() => $('#jobs').html(jobs[(j++ % jobs.length)]).fadeIn());
