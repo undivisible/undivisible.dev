@@ -340,8 +340,8 @@ body::-webkit-scrollbar-thumb {
 
     /*.content {display: block;}*/
 
-    body {font-size: 16px;}
-    .content, .toggle, .scroll {font-size: 12px;}
+    body {font-size: 10px;}
+    .content, .toggle, .scroll {font-size: 7px;}
 }
 
 /* link text */
