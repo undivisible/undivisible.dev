@@ -337,10 +337,10 @@ body::-webkit-scrollbar-thumb {
         
     }
 
-    .content {display: block;}
+    /*.content {display: block;}*/
 
-    body {font-size: x-large;}
-    .content, .toggle, .scroll {font-size: large;}
+    body {font-size: 16px;}
+    .content, .toggle, .scroll {font-size: 12px;}
 }
 
 /* link text */
