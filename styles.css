@@ -127,18 +127,26 @@ body::-webkit-scrollbar-thumb {
     --textf: #eceff48a;
 }
 
+.forest {
+    --bg1: #003300;
+    --bg2: #204420;
+    --bg3: #345c34;
+    --text: #eadbcb;
+    --textf: #eadbcb8a;
+  }
+
 .sepia {
     --bg1: #eadbcb;
-    --bg2: #dcc1a7;
-    --bg3: #e3ceb9;
+    --bg2: #e3ceb9;
+    --bg3: #dcc1a7;
     --text: black;
     --textf: #0000008a;
 }
 
 .light {
     --bg1: #eceff4;
-    --bg3: #d8dee9;
     --bg2: #e5e9f0;
+    --bg3: #d8dee9;
     --text: black;
     --textf: #0000008a;
 }

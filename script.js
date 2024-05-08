@@ -34,8 +34,14 @@ function toggleTheme() {
             setCookie('theme', 'nord');
             break;
         case 'nord':
-            body.classList.add('sepia');
+            body.classList.add('forest');
             body.classList.remove('nord');
+            currentTheme = 'forest';
+            setCookie('theme', 'forest');
+            break;
+        case 'forest':
+            body.classList.add('sepia');
+            body.classList.remove('forest');
             currentTheme = 'sepia';
             setCookie('theme', 'sepia');
             break;
