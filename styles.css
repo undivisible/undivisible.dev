@@ -137,16 +137,16 @@ body::-webkit-scrollbar-thumb {
 
 .sepia {
     --bg1: #eadbcb;
-    --bg2: #e3ceb9;
-    --bg3: #dcc1a7;
+    --bg3: #e3ceb9;
+    --bg2: #dcc1a7;
     --text: black;
     --textf: #0000008a;
 }
 
 .light {
     --bg1: #eceff4;
-    --bg2: #e5e9f0;
-    --bg3: #d8dee9;
+    --bg3: #e5e9f0;
+    --bg2: #d8dee9;
     --text: black;
     --textf: #0000008a;
 }
