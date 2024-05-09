@@ -78,10 +78,16 @@ function swap(page, backing, back) {
         setTimeout(() => {
             document.body.style.animation = 'exit 1.5s ease-in forwards'; 
         }, 1500);
+        onexternal = false;
     }
     setTimeout(() => {
         window.location.href = page;
+        let pageloc = page;
     }, 3000);
+}
+
+function lang() {
+    
 }
 
 function showLinks() {
@@ -140,10 +146,31 @@ document.addEventListener("DOMContentLoaded", function() {
     updateText();
     randoms();
     const savedTheme = getCookie('theme');
+    const onexternal = getCookie('external');
+    const location = getCookie('location');
     if (savedTheme) {
         const body = document.body;
         body.classList.add(savedTheme);
         currentTheme = savedTheme;
+    }
+    if (onexternal = 'true') {
+        var see = document.getElementById('see');
+        var about = document.getElementById('about');
+        var greet = document.getElementById('greet');
+        var onel = document.getElementById('onel');
+        var twol = document.getElementById('twol');
+        if (location = "see") {
+            see.style.animation('popup');
+            greet.html('skills, education and experience');
+            onel.html('');
+            twol.html('');
+        }
+        else if (location = "about") {
+            see.style.animation('popup');
+            greet.html('skills, education and experience');
+            onel.html('');
+            twol.html('');
+        }
     }
 });
   
