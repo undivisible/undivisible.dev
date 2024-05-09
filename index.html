@@ -6,6 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@500&family=Space+Grotesk&family=Wix+Madefor+Display&family=Rubik&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="icon" type="image/x-icon" href="https://upload.wikimedia.org/wikipedia/commons/5/59/Empty.png"/>
     <link rel="stylesheet" href="styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -13,10 +14,10 @@
 <body class="dark">
     <div class="sticky" id="sticky">
         <div class="dropdown">
-            <div class="greeting">salam!</div>
+            <div class="greeting">salam!<span class="material-symbols-rounded">expand_more</span></div>
             <div class="content" id="content">
-                <a onclick="swap('r.html', 'content', false)" class="link d">салам!</a><br>
-                <a onclick="swap('c.html', 'content', false)" class="link d">吃了吗？</a>
+                <a onclick="lang('/ru/index.html')" class="link d">салам!</a><br>
+                <a onclick="lang('/zh/index.html')" class="link d">吃了吗？</a>
             </div>
         </div>
         <div class="toggle">
@@ -29,7 +30,7 @@
             i am <span>cantonese</span> <br>
             i am a <span id="jobs">student</span> from <span>melbourne, australia</span> <br><br>
             i speak <span id="langs">english</span> and code in <span id="code">type/javascript</span><br>
-            and i follow <span>islam</span>
+            and i am <span>muslim</span>
         </div>
         <div class="links">
             <a href="https://t.me/undivisible/" class="link" id="tg">telegram</a><br>
@@ -43,10 +44,10 @@
     <div class="twob">
         <div class="second">
             <div class="left element"></div>
-            <a class="upright element" id="upright" onclick="swap('see.html', 'upright', false)">
+            <a class="upright element" id="upright" onclick="swap('see', 'upright', false)">
                 <div class="title link" id="see">skills, education and experience</div>
             </a>
-            <a class="downright element" id="downright" onclick="swap('about.html', 'downright', false)">
+            <a class="downright element" id="downright" onclick="swap('about', 'downright', false)">
                 <div class="title link" id="about">about this site</div>
             </a>
         </div>
