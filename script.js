@@ -130,7 +130,7 @@ function fancyText(elementIds) {
 }
 
 function updateText() {
-    var names = ['max lee carter', 'максим ли раймондович картер', '祁明思', 'مكس لي ابن ريمون ال كعطار'];
+    var names = ['max lee carter', 'максим ли раймондович картер', '祁明思', 'مكس لي ابن ريمون الكعطار'];
     var jobs = ['student', 'developer', 'entrepreneur', 'video editor'];
     var langs = ['cantonese', 'english', 'russian', 'mandarin', 'indonesian'];
     var code = ['type/javascript', 'python', 'c#', 'html+css'];
