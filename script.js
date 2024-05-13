@@ -1,4 +1,4 @@
-var currentTheme = "dark";
+var currentTheme = "taiga";
 var once2 = false;
 
 function getCookie(name) {
@@ -27,21 +27,21 @@ function randoms() {
 function toggleTheme() {
     const body = document.body;
     switch (currentTheme) {
+        case 'taiga':
+            body.classList.add('dark');
+            body.classList.remove('taiga');
+            currentTheme = 'dark';
+            setCookie('theme', 'dark');
+            break;
         case 'dark':
             body.classList.add('nord');
-            body.classList.remove('dark');
+            body.classList.remove('taiga');
             currentTheme = 'nord';
             setCookie('theme', 'nord');
             break;
         case 'nord':
-            body.classList.add('forest');
-            body.classList.remove('nord');
-            currentTheme = 'forest';
-            setCookie('theme', 'forest');
-            break;
-        case 'forest':
             body.classList.add('sepia');
-            body.classList.remove('forest');
+            body.classList.remove('nord');
             currentTheme = 'sepia';
             setCookie('theme', 'sepia');
             break;
@@ -52,10 +52,10 @@ function toggleTheme() {
             setCookie('theme', 'light');
             break;
         case 'light':
-            body.classList.add('dark');
+            body.classList.add('taiga');
             body.classList.remove('light');
-            currentTheme = 'dark';
-            setCookie('theme', 'dark');
+            currentTheme = 'taiga';
+            setCookie('theme', 'taiga');
             break;
     }
 }
