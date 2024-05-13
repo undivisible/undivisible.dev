@@ -127,12 +127,12 @@ body::-webkit-scrollbar-thumb {
     --textf: #eceff48a;
 }
 
-.forest {
-    --bg1: #003300;
-    --bg2: #204420;
-    --bg3: #345c34;
-    --text: #eadbcb;
-    --textf: #eadbcb8a;
+.taiga {
+    --bg1: #00352c;
+    --bg2: #0c3f2f;
+    --bg3: #004f41;
+    --text: #ecf4f2;
+    --textf: #ecf4f28a;
   }
 
 .sepia {
