@@ -1,5 +1,6 @@
 var currentTheme = "taiga";
 var once2 = false;
+const palette = document.getElementById('color');
 
 function getCookie(name) {
     const value = `; ${document.cookie}`;
@@ -58,6 +59,8 @@ function toggleTheme() {
             setCookie('theme', 'taiga');
             break;
     }
+    palette.innerHTML = currentTheme;
+    fancyText(['color']);
 }
 
 function swap(page, backing, back) {
@@ -142,9 +145,6 @@ function updateText() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    fancyText(["color", "tg", "ig", "gh", "email", "all", "back", "abouthover"]); // Pass an array of element IDs
-    updateText();
-    randoms();
     const savedTheme = getCookie('theme');
     const onexternal = getCookie('external');
     const location = getCookie('location');
@@ -152,7 +152,11 @@ document.addEventListener("DOMContentLoaded", function() {
         const body = document.body;
         body.classList.add(savedTheme);
         currentTheme = savedTheme;
+        palette.innerHTML = currentTheme;
     }
+    fancyText(["color", "tg", "ig", "gh", "email", "all", "back", "abouthover"]); // Pass an array of element IDs
+    updateText();
+    randoms();
     if (onexternal == 'true') {
         var see = document.getElementById('see');
         var about = document.getElementById('about');
@@ -162,14 +166,14 @@ document.addEventListener("DOMContentLoaded", function() {
         if (location = "see") {
             see.style.animation('popup');
             greet.html('skills, education and experience');
-            onel.html('');
-            twol.html('');
+            onel.innerHTML = '';
+            twol.innerHTML = '';
         }
         else if (location = "about") {
             see.style.animation('popup');
-            greet.html('skills, education and experience');
-            onel.html('');
-            twol.html('');
+            greet.innerHTML = 'skills, education and experience';
+            onel.innerHTML = '';
+            twol.innerHTML = '';
         }
     }
 });
