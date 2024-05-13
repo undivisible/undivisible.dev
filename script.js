@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function() {
         body.classList.add(savedTheme);
         currentTheme = savedTheme;
     }
-    if (onexternal = 'true') {
+    if (onexternal == 'true') {
         var see = document.getElementById('see');
         var about = document.getElementById('about');
         var greet = document.getElementById('greet');
