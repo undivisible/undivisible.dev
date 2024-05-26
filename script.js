@@ -32,33 +32,29 @@ function toggleTheme() {
             body.classList.add('dark');
             body.classList.remove('taiga');
             currentTheme = 'dark';
-            setCookie('theme', 'dark');
             break;
         case 'dark':
             body.classList.add('nord');
             body.classList.remove('taiga');
             currentTheme = 'nord';
-            setCookie('theme', 'nord');
             break;
         case 'nord':
             body.classList.add('sepia');
             body.classList.remove('nord');
             currentTheme = 'sepia';
-            setCookie('theme', 'sepia');
             break;
         case 'sepia':
             body.classList.add('light');
             body.classList.remove('sepia');
             currentTheme = 'light';
-            setCookie('theme', 'light');
             break;
         case 'light':
             body.classList.add('taiga');
             body.classList.remove('light');
             currentTheme = 'taiga';
-            setCookie('theme', 'taiga');
             break;
     }
+    setCookie('theme', currentTheme);
     palette.innerHTML = currentTheme;
     fancyText(['color']);
 }
@@ -130,7 +126,7 @@ function fancyText(elementIds) {
 }
 
 function updateText() {
-    var names = ['max lee carter', 'максим ли раймондович картер', '祁明思', 'مكس لي ابن ريمون الكعطار'];
+    var names = ['max lee carter', 'максим ли раймондович картер', '祁明思', 'مكس لي ابن ريمون الكعطار الأثري'];
     var jobs = ['student', 'developer', 'entrepreneur', 'video editor'];
     var langs = ['cantonese', 'english', 'russian', 'mandarin', 'indonesian'];
     var code = ['type/javascript', 'python', 'c#', 'html+css'];
