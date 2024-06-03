@@ -142,14 +142,15 @@
                 document.getElementById('first').style.animation = 'bcolorTextLight 2s ease-in forwards';
                 document.body.style.animation = 'colorTextDark 1s ease-in forwards';
                 changeExistingDivColors();
-                setTimeout (() => {
+                setTimeout(() => {
                     document.getElementById('toggler').innerHTML = '→ LIGHT MODE';
-                    setTimeout (() => {
+                    setTimeout(() => {
                         document.getElementById('first').style.backgroundColor = 'black';
                         document.body.style.color = '#eceff4';
+                        once = false;
                     }, 1000);
                 }, 1000);
-            }
+            } 
             else {
                 setCookie('dark', dark);
                 dark = false;
@@ -161,10 +162,12 @@
                     setTimeout (() => {
                         document.getElementById('first').style.backgroundColor = '#eceff4';
                         document.body.style.color = 'black';
+                        once = false;
                     }, 1000);
                 }, 1000);
             }
         }
+
         document.addEventListener('DOMContentLoaded', () => {
             dark = getCookie('dark');
             const parentElement = document.getElementById('parentElementId');
@@ -203,6 +206,7 @@
                 if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
                     loadMoreDivs();
                 }
+
                 const changeColor = (color, animation) => {
                     document.body.style.animation = `${animation} 0.5s ease-in forwards`;
                     setTimeout(() => { document.body.style.color = color; }, 1000);
