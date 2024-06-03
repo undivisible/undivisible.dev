@@ -1,57 +1,210 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>salam! | undivisible.dev</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@500&family=Space+Grotesk&family=Wix+Madefor+Display&family=Rubik&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <link rel="icon" type="image/x-icon" href="https://upload.wikimedia.org/wikipedia/commons/5/59/Empty.png"/>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+    <title>undivisible.dev</title>
+    <style>
+        @keyframes colorTextDark {to {color: #eceff4;}}
+        @keyframes colorTextLight {to {color: #000000;}}
+        @keyframes bcolorTextDark {to {background-color: #eceff4;}}
+        @keyframes bcolorTextLight {to {background-color: #000000;}}
+        body {
+            color: black;
+            font-family: 'IBM Plex Mono', monospace, 'Noto Color Emoji';
+            font-size: 16px;
+            margin: 0;
+            overflow-x: hidden;
+            scrollbar-width: 0px;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        a:hover {text-decoration: underline;}
+        .text {
+            z-index: 1; 
+            position: fixed;
+            margin: 1vh;
+        }
+        #background {filter: blur(10rem);}
+        #background > * {
+            width: 150vw;
+            transform: translateX(-25vw) translateY(-10vh);
+        }
+        #background > *:not(#first) {transition: background-color 2s ease-in;}
+        #first {
+            background-color: #eceff4; 
+            height: 75vh;
+        }
+        .bottomright {
+            position: absolute;
+            right: 1vw;
+            font-size: 1vh;
+            top: 98vh;
+            z-index: 1;
+        }
+    </style>
 </head>
-<body class="taiga">
-    <div class="sticky" id="sticky">
-        <div class="dropdown">
-            <div class="greeting">salam!<span class="material-symbols-rounded">expand_more</span></div>
-            <div class="content" id="content">
-                <a onclick="lang('/ru/index.html')" class="link d">салам!</a><br>
-                <a onclick="lang('/zh/index.html')" class="link d">吃了吗？</a>
-            </div>
-        </div>
-        <div class="toggle">
-            <a onclick="toggleTheme()" class="link" id="color">color&nbsp;scheme</a>
-        </div>
+<body>
+    <div class="text">
+        <span>UNDIVISIBLE</span><br>
+        🇦🇺🇭🇰🇨🇳🇷🇺☪️<br>
+        FULL STACK DEVELOPER | VIDEOGRAPHY | PHOTOGRAPHY <br><br>
+
+        <a href="https://t.me/undivisible">→ TELEGRAM</a><br>
+        <a href="https://instagram.com/@undivisible.dev">→ INSTAGRAM</a><br>
+        <a href="https://github.com/undivisible">→ GITHUB</a><br>
+        <a href="mailto:v@undivisible.dev">→ EMAIL</a><br>
+        <a href="https://ampersand.mov/">→ AMPERSAND</a><br><br>
+
+        <a onclick="toggleDark();" id="toggler">→ DARK MODE</a>
     </div>
-    <div class="first">
-        <div class="p intro" id="intro">
-            i am <span id="names">max lee carter</span><br><br>
-            i am <span>cantonese</span> <br>
-            i am a <span id="jobs">student</span> from <span>melbourne, australia</span> <br><br>
-            i speak <span id="langs">english</span> and code in <span id="code">type/javascript</span><br>
-            and i am <span>muslim</span>
-        </div>
-        <div class="links">
-            <a href="https://t.me/undivisible/" class="link" id="tg">telegram</a><br>
-            <a href="https://instagram.com/undivisible_" class="link" id="ig">instagram</a><br>
-            <a href="https://github.com/undivisible" class="link" id="gh">github</a><br>
-            <a href="mailto:o@undivisible.dev" class="link" id="email">email</a><br><br>
-            <a onclick="showLinks()" class="link" id="all">all&nbsp;links</a>
-        </div>
-        <div class="scroll">scroll down to learn more</div>
+    <div id="background">
+        <div id="first"></div>
     </div>
-    <div class="twob">
-        <div class="second">
-            <div class="left element"></div>
-            <a class="upright element" id="upright" onclick="swap('seeab.html', 'upright', false)">
-                <div class="title link" id="see">skills, education and experience</div>
-            </a>
-            <a class="downright element" id="downright" onclick="swap('seeab.html', 'downright', false)">
-                <div class="title link" id="about">about this site</div>
-            </a>
-        </div>
-    </div>
-    <script src="script.js"></script>
+    <span class="bottomright">PAGE IS SCROLLABLE BTW</span>
+    <script>
+        let dark = false;
+        let once = false;
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function setCookie(name, value) {
+            document.cookie = name + '=' + (value || '') + '; path=/';
+        }
+
+        const background = document.getElementById('background');
+            const darkColors = [
+                '#303a5a',
+                '#00352c',
+                '#1f2335',
+                '#24283b',
+                '#292e42',
+                '#3b4261',
+                '#414868',
+                '#545c7e',
+                '#565f89',
+                '#394b70',
+                '#3d59a1'
+            ];
+
+            const lightColors = [
+                '#8e8066',
+                '#737aa2',
+                '#a9b1d6',
+                '#c0caf5',
+                '#7aa2f7',
+                '#7dcfff',
+                '#b4f9f8',
+                '#bb9af7',
+                '#9d7cd8',
+                '#ff9e64',
+                '#ffc777',
+                '#c3e88d',
+                '#4fd6be',
+                '#41a6b5',
+                '#ff757f',
+                '#c53b53',
+                '#ff007c'
+            ];
+
+        function changeExistingDivColors() {
+            const divs = background.querySelectorAll('div:not(#first)');
+            divs.forEach(div => {
+                if (!dark) {div.style.backgroundColor = darkColors[Math.floor(Math.random() * darkColors.length)];}
+                else {div.style.backgroundColor = lightColors[Math.floor(Math.random() * lightColors.length)];}
+            });
+        }
+
+        function toggleDark() {
+            if (!dark) {
+                setCookie('dark', dark);
+                dark = true;
+                document.getElementById('first').style.animation = 'bcolorTextLight 2s ease-in forwards';
+                document.body.style.animation = 'colorTextDark 1s ease-in forwards';
+                changeExistingDivColors();
+                setTimeout (() => {
+                    document.getElementById('toggler').innerHTML = '→ LIGHT MODE';
+                    setTimeout (() => {
+                        document.getElementById('first').style.backgroundColor = 'black';
+                        document.body.style.color = '#eceff4';
+                    }, 1000);
+                }, 1000);
+            }
+            else {
+                setCookie('dark', dark);
+                dark = false;
+                document.getElementById('first').style.animation = 'bcolorTextDark 2s ease-in forwards';
+                document.body.style.animation = 'colorTextLight 1s ease-in forwards';
+                changeExistingDivColors();
+                setTimeout (() => {
+                    document.getElementById('toggler').innerHTML = '→ DARK MODE';
+                    setTimeout (() => {
+                        document.getElementById('first').style.backgroundColor = '#eceff4';
+                        document.body.style.color = 'black';
+                    }, 1000);
+                }, 1000);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            dark = getCookie('dark');
+            const parentElement = document.getElementById('parentElementId');
+
+            if (!dark) {
+                document.getElementById('first').style.backgroundColor = 'black';
+                document.body.style.color = '#eceff4';
+                document.getElementById('toggler').innerHTML = '→ LIGHT MODE';
+                changeExistingDivColors();
+                dark = true;
+            }
+
+            function createRandomDiv() {
+                const div = document.createElement('div');
+                div.style.height = `${Math.random() * 50 + 25}vh`; 
+                if (!dark) {
+                    div.style.backgroundColor = darkColors[Math.floor(Math.random() * darkColors.length)];
+                }
+                else {
+                    div.style.backgroundColor = lightColors[Math.floor(Math.random() * lightColors.length)];
+                }
+                return div;
+            }
+
+            function loadMoreDivs() {
+                for (let i = 0; i < 4; i++) {
+                    background.appendChild(createRandomDiv());
+                }
+            }
+
+            loadMoreDivs();
+
+            window.addEventListener('scroll', () => {
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+                    loadMoreDivs();
+                }
+                const changeColor = (color, animation) => {
+                    document.body.style.animation = `${animation} 0.5s ease-in forwards`;
+                    setTimeout(() => { document.body.style.color = color; }, 1000);
+                };
+
+                if (window.scrollY >= (window.innerHeight * 0.75) && !once) {
+                    changeColor(dark ? '#000000' : '#eceff4', dark ? 'colorTextLight' : 'colorTextDark');
+                    once = true;
+                } 
+                else if (window.scrollY < (window.innerHeight * 0.75) && once === true) {
+                    changeColor(dark ? '#eceff4' : '#000000', dark ? 'colorTextDark' : 'colorTextLight');
+                    once = false;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
