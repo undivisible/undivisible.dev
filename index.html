@@ -6,6 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>undivisible.dev</title>
     <style>
         @keyframes colorTextDark {to {color: #eceff4;}}
@@ -53,7 +54,7 @@
     <div class="text">
         <span id="names">UNDIVISIBLE</span><br>
         🇦🇺🇭🇰🇨🇳🇷🇺☪️<br>
-        FULL STACK DEVELOPER | VIDEOGRAPHY | PHOTOGRAPHY <br><br>
+        <span id="jobs">FULL STACK DEV</span> <br><br>
 
         <a href="https://t.me/undivisible">→ TELEGRAM</a><br>
         <a href="https://instagram.com/@undivisible.dev">→ INSTAGRAM</a><br>
@@ -83,9 +84,11 @@
 
         function updateText() {
             var names = ['UNDIVISIBLE', 'MAX LEE CARTER', 'МАКСИМ ЛИ РАЙМОНДОВИЧ КАРТЕР', '祁明思', 'مكس لي ابن ريمون الكعطار الأثري'];
-            let n = 1;
+            var jobs = ['FULL STACK DEVELOPER', 'VIDEOGRAPHER', 'PHOTOGRAPHER', 'ENTREPRENEUR', 'STUDENT'];
+            let n = 1, j = 1;
             setInterval(() => {
                 $('#names').fadeOut(() => $('#names').html(names[(n++ % names.length)]).fadeIn());
+                $('#jobs').fadeOut(() => $('#jobs').html(jobs[(j++ % jobs.length)]).fadeIn());
             }, 3000);
         }
 
