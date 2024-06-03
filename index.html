@@ -51,7 +51,7 @@
 </head>
 <body>
     <div class="text">
-        <span>UNDIVISIBLE</span><br>
+        <span id="names">UNDIVISIBLE</span><br>
         🇦🇺🇭🇰🇨🇳🇷🇺☪️<br>
         FULL STACK DEVELOPER | VIDEOGRAPHY | PHOTOGRAPHY <br><br>
 
@@ -79,6 +79,14 @@
 
         function setCookie(name, value) {
             document.cookie = name + '=' + (value || '') + '; path=/';
+        }
+
+        function updateText() {
+            var names = ['UNDIVISIBLE', 'MAX LEE CARTER', 'МАКСИМ ЛИ РАЙМОНДОВИЧ КАРТЕР', '祁明思', 'مكس لي ابن ريمون الكعطار الأثري'];
+            let n = 1;
+            setInterval(() => {
+                $('#names').fadeOut(() => $('#names').html(names[(n++ % names.length)]).fadeIn());
+            }, 3000);
         }
 
         const background = document.getElementById('background');
