@@ -9,9 +9,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>undivisible.dev</title>
     <style>
-        @keyframes colorTextDark {to {color: #eceff4;}}
+        @keyframes colorTextDark {to {color: #fff8e7;}}
         @keyframes colorTextLight {to {color: #000000;}}
-        @keyframes bcolorTextDark {to {background-color: #eceff4;}}
+        @keyframes bcolorTextDark {to {background-color: #fff8e7;}}
         @keyframes bcolorTextLight {to {background-color: #000000;}}
         body {
             color: black;
@@ -38,7 +38,7 @@
         }
         #background > *:not(#first) {transition: background-color 2s ease-in;}
         #first {
-            background-color: #eceff4; 
+            background-color: #fff8e7; 
             height: 75vh;
         }
         .bottomright {
@@ -147,7 +147,7 @@
                     document.getElementById('toggler').innerHTML = '→ LIGHT MODE';
                     setTimeout(() => {
                         document.getElementById('first').style.backgroundColor = 'black';
-                        document.body.style.color = '#eceff4';
+                        document.body.style.color = '#fff8e7';
                         once = false;
                     }, 1000);
                 }, 1000);
@@ -161,7 +161,7 @@
                 setTimeout (() => {
                     document.getElementById('toggler').innerHTML = '→ DARK MODE';
                     setTimeout (() => {
-                        document.getElementById('first').style.backgroundColor = '#eceff4';
+                        document.getElementById('first').style.backgroundColor = '#fff8e7';
                         document.body.style.color = 'black';
                         once = false;
                     }, 1000);
@@ -176,7 +176,7 @@
                 darkc = dark;
                 if (dark && !once2) {
                     document.getElementById('first').style.backgroundColor = 'black';
-                    document.body.style.color = '#eceff4';
+                    document.body.style.color = '#fff8e7';
                     document.getElementById('toggler').innerHTML = '→ LIGHT MODE';
                     changeExistingDivColors();
                     setCookie('dark', dark);
@@ -218,11 +218,11 @@
                 };
 
                 if (window.scrollY >= (window.innerHeight * 0.75) && !once) {
-                    changeColor(dark ? '#000000' : '#eceff4', dark ? 'colorTextLight' : 'colorTextDark');
+                    changeColor(dark ? '#000000' : '#fff8e7', dark ? 'colorTextLight' : 'colorTextDark');
                     once = true;
                 } 
                 else if (window.scrollY < (window.innerHeight * 0.75) && once === true) {
-                    changeColor(dark ? '#eceff4' : '#000000', dark ? 'colorTextDark' : 'colorTextLight');
+                    changeColor(dark ? '#fff8e7' : '#000000', dark ? 'colorTextDark' : 'colorTextLight');
                     once = false;
                 }
             });
