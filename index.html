@@ -170,16 +170,19 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            dark = getCookie('dark');
+            darkc = getCookie('dark');
 
-            if (!dark && !once2) {
-                document.getElementById('first').style.backgroundColor = 'black';
-                document.body.style.color = '#eceff4';
-                document.getElementById('toggler').innerHTML = '→ LIGHT MODE';
-                changeExistingDivColors();
-                setCookie('dark', dark);
-                dark = true;
-                once2 = true;
+            if (darkc != null) {
+                darkc = dark;
+                if (dark && !once2) {
+                    document.getElementById('first').style.backgroundColor = 'black';
+                    document.body.style.color = '#eceff4';
+                    document.getElementById('toggler').innerHTML = '→ LIGHT MODE';
+                    changeExistingDivColors();
+                    setCookie('dark', dark);
+                    dark = true;
+                    once2 = true;
+                }
             }
 
             updateText();
@@ -215,11 +218,11 @@
                 };
 
                 if (window.scrollY >= (window.innerHeight * 0.75) && !once) {
-                    changeColor(dark ? '#000000' : '#eceff4', dark ? 'colorTextDark' : 'colorTextLight');
+                    changeColor(dark ? '#000000' : '#eceff4', dark ? 'colorTextLight' : 'colorTextDark');
                     once = true;
                 } 
                 else if (window.scrollY < (window.innerHeight * 0.75) && once === true) {
-                    changeColor(dark ? '#eceff4' : '#000000', dark ? 'colorTextLight' : 'colorTextDark');
+                    changeColor(dark ? '#eceff4' : '#000000', dark ? 'colorTextDark' : 'colorTextLight');
                     once = false;
                 }
             });
