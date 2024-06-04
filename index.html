@@ -57,7 +57,7 @@
     </style>
 </head>
 <body>
-    <div class="text">
+    <div class="text" id="text">
         <span id="names">UNDIVISIBLE</span><br>
         🇦🇺🇭🇰🇨🇳🇷🇺☪️<br>
         <span id="jobs">FULL STACK DEV</span> <br><br>
@@ -68,7 +68,7 @@
         <a href="mailto:v@undivisible.dev">→ EMAIL</a><br><br>
         <a href="https://ampersand.undivisible.dev/">→ AMPERSAND</a><br><br>
 
-        <a onclick="toggleDark();" id="toggler">→ DARK MODE</a>
+        <a onclick="toggleDark();" id="toggler">→ DARK MODE</a><br>
         <a onclick="about();">→ ABOUT THIS SITE</a>
     </div>
     <div id="background">
@@ -79,6 +79,7 @@
         let dark = false;
         let once = false;
         let once2 = false;
+        let aboutToggle = false;
 
         function getCookie(name) {
             const value = `; ${document.cookie}`;
@@ -176,7 +177,19 @@
             }
         }
 
+        function about() {
+            if (!aboutToggle) {
+                document.getElementById('text').innerHTML = "design inspired by <a href='https://instagram.com/@nuevo.tokyo'>nuevo tokyo</a><br>colors taken from <a href='https://lospec.com/palette-list/tokyo-night'>tokyo night</a> and <a href='https://www.wikiwand.com/en/Cosmic_latte'>cosmic latte</a><br>font is <a href='https://fonts.google.com/specimen/IBM+Plex+Mono'>IBM Plex Mono</a> and <a href='https://fonts.google.com/specimen/Noto+Color+Emoji'>Noto Color Emoji</a><br>website hosted on <a href='https://github.com/undivisible/undivisible.dev/'>github</a><br><br><a onclick='about();'>→ HOME</a>";
+                aboutToggle = true;
+            }
+            else {
+                document.getElementById('text').innerHTML = original;
+                aboutToggle = false;
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            original = document.getElementById('text').innerHTML;
             darkc = getCookie('dark');
 
             if (darkc != null) {
