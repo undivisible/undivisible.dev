@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@500&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>undivisible.dev</title>
     <style>
@@ -15,8 +15,9 @@
         @keyframes bcolorTextLight {to {background-color: #000000;}}
         body {
             color: black;
-            font-family: 'IBM Plex Mono', monospace, 'Noto Color Emoji';
+            font-family: 'Chivo Mono', monospace, 'Noto Color Emoji';
             font-size: 16px;
+            font-weight: 500;
             margin: 0;
             overflow-x: hidden;
             scrollbar-width: 0px;
@@ -179,7 +180,7 @@
 
         function about() {
             if (!aboutToggle) {
-                text = "design inspired by <a href='https://instagram.com/@nuevo.tokyo'>nuevo tokyo</a><br>colors taken from <a href='https://lospec.com/palette-list/tokyo-night'>tokyo night</a> and <a href='https://www.wikiwand.com/en/Cosmic_latte'>cosmic latte</a><br>font is <a href='https://fonts.google.com/specimen/IBM+Plex+Mono'>IBM Plex Mono</a> and <a href='https://fonts.google.com/specimen/Noto+Color+Emoji'>Noto Color Emoji</a><br>website hosted on <a href='https://github.com/undivisible/undivisible.dev/'>github</a><br><br><a onclick='about();'>→ HOME</a>";
+                text = "design inspired by <a href='https://instagram.com/@nuevo.tokyo'>nuevo tokyo</a><br>colors taken from <a href='https://lospec.com/palette-list/tokyo-night'>tokyo night</a> and <a href='https://www.wikiwand.com/en/Cosmic_latte'>cosmic latte</a><br>font is <a href='https://fonts.google.com/specimen/IBM+Plex+Mono'>IBM Plex Mono</a>, <a href='https://fonts.google.com/specimen/Chivo+Mono'>Chivo Mono</a> and <a href='https://fonts.google.com/specimen/Noto+Color+Emoji'>Noto Color Emoji</a><br>website hosted on <a href='https://github.com/undivisible/undivisible.dev/'>github</a><br><br><a onclick='about();'>→ HOME</a>";
                 $('#text').fadeOut(() => $('#text').html(text).fadeIn());  
                 aboutToggle = true;
             }
