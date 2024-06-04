@@ -48,6 +48,12 @@
             top: 98vh;
             z-index: 1;
         }
+        @media screen
+            and (max-device-width: 765px)
+            and (orientation: portrait){
+                body {overflow-y: hidden;}
+                .bottomright {display: none;}
+        }
     </style>
 </head>
 <body>
