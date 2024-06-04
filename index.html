@@ -179,11 +179,12 @@
 
         function about() {
             if (!aboutToggle) {
-                document.getElementById('text').innerHTML = "design inspired by <a href='https://instagram.com/@nuevo.tokyo'>nuevo tokyo</a><br>colors taken from <a href='https://lospec.com/palette-list/tokyo-night'>tokyo night</a> and <a href='https://www.wikiwand.com/en/Cosmic_latte'>cosmic latte</a><br>font is <a href='https://fonts.google.com/specimen/IBM+Plex+Mono'>IBM Plex Mono</a> and <a href='https://fonts.google.com/specimen/Noto+Color+Emoji'>Noto Color Emoji</a><br>website hosted on <a href='https://github.com/undivisible/undivisible.dev/'>github</a><br><br><a onclick='about();'>→ HOME</a>";
+                text = "design inspired by <a href='https://instagram.com/@nuevo.tokyo'>nuevo tokyo</a><br>colors taken from <a href='https://lospec.com/palette-list/tokyo-night'>tokyo night</a> and <a href='https://www.wikiwand.com/en/Cosmic_latte'>cosmic latte</a><br>font is <a href='https://fonts.google.com/specimen/IBM+Plex+Mono'>IBM Plex Mono</a> and <a href='https://fonts.google.com/specimen/Noto+Color+Emoji'>Noto Color Emoji</a><br>website hosted on <a href='https://github.com/undivisible/undivisible.dev/'>github</a><br><br><a onclick='about();'>→ HOME</a>";
+                $('#text').fadeOut(() => $('#text').html(text).fadeIn());  
                 aboutToggle = true;
             }
             else {
-                document.getElementById('text').innerHTML = original;
+                $('#text').fadeOut(() => $('#text').html(original).fadeIn());
                 aboutToggle = false;
             }
         }
