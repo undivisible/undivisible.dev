@@ -13,6 +13,7 @@
         @keyframes colorTextLight {to {color: #000000;}}
         @keyframes bcolorTextDark {to {background-color: #fff8e7;}}
         @keyframes bcolorTextLight {to {background-color: #000000;}}
+
         body {
             color: black;
             font-family: 'Chivo Mono', monospace, 'Noto Color Emoji';
@@ -61,12 +62,13 @@
     <div class="text" id="text">
         <span id="names">UNDIVISIBLE</span><br>
         🇦🇺🇭🇰🇨🇳🇷🇺☪️<br>
-        <span id="jobs">FULL STACK DEV</span> <br><br>
+        <span id="jobs">FULL STACK DEVELOPER</span> <br><br>
 
         <a href="https://t.me/undivisible">→ TELEGRAM</a><br>
         <a href="https://instagram.com/@undivisible.dev">→ INSTAGRAM</a><br>
         <a href="https://github.com/undivisible">→ GITHUB</a><br>
         <a href="mailto:v@undivisible.dev">→ EMAIL</a><br><br>
+
         <a href="https://ampersand.undivisible.dev/">→ AMPERSAND</a><br><br>
 
         <a onclick="toggleDark();" id="toggler">→ DARK MODE</a><br>
@@ -93,12 +95,13 @@
         }
 
         function updateText() {
-            var names = ['UNDIVISIBLE', 'MAX LEE CARTER', 'МАКСИМ ЛИ РАЙМОНДОВИЧ КАРТЕР', '祁明思', 'مكس لي ابن ريمون الكعطار الأثري'];
+            var names = ['UNDIVISIBLE', 'MAX LEE CARTER', 'МАКСИМ ЛИ РАЙМОНДОВИЧ КАРТЕР', '祁明思', 'مكس لي ابن ريمون ابن سوي وا جانيت الكعطار الحنبلي الأثري '];
             var jobs = ['FULL STACK DEVELOPER', 'VIDEOGRAPHER', 'PHOTOGRAPHER', 'ENTREPRENEUR', 'STUDENT'];
             let n = 1, j = 1;
+
             setInterval(() => {
-                $('#names').fadeOut(() => $('#names').html(names[(n++ % names.length)]).fadeIn());
-                $('#jobs').fadeOut(() => $('#jobs').html(jobs[(j++ % jobs.length)]).fadeIn());
+                $('#names').html(names[(n++ % names.length)]);
+                $('#jobs').html(jobs[(j++ % jobs.length)]);
             }, 3000);
         }
 
