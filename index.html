@@ -79,30 +79,26 @@
     </div>
     <span class="bottomright">PAGE IS SCROLLABLE BTW</span>
     <script>
-        let dark = false;
-        let once = false;
-        let once2 = false;
-        let aboutToggle = false;
+        let dark = false, once = false, once2 = false, aboutToggle = false;
 
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
+        function handleCookie(name, value = null) {
+            if (value === null) {
+                return document.cookie.split('; ').find(row => row.startsWith(name))?.split('=')[1];
+            }
+            document.cookie = `${name}=${value}; path=/`;
         }
 
-        function setCookie(name, value) {
-            document.cookie = name + '=' + (value || '') + '; path=/';
-        }
 
         function updateText() {
             var names = ['MAX LEE ABDURRAHMAN AS-SALAFI CARTER', 'МАКСИМ ЛИ АБДУРРАХМАН РАЙМОНДОВИЧ АС-САЛАФИ КАРТЕР', '祁明思', 'مكس لي عبد الرحمن السلفي الهونغ كونغي الكعرطار'];
             var jobs = ['FULL STACK DEVELOPER', 'VIDEOGRAPHER', 'PHOTOGRAPHER', 'ENTREPRENEUR', 'STUDENT'];
             let n = 1, j = 1;
 
-            setInterval(() => {
-                $('#names').html(names[(n++ % names.length)]);
-                $('#jobs').html(jobs[(j++ % jobs.length)]);
-            }, 4000);
+            (function update() {
+                $('#names').html(names[n++ % names.length]);
+                $('#jobs').html(jobs[j++ % jobs.length]);
+                setTimeout(update, 4000);
+            })();
         }
 
         const background = document.getElementById('background');
@@ -149,36 +145,19 @@
         }
 
         function toggleDark() {
-            if (!dark) {
-                setCookie('dark', dark);
-                dark = true;
-                document.getElementById('first').style.animation = 'bcolorTextLight 2s ease-in forwards';
-                document.body.style.animation = 'colorTextDark 1s ease-in forwards';
-                changeExistingDivColors();
-                setTimeout(() => {
-                    document.getElementById('toggler').innerHTML = '→ LIGHT MODE';
-                    setTimeout(() => {
-                        document.getElementById('first').style.backgroundColor = 'black';
-                        document.body.style.color = '#fff8e7';
-                        once = false;
-                    }, 1000);
-                }, 1000);
-            } 
-            else {
-                setCookie('dark', dark);
-                dark = false;
-                document.getElementById('first').style.animation = 'bcolorTextDark 2s ease-in forwards';
-                document.body.style.animation = 'colorTextLight 1s ease-in forwards';
-                changeExistingDivColors();
-                setTimeout (() => {
-                    document.getElementById('toggler').innerHTML = '→ DARK MODE';
-                    setTimeout (() => {
-                        document.getElementById('first').style.backgroundColor = '#fff8e7';
-                        document.body.style.color = 'black';
-                        once = false;
-                    }, 1000);
-                }, 1000);
-            }
+            dark = !dark;
+            const colorSettings = dark ? { bg: 'black', text: '#fff8e7', label: '→ LIGHT MODE' } 
+                                    : { bg: '#fff8e7', text: 'black', label: '→ DARK MODE' };
+
+            $('#first').css('animation', dark ? 'bcolorTextLight 2s ease-in forwards' : 'bcolorTextDark 2s ease-in forwards');
+            $('body').css('animation', dark ? 'colorTextDark 1s ease-in forwards' : 'colorTextLight 1s ease-in forwards');
+            $('#toggler').text(colorSettings.label);
+            changeExistingDivColors();
+            setTimeout(() => {
+                $('#first').css('background-color', colorSettings.bg);
+                $('body').css('color', colorSettings.text);
+            }, 1000);
+            handleCookie('dark', dark);
         }
 
         function about() {
@@ -225,32 +204,27 @@
             }
 
             function loadMoreDivs() {
+                const divs = [];
                 for (let i = 0; i < 4; i++) {
-                    background.appendChild(createRandomDiv());
+                    divs.push(createRandomDiv());
                 }
+                $('#background').append(divs);
             }
 
             loadMoreDivs();
 
-            window.addEventListener('scroll', () => {
-                if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-                    loadMoreDivs();
-                }
+            $(window).on('scroll', () => {
+                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) loadMoreDivs();
 
-                const changeColor = (color, animation) => {
-                    document.body.style.animation = `${animation} 0.5s ease-in forwards`;
-                    setTimeout(() => { document.body.style.color = color; }, 1000);
-                };
-
-                if (window.scrollY >= (window.innerHeight * 0.75) && !once) {
-                    changeColor(dark ? '#000000' : '#fff8e7', dark ? 'colorTextLight' : 'colorTextDark');
-                    once = true;
-                } 
-                else if (window.scrollY < (window.innerHeight * 0.75) && once === true) {
-                    changeColor(dark ? '#fff8e7' : '#000000', dark ? 'colorTextDark' : 'colorTextLight');
-                    once = false;
-                }
+                if ($(window).scrollTop() >= window.innerHeight * 0.75) {
+                    if (!once) toggleBodyColor();
+                } else if (once) toggleBodyColor();
             });
+
+            function toggleBodyColor() {
+                $('body').css('color', dark ? '#fff8e7' : '#000000');
+                once = !once;
+            }
         });
     </script>
 </body>
