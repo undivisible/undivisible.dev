@@ -158,7 +158,7 @@
                 $('#first').css('background-color', colorSettings.bg);
                 $('body').css('color', colorSettings.text);
             }, 1000);
-            handleCookie('dark', dark);
+            dark = handleCookie('dark');
         }
 
         function about() {
@@ -175,7 +175,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             original = document.getElementById('text').innerHTML;
-            darkc = getCookie('dark');
+            handleCookie('dark', darkC);
 
             if (darkc != null) {
                 darkc = dark;
@@ -184,7 +184,7 @@
                     document.body.style.color = '#fff8e7';
                     document.getElementById('toggler').innerHTML = '→ LIGHT MODE';
                     changeExistingDivColors();
-                    setCookie('dark', dark);
+                    dark = handleCookie('dark');
                     dark = true;
                     once2 = true;
                 }
