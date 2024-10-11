@@ -16,8 +16,7 @@
             font-weight: 500;
             margin: 0;
             overflow-x: hidden;
-            scrollbar-width: 0px;
-            background-color: black;
+            background-color: #fff8e7;
         }
         a {
             color: inherit;
@@ -28,6 +27,15 @@
             z-index: 1; 
             position: fixed;
             margin: 1vh;
+        }
+        #background {filter: blur(10rem);}
+        #background > * {
+            width: 150vw;
+            transform: translateX(-25vw) translateY(-15vh);
+        }
+        #first {
+            background-color: #000000; 
+            height: 75vh;
         }
         @media screen
             and (max-device-width: 765px)
@@ -52,6 +60,9 @@
         <a href="https://telegra.ph/cote-dfraud---a-homage-to-our-society-in-its-current-state-10-11">→ COTE D'FRAUD</a><br><br>
 
         <a onclick="about();">→ ABOUT THIS SITE</a>
+    </div>
+    <div id="background">
+        <div id="first"></div>
     </div>
     <script>
         let aboutToggle = false;
