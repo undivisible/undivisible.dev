@@ -1,100 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@500&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <title>undivisible.dev</title>
-    <style>
-        body {
-            color: #fff8e7;
-            font-family: 'Chivo Mono', monospace, 'Noto Color Emoji';
-            font-size: 16px;
-            font-weight: 500;
-            margin: 0;
-            overflow-x: hidden;
-            background-color: #fff8e7;
-        }
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-        a:hover {text-decoration: underline;}
-        .text {
-            z-index: 1; 
-            position: fixed;
-            margin: 1vh;
-        }
-        #background {filter: blur(10rem);}
-        #background > * {
-            width: 150vw;
-            transform: translateX(-25vw) translateY(-15vh);
-        }
-        #first {
-            background-color: #000000; 
-            height: 75vh;
-        }
-        @media screen
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@500&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <title>undivisible.dev</title>
+        <style>
+            body {
+                color: #fff8e7;
+                font-family: 'Chivo Mono', monospace, 'Noto Color Emoji';
+                font-size: 16px;
+                font-weight: 500;
+                margin: 0;
+                overflow: hidden;
+                background-color: #000000;
+            }
+            a {
+                color: inherit;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            .text {
+                z-index: 1;
+                position: fixed;
+                margin: 1vh;
+            }
+            #background {
+                filter: blur(10rem);
+            }
+            #background > * {
+                width: 150vw;
+                transform: translateX(-25vw) translateY(50vh);
+            }
+            #first {
+                background-color: #fff8e7;
+                height: 75vh;
+            }
+            @supports (-webkit-backdrop-filter: blur(10px)) {
+                background {
+                    -webkit-backdrop-filter: blur(10rem);
+                }
+            }
+            @media screen
             and (max-device-width: 765px)
-            and (orientation: portrait){
-                body {overflow-y: hidden;}
-                .bottomright {display: none;}
-        }
-    </style>
-</head>
-<body>
-    <div class="text" id="text">
-        <span id="names">MAX LEE ABDURRAHMAN AS-SALAFI CARTER</span><br>
-        🇦🇺🇭🇰🇨🇳🇷🇺☪️<br>
-        <span id="jobs">FULL STACK DEVELOPER</span> <br><br>
-
-        <a href="https://t.me/undivisible">→ TELEGRAM</a><br>
-        <a href="https://retro.app/@undivisible">→ RETRO</a><br>
-        <a href="https://github.com/undivisible">→ GITHUB</a><br>
-        <a href="mailto:v@undivisible.dev">→ EMAIL</a><br><br>
-
-        <a href="https://telegra.ph/Project-Equilibrium-10-14">→ PROJECT EQUILIBRIUM</a><br>
-        <a href="https://telegra.ph/cote-dfraud---a-homage-to-our-society-in-its-current-state-10-11">→ COTE D'FRAUD</a><br><br>
-
-        <a onclick="about();">→ ABOUT THIS SITE</a>
-    </div>
-    <div id="background">
-        <div id="first"></div>
-    </div>
-    <script>
-        let aboutToggle = false;
-
-        function updateText() {
-            var names = ['MAX LEE ABDURRAHMAN AS-SALAFI CARTER', 'МАКСИМ ЛИ АБДУРРАХМАН РАЙМОНДОВИЧ АС-САЛАФИ КАРТЕР', '祁明思', 'مكس لي عبد الرحمن السلفي الكعرطار'], 
-            jobs = ['FULL STACK DEVELOPER', 'VIDEOGRAPHER', 'PHOTOGRAPHER', 'ENTREPRENEUR', 'STUDENT'], 
-            n = 0, j = 0;
-
-            (function update() {
-                $('#names').html(names[n++ % names.length]);
-                $('#jobs').html(jobs[j++ % jobs.length]);
-                setTimeout(update, 4000);
-            })();
-        }
-
-        function about() {
-            if (!aboutToggle) {
-                text = "design inspired by <a href='https://instagram.com/@nuevo.tokyo'>nuevo tokyo</a><br>colors taken from <a href='https://lospec.com/palette-list/tokyo-night'>tokyo night</a> and <a href='https://www.wikiwand.com/en/Cosmic_latte'>cosmic latte</a><br>font is <a href='https://fonts.google.com/specimen/IBM+Plex+Mono'>IBM Plex Mono</a>, <a href='https://fonts.google.com/specimen/Chivo+Mono'>Chivo Mono</a> and <a href='https://fonts.google.com/specimen/Noto+Color+Emoji'>Noto Color Emoji</a><br>website hosted on <a href='https://github.com/undivisible/undivisible.dev/'>github</a><br><br><a onclick='about();'>→ HOME</a>";
-                $('#text').fadeOut(() => $('#text').html(text).fadeIn());  
-                aboutToggle = true;
+            and (orientation: portrait) {
+                body {
+                    overflow-y: hidden;
+                }
+                .bottomright {
+                    display: none;
+                }
             }
-            else {
-                $('#text').fadeOut(() => $('#text').html(original).fadeIn());
-                aboutToggle = false;
-            }
-        }
+        </style>
+    </head>
+    <body>
+        <div class="text" id="text">
+            <span id="names">MAX LEE ABDURRAHMAN AS-SALAFI CARTER</span><br>
+            🇦🇺🇭🇰🇨🇳🇷🇺☪️<br>
+            <span id="jobs">FULL STACK DEVELOPER</span> <br><br>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            original = document.getElementById('text').innerHTML;
-            updateText();
-        });
-    </script>
-</body>
+            <a href="https://t.me/undivisible">→ TELEGRAM</a><br>
+            <a href="https://retro.app/@undivisible">→ RETRO</a><br>
+            <a href="https://github.com/undivisible">→ GITHUB</a><br>
+            <a href="mailto:v@undivisible.dev">→ EMAIL</a><br><br>
+
+            <a href="https://telegra.ph/Project-Equilibrium-10-14">→ PROJECT EQUILIBRIUM</a><br>
+            <a href="https://telegra.ph/cote-dfraud---a-homage-to-our-society-in-its-current-state-10-11">→ COTE D'FRAUD</a><br><br>
+
+            <a onclick="about();">→ ABOUT THIS SITE</a>
+        </div>
+        <div id="background">
+            <div id="first"></div>
+        </div>
+        <script>
+            let aboutToggle = false;
+
+            function updateText() {
+                var names = ['MAX LEE ABDURRAHMAN AS-SALAFI CARTER', 'МАКСИМ ЛИ АБДУРРАХМАН РАЙМОНДОВИЧ АС-САЛАФИ КАРТЕР', '祁明思', 'مكس لي عبد الرحمن السلفي الكعرطار'],
+                    jobs = ['FULL STACK DEVELOPER', 'VIDEOGRAPHER', 'PHOTOGRAPHER', 'ENTREPRENEUR', 'STUDENT'],
+                    n = 0, j = 0;
+
+                (function update() {
+                    $('#names').html(names[n++ % names.length]);
+                    $('#jobs').html(jobs[j++ % jobs.length]);
+                    setTimeout(update, 4000);
+                })();
+            }
+
+            function about() {
+                if (!aboutToggle) {
+                    text = "design inspired by <a href='https://instagram.com/@nuevo.tokyo'>nuevo tokyo</a><br>colors taken from <a href='https://lospec.com/palette-list/tokyo-night'>tokyo night</a> and <a href='https://www.wikiwand.com/en/Cosmic_latte'>cosmic latte</a><br>font is <a href='https://fonts.google.com/specimen/IBM+Plex+Mono'>IBM Plex Mono</a>, <a href='https://fonts.google.com/specimen/Chivo+Mono'>Chivo Mono</a> and <a href='https://fonts.google.com/specimen/Noto+Color+Emoji'>Noto Color Emoji</a><br>website hosted on <a href='https://github.com/undivisible/undivisible.dev/'>github</a><br><br><a onclick='about();'>→ HOME</a>";
+                    $('#text').fadeOut(() => $('#text').html(text).fadeIn());
+                    aboutToggle = true;
+                }
+                else {
+                    $('#text').fadeOut(() => $('#text').html(original).fadeIn());
+                    aboutToggle = false;
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                original = document.getElementById('text').innerHTML;
+                updateText();
+            });
+        </script>
+    </body>
 </html>
