@@ -7,7 +7,6 @@ function updateText() {
 
     $('#greetings').html(greetings[n]);
     $('#names').html(names[n]);
-    $('#nameso').html(nameso[n]);
     $('#jobs').html(jobs[j]);
     $('#langs').html(langs[l]);
 
@@ -19,7 +18,6 @@ function updateText() {
         $('#greetings, #names, #jobs, #langs').fadeOut(500, function () {
             $('#greetings').html(greetings[n]);
             $('#names').html(names[n]);
-            $('#nameso').html(nameso[n]);
             $('#jobs').html(jobs[j]);
             $('#langs').html(langs[l]);
             $('#greetings, #names, #jobs, #langs').fadeIn(500);
