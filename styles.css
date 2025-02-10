@@ -1,0 +1,64 @@
+body {
+    background-color: black;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+tags {
+    position: sticky;
+    top: 0;
+    right: 0;
+    margin-right: 10px;
+    margin-left: auto;
+}
+
+section, main.landing {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+}
+
+main.landing {
+    justify-content: center;
+    margin-left: 40px;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+main.landing > div, h1 {
+    font-family: 'Onest', sans-serif;
+}
+
+main.landing > h1 {
+    font-size: xxx-large;
+    margin-block-end: 0.40em;
+}
+
+main.landing > div {
+    color: #fff8e699;
+    font-size: x-large;
+}
+
+span, a {
+    color: #fff8e6;
+}
+
+i {
+    font-size: 1.5em;
+}
+
+span > span {
+    color: #fff8e699;
+}
+
+header {
+    height: 5vh;
+    position: absolute;
+    width: 100vw;
+}
+
+header > a {
+    padding-top: 40px;
+    padding-left: 20px;
+    float: right;
+}
