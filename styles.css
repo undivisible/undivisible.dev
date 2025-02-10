@@ -61,4 +61,10 @@ header > a {
     padding-top: 40px;
     padding-left: 20px;
     float: right;
+    color: #fff8e699;
+    transition: color 0.5s;
+}
+
+header > a:hover {
+    color: #fff8e6;
 }
