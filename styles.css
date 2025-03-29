@@ -25,7 +25,7 @@ main.landing {
     overflow: hidden;
 }
 
-main.landing > div, h1 {
+main.landing > div, h1, header {
     font-family: 'Onest', sans-serif;
 }
 
@@ -67,4 +67,13 @@ header > a {
 
 header > a:hover {
     color: #fff8e6;
+    text-decoration: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
