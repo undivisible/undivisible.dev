@@ -1,5 +1,5 @@
 function updateText() {
-    let greetings = ['Assalamualaikum!', 'Ассалам Алейкум!', '哈喽！', 'السالم عليكم', 'שלום'],
+    let greetings = ['Assalamualaikum!', 'Ассалам Алейкум!', '哈喽！', 'السلام عليكم', 'שלום'],
         names = ['Abdurrahman', 'Абдуррахман', '明思', 'عبد الرحمن', 'עבד הרחמן'],
         jobs = ['a full stack web developer', 'a director', 'a photographer and videographer', 'a student', 'a thinker'],
         langs = ['<span>speak</span> English', '<span>speak</span> Cantonese', '<span>speak</span> Mandarin Chinese', '<span>speak</span> Russian', '<span>speak</span> Indonesian', '<span>learn</span> Arabic', '<span>learn</span> Hebrew'],
