@@ -1,0 +1,16 @@
+{
+  "name": "undivisible-dev",
+  "version": "7.0.0",
+  "type": "module",
+  "packageManager": "pnpm@10.12.4",
+  "scripts": {
+    "dev": "imba serve app.imba -p 3000",
+    "build": "imba build",
+    "preview": "imba preview"
+  },
+  "devDependencies": {
+    "imba": "^2.0.0-alpha.247",
+    "vite": "^7.2.4",
+    "vite-node": "^5.2.0"
+  }
+}
