@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>undivisible</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="styles.css">
+        <link rel="icon" type="image/x-icon" href="https://upload.wikimedia.org/wikipedia/commons/5/59/Empty.png"/>
+        <script src="https://kit.fontawesome.com/b0d9b822d8.js" crossorigin="anonymous"></script>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-3YW9C78ZXL"></script>
+        <script src="script.js"></script>
+        <script>
+            function redirect(){
+                document.getElementById('centered').style.animation = "fall 2s ease-in forwards"; 
+
+                setTimeout(() => {
+                window.location = "index.html"; 
+                }, 2000);
+            }
+        </script>
+    </head>
+    <body>
+        <a class="full" href="javascript:void(0);" onclick="redirect()"></a>
+        <div class="dropdown">
+            english
+            <i class="fa-solid fa-angle-down fa-xs" style="color:#eceff4;"></i>
+            <div class="dropdown-content">
+                <a href="#">english</a>
+                <a href="zh/one.html">中文</a>
+                <a class="russian" href="ru/one.html">русский</a>
+                <a href="id/one.html">bahasa indonesia</a>
+            </div>
+        </div>
+        <a href="https://undivisible.notion.site/school-notion-0d7231d93d8e494b8cf079e0507f933c?pvs=4" class="s"><i class="fa-regular fa-circle" style="color: #2b34400f;"></i></a>
+        <div class="centered" id="centered">
+            <div class="margin">
+                <form id="email" method="post" action="mail.php" class="display: inline;">
+                    <textarea type="text" class="titler" name="message" placeholder="undivisible | email no work, click the button for the time being"></textarea>
+            </div>
+            <div class="row">
+                <a href="mailto:v@undivisible.dev" class="submit elements b">
+                    <i class="fa-solid fa-paper-plane fa-xl hover"></i>
+                </a>
+                <a href="https://instagram.com/undivisible_" class="elements b1" title="instagram"><i class="fa-brands fa-instagram fa-xl hover"></i></a>
+                <a href="https://twitter.com/undivisible_" class="elements b2" title="twitter"><i class="fa-brands fa-x-twitter fa-xl hover"></i></a>
+                <a href="http://open.spotify.com/user/gih8nx4il49dl60bkq6anyml4?si=DJbxr2CAThS_afzCwxT2FA" class="elements b3" title="spotify"><i class="fa-brands fa-spotify fa-xl hover"></i></a>
+                <a href="http://t.me/undivisible" class="elements b4" title="telegram"><i class="fa-brands fa-telegram fa-xl hover"></i></a>
+                <a href="https://pronouns.page/@undivisible" class="elements b5" style="font-family: 'Darker Grotesque'; font-size: medium;" title="pronouns"><i class="fa-solid fa-p fa-xl hover"></i></a>
+            </div>  
+        </form>   
+        </div>
+    </body>
+</html>

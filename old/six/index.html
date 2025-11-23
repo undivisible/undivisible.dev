@@ -1,0 +1,78 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>undivisible.dev</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <div>
+            <p>
+                my name's <span id="names">max</span> <br>
+                i <span id="ability">speak</span> <span id="langs">english</span> <br>
+                i make <a href="https://atechnology.company/" style="color:#ff5705;">software</a> <br>
+                <a href="https://t.me/undivisible">telegram</a> <a href="https://github.com/undivisible">github</a>
+            </p>
+        </div>
+    </body>
+    <style>
+        body { background-color: black; color: white; font-family: 'Helvetica', 'Arial', sans-serif; font-size: 3rem; margin: 0; padding: 0; }
+        div { width: 95vw; height: 100vh; display: flex; align-items: center; justify-content: left; margin-left: 5vw; }
+        a { color: white; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+<script>
+    function updateText() {
+        const pairs = [
+            { name: 'max', lang: 'english', ability: 'speak' },
+            { name: 'максим', lang: 'русский', ability: 'speak' }, 
+            { name: 'максим', lang: 'нохчийн', ability: 'learn' }, 
+            { name: '明思', lang: '廣東話', ability: 'speak' }, 
+            { name: '明思', lang: '普通话', ability: 'speak' }, 
+            { name: 'ماكسيم', lang: 'iraqi arabic', ability: 'learn' },
+            { name: 'מאקסים', lang: 'hebrew', ability: 'learn' },
+        ];
+        let i = 0;
+
+        $('#names').html(pairs[i].name);
+        $('#langs').html(pairs[i].lang);
+        $('#ability').html(pairs[i].ability);
+
+        setTimeout(function update() {
+            i = (i + 1) % pairs.length;
+            let next = pairs[i];
+
+            if ($('#names').text() !== next.name) {
+                $('#names').fadeOut(500, function () {
+                    $('#names').html(next.name).fadeIn(500);
+                });
+            } else {
+                $('#names').html(next.name);
+            }
+
+            if ($('#langs').text() !== next.lang) {
+                $('#langs').fadeOut(500, function () {
+                    $('#langs').html(next.lang).fadeIn(500);
+                });
+            } else {
+                $('#langs').html(next.lang);
+            }
+
+            if ($('#ability').text() !== next.ability) {
+                $('#ability').fadeOut(500, function () {
+                    $('#ability').html(next.ability).fadeIn(500);
+                });
+            } else {
+                $('#ability').html(next.ability);
+            }
+
+            setTimeout(update, 4000);
+        }, 500);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateText();
+    });
+</script>
+
+</html>

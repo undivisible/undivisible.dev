@@ -1,0 +1,17 @@
+[package]
+name = "undivisible-dev"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+leptos = { version = "0.7", features = ["csr"] }
+console_error_panic_hook = "0.1"
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = ["HtmlElement", "MouseEvent", "Document", "Element", "NodeList"] }
+rand = { version = "0.8", features = ["getrandom"] }
+getrandom = { version = "0.2", features = ["js"] }
+
+[profile.release]
+opt-level = 'z'
+lto = true
+codegen-units = 1
