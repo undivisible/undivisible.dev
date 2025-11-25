@@ -127,7 +127,7 @@ fn App() -> impl IntoView {
         ("soliloquy", "https://github.com/atechnology-company/soliloquy"),
         ("plates", "https://plates.atechnology.company/"),
         ("standpoint", "https://standpoint.atechnology.company/"),
-        ("infrastruct", "https://github.com/atechnology-company/infrastruct"),
+        ("infrastruct", "https://infrastruct.atechnology.company/"),
         ("vuno", "https://github.com/atechnology-company/vuno"),
     ];
     
