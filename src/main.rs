@@ -38,6 +38,9 @@ fn get_default_translations() -> Translations {
 }
 
 fn detect_browser_language() -> String {
+    // Detect browser language and map to our supported language codes
+    // Note: Chechen (ce) is unlikely to be auto-detected by browsers,
+    // but users can manually select it via the flag switcher
     web_sys::window()
         .and_then(|w| w.navigator().language())
         .map(|lang| {
@@ -57,6 +60,25 @@ fn detect_browser_language() -> String {
             }
         })
         .unwrap_or_else(|| "en".to_string())
+}
+
+fn default_language_strings() -> LanguageStrings {
+    LanguageStrings {
+        greeting: "Hi. I'm Max Carter 祁明思.".to_string(),
+        intro: "I make things, think about life and speak languages.".to_string(),
+        projects_intro: "Here's some of my projects:".to_string(),
+        see_more_github: "see more at my github".to_string(),
+        instagram: "instagram".to_string(),
+        read_philosophy: "read my philosophy".to_string(),
+        gizzmo_electronics: "gizzmoelectronics.com".to_string(),
+        technology_company: "technology.company".to_string(),
+        visit_project: "Visit Project →".to_string(),
+        soliloquy_desc: "soliloquy is a new type of operating system based on the zircon kernel built from the ground up for web.".to_string(),
+        plates_desc: "plates is a universal ai assistant, that links all your devices together.".to_string(),
+        standpoint_desc: "standpoint is an opinion based social media platform to create tierlists and polls.".to_string(),
+        infrastruct_desc: "infrastruct is an online ai-powered jurisprudence platform.".to_string(),
+        vuno_desc: "vuno is the text editor to end all text editors.".to_string(),
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -140,22 +162,8 @@ fn App() -> impl IntoView {
             translations
                 .get(lang)
                 .cloned()
-                .unwrap_or_else(|| translations.get("en").cloned().unwrap_or_else(|| LanguageStrings {
-                    greeting: "Hi. I'm Max Carter 祁明思.".to_string(),
-                    intro: "I make things, think about life and speak languages.".to_string(),
-                    projects_intro: "Here's some of my projects:".to_string(),
-                    see_more_github: "see more at my github".to_string(),
-                    instagram: "instagram".to_string(),
-                    read_philosophy: "read my philosophy".to_string(),
-                    gizzmo_electronics: "gizzmoelectronics.com".to_string(),
-                    technology_company: "technology.company".to_string(),
-                    visit_project: "Visit Project →".to_string(),
-                    soliloquy_desc: "".to_string(),
-                    plates_desc: "".to_string(),
-                    standpoint_desc: "".to_string(),
-                    infrastruct_desc: "".to_string(),
-                    vuno_desc: "".to_string(),
-                }))
+                .or_else(|| translations.get("en").cloned())
+                .unwrap_or_else(default_language_strings)
         }
     };
 
