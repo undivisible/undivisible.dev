@@ -2,6 +2,8 @@ use leptos::*;
 use leptos::prelude::{ElementChild, ClassAttribute, StyleAttribute, OnAttribute, CustomAttribute, set_timeout, set_interval_with_handle, create_effect, create_signal, Get, Set, Update, IntoView, IntoAny, With};
 use leptos::wasm_bindgen::JsCast;
 use rand::Rng;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::time::Duration;
 use web_sys::MouseEvent;
 
@@ -9,6 +11,69 @@ fn main() {
     console_error_panic_hook::set_once();
     leptos::mount::mount_to_body(|| view! { <App/> })
 }
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+struct LanguageStrings {
+    greeting: String,
+    intro: String,
+    projects_intro: String,
+    see_more_github: String,
+    instagram: String,
+    read_philosophy: String,
+    gizzmo_electronics: String,
+    technology_company: String,
+    visit_project: String,
+    soliloquy_desc: String,
+    plates_desc: String,
+    standpoint_desc: String,
+    infrastruct_desc: String,
+    vuno_desc: String,
+}
+
+type Translations = HashMap<String, LanguageStrings>;
+
+fn get_default_translations() -> Translations {
+    let json = include_str!("../static/translations.json");
+    serde_json::from_str(json).unwrap_or_else(|_| HashMap::new())
+}
+
+fn detect_browser_language() -> String {
+    web_sys::window()
+        .and_then(|w| w.navigator().language())
+        .map(|lang| {
+            let lang_lower = lang.to_lowercase();
+            if lang_lower.starts_with("zh-hk") || lang_lower.starts_with("zh-tw") || lang_lower.starts_with("yue") {
+                "zh-yue".to_string()
+            } else if lang_lower.starts_with("zh") {
+                "zh".to_string()
+            } else if lang_lower.starts_with("ru") {
+                "ru".to_string()
+            } else if lang_lower.starts_with("id") {
+                "id".to_string()
+            } else if lang_lower.starts_with("ce") {
+                "ce".to_string()
+            } else {
+                "en".to_string()
+            }
+        })
+        .unwrap_or_else(|| "en".to_string())
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+struct Language {
+    code: &'static str,
+    flag: &'static str,
+    is_image: bool,
+}
+
+const LANGUAGES: [Language; 6] = [
+    Language { code: "en", flag: "🇦🇺", is_image: false },
+    Language { code: "zh-yue", flag: "🇭🇰", is_image: false },
+    Language { code: "ru", flag: "🇷🇺", is_image: false },
+    Language { code: "zh", flag: "🇨🇳", is_image: false },
+    Language { code: "id", flag: "🇮🇩", is_image: false },
+    Language { code: "ce", flag: "/static/chechen.png", is_image: true },
+];
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 enum ShapeType {
@@ -40,7 +105,6 @@ fn create_shape(id: usize, shape_type: ShapeType) -> Shape {
     let dx = -speed;
     let dy = 0.0;
     
-    // Truly random RGB colors
     let r = rng.gen_range(0..256);
     let g = rng.gen_range(0..256);
     let b = rng.gen_range(0..256);
@@ -62,13 +126,39 @@ fn create_shape(id: usize, shape_type: ShapeType) -> Shape {
 
 #[component]
 fn App() -> impl IntoView {
+    let translations = get_default_translations();
+    let (current_lang, set_current_lang) = create_signal(detect_browser_language());
     let (shapes, set_shapes) = create_signal::<Vec<Shape>>(vec![]);
     let (background_visible, set_background_visible) = create_signal(false);
     let (text_visible, set_text_visible) = create_signal(false);
     let (hovered_project, set_hovered_project) = create_signal::<Option<String>>(None);
     let (expanded_project, set_expanded_project) = create_signal::<Option<String>>(None);
     
-    // Initialize shapes
+    let get_translation = {
+        let translations = translations.clone();
+        move |lang: &str| -> LanguageStrings {
+            translations
+                .get(lang)
+                .cloned()
+                .unwrap_or_else(|| translations.get("en").cloned().unwrap_or_else(|| LanguageStrings {
+                    greeting: "Hi. I'm Max Carter 祁明思.".to_string(),
+                    intro: "I make things, think about life and speak languages.".to_string(),
+                    projects_intro: "Here's some of my projects:".to_string(),
+                    see_more_github: "see more at my github".to_string(),
+                    instagram: "instagram".to_string(),
+                    read_philosophy: "read my philosophy".to_string(),
+                    gizzmo_electronics: "gizzmoelectronics.com".to_string(),
+                    technology_company: "technology.company".to_string(),
+                    visit_project: "Visit Project →".to_string(),
+                    soliloquy_desc: "".to_string(),
+                    plates_desc: "".to_string(),
+                    standpoint_desc: "".to_string(),
+                    infrastruct_desc: "".to_string(),
+                    vuno_desc: "".to_string(),
+                }))
+        }
+    };
+
     create_effect(move |_| {
         let initial_shapes: Vec<Shape> = vec![
             create_shape(0, ShapeType::Triangle),
@@ -94,7 +184,6 @@ fn App() -> impl IntoView {
         set_timeout(move || set_text_visible.set(true), Duration::from_millis(600));
     });
     
-    // Animation loop
     create_effect(move |_| {
         let _ = set_interval_with_handle(
             move || {
@@ -131,29 +220,32 @@ fn App() -> impl IntoView {
         ("vuno", "https://github.com/atechnology-company/vuno"),
     ];
     
-    let project_descriptions = move |name: &str| -> &str {
-        match name {
-            "soliloquy" => "soliloquy is a new type of operating system based on the zircon kernel built from the ground up for web. what makes soliloquy different aside from being faster, with a smaller footprint, and using less resources is the web based desktop environment built with servo and v8.\n\nbuilt primarily with rust.",
-            "plates" => "plates is a universal ai assistant, that links all your devices together. it is local first, utilising on device language models and tools to interact with your services. it works anytime, anywhere. own your data with a local server, syncing photos, clipboard and your accounts. pickup where you left off on any device.\n\nbuilt with swiftui + rust. tableware (web ui) and mcp built with go and svelte.",
-            "standpoint" => "standpoint is an opinion based social media platform to create tierlists and polls to share standpoints. it is ai powered and web-focused allowing you to grab photos across the web, as well as collaborate in real time.\n\nbuilt with svelte and python.",
-            "infrastruct" => "infrastruct is an online ai-powered jurisprudence platform. compare opinions on any topic from the worlds religions as well as the culmination of knowledge from the greatest philosophers in history in one place. mix and match your own ideas and create your own system with our online tool. save your stances.\n\nbuilt with next.js, and backend r2 built with vlang.",
-            "vuno" => "vuno is the text editor to end all text editors. keyboard based, but not complicated like vim, edit at lightspeed. ai copilot to help you write, code and more, with live notion-style markdown editing.\n\nbuilt with tauri (svelte+rust).",
-            _ => ""
+    let get_project_description = {
+        let get_translation = get_translation.clone();
+        move |name: &str, lang: &str| -> String {
+            let t = get_translation(lang);
+            match name {
+                "soliloquy" => t.soliloquy_desc,
+                "plates" => t.plates_desc,
+                "standpoint" => t.standpoint_desc,
+                "infrastruct" => t.infrastruct_desc,
+                "vuno" => t.vuno_desc,
+                _ => String::new()
+            }
         }
     };
     
     let animate_letters = move |ev: MouseEvent| {
         if let Some(target) = ev.target() {
             if let Ok(element) = target.dyn_into::<web_sys::HtmlElement>() {
-                // Set CSS variables on document root for transforms (reduced range)
                 if let Some(document) = web_sys::window().and_then(|w| w.document()) {
                     if let Some(doc_element) = document.document_element() {
                         if let Some(html_element) = doc_element.dyn_ref::<web_sys::HtmlElement>() {
                             let mut rng = rand::thread_rng();
                             for i in 1..=50 {
-                                let rotate = rng.gen_range(-30..=30);  // Reduced from -100..100
-                                let loc = rng.gen_range(-40..=40);      // Reduced from -100..100
-                                let loctwo = rng.gen_range(-40..=40);   // Reduced from -100..100
+                                let rotate = rng.gen_range(-30..=30);
+                                let loc = rng.gen_range(-40..=40);
+                                let loctwo = rng.gen_range(-40..=40);
                                 let _ = html_element.style().set_property(&format!("--rotate{}", i), &format!("{}deg", rotate));
                                 let _ = html_element.style().set_property(&format!("--loc{}", i), &format!("{}%", loc));
                                 let _ = html_element.style().set_property(&format!("--loctwo{}", i), &format!("{}%", loctwo));
@@ -162,13 +254,11 @@ fn App() -> impl IntoView {
                     }
                 }
                 
-                // Randomize pastel colors on letters
                 if let Ok(letters) = element.query_selector_all(".letter") {
                     let mut rng = rand::thread_rng();
                     for _i in 0..letters.length() {
                         if let Some(letter) = letters.item(_i) {
                             if let Some(html_letter) = letter.dyn_ref::<web_sys::HtmlElement>() {
-                                // Generate pastel colors (high lightness, medium saturation)
                                 let hue = rng.gen_range(0..360);
                                 let saturation = rng.gen_range(60..80);
                                 let lightness = rng.gen_range(70..85);
@@ -184,7 +274,6 @@ fn App() -> impl IntoView {
     let reset_letters = move |ev: MouseEvent| {
         if let Some(target) = ev.target() {
             if let Ok(element) = target.dyn_into::<web_sys::HtmlElement>() {
-                // Remove inline color styles from letters
                 if let Ok(letters) = element.query_selector_all(".letter") {
                     for _i in 0..letters.length() {
                         if let Some(letter) = letters.item(_i) {
@@ -205,22 +294,11 @@ fn App() -> impl IntoView {
         }).collect::<Vec<_>>()
     };
     
-    let nav_links = vec![
-        ("see more at my github", "https://github.com/undivisible", false),
-        ("instagram", "https://instagram.com/undivisible.dev", false),
-        ("read my philosophy", "https://undivisible.notion.site/eudaimonia-total-latitude-2b45f9801be4805ba030d510404673c6", false),
-        ("gizzmoelectronics.com", "https://gizzmoelectronics.com", false),
-        ("technology.company", "https://atechnology.company", true),
-    ];
-    
     view! {
         <div class="relative w-screen h-screen bg-black overflow-hidden text-white overflow-y-auto md:overflow-hidden">
-            // Background
             <div class="absolute inset-0 transition-opacity duration-1000" style:opacity=move || if background_visible.get() { "1" } else { "0" }>
-                // Dot matrix
                 <div class="absolute inset-0 pointer-events-none opacity-10" style="background-image: radial-gradient(circle, #b21f1f 1px, transparent 1px); background-size: 10px 10px; md:background-size: 15px 15px;"></div>
                 
-                // SVG Shapes
                 <svg class="absolute inset-0 w-full h-full opacity-30 md:opacity-50 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"
                     style="mask-image: radial-gradient(circle, rgba(255, 255, 255, 1) 1.5px, transparent 1.5px); mask-size: 10px 10px; -webkit-mask-image: radial-gradient(circle, rgba(255, 255, 255, 1) 1.5px, transparent 1.5px); -webkit-mask-size: 10px 10px;">
                     <defs>
@@ -297,43 +375,87 @@ fn App() -> impl IntoView {
                 </svg>
             </div>
             
-            // Content
             <div class="relative z-10 w-full h-full min-h-screen md:min-h-0">
-                // Top/Bottom Navigation
                 <div class="absolute bottom-[20px] left-[20px] right-[20px] md:top-[50px] md:right-[100px] md:left-auto md:bottom-auto flex flex-col md:flex-row gap-[10px] md:gap-[15px] items-start md:items-center text-white text-base md:text-2xl transition-all duration-1000"
                     style:opacity=move || if text_visible.get() { "1" } else { "0" }
                     style:transform=move || if text_visible.get() { "translateY(0)" } else { "translateY(-20px)" }>
-                    {nav_links.iter().map(|(text, href, has_prefix)| {
-                        view! {
-                            <a class="fancy-link transition-colors inline-block" href=*href on:mouseenter=animate_letters>
-                                {if *has_prefix {
-                                    Some(view! { <span class="outer"><span class="inner"><span class="letter prefix-letter" style="color: #ff5705;">"a"</span></span></span> })
-                                } else {
-                                    None
-                                }}
-                                {render_letter_text(text)}
-                            </a>
+                    {
+                        let get_translation_nav = get_translation.clone();
+                        move || {
+                            let t = get_translation_nav(&current_lang.get());
+                            let nav_links = vec![
+                                (t.see_more_github.clone(), "https://github.com/undivisible".to_string(), false),
+                                (t.instagram.clone(), "https://instagram.com/undivisible.dev".to_string(), false),
+                                (t.read_philosophy.clone(), "https://undivisible.notion.site/eudaimonia-total-latitude-2b45f9801be4805ba030d510404673c6".to_string(), false),
+                                (t.gizzmo_electronics.clone(), "https://gizzmoelectronics.com".to_string(), false),
+                                (t.technology_company.clone(), "https://atechnology.company".to_string(), true),
+                            ];
+                            nav_links.into_iter().map(|(text, href, has_prefix)| {
+                                view! {
+                                    <a class="fancy-link transition-colors inline-block" href=href on:mouseenter=animate_letters>
+                                        {if has_prefix {
+                                            Some(view! { <span class="outer"><span class="inner"><span class="letter prefix-letter" style="color: #ff5705;">"a"</span></span></span> })
+                                        } else {
+                                            None
+                                        }}
+                                        {render_letter_text(&text)}
+                                    </a>
+                                }
+                            }).collect::<Vec<_>>()
                         }
-                    }).collect::<Vec<_>>()}
+                    }
                 </div>
                 
-                // Main Content
                 <div class="absolute left-[20px] right-[20px] top-[50px] pb-[200px] md:pb-0 md:left-[100px] md:top-1/2 md:-translate-y-1/2 md:right-auto transition-all duration-1000 delay-300"
                     style:opacity=move || if text_visible.get() { "1" } else { "0" }
                     style:transform=move || if text_visible.get() { "translate(0, 0)" } else { "translate(-30px, 0)" }>
                     <div class="text-white text-base md:text-2xl mb-6 md:mb-8">
-                        <p class="mb-0 flex flex-wrap items-center gap-1 md:gap-2">
-                            "Hi. I'm Max Carter 祁明思. 🇭🇰🇦🇺🇷🇺🇨🇳🇮🇩"
-                            <img src="/static/chechen.png" alt="" class="w-[16px] h-[14px] md:w-[22px] md:h-[18px] inline-block mb-1 -ml-0.5 md:-ml-1.5"/>
+                        <p class="mb-2 flex flex-wrap items-center gap-1 md:gap-2">
+                            {
+                                let get_translation_greeting = get_translation.clone();
+                                move || get_translation_greeting(&current_lang.get()).greeting
+                            }
                         </p>
-                        <p class="mb-0">"I make things, think about life and speak languages."</p>
-                        <p class="mb-4">"Here's some of my projects:"</p>
+                        <div class="flex flex-wrap items-center gap-2 md:gap-3 mb-4">
+                            {LANGUAGES.iter().map(|lang| {
+                                let code = lang.code.to_string();
+                                let code_for_click = code.clone();
+                                let is_image = lang.is_image;
+                                let flag = lang.flag.to_string();
+                                view! {
+                                    <button
+                                        class="flag-btn cursor-pointer transition-all duration-300 hover:scale-125 relative"
+                                        on:click=move |_| set_current_lang.set(code_for_click.clone())
+                                    >
+                                        {if is_image {
+                                            view! { <img src=flag.clone() alt="" class="w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block"/> }.into_any()
+                                        } else {
+                                            view! { <span class="text-xl md:text-2xl">{flag.clone()}</span> }.into_any()
+                                        }}
+                                        <span 
+                                            class="shimmer-overlay absolute inset-0 pointer-events-none"
+                                            style=move || if current_lang.get() == code { "opacity: 1" } else { "opacity: 0" }
+                                        ></span>
+                                    </button>
+                                }
+                            }).collect::<Vec<_>>()}
+                        </div>
+                        <p class="mb-0">{
+                            let get_translation_intro = get_translation.clone();
+                            move || get_translation_intro(&current_lang.get()).intro
+                        }</p>
+                        <p class="mb-4">{
+                            let get_translation_projects = get_translation.clone();
+                            move || get_translation_projects(&current_lang.get()).projects_intro
+                        }</p>
                     </div>
                     
                     <div class="flex flex-col md:flex-row gap-[10px] md:gap-[15px] items-start md:items-center text-white text-base md:text-2xl">
                         {projects.iter().enumerate().map(|(index, &(project, href))| {
                             let project_name = project.to_string();
                             let project_href = href.to_string();
+                            let project_href_mobile = href.to_string();
+                            let project_name_for_hover = project_name.clone();
                             let animate_project = {
                                 let project_name = project_name.clone();
                                 move |ev: MouseEvent| {
@@ -359,7 +481,9 @@ fn App() -> impl IntoView {
                             let project_name_for_check = project_name.clone();
                             let project_name_for_check2 = project_name.clone();
                             let project_name_for_check3 = project_name.clone();
-                            let desc = project_descriptions(project);
+                            let get_project_description = get_project_description.clone();
+                            let get_project_description_mobile = get_project_description.clone();
+                            let get_translation_visit = get_translation.clone();
                             
                             view! {
                                 <div class="w-full md:w-auto">
@@ -383,13 +507,13 @@ fn App() -> impl IntoView {
                                         style:opacity=move || if expanded_project.get() == Some(project_name_for_check2.clone()) { "1" } else { "0" }
                                     >
                                         <div class="mt-3 mb-2 text-xs leading-relaxed whitespace-pre-line">
-                                            {desc}
+                                            {move || get_project_description_mobile(&project_name_for_hover, &current_lang.get())}
                                         </div>
                                         <a
-                                            href=project_href
+                                            href=project_href_mobile
                                             class="inline-block mt-2 px-4 py-2 bg-white text-black rounded text-sm font-bold transition-transform hover:scale-105"
                                         >
-                                            "Visit Project →"
+                                            {move || get_translation_visit(&current_lang.get()).visit_project}
                                         </a>
                                     </div>
                                 </div>
@@ -398,9 +522,8 @@ fn App() -> impl IntoView {
                     </div>
                 </div>
                 
-                // Desktop hover description
                 {move || hovered_project.get().map(|project: String| {
-                    let desc = project_descriptions(&project);
+                    let desc = get_project_description(&project, &current_lang.get());
                     view! {
                         <div class="hidden md:block absolute left-[100px] bg-black/0 text-white text-sm leading-relaxed whitespace-pre-line max-w-[800px] z-50 pointer-events-none"
                             style="top: calc(50% + 180px); animation: fadeIn 0.3s ease-out forwards;">
@@ -418,23 +541,43 @@ fn App() -> impl IntoView {
             }
             
             @keyframes float {
-                from, to {
-                    transform: translateY(-0%);
-                }
-                50% {    
-                    transform: translateY(-10%);
-                }
+                from, to { transform: translateY(-0%); }
+                50% { transform: translateY(-10%); }
+            }
+            
+            @keyframes shimmer {
+                0% { background-position: -100% 0; }
+                100% { background-position: 200% 0; }
+            }
+            
+            @keyframes pulse-scale {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.15); }
+            }
+            
+            .flag-btn {
+                background: none;
+                border: none;
+                padding: 4px;
+                border-radius: 4px;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .flag-btn:hover {
+                animation: pulse-scale 0.6s ease-in-out;
+            }
+            
+            .shimmer-overlay {
+                background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+                background-size: 200% 100%;
+                animation: shimmer 2s infinite linear;
+                border-radius: 4px;
             }
 
             @media (max-width: 768px) {
-                body {
-                    overflow-y: auto;
-                    overflow-x: hidden;
-                }
-                
-                .link:hover > .outer > .inner, .fancy-link:hover > .outer > .inner {
-                    animation: none;
-                }
+                body { overflow-y: auto; overflow-x: hidden; }
+                .link:hover > .outer > .inner, .fancy-link:hover > .outer > .inner { animation: none; }
             }
             
             :root {
@@ -490,34 +633,13 @@ fn App() -> impl IntoView {
                 --rotate50: 0deg; --loc50: 0%; --loctwo50: 0%;
             }
             
-            .fancy-link {
-                text-decoration: none !important;
-                color: white !important;
-            }
-            
-            .fancy-link .letter {
-                transition: color 800ms ease;
-            }
-            
-            .fancy-link:not(:hover):not(.expanded) .letter:not(.prefix-letter) {
-                color: white !important;
-            }
-            
-            .link span, .fancy-link span {
-                display: inline-block;
-            }
-            
-            .link > .outer, .fancy-link > .outer {
-                transition: transform 350ms ease;
-            }
-            
-            .link:hover > .outer, .fancy-link:hover > .outer {
-                transition-duration: 800ms;
-            }
-            
-            .link:hover > .outer > .inner, .fancy-link:hover > .outer > .inner, .fancy-link.expanded > .outer > .inner {
-                animation: float 5s ease infinite;
-            }
+            .fancy-link { text-decoration: none !important; color: white !important; }
+            .fancy-link .letter { transition: color 800ms ease; }
+            .fancy-link:not(:hover):not(.expanded) .letter:not(.prefix-letter) { color: white !important; }
+            .link span, .fancy-link span { display: inline-block; }
+            .link > .outer, .fancy-link > .outer { transition: transform 350ms ease; }
+            .link:hover > .outer, .fancy-link:hover > .outer { transition-duration: 800ms; }
+            .link:hover > .outer > .inner, .fancy-link:hover > .outer > .inner, .fancy-link.expanded > .outer > .inner { animation: float 5s ease infinite; }
             
             .link:hover > .outer:nth-child(1), .fancy-link:hover > .outer:nth-child(1), .fancy-link.expanded > .outer:nth-child(1) { transform: translate(var(--loc1), var(--loctwo1)) rotate(var(--rotate1)) !important; }
             .link:hover > .outer:nth-child(2), .fancy-link:hover > .outer:nth-child(2), .fancy-link.expanded > .outer:nth-child(2) { transform: translate(var(--loc2), var(--loctwo2)) rotate(var(--rotate2)) !important; }
