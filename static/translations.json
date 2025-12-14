@@ -78,21 +78,5 @@
     "standpoint_desc": "standpoint adalah platform media sosial berbasis opini untuk membuat tierlist dan polling untuk berbagi pendapat. Ini didukung AI dan berfokus web memungkinkan Anda mengambil foto di seluruh web, serta berkolaborasi secara real time.\n\ndibangun dengan svelte dan python.",
     "infrastruct_desc": "infrastruct adalah platform yurisprudensi online bertenaga AI. Bandingkan pendapat dari agama-agama dunia tentang topik apa pun serta puncak pengetahuan dari filsuf terbesar dalam sejarah di satu tempat. Campur dan cocokkan ide Anda sendiri dan buat sistem Anda sendiri dengan alat online kami. Simpan pendirian Anda.\n\ndibangun dengan next.js, dan backend r2 dibangun dengan vlang.",
     "vuno_desc": "vuno adalah editor teks untuk mengakhiri semua editor teks. Berbasis keyboard, tetapi tidak rumit seperti vim, edit dengan kecepatan cahaya. AI copilot untuk membantu Anda menulis, coding dan lainnya, dengan pengeditan markdown gaya notion langsung.\n\ndibangun dengan tauri (svelte+rust)."
-  },
-  "ce": {
-    "greeting": "Маршалла. Сан цӀе Max Carter 祁明思.",
-    "intro": "Ас хӀумнаш дой, дахаран теңан хьоьж, меттанаш дуьйц.",
-    "projects_intro": "ХӀара сан цахьинарш ю:",
-    "see_more_github": "сан github-ехь кхин а тӀе хьажа",
-    "instagram": "instagram",
-    "read_philosophy": "сан философи еш",
-    "gizzmo_electronics": "gizzmoelectronics.com",
-    "technology_company": "technology.company",
-    "visit_project": "Проектана вахьа →",
-    "soliloquy_desc": "soliloquy — цхьа керла операцин систем ю, zircon ядро тӀехь йиллина, веб оьшуш хӀоттийна. soliloquy башхолу хьалха хила, жимма меттиг лоьцу, дукхагӀа ресурсаш лоьцуш доцу — веб-рабочий столан хьал servo а v8 а тӀехь йиллина.\n\nоьшуниг rust тӀехь йиллина.",
-    "plates_desc": "plates — универсальни ИИ-гӀоьнча ю, хьан массо а устройстваш вовшахтухуш. ХӀара локальни хьалхара ю, устройство тӀехь йолу меттанаш модели а гӀирсаш а лоьцуш хьан сервисашца болх беш. ХӀара цхьанна хенахь а, цхьанна меттехь а болх бой. Локальни серверца хьан даташ лаца, сурташ, буфер а аккаунташ а синхронизаци йе. Цхьанна устройство тӀехь дӀадоладе хьалххе социйначохь.\n\nswiftui + rust тӀехь йиллина. tableware (веб-интерфейс) а mcp а go а svelte а тӀехь йиллина.",
-    "standpoint_desc": "standpoint — мнени тӀехь социальни медиа платформа ю, тирлисташ а опросаш а кхоллуш позицеш дӀабохуш. ХӀара ИИ тӀехь болх беш, веб тӀехь мел йолу сурташ схьалаца а реальни хенахь барт хила а мегийна.\n\nsvelte а python а тӀехь йиллина.",
-    "infrastruct_desc": "infrastruct — онлайн ИИ юриспруденцин платформа ю. Дуьненан динашин мнениш массо а темашца цхьанна меттехь дустуш, исторехь дуккха йоккхачу философийн хаарш цхьана. Хьан хьажарш вовшахтоха, хьайн система кхолла тхан онлайн гӀирсаца. Хьан позицеш лаца.\n\nnext.js тӀехь йиллина, бэкенд r2 vlang тӀехь йиллина.",
-    "vuno_desc": "vuno — массо текст редакторашна тӀаьхьа текст редактор ю. Клавиатура тӀехь йиллина, цхьа дика vim санна ца кхеташ, серло сихаллица редактирова де. ИИ-копилот гӀо дой яздеш, код деш а кхин а, реальни notion-стилехь markdown редактирова йоккхуш.\n\ntauri (svelte+rust) тӀехь йиллина."
   }
 }
