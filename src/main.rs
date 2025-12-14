@@ -39,8 +39,6 @@ fn get_default_translations() -> Translations {
 
 fn detect_browser_language() -> String {
     // Detect browser language and map to our supported language codes
-    // Note: Chechen (ce) is unlikely to be auto-detected by browsers,
-    // but users can manually select it via the flag switcher
     web_sys::window()
         .and_then(|w| w.navigator().language())
         .map(|lang| {
@@ -53,8 +51,6 @@ fn detect_browser_language() -> String {
                 "ru".to_string()
             } else if lang_lower.starts_with("id") {
                 "id".to_string()
-            } else if lang_lower.starts_with("ce") {
-                "ce".to_string()
             } else {
                 "en".to_string()
             }
@@ -88,13 +84,12 @@ struct Language {
     is_image: bool,
 }
 
-const LANGUAGES: [Language; 6] = [
+const LANGUAGES: [Language; 5] = [
     Language { code: "en", flag: "🇦🇺", is_image: false },
     Language { code: "zh-yue", flag: "🇭🇰", is_image: false },
     Language { code: "ru", flag: "🇷🇺", is_image: false },
     Language { code: "zh", flag: "🇨🇳", is_image: false },
     Language { code: "id", flag: "🇮🇩", is_image: false },
-    Language { code: "ce", flag: "/static/chechen.png", is_image: true },
 ];
 
 #[derive(Clone, Copy, Debug, PartialEq)]
