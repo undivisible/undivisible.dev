@@ -38,7 +38,6 @@ fn get_default_translations() -> Translations {
 }
 
 fn detect_browser_language() -> String {
-    // Detect browser language and map to our supported language codes
     web_sys::window()
         .and_then(|w| w.navigator().language())
         .map(|lang| {
@@ -286,9 +285,54 @@ fn App() -> impl IntoView {
                         }
                     }
                 }
+                
+                if let Some(document) = web_sys::window().and_then(|w| w.document()) {
+                    if let Some(doc_element) = document.document_element() {
+                        if let Some(html_element) = doc_element.dyn_ref::<web_sys::HtmlElement>() {
+                            for i in 1..=50 {
+                                let _ = html_element.style().set_property(&format!("--rotate{}", i), "0deg");
+                                let _ = html_element.style().set_property(&format!("--loc{}", i), "0%");
+                                let _ = html_element.style().set_property(&format!("--loctwo{}", i), "0%");
+                            }
+                        }
+                    }
+                }
             }
         }
     };
+    
+    create_effect(move |_| {
+        if let Some(document) = web_sys::window().and_then(|w| w.document()) {
+            let closure = wasm_bindgen::closure::Closure::wrap(Box::new(move || {
+                if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
+                    if doc.hidden() {
+                        if let Some(doc_element) = doc.document_element() {
+                            if let Some(html_element) = doc_element.dyn_ref::<web_sys::HtmlElement>() {
+                                if let Ok(letters) = doc.query_selector_all(".letter") {
+                                    for _i in 0..letters.length() {
+                                        if let Some(letter) = letters.item(_i) {
+                                            if let Some(html_letter) = letter.dyn_ref::<web_sys::HtmlElement>() {
+                                                let _ = html_letter.style().remove_property("color");
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                for i in 1..=50 {
+                                    let _ = html_element.style().set_property(&format!("--rotate{}", i), "0deg");
+                                    let _ = html_element.style().set_property(&format!("--loc{}", i), "0%");
+                                    let _ = html_element.style().set_property(&format!("--loctwo{}", i), "0%");
+                                }
+                            }
+                        }
+                    }
+                }
+            }) as Box<dyn Fn()>);
+            
+            let _ = document.add_event_listener_with_callback("visibilitychange", closure.as_ref().unchecked_ref());
+            closure.forget();
+        }
+    });
     
     let render_letter_text = |text: &str| {
         text.chars().enumerate().map(|(i, c)| {
@@ -379,9 +423,10 @@ fn App() -> impl IntoView {
             </div>
             
             <div class="relative z-10 w-full h-full min-h-screen md:min-h-0">
-                <div class="absolute bottom-[20px] left-[20px] right-[20px] md:top-[50px] md:right-[100px] md:left-auto md:bottom-auto flex flex-col md:flex-row gap-[10px] md:gap-[15px] items-start md:items-center text-white text-base md:text-2xl transition-all duration-1000"
+                <div class="absolute bottom-[40px] left-[20px] right-[20px] md:top-[50px] md:right-[100px] md:left-auto md:bottom-auto flex flex-col md:flex-row gap-[10px] md:gap-[15px] items-start md:items-center text-white text-base md:text-2xl transition-all duration-1000"
                     style:opacity=move || if text_visible.get() { "1" } else { "0" }
-                    style:transform=move || if text_visible.get() { "translateY(0)" } else { "translateY(-20px)" }>
+                    style:transform=move || if text_visible.get() { "translateY(0)" } else { "translateY(-20px)" }
+                    style="padding-bottom: env(safe-area-inset-bottom, 0px);">
                     {
                         let get_translation_nav = get_translation.clone();
                         move || {
@@ -395,7 +440,7 @@ fn App() -> impl IntoView {
                             ];
                             nav_links.into_iter().map(|(text, href, has_prefix)| {
                                 view! {
-                                    <a class="fancy-link transition-colors inline-block" href=href on:mouseenter=animate_letters>
+                                    <a class="fancy-link transition-colors inline-block" href=href on:mouseenter=animate_letters on:mouseleave=reset_letters>
                                         {if has_prefix {
                                             Some(view! { <span class="outer"><span class="inner"><span class="letter prefix-letter" style="color: #ff5705;">"a"</span></span></span> })
                                         } else {
@@ -427,18 +472,22 @@ fn App() -> impl IntoView {
                                 let flag = lang.flag.to_string();
                                 view! {
                                     <button
-                                        class="flag-btn cursor-pointer transition-all duration-300 hover:scale-125 relative"
+                                        class="flag-btn cursor-pointer transition-all duration-300 hover:scale-125"
                                         on:click=move |_| set_current_lang.set(code_for_click.clone())
                                     >
                                         {if is_image {
-                                            view! { <img src=flag.clone() alt="" class="w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block"/> }.into_any()
+                                            view! { 
+                                                <span class="relative inline-block">
+                                                    <img src=flag.clone() alt="" class="w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block shimmer-flag" style=move || if current_lang.get() == code { "" } else { "filter: none;" }/>
+                                                </span>
+                                            }.into_any()
                                         } else {
-                                            view! { <span class="text-xl md:text-2xl">{flag.clone()}</span> }.into_any()
+                                            view! { 
+                                                <span class="relative inline-block">
+                                                    <span class="text-xl md:text-2xl shimmer-flag" style=move || if current_lang.get() == code { "" } else { "background: none; -webkit-background-clip: unset; background-clip: unset; -webkit-text-fill-color: unset;" }>{flag.clone()}</span>
+                                                </span>
+                                            }.into_any()
                                         }}
-                                        <span 
-                                            class="shimmer-overlay absolute inset-0 pointer-events-none"
-                                            style=move || if current_lang.get() == code { "opacity: 1" } else { "opacity: 0" }
-                                        ></span>
                                     </button>
                                 }
                             }).collect::<Vec<_>>()}
@@ -464,6 +513,12 @@ fn App() -> impl IntoView {
                                 move |ev: MouseEvent| {
                                     set_hovered_project.set(Some(project_name.clone()));
                                     animate_letters(ev);
+                                }
+                            };
+                            let reset_project = {
+                                move |ev: MouseEvent| {
+                                    set_hovered_project.set(None);
+                                    reset_letters(ev);
                                 }
                             };
                             let handle_click = {
@@ -494,7 +549,7 @@ fn App() -> impl IntoView {
                                         href=project_href.clone()
                                         class=move || if expanded_project.get() == Some(project_name_for_check3.clone()) { "fancy-link expanded transition-colors cursor-pointer relative inline-block" } else { "fancy-link transition-colors cursor-pointer relative inline-block" }
                                         on:mouseenter=animate_project
-                                        on:mouseleave=move |_| set_hovered_project.set(None)
+                                        on:mouseleave=reset_project
                                         on:click=handle_click
                                         style=format!("transition-delay: {}ms", index * 100 + 500)
                                     >
@@ -571,11 +626,32 @@ fn App() -> impl IntoView {
                 animation: pulse-scale 0.6s ease-in-out;
             }
             
-            .shimmer-overlay {
-                background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+            .shimmer-flag {
+                position: relative;
+            }
+            
+            .shimmer-flag::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%);
                 background-size: 200% 100%;
                 animation: shimmer 2s infinite linear;
-                border-radius: 4px;
+                pointer-events: none;
+                mix-blend-mode: overlay;
+            }
+            
+            img.shimmer-flag {
+                filter: brightness(1.2) contrast(1.1);
+            }
+            
+            span.shimmer-flag {
+                background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%);
+                background-size: 200% 100%;
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                animation: shimmer 2s infinite linear;
             }
 
             @media (max-width: 768px) {
