@@ -38,7 +38,6 @@ fn get_default_translations() -> Translations {
 }
 
 fn detect_browser_language() -> String {
-    // Detect browser language and map to our supported language codes
     web_sys::window()
         .and_then(|w| w.navigator().language())
         .map(|lang| {
@@ -287,7 +286,6 @@ fn App() -> impl IntoView {
                     }
                 }
                 
-                // Reset the CSS custom properties for transforms
                 if let Some(document) = web_sys::window().and_then(|w| w.document()) {
                     if let Some(doc_element) = document.document_element() {
                         if let Some(html_element) = doc_element.dyn_ref::<web_sys::HtmlElement>() {
@@ -302,6 +300,39 @@ fn App() -> impl IntoView {
             }
         }
     };
+    
+    create_effect(move |_| {
+        if let Some(document) = web_sys::window().and_then(|w| w.document()) {
+            let closure = wasm_bindgen::closure::Closure::wrap(Box::new(move || {
+                if let Some(doc) = web_sys::window().and_then(|w| w.document()) {
+                    if doc.hidden() {
+                        if let Some(doc_element) = doc.document_element() {
+                            if let Some(html_element) = doc_element.dyn_ref::<web_sys::HtmlElement>() {
+                                if let Ok(letters) = doc.query_selector_all(".letter") {
+                                    for _i in 0..letters.length() {
+                                        if let Some(letter) = letters.item(_i) {
+                                            if let Some(html_letter) = letter.dyn_ref::<web_sys::HtmlElement>() {
+                                                let _ = html_letter.style().remove_property("color");
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                for i in 1..=50 {
+                                    let _ = html_element.style().set_property(&format!("--rotate{}", i), "0deg");
+                                    let _ = html_element.style().set_property(&format!("--loc{}", i), "0%");
+                                    let _ = html_element.style().set_property(&format!("--loctwo{}", i), "0%");
+                                }
+                            }
+                        }
+                    }
+                }
+            }) as Box<dyn Fn()>);
+            
+            let _ = document.add_event_listener_with_callback("visibilitychange", closure.as_ref().unchecked_ref());
+            closure.forget();
+        }
+    });
     
     let render_letter_text = |text: &str| {
         text.chars().enumerate().map(|(i, c)| {
@@ -441,18 +472,30 @@ fn App() -> impl IntoView {
                                 let flag = lang.flag.to_string();
                                 view! {
                                     <button
-                                        class="flag-btn cursor-pointer transition-all duration-300 hover:scale-125 relative"
+                                        class="flag-btn cursor-pointer transition-all duration-300 hover:scale-125"
                                         on:click=move |_| set_current_lang.set(code_for_click.clone())
                                     >
                                         {if is_image {
-                                            view! { <img src=flag.clone() alt="" class="w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block"/> }.into_any()
+                                            view! { 
+                                                <span class="relative inline-block">
+                                                    <img src=flag.clone() alt="" class="w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block"/>
+                                                    <span 
+                                                        class="shimmer-overlay absolute inset-0 pointer-events-none"
+                                                        style=move || if current_lang.get() == code { "opacity: 1" } else { "opacity: 0" }
+                                                    ></span>
+                                                </span>
+                                            }.into_any()
                                         } else {
-                                            view! { <span class="text-xl md:text-2xl">{flag.clone()}</span> }.into_any()
+                                            view! { 
+                                                <span class="relative inline-block">
+                                                    <span class="text-xl md:text-2xl">{flag.clone()}</span>
+                                                    <span 
+                                                        class="shimmer-overlay absolute inset-0 pointer-events-none"
+                                                        style=move || if current_lang.get() == code { "opacity: 1" } else { "opacity: 0" }
+                                                    ></span>
+                                                </span>
+                                            }.into_any()
                                         }}
-                                        <span 
-                                            class="shimmer-overlay absolute inset-0 pointer-events-none"
-                                            style=move || if current_lang.get() == code { "opacity: 1" } else { "opacity: 0" }
-                                        ></span>
                                     </button>
                                 }
                             }).collect::<Vec<_>>()}
@@ -596,7 +639,6 @@ fn App() -> impl IntoView {
                 background-size: 200% 100%;
                 animation: shimmer 2s infinite linear;
                 border-radius: 4px;
-                inset: 4px;
             }
 
             @media (max-width: 768px) {
