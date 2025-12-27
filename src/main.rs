@@ -162,6 +162,16 @@ fn App() -> impl IntoView {
         }
     };
 
+    // Update document lang attribute when language changes
+    create_effect(move |_| {
+        let lang = current_lang.get();
+        if let Some(document) = web_sys::window().and_then(|w| w.document()) {
+            if let Some(html) = document.document_element() {
+                let _ = html.set_attribute("lang", &lang);
+            }
+        }
+    });
+
     create_effect(move |_| {
         let initial_shapes: Vec<Shape> = vec![
             create_shape(0, ShapeType::Triangle),
