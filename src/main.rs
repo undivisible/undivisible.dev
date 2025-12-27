@@ -477,22 +477,20 @@ fn App() -> impl IntoView {
                                     >
                                         {if is_image {
                                             view! { 
-                                                <span class="relative inline-block">
+                                                <span 
+                                                    class="shimmer-overlay relative inline-block pointer-events-none"
+                                                    style=move || if current_lang.get() == code { "opacity: 1" } else { "opacity: 0" }
+                                                >
                                                     <img src=flag.clone() alt="" class="w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block"/>
-                                                    <span 
-                                                        class="shimmer-overlay absolute inset-0 pointer-events-none"
-                                                        style=move || if current_lang.get() == code { "opacity: 1" } else { "opacity: 0" }
-                                                    ></span>
                                                 </span>
                                             }.into_any()
                                         } else {
                                             view! { 
-                                                <span class="relative inline-block">
+                                                <span 
+                                                    class="shimmer-overlay relative inline-block pointer-events-none"
+                                                    style=move || if current_lang.get() == code { "opacity: 1" } else { "opacity: 0" }
+                                                >
                                                     <span class="text-xl md:text-2xl">{flag.clone()}</span>
-                                                    <span 
-                                                        class="shimmer-overlay absolute inset-0 pointer-events-none"
-                                                        style=move || if current_lang.get() == code { "opacity: 1" } else { "opacity: 0" }
-                                                    ></span>
                                                 </span>
                                             }.into_any()
                                         }}
