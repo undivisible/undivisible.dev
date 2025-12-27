@@ -477,20 +477,14 @@ fn App() -> impl IntoView {
                                     >
                                         {if is_image {
                                             view! { 
-                                                <span 
-                                                    class="shimmer-overlay relative inline-block pointer-events-none"
-                                                    style=move || if current_lang.get() == code { "opacity: 1" } else { "opacity: 0" }
-                                                >
-                                                    <img src=flag.clone() alt="" class="w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block"/>
+                                                <span class="relative inline-block">
+                                                    <img src=flag.clone() alt="" class="w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block shimmer-flag" style=move || if current_lang.get() == code { "" } else { "filter: none;" }/>
                                                 </span>
                                             }.into_any()
                                         } else {
                                             view! { 
-                                                <span 
-                                                    class="shimmer-overlay relative inline-block pointer-events-none"
-                                                    style=move || if current_lang.get() == code { "opacity: 1" } else { "opacity: 0" }
-                                                >
-                                                    <span class="text-xl md:text-2xl">{flag.clone()}</span>
+                                                <span class="relative inline-block">
+                                                    <span class="text-xl md:text-2xl shimmer-flag" style=move || if current_lang.get() == code { "" } else { "background: none; -webkit-background-clip: unset; background-clip: unset; -webkit-text-fill-color: unset;" }>{flag.clone()}</span>
                                                 </span>
                                             }.into_any()
                                         }}
@@ -632,11 +626,32 @@ fn App() -> impl IntoView {
                 animation: pulse-scale 0.6s ease-in-out;
             }
             
-            .shimmer-overlay {
-                background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+            .shimmer-flag {
+                position: relative;
+            }
+            
+            .shimmer-flag::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%);
                 background-size: 200% 100%;
                 animation: shimmer 2s infinite linear;
-                border-radius: 4px;
+                pointer-events: none;
+                mix-blend-mode: overlay;
+            }
+            
+            img.shimmer-flag {
+                filter: brightness(1.2) contrast(1.1);
+            }
+            
+            span.shimmer-flag {
+                background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%);
+                background-size: 200% 100%;
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                animation: shimmer 2s infinite linear;
             }
 
             @media (max-width: 768px) {
