@@ -162,16 +162,6 @@ fn App() -> impl IntoView {
         }
     };
 
-    // Update document lang attribute when language changes
-    create_effect(move |_| {
-        let lang = current_lang.get();
-        if let Some(document) = web_sys::window().and_then(|w| w.document()) {
-            if let Some(html) = document.document_element() {
-                let _ = html.set_attribute("lang", &lang);
-            }
-        }
-    });
-
     create_effect(move |_| {
         let initial_shapes: Vec<Shape> = vec![
             create_shape(0, ShapeType::Triangle),
@@ -296,6 +286,19 @@ fn App() -> impl IntoView {
                         }
                     }
                 }
+                
+                // Reset the CSS custom properties for transforms
+                if let Some(document) = web_sys::window().and_then(|w| w.document()) {
+                    if let Some(doc_element) = document.document_element() {
+                        if let Some(html_element) = doc_element.dyn_ref::<web_sys::HtmlElement>() {
+                            for i in 1..=50 {
+                                let _ = html_element.style().set_property(&format!("--rotate{}", i), "0deg");
+                                let _ = html_element.style().set_property(&format!("--loc{}", i), "0%");
+                                let _ = html_element.style().set_property(&format!("--loctwo{}", i), "0%");
+                            }
+                        }
+                    }
+                }
             }
         }
     };
@@ -406,7 +409,7 @@ fn App() -> impl IntoView {
                             ];
                             nav_links.into_iter().map(|(text, href, has_prefix)| {
                                 view! {
-                                    <a class="fancy-link transition-colors inline-block" href=href on:mouseenter=animate_letters>
+                                    <a class="fancy-link transition-colors inline-block" href=href on:mouseenter=animate_letters on:mouseleave=reset_letters>
                                         {if has_prefix {
                                             Some(view! { <span class="outer"><span class="inner"><span class="letter prefix-letter" style="color: #ff5705;">"a"</span></span></span> })
                                         } else {
@@ -477,6 +480,12 @@ fn App() -> impl IntoView {
                                     animate_letters(ev);
                                 }
                             };
+                            let reset_project = {
+                                move |ev: MouseEvent| {
+                                    set_hovered_project.set(None);
+                                    reset_letters(ev);
+                                }
+                            };
                             let handle_click = {
                                 let project_name = project_name.clone();
                                 move |ev: MouseEvent| {
@@ -505,7 +514,7 @@ fn App() -> impl IntoView {
                                         href=project_href.clone()
                                         class=move || if expanded_project.get() == Some(project_name_for_check3.clone()) { "fancy-link expanded transition-colors cursor-pointer relative inline-block" } else { "fancy-link transition-colors cursor-pointer relative inline-block" }
                                         on:mouseenter=animate_project
-                                        on:mouseleave=move |_| set_hovered_project.set(None)
+                                        on:mouseleave=reset_project
                                         on:click=handle_click
                                         style=format!("transition-delay: {}ms", index * 100 + 500)
                                     >
@@ -587,6 +596,7 @@ fn App() -> impl IntoView {
                 background-size: 200% 100%;
                 animation: shimmer 2s infinite linear;
                 border-radius: 4px;
+                inset: 4px;
             }
 
             @media (max-width: 768px) {

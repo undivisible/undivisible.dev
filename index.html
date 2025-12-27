@@ -11,19 +11,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link data-trunk rel="rust" data-wasm-opt="z" />
     <link data-trunk rel="copy-dir" href="static" />
-    <style>
-        /* Use PT Serif for Cyrillic text, fallback to Young Serif for others */
-        body {
-            font-family: 'Young Serif', serif;
-        }
-        
-        /* Apply PT Serif to Russian text */
-        :lang(ru) {
-            font-family: 'PT Serif', serif;
-        }
-    </style>
 </head>
 
-<body class="m-0 overflow-hidden"></body>
+<body class="m-0 overflow-hidden font-['Young_Serif','PT_Serif',serif]"></body>
 
 </html>
