@@ -379,9 +379,10 @@ fn App() -> impl IntoView {
             </div>
             
             <div class="relative z-10 w-full h-full min-h-screen md:min-h-0">
-                <div class="absolute bottom-[20px] left-[20px] right-[20px] md:top-[50px] md:right-[100px] md:left-auto md:bottom-auto flex flex-col md:flex-row gap-[10px] md:gap-[15px] items-start md:items-center text-white text-base md:text-2xl transition-all duration-1000"
+                <div class="absolute bottom-[40px] left-[20px] right-[20px] md:top-[50px] md:right-[100px] md:left-auto md:bottom-auto flex flex-col md:flex-row gap-[10px] md:gap-[15px] items-start md:items-center text-white text-base md:text-2xl transition-all duration-1000"
                     style:opacity=move || if text_visible.get() { "1" } else { "0" }
-                    style:transform=move || if text_visible.get() { "translateY(0)" } else { "translateY(-20px)" }>
+                    style:transform=move || if text_visible.get() { "translateY(0)" } else { "translateY(-20px)" }
+                    style="padding-bottom: env(safe-area-inset-bottom, 0px);">
                     {
                         let get_translation_nav = get_translation.clone();
                         move || {
