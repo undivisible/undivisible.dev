@@ -472,19 +472,19 @@ fn App() -> impl IntoView {
                                 let flag = lang.flag.to_string();
                                 view! {
                                     <button
-                                        class="flag-btn cursor-pointer transition-all duration-300 hover:scale-125"
+                                        class="flag-btn cursor-pointer transition-all duration-300"
                                         on:click=move |_| set_current_lang.set(code_for_click.clone())
                                     >
                                         {if is_image {
                                             view! { 
                                                 <span class="relative inline-block">
-                                                    <img src=flag.clone() alt="" class="w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block shimmer-flag" style=move || if current_lang.get() == code { "" } else { "filter: none;" }/>
+                                                    <img src=flag.clone() alt="" class=move || if current_lang.get() == code { "w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block shimmer-flag" } else { "w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block" }/>
                                                 </span>
                                             }.into_any()
                                         } else {
                                             view! { 
                                                 <span class="relative inline-block">
-                                                    <span class="text-xl md:text-2xl shimmer-flag" style=move || if current_lang.get() == code { "" } else { "background: none; -webkit-background-clip: unset; background-clip: unset; -webkit-text-fill-color: unset;" }>{flag.clone()}</span>
+                                                    <span class=move || if current_lang.get() == code { "text-xl md:text-2xl shimmer-flag" } else { "text-xl md:text-2xl" }>{flag.clone()}</span>
                                                 </span>
                                             }.into_any()
                                         }}
@@ -623,7 +623,7 @@ fn App() -> impl IntoView {
             }
             
             .flag-btn:hover {
-                animation: pulse-scale 0.6s ease-in-out;
+                transform: scale(1.1);
             }
             
             .shimmer-flag {
