@@ -476,15 +476,17 @@ fn App() -> impl IntoView {
                                         on:click=move |_| set_current_lang.set(code_for_click.clone())
                                     >
                                         {if is_image {
+                                            let base_classes = "w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block";
                                             view! { 
                                                 <span class="relative inline-block">
-                                                    <img src=flag.clone() alt="" class=move || if current_lang.get() == code { "w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block shimmer-flag" } else { "w-[22px] h-[18px] md:w-[28px] md:h-[22px] inline-block" }/>
+                                                    <img src=flag.clone() alt="" class=move || if current_lang.get() == code { format!("{} shimmer-flag", base_classes) } else { base_classes.to_string() }/>
                                                 </span>
                                             }.into_any()
                                         } else {
+                                            let base_classes = "text-xl md:text-2xl";
                                             view! { 
                                                 <span class="relative inline-block">
-                                                    <span class=move || if current_lang.get() == code { "text-xl md:text-2xl shimmer-flag" } else { "text-xl md:text-2xl" }>{flag.clone()}</span>
+                                                    <span class=move || if current_lang.get() == code { format!("{} shimmer-flag", base_classes) } else { base_classes.to_string() }>{flag.clone()}</span>
                                                 </span>
                                             }.into_any()
                                         }}
