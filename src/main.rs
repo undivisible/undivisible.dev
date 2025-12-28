@@ -426,7 +426,7 @@ fn App() -> impl IntoView {
                 <div class="absolute bottom-[40px] left-[20px] right-[20px] md:top-[50px] md:right-[100px] md:left-auto md:bottom-auto flex flex-col md:flex-row gap-[10px] md:gap-[15px] items-start md:items-center text-white text-base md:text-2xl transition-all duration-1000"
                     style:opacity=move || if text_visible.get() { "1" } else { "0" }
                     style:transform=move || if text_visible.get() { "translateY(0)" } else { "translateY(-20px)" }
-                    style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+                    style="padding-bottom: env(safe-area-inset-bottom, 0px); flex-wrap: wrap; max-width: 100%;">
                     {
                         let get_translation_nav = get_translation.clone();
                         move || {
@@ -440,7 +440,7 @@ fn App() -> impl IntoView {
                             ];
                             nav_links.into_iter().map(|(text, href, has_prefix)| {
                                 view! {
-                                    <a class="fancy-link transition-colors inline-block" href=href on:mouseenter=animate_letters on:mouseleave=reset_letters>
+                                    <a class="fancy-link transition-colors inline-block whitespace-nowrap" href=href on:mouseenter=animate_letters on:mouseleave=reset_letters>
                                         {if has_prefix {
                                             Some(view! { <span class="outer"><span class="inner"><span class="letter prefix-letter" style="color: #ff5705;">"a"</span></span></span> })
                                         } else {
@@ -585,8 +585,8 @@ fn App() -> impl IntoView {
                 {move || hovered_project.get().map(|project: String| {
                     let desc = get_project_description(&project, &current_lang.get());
                     view! {
-                        <div class="hidden md:block absolute left-[100px] bg-black/0 text-white text-sm leading-relaxed whitespace-pre-line max-w-[800px] z-50 pointer-events-none"
-                            style="top: calc(50% + 180px); animation: fadeIn 0.3s ease-out forwards;">
+                        <div class="hidden md:block fixed left-[100px] bottom-[50px] bg-black/90 backdrop-blur-sm text-white text-sm leading-relaxed max-w-[600px] z-50 pointer-events-none p-4 rounded-lg border border-white/10"
+                            style="animation: fadeIn 0.3s ease-out forwards;">
                             {desc}
                         </div>
                     }
@@ -648,17 +648,30 @@ fn App() -> impl IntoView {
             }
             
             span.shimmer-flag {
+                position: relative;
+                display: inline-block;
+            }
+            
+            span.shimmer-flag::before {
+                content: '';
+                position: absolute;
+                inset: 0;
                 background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%);
                 background-size: 200% 100%;
-                background-clip: text;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
                 animation: shimmer 2s infinite linear;
+                pointer-events: none;
+                mix-blend-mode: overlay;
             }
 
             @media (max-width: 768px) {
                 body { overflow-y: auto; overflow-x: hidden; }
                 .link:hover > .outer > .inner, .fancy-link:hover > .outer > .inner { animation: none; }
+            }
+            
+            @media (max-width: 480px) {
+                .fancy-link {
+                    font-size: 0.875rem;
+                }
             }
             
             :root {
