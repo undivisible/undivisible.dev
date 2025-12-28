@@ -647,6 +647,10 @@ fn App() -> impl IntoView {
                 filter: brightness(1.2) contrast(1.1);
             }
             
+            /* Shimmer effect for active flag emoji
+               Using ::before pseudo-element with mix-blend-mode instead of background-clip: text
+               to keep the flag emoji visible while applying the shimmer animation.
+               background-clip: text made the emoji invisible (blacked out). */
             span.shimmer-flag {
                 position: relative;
                 display: inline-block;
