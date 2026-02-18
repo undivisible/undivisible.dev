@@ -14,14 +14,12 @@ export const metadata: Metadata = {
     default: "Max Carter | undivisible.dev",
     template: "%s | undivisible.dev",
   },
-  description:
-    "Max Carter — Cantonese-Australian developer, Nasdaq futures trader, and entrepreneur building Soliloquy, Atmosphere, Graft AI, Pava, and Subspace.",
+  description: "Max Carter — Making things for people.",
   keywords: [
     "Max Carter",
     "undivisible",
     "software developer",
     "full stack developer",
-    "Nasdaq trader",
     "entrepreneur",
     "Soliloquy",
     "Atmosphere",
@@ -38,19 +36,19 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Max Carter | Developer, Trader & Entrepreneur",
+    title: "Max Carter | Making things for people.",
     description:
-      "Cantonese-Australian developer, Nasdaq futures trader, and entrepreneur. Building Soliloquy, Graft AI, Pava, and more.",
+      "Cantonese-Australian serial entrepreneur and software developer. Building atechnology.company, graftai.com.au and pava.studio.",
     url: "https://undivisible.dev",
     siteName: "undivisible.dev",
     locale: "en_AU",
     type: "website",
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Max Carter | Developer, Trader & Entrepreneur",
+    card: "summary",
+    title: "Max Carter | Making things for people",
     description:
-      "Cantonese-Australian developer, Nasdaq futures trader, and entrepreneur. Building Soliloquy, Graft AI, Pava, and more.",
+      "Cantonese-Australian serial entrepreneur and software developer. Building atechnology.company, graftai.com.au and pava.studio.",
   },
   robots: {
     index: true,
