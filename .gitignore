@@ -1,5 +1,7 @@
 node_modules/
-dist/
-target/
+.next/
+out/
 .DS_Store
-*.log
+*.tsbuildinfo
+next-env.d.ts
+.claude
