@@ -215,7 +215,7 @@ export default function SiteShell() {
             >
               graft
             </a>
-            &nbsp; which is a business agent on every platform.&nbsp;
+            , which is a business agent on every platform.&nbsp;
             <a
               href="https://pava.studio/"
               className="text-[#ff5705] hover:underline"
@@ -224,7 +224,7 @@ export default function SiteShell() {
             </a>
             , which is an automated marketing assistant on every service, and
             subspace, a memory for every ai and your editor for all of your text
-            based documents. it&apos;s built on top of vibemania for code which
+            based documents. it&apos;s built on top of vibemania for code, a thing i built which
             deploys agent swarms to work on your codebase faster without
             conflicts.
             <br />
