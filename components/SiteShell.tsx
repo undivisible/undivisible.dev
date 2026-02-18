@@ -40,7 +40,7 @@ export default function SiteShell() {
 
   return (
     <motion.div
-      className="[font-synthesis:none] overflow-clip bg-black antialiased w-screen h-screen relative"
+      className="[font-synthesis:none] overflow-clip bg-black antialiased w-screen h-[100dvh] relative"
       initial={{ opacity: 0 }}
       animate={{ opacity: mounted ? 1 : 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
