@@ -30,12 +30,25 @@ export default function SiteShell() {
   const pathname = usePathname();
   const isAbout = pathname === "/about";
   const isMobile = useIsMobile();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Small delay to ensure layout is settled before fade-in
+    const id = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   return (
-    <div className="[font-synthesis:none] overflow-clip bg-black antialiased w-screen h-screen relative">
+    <motion.div
+      className="[font-synthesis:none] overflow-clip bg-black antialiased w-screen h-screen relative"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: mounted ? 1 : 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       {/* Dot grid + shapes layer */}
       <motion.div
         className="absolute overflow-hidden"
+        initial={false}
         animate={{
           top: isAbout ? 0 : isMobile ? 56 : 70,
           bottom: isAbout ? 0 : isMobile ? 0 : 46,
@@ -60,18 +73,45 @@ export default function SiteShell() {
             href={isAbout ? "/" : "/about"}
             className="flex items-center gap-2 md:gap-2.5 p-0 no-underline"
           >
-            <Dithering
-              speed={1}
-              shape="sphere"
-              type="4x4"
-              size={2}
-              scale={0.4}
-              colorBack="#00000000"
-              colorFront={isAbout ? "#FF5705" : "#FFF8E6"}
-              className="w-[56px] h-[56px] md:w-[70px] md:h-[70px] bg-black shrink-0"
-            />
+            <div className="relative w-[56px] h-[56px] md:w-[70px] md:h-[70px] shrink-0">
+              <motion.div
+                className="absolute inset-0"
+                initial={false}
+                animate={{ opacity: isAbout ? 0 : 1 }}
+                transition={transition}
+              >
+                <Dithering
+                  speed={1}
+                  shape="sphere"
+                  type="4x4"
+                  size={2}
+                  scale={0.4}
+                  colorBack="#00000000"
+                  colorFront="#FFF8E6"
+                  className="w-full h-full bg-black"
+                />
+              </motion.div>
+              <motion.div
+                className="absolute inset-0"
+                initial={false}
+                animate={{ opacity: isAbout ? 1 : 0 }}
+                transition={transition}
+              >
+                <Dithering
+                  speed={1}
+                  shape="sphere"
+                  type="4x4"
+                  size={2}
+                  scale={0.4}
+                  colorBack="#00000000"
+                  colorFront="#FF5705"
+                  className="w-full h-full bg-black"
+                />
+              </motion.div>
+            </div>
             <motion.div
               className="text-base md:text-[24px] md:leading-[30px] text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] font-bold shrink-0"
+              initial={false}
               animate={{ opacity: isAbout ? 1 : 0.5 }}
               transition={transition}
             >
@@ -82,6 +122,7 @@ export default function SiteShell() {
           {/* Desktop-only top right links */}
           <motion.div
             className="hidden md:flex items-center gap-[50px] pt-5 pr-5 pointer-events-auto"
+            initial={false}
             animate={{ opacity: isAbout ? 0 : 1 }}
             transition={transition}
             style={{ pointerEvents: isAbout ? "none" : "auto" }}
@@ -116,6 +157,7 @@ export default function SiteShell() {
         {/* Middle area - bio text on about */}
         <motion.div
           className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pointer-events-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          initial={false}
           animate={{
             width: isAbout ? (isMobile ? "100%" : "50%") : "0%",
             opacity: isAbout ? 1 : 0,
@@ -222,6 +264,7 @@ export default function SiteShell() {
         {/* Bottom bar - desktop */}
         <motion.div
           className="hidden md:flex justify-between items-end shrink-0 px-4 pb-4 pt-2 pointer-events-auto"
+          initial={false}
           animate={{ opacity: isAbout ? 0 : 1 }}
           transition={transition}
           style={{ pointerEvents: isAbout ? "none" : "auto" }}
@@ -277,6 +320,7 @@ export default function SiteShell() {
         {/* Bottom bar - mobile */}
         <motion.div
           className="md:hidden shrink-0 px-4 pb-5 pt-2 pointer-events-auto"
+          initial={false}
           animate={{
             opacity: isAbout ? 0 : 1,
             height: isAbout ? 0 : "auto",
@@ -361,6 +405,6 @@ export default function SiteShell() {
           </div>
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
