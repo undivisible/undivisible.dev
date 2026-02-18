@@ -318,21 +318,19 @@ export default function SiteShell() {
         </motion.div>
 
         {/* Bottom bar - mobile */}
-        <motion.div
-          className="md:hidden shrink-0 px-4 pb-5 pt-2 pointer-events-auto"
-          initial={false}
-          animate={{
-            opacity: isAbout ? 0 : 1,
-            height: isAbout ? 0 : "auto",
-            paddingTop: isAbout ? 0 : 8,
-            paddingBottom: isAbout ? 0 : 20,
-          }}
-          transition={transition}
+        <div
+          className="md:hidden shrink-0 pointer-events-auto overflow-hidden transition-[max-height] duration-500 ease-in-out"
           style={{
+            maxHeight: isAbout ? 0 : 200,
             pointerEvents: isAbout ? "none" : "auto",
-            overflow: "hidden",
           }}
         >
+          <motion.div
+            className="px-4 pb-5 pt-2"
+            initial={false}
+            animate={{ opacity: isAbout ? 0 : 1 }}
+            transition={transition}
+          >
           <div className="flex items-baseline gap-3 mb-3">
             <div className="text-lg text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] font-bold">
               max carter
@@ -403,7 +401,8 @@ export default function SiteShell() {
               pava
             </a>
           </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     </motion.div>
   );
