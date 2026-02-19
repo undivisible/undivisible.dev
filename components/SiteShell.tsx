@@ -204,7 +204,7 @@ export default function SiteShell() {
             zircon in v.
             <br />
             it is based on my browser engine - rover, which is made from servo
-            and v8. the the ui is made with my own language, equilibrium, built
+            and v8. the ui is made with my own language, equilibrium, built
             on top of v and svelte.
             <br />
             <br />i also make atmosphere, an apple-type ecosystem for every
