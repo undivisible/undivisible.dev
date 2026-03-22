@@ -14,6 +14,104 @@ const dotStyle = {
   backgroundSize: "17px 17px",
 } as const;
 
+interface Project {
+  name: string;
+  url: string;
+  description: string;
+  stack: string[];
+}
+
+const PROJECTS: Record<string, Project> = {
+  crepuscularity: {
+    name: "crepuscularity",
+    url: "https://github.com/semitechnological/crepuscularity",
+    description: "a declarative ui framework built on gpui (the gpu-accelerated engine from zed). features a tailwind-like syntax and shadcn/ui inspired component library.",
+    stack: ["rust", "gpui", "tailwind"],
+  },
+  rusty_foundationmodels: {
+    name: "rusty_foundationmodels",
+    url: "https://github.com/undivisible/RUSTY_FOUNDATIONMODELS",
+    description: "safe rust bindings for apple's foundationmodels, bringing on-device apple intelligence to the rust ecosystem with memory safety and performance.",
+    stack: ["rust", "swift", "apple intelligence"],
+  },
+  scape: {
+    name: "scape",
+    url: "https://github.com/undivisible/scape",
+    description: "a spatial desktop environment for macos designed specifically for apple vision pro, redefining multi-window productivity in 3d space.",
+    stack: ["swift", "macos", "visionpro"],
+  },
+  unthinkmail: {
+    name: "unthinkmail",
+    url: "https://github.com/undivisible/UNTHINKMAIL",
+    description: "a minimalist, private-first email miniapp designed for speed and clarity in communication.",
+    stack: ["javascript", "rust"],
+  },
+  unthinkclaw: {
+    name: "unthinkclaw",
+    url: "https://github.com/undivisible/UNTHINKCLAW",
+    description: "an autonomous agent runtime built in rust for secure, high-performance messaging and automation tasks.",
+    stack: ["rust"],
+  },
+  standpoint: {
+    name: "standpoint",
+    url: "https://github.com/undivisible/standpoint",
+    description: "an ai-powered opinion platform and tier list creator. features real-time social features, deep customization, and a focus on beautiful ui.",
+    stack: ["svelte", "typescript", "firebase", "ai"],
+  },
+  wax: {
+    name: "wax",
+    url: "https://github.com/semitechnological/wax",
+    description: "a fast, homebrew-compatible package manager for rust developers, focusing on speed and minimal dependencies.",
+    stack: ["rust"],
+  },
+  bublik: {
+    name: "bublik",
+    url: "https://github.com/undivisible/bublik",
+    description: "a specialized noise generator miniapp for focused work and acoustic modeling.",
+    stack: ["rust"],
+  },
+  alphabets: {
+    name: "alphabets",
+    url: "https://github.com/semitechnological/alphabets",
+    description: "a tool for language learning focusing on character recognition and orthography across different writing systems.",
+    stack: ["rust", "language learning"],
+  },
+};
+
+function ProjectLink({ id }: { id: string }) {
+  const project = PROJECTS[id];
+  if (!project) return null;
+
+  return (
+    <span className="relative group inline-block">
+      <a
+        href={project.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-[#ff5705] hover:underline"
+      >
+        {project.name.toLowerCase()}
+      </a>
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-64 p-4 bg-black border border-[#FFF8E6]/20 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 shadow-2xl backdrop-blur-md">
+        <div className="text-sm text-[#FFF8E6] mb-3 leading-snug">
+          {project.description}
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {project.stack.map((tech) => (
+            <span
+              key={tech}
+              className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border border-[#FFF8E6]/30 text-[#FFF8E6]/70 rounded-full"
+            >
+              {tech}
+            </span>
+          ))}
+        </div>
+        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-black border-r border-b border-[#FFF8E6]/20 rotate-45" />
+      </div>
+    </span>
+  );
+}
+
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -171,74 +269,29 @@ export default function SiteShell() {
             english and beginner japanese.
             <br />
             i learn japanese, bulgarian and hebrew. i am also building&nbsp;
-            <a
-              href="https://github.com/semitechnological/alphabets"
-              className="text-[#ff5705] hover:underline"
-            >
-              alphabets
-            </a>
+            <ProjectLink id="alphabets" />
             , a tool for language learning.
             <br />
             <br />
             i build public software like&nbsp;
-            <a
-              href="https://github.com/semitechnological/crepuscularity"
-              className="text-[#ff5705] hover:underline"
-            >
-              crepuscularity
-            </a>
+            <ProjectLink id="crepuscularity" />
             , a declarative ui framework for rust,&nbsp;
-            <a
-              href="https://github.com/undivisible/RUSTY_FOUNDATIONMODELS"
-              className="text-[#ff5705] hover:underline"
-            >
-              rusty_foundationmodels
-            </a>
+            <ProjectLink id="rusty_foundationmodels" />
             , bindings for apple intelligence,&nbsp;
-            <a
-              href="https://github.com/undivisible/scape"
-              className="text-[#ff5705] hover:underline"
-            >
-              scape
-            </a>
+            <ProjectLink id="scape" />
             , a spatial desktop for vision pro, and&nbsp;
-            <a
-              href="https://github.com/undivisible/UNTHINKMAIL"
-              className="text-[#ff5705] hover:underline"
-            >
-              unthinkmail
-            </a>
+            <ProjectLink id="unthinkmail" />
             .
             <br />
             <br />
             my other projects include&nbsp;
-            <a
-              href="https://github.com/undivisible/UNTHINKCLAW"
-              className="text-[#ff5705] hover:underline"
-            >
-              unthinkclaw
-            </a>
+            <ProjectLink id="unthinkclaw" />
             ,&nbsp;
-            <a
-              href="https://github.com/undivisible/standpoint"
-              className="text-[#ff5705] hover:underline"
-            >
-              standpoint
-            </a>
+            <ProjectLink id="standpoint" />
             ,&nbsp;
-            <a
-              href="https://github.com/semitechnological/wax"
-              className="text-[#ff5705] hover:underline"
-            >
-              wax
-            </a>
+            <ProjectLink id="wax" />
             &nbsp;and&nbsp;
-            <a
-              href="https://github.com/undivisible/bublik"
-              className="text-[#ff5705] hover:underline"
-            >
-              bublik
-            </a>
+            <ProjectLink id="bublik" />
             .
             <br />
             <br />
@@ -254,8 +307,7 @@ export default function SiteShell() {
             gpt-3 in 2020.
             <br />
             <br />
-            i go to the gym occassionally, love cooking and photography. i am
-            writing my own philosophy as well - eudaimonia, total latitude.
+            i go to the gym occassionally, love cooking and photography.
           </div>
         </motion.div>
 
