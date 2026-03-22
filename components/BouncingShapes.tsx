@@ -116,14 +116,14 @@ export default function BouncingShapes({ colorMode }: BouncingShapesProps) {
       });
 
       rafRef.current = requestAnimationFrame(animate);
-    };
+      };
 
-    rafRef.current = requestAnimationFrame(animate);
+      rafRef.current = requestAnimationFrame(animate);
 
-    return () => {
+      return () => {
       cancelAnimationFrame(rafRef.current);
-    };
-  }, [init]);
+      };
+      }, [colorMode]);
 
   useEffect(() => {
     shapesRef.current.forEach((shape) => {
