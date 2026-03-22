@@ -18,8 +18,8 @@ function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const mql = window.matchMedia("(max-width: 768px)");
-    setIsMobile(mql.matches);
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    setIsMobile(mql.matches);
     mql.addEventListener("change", handler);
     return () => mql.removeEventListener("change", handler);
   }, []);
@@ -128,20 +128,12 @@ export default function SiteShell() {
             style={{ pointerEvents: isAbout ? "none" : "auto" }}
           >
             <a
-              href="https://github.com/undivisible"
+              href="https://github.com/semitechnological"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[24px] leading-[30px] text-right opacity-50 hover:opacity-100 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] shrink-0 no-underline transition-opacity duration-300"
             >
-              github/undivisible
-            </a>
-            <a
-              href="https://instagram.com/makethingsforpeople"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[24px] leading-[30px] text-right opacity-50 hover:opacity-100 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] shrink-0 no-underline transition-opacity duration-300"
-            >
-              instagram@makethingsforpeople
+              github/semitechnological
             </a>
             <a
               href="https://instagram.com/undivisible.dev"
@@ -175,16 +167,82 @@ export default function SiteShell() {
             i make things for people.
             <br />
             <br />
-            i am cantonese australian. i speak cantonese, mandarin, russian and
-            english.
+            i am cantonese australian. i speak cantonese, mandarin, russian,
+            english and beginner japanese.
             <br />
-            i learn iraqi arabic, bulgarian, interslavic and hebrew. i speak
-            some chechen and indonesian.
+            i learn japanese, bulgarian and hebrew. i am also building&nbsp;
+            <a
+              href="https://github.com/semitechnological/alphabets"
+              className="text-[#ff5705] hover:underline"
+            >
+              alphabets
+            </a>
+            , a tool for language learning.
             <br />
             <br />
-            i trade on nasdaq futures, run three software startups and work with
-            my dad making amazing automotive products and technology for older
-            people.
+            i build public software like&nbsp;
+            <a
+              href="https://github.com/semitechnological/crepuscularity"
+              className="text-[#ff5705] hover:underline"
+            >
+              crepuscularity
+            </a>
+            , a declarative ui framework for rust,&nbsp;
+            <a
+              href="https://github.com/undivisible/RUSTY_FOUNDATIONMODELS"
+              className="text-[#ff5705] hover:underline"
+            >
+              rusty_foundationmodels
+            </a>
+            , bindings for apple intelligence,&nbsp;
+            <a
+              href="https://github.com/undivisible/scape"
+              className="text-[#ff5705] hover:underline"
+            >
+              scape
+            </a>
+            , a spatial desktop for vision pro, and&nbsp;
+            <a
+              href="https://github.com/undivisible/UNTHINKMAIL"
+              className="text-[#ff5705] hover:underline"
+            >
+              unthinkmail
+            </a>
+            .
+            <br />
+            <br />
+            my other projects include&nbsp;
+            <a
+              href="https://github.com/undivisible/UNTHINKCLAW"
+              className="text-[#ff5705] hover:underline"
+            >
+              unthinkclaw
+            </a>
+            ,&nbsp;
+            <a
+              href="https://github.com/undivisible/standpoint"
+              className="text-[#ff5705] hover:underline"
+            >
+              standpoint
+            </a>
+            ,&nbsp;
+            <a
+              href="https://github.com/semitechnological/wax"
+              className="text-[#ff5705] hover:underline"
+            >
+              wax
+            </a>
+            &nbsp;and&nbsp;
+            <a
+              href="https://github.com/undivisible/bublik"
+              className="text-[#ff5705] hover:underline"
+            >
+              bublik
+            </a>
+            .
+            <br />
+            <br />
+            i trade on nasdaq futures.
             <br />
             <br />
             i am a self taught full stack, high level and occassionally low
@@ -198,66 +256,6 @@ export default function SiteShell() {
             <br />
             i go to the gym occassionally, love cooking and photography. i am
             writing my own philosophy as well - eudaimonia, total latitude.
-            <br />
-            <br />
-            i make soliloquy - a web and ai first operating system based on
-            zircon in v.
-            <br />
-            it is based on my browser engine - rover, which is made from servo
-            and v8. the ui is made with my own language, equilibrium, built
-            on top of v and svelte.
-            <br />
-            <br />i also make atmosphere, an apple-type ecosystem for every
-            device,&nbsp;
-            <a
-              href="https://graftai.com.au/"
-              className="text-[#ff5705] hover:underline"
-            >
-              graft
-            </a>
-            , which is a business agent on every platform.&nbsp;
-            <a
-              href="https://pava.studio/"
-              className="text-[#ff5705] hover:underline"
-            >
-              pava
-            </a>
-            , which is an automated marketing assistant on every service, and
-            subspace, a memory for every ai and your editor for all of your text
-            based documents. it&apos;s built on top of vibemania for code, a thing i built which
-            deploys agent swarms to work on your codebase faster without
-            conflicts.
-            <br />
-            <br />
-            also for fun i made&nbsp;
-            <a
-              href="https://standpoint.atechnology.company/"
-              className="text-[#ff5705] hover:underline"
-            >
-              standpoint
-            </a>
-            , an opinion based social media platform,&nbsp;
-            <a
-              href="https://bublik.undivisible.dev/"
-              className="text-[#ff5705] hover:underline"
-            >
-              bublik
-            </a>
-            , a noise generator and&nbsp;
-            <a
-              href="https://infrastruct.atechnology.company/"
-              className="text-[#ff5705] hover:underline"
-            >
-              infrastruct
-            </a>
-            , which is an agnostic jurisprudence search engine, as well as&nbsp;
-            <a
-              href="https://akh.atechnology.company/"
-              className="text-[#ff5705] hover:underline"
-            >
-              akh
-            </a>
-            , an islamic platform for when i was previously muslim.
           </div>
         </motion.div>
 
@@ -283,36 +281,12 @@ export default function SiteShell() {
 
           <div className="flex items-center gap-[50px]">
             <a
-              href="https://atechnology.company/"
+              href="https://github.com/undivisible"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[24px] leading-[30px] text-right opacity-50 hover:opacity-100 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] shrink-0 no-underline transition-opacity duration-300"
             >
-              atechnology company
-            </a>
-            <a
-              href="https://gizzmoelectronics.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[24px] leading-[30px] text-right opacity-50 hover:opacity-100 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] shrink-0 no-underline transition-opacity duration-300"
-            >
-              gizzmo electronics
-            </a>
-            <a
-              href="https://pava.studio"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[24px] leading-[30px] text-right opacity-50 hover:opacity-100 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] shrink-0 no-underline transition-opacity duration-300"
-            >
-              pava
-            </a>
-            <a
-              href="https://graftai.com.au"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[24px] leading-[30px] text-right opacity-50 hover:opacity-100 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] shrink-0 no-underline transition-opacity duration-300"
-            >
-              graft ai
+              github/undivisible
             </a>
           </div>
         </motion.div>
@@ -345,20 +319,12 @@ export default function SiteShell() {
 
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <a
-              href="https://github.com/undivisible"
+              href="https://github.com/semitechnological"
               target="_blank"
               rel="noopener noreferrer"
               className="text-base opacity-50 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] no-underline transition-opacity duration-300"
             >
               github
-            </a>
-            <a
-              href="https://instagram.com/makethingsforpeople"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-base opacity-50 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] no-underline transition-opacity duration-300"
-            >
-              @makethingsforpeople
             </a>
             <a
               href="https://instagram.com/undivisible.dev"
@@ -369,36 +335,12 @@ export default function SiteShell() {
               @undivisible.dev
             </a>
             <a
-              href="https://atechnology.company/"
+              href="https://github.com/undivisible"
               target="_blank"
               rel="noopener noreferrer"
               className="text-base opacity-50 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] no-underline transition-opacity duration-300"
             >
-              atechnology
-            </a>
-            <a
-              href="https://gizzmoelectronics.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-base opacity-50 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] no-underline transition-opacity duration-300"
-            >
-              gizzmo
-            </a>
-            <a
-              href="https://graftai.com.au"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-base opacity-50 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] no-underline transition-opacity duration-300"
-            >
-              graft ai
-            </a>
-            <a
-              href="https://pava.studio"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-base opacity-50 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] no-underline transition-opacity duration-300"
-            >
-              pava
+              @undivisible
             </a>
           </div>
           </motion.div>

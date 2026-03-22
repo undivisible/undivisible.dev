@@ -31,9 +31,7 @@ const ORANGE_COLOR = "#ff5705";
 function createShape(
   id: number,
   type: ShapeType,
-  colorMode: "rgb" | "orange",
-  w: number,
-  h: number
+  colorMode: "rgb" | "orange"
 ): Shape {
   const size = 30;
   const x = 10 + Math.random() * 80;
@@ -68,14 +66,23 @@ export default function BouncingShapes({ colorMode }: BouncingShapesProps) {
     initializedRef.current = true;
     const types: ShapeType[] = ["triangle", "circle", "square"];
     const created = types.map((type, i) =>
-      createShape(i, type, colorMode, 100, 100)
+      createShape(i, type, colorMode)
     );
     shapesRef.current = created;
     setShapes([...created]);
   }, [colorMode]);
 
   useEffect(() => {
-    init();
+    // Initial creation of shapes
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      const types: ShapeType[] = ["triangle", "circle", "square"];
+      const created = types.map((type, i) =>
+        createShape(i, type, colorMode)
+      );
+      shapesRef.current = created;
+      setShapes([...created]);
+    }
 
     const animate = () => {
       shapesRef.current.forEach((shape) => {

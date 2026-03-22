@@ -16,18 +16,19 @@ export const metadata: Metadata = {
   },
   description: "Max Carter — Making things for people.",
   keywords: [
-    "Max Carter",
+    "max carter",
     "undivisible",
     "software developer",
     "full stack developer",
     "entrepreneur",
-    "Soliloquy",
-    "Atmosphere",
-    "Graft AI",
-    "Pava",
-    "Subspace",
-    "Rust developer",
-    "Go developer",
+    "crepuscularity",
+    "rusty_foundationmodels",
+    "scape",
+    "unthinkmail",
+    "unthinkclaw",
+    "alphabets",
+    "rust developer",
+    "go developer",
   ],
   authors: [{ name: "Max Carter", url: "https://undivisible.dev" }],
   creator: "Max Carter",
@@ -37,8 +38,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Max Carter | Making things for people.",
-    description:
-      "Cantonese-Australian serial entrepreneur and software developer. Building atechnology.company, graftai.com.au and pava.studio.",
+    description: "artificer, architect, generalist.",
     url: "https://undivisible.dev",
     siteName: "undivisible.dev",
     locale: "en_AU",
@@ -47,8 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "Max Carter | Making things for people",
-    description:
-      "Cantonese-Australian serial entrepreneur and software developer. Building atechnology.company, graftai.com.au and pava.studio.",
+    description: "artificer, architect, generalist.",
   },
   robots: {
     index: true,
