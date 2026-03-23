@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState } from "react";
 
 type ShapeType = "triangle" | "circle" | "square";
 
@@ -15,18 +15,19 @@ interface Shape {
   dx: number;
   dy: number;
   rotationSpeed: number;
+  gradientId: string;
 }
 
 interface BouncingShapesProps {
   colorMode: "rgb" | "orange";
 }
 
-const RGB_COLORS: Record<ShapeType, string> = {
-  triangle: "#ff0000",
-  circle: "#00ff00",
-  square: "#0000ff",
+const GRADIENTS = {
+  red: { start: "#660000", end: "#ff007f" },      // Deep Red to Neon Pink
+  green: { start: "#004400", end: "#00ffcc" },    // Deep Green to bright Teal
+  blue: { start: "#000066", end: "#00f2ff" },     // Deep Blue to Electric Cyan
+  orange: { start: "#882200", end: "#ffff00" },   // Deep Burnt Orange to bright Yellow
 };
-const ORANGE_COLOR = "#ff5705";
 
 function createShape(
   id: number,
@@ -38,6 +39,13 @@ function createShape(
   const y = 10 + Math.random() * 80;
   const angle = Math.random() * Math.PI * 2;
   const speed = Math.random() * 0.03 + 0.025;
+  const gradientId = `grad-${type}-${id}`;
+
+  const colorMap: Record<ShapeType, string> = {
+    triangle: "url(#grad-red)",
+    circle: "url(#grad-green)",
+    square: "url(#grad-blue)",
+  };
 
   return {
     id,
@@ -45,11 +53,12 @@ function createShape(
     y,
     size,
     rotation: Math.random() * 360,
-    color: colorMode === "orange" ? ORANGE_COLOR : RGB_COLORS[type],
+    color: colorMode === "orange" ? "url(#grad-orange)" : colorMap[type],
     type,
     dx: Math.cos(angle) * speed,
     dy: Math.sin(angle) * speed,
     rotationSpeed: (Math.random() - 0.5) * 0.4,
+    gradientId,
   };
 }
 
@@ -61,19 +70,7 @@ export default function BouncingShapes({ colorMode }: BouncingShapesProps) {
   const [shapes, setShapes] = useState<Shape[]>([]);
   const initializedRef = useRef(false);
 
-  const init = useCallback(() => {
-    if (initializedRef.current) return;
-    initializedRef.current = true;
-    const types: ShapeType[] = ["triangle", "circle", "square"];
-    const created = types.map((type, i) =>
-      createShape(i, type, colorMode)
-    );
-    shapesRef.current = created;
-    setShapes([...created]);
-  }, [colorMode]);
-
   useEffect(() => {
-    // Initial creation of shapes
     if (!initializedRef.current) {
       initializedRef.current = true;
       const types: ShapeType[] = ["triangle", "circle", "square"];
@@ -114,21 +111,21 @@ export default function BouncingShapes({ colorMode }: BouncingShapesProps) {
           );
         }
       });
-
       rafRef.current = requestAnimationFrame(animate);
-      };
+    };
 
-      rafRef.current = requestAnimationFrame(animate);
-
-      return () => {
-      cancelAnimationFrame(rafRef.current);
-      };
-      }, [colorMode]);
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [colorMode]);
 
   useEffect(() => {
     shapesRef.current.forEach((shape) => {
-      shape.color =
-        colorMode === "orange" ? ORANGE_COLOR : RGB_COLORS[shape.type];
+      const colorMap: Record<ShapeType, string> = {
+        triangle: "url(#grad-red)",
+        circle: "url(#grad-green)",
+        square: "url(#grad-blue)",
+      };
+      shape.color = colorMode === "orange" ? "url(#grad-orange)" : colorMap[shape.type];
     });
     setShapes([...shapesRef.current]);
   }, [colorMode]);
@@ -141,13 +138,35 @@ export default function BouncingShapes({ colorMode }: BouncingShapesProps) {
       preserveAspectRatio="xMidYMid slice"
       style={{
         maskImage:
-          "radial-gradient(circle, rgba(255,255,255,1) 1.5px, transparent 1.5px)",
-        maskSize: "17px 17px",
+          "radial-gradient(circle, rgba(255,255,255,1) 2.5px, transparent 2.5px)",
+        maskSize: "20px 20px",
         WebkitMaskImage:
-          "radial-gradient(circle, rgba(255,255,255,1) 1.5px, transparent 1.5px)",
-        WebkitMaskSize: "17px 17px",
+          "radial-gradient(circle, rgba(255,255,255,1) 2.5px, transparent 2.5px)",
+        WebkitMaskSize: "20px 20px",
       }}
     >
+      <defs>
+        <linearGradient id="grad-red" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={GRADIENTS.red.start} />
+          <stop offset="50%" stopColor="#ff0000" />
+          <stop offset="100%" stopColor={GRADIENTS.red.end} />
+        </linearGradient>
+        <linearGradient id="grad-green" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={GRADIENTS.green.start} />
+          <stop offset="50%" stopColor="#00ff00" />
+          <stop offset="100%" stopColor={GRADIENTS.green.end} />
+        </linearGradient>
+        <linearGradient id="grad-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={GRADIENTS.blue.start} />
+          <stop offset="50%" stopColor="#0000ff" />
+          <stop offset="100%" stopColor={GRADIENTS.blue.end} />
+        </linearGradient>
+        <linearGradient id="grad-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={GRADIENTS.orange.start} />
+          <stop offset="50%" stopColor="#ff5705" />
+          <stop offset="100%" stopColor={GRADIENTS.orange.end} />
+        </linearGradient>
+      </defs>
       {shapes.map((shape) => {
         const s = shape.size;
         return (
