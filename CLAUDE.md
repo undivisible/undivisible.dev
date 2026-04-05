@@ -1,30 +1,38 @@
-# Repository context for Claude / coding agents
+# Agent notes — undivisible.dev repository
 
-## Scope
+## What this repo is
 
-This repository is **only** the undivisible.dev Next.js app plus the **Crepuscularity static site** inputs and glue scripts. It is not the Crepuscularity monorepo; CI clones that separately.
+A **Rust-only** static site:
+
+1. **`crepus web build`** (from `semitechnological/crepuscularity`, branch **`web-v3`**) reads `crepuscularity-site/site.json` and writes HTML.
+2. **`expand-site-links`** (`site-tools` crate) post-processes `dist/index.html`, replacing tokens like `__CREPUS__` with anchor tags.
+
+There is **no** Next.js in the production build. Do not reintroduce Node for the main site without an explicit request.
+
+## Tokens
+
+All placeholders live in `site-tools/src/main.rs` (`replacements()`). Any new `__NAME__` in `site.json` must have a matching entry there.
+
+## Crepuscularity facts (avoid mislabeling)
+
+- **`crepus web`** → static HTML from `site.json` (not WASM).
+- **`crepus webext`** → MV3 extensions with WASM + manifests (`crepuscularity-webext`).
+- User-facing claims in copy should match what the upstream README says, extended only when the user explicitly asks.
 
 ## Layout
 
 | Path | Role |
 |------|------|
-| `app/` | Next.js App Router; `page.tsx` and `about/page.tsx` are shells; UI is in `SiteShell` |
-| `components/SiteShell.tsx` | Client UI: bio paragraph, `ProjectLink` tooltips, nav |
-| `crepuscularity-site/site.json` | Structured content for `crepus web build` |
-| `scripts/build-static.sh` | Clone/build `crepus`, emit `out/index.html` |
-| `scripts/apply-crepus-link-placeholders.mjs` | Replace `__GH_*__` tokens with `<a>` tags after HTML generation |
-| `.github/workflows/deploy.yml` | GitHub Pages: Rust + cloned crepuscularity `web-v3` → `dist/` |
+| `crepuscularity-site/site.json` | Page content |
+| `site-tools/` | `expand-site-links` binary |
+| `scripts/build-static.sh` | Local full pipeline |
+| `.github/workflows/deploy.yml` | Pages deploy |
+| `old/` | Archived site iterations — not part of build |
 
-## Editing the “paragraph”
+## After edits
 
-The visible bio is the block starting at “hi, i'm max carter” in `components/SiteShell.tsx`. Each `ProjectLink` needs a matching entry in the `PROJECTS` map (id → url, description, stack).
-
-## Crepuscularity `web-v3` note
-
-On branch `web-v3`, `crepus web build` produces **static HTML from `site.json`**. WASM is central to **`crepus webext`** (extensions), not to `crepus web`. The README describes the static pipeline accurately; avoid calling `crepus web` output “WASM” unless you add a wasm client yourself.
-
-## Constraints
-
-- Prefer minimal diffs; match existing Tailwind + Framer patterns.
-- Do not remove `.gitignore` rules for `out/` (Next export) or `dist/` (Crepuscularity static) unless deployment changes.
-- After substantive edits, run `npm run lint` and `npm run build`.
+```bash
+cargo fmt
+cargo clippy -p site-tools -- -D warnings
+./scripts/build-static.sh
+```

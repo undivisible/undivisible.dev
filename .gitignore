@@ -1,9 +1,6 @@
-node_modules/
-.next/
-out/
+/target/
 dist/
 .crepus-cache/
 .DS_Store
-*.tsbuildinfo
-next-env.d.ts
+*.rs.bk
 .claude

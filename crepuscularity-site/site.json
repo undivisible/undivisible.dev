@@ -4,7 +4,7 @@
   "domain": "undivisible.dev",
   "seo": {
     "title": "Max Carter | undivisible.dev",
-    "description": "Artificer and generalist: Crepuscularity, on-device Apple Intelligence in Rust, spatial macOS, AI extensions, and more.",
+    "description": "Rust-first tooling: Crepuscularity (GPUI + webext), Equilibrium FFI, Wax, Atechnology company, and miniapps.",
     "ogImage": null
   },
   "theme": {
@@ -22,15 +22,15 @@
       "props": {
         "eyebrow": "undivisible.dev",
         "headline": "Hi, I'm Max Carter.",
-        "subheadline": "I build public software that pushes past the usual JS-and-bundler wall: __GH_SEMITECH_CREPUSCULARITY__ is the first GPUI-native component stack with hot-reloaded .crepus templates and the first plug-and-play Rust path to Manifest V3 extensions (WASM in the browser, structured manifests, no separate frontend toolchain). On top of that stack, __GH_UNDIVISIBLE_ANYWHERE__ ships AI chat surfaces that can render real widgets and scripts—not just text—because the extension runtime is designed for it. __GH_UNDIVISIBLE_POKE_AROUND__ lets Poke-class agents drive macOS, Linux, and Windows with one codebase; __GH_UNDIVISIBLE_TILE__ is a macOS tiling manager with stacking, Rectangle-style keys, and drag-to-snap zones; __GH_UNDIVISIBLE_RUSTY_AI__ is an AI SDK for Rust; __GH_UNDIVISIBLE_RUSTY_FM__ exposes Apple Intelligence / FoundationModels to Rust with safety in mind; __GH_UNDIVISIBLE_UNTHINKMAIL__ MCPs your IMAP mail; __GH_UNDIVISIBLE_UNTHINKCLAW__ is an OpenClaw-style agent runtime for builders; __GH_SEMITECH_EQUILIBRIUM__ auto-generates C FFI for C-compiling languages; __GH_UNDIVISIBLE_ALPHABETS__ supports language learning; __GH_UNDIVISIBLE_STANDPOINT__ is an opinion and tier-list platform; __GH_SEMITECH_WAX__ is a fast Homebrew-compatible package manager in Rust; __GH_UNDIVISIBLE_BUBLIK__ is a focused noise generator. I also collaborate with __GH_ATECH_SERVO__ and __GH_ATECH_RUSTY_V8__ under __GH_ORG_ATECH__. Together, these projects are better because they share one coherent Rust-and-.crepus story—native, web, and extension targets—instead of three unrelated stacks. Explore __GH_ORG_UNDIVISIBLE__, __GH_ORG_SEMITECH__, and the org index at __GH_UNDIVISIBLE_ATECH_COMPANY__.",
+        "subheadline": "I ship systems software in Rust. __CREPUS__ is the world's first GPUI runtime and component stack with live template hot reload: the same tree drives native desktop UI, and you author it with an extremely approachable surface—__CREPUS_DSL__ as our almost-syntaxless, indentation-first frontend language, plus __CREPUS_REACT__ so the component model stays familiar. __CREPUS_WEBEXT__ is the first plug-and-play, non–JS/TS web-extension framework for MV3: write extension UI and glue in Rust and __CREPUS_DSL__, ship a compliant bundle without a separate JS bundler story. __EQUILIBRIUM__ is the world's first FFI system that takes C-compiling languages and lets you call them from Rust like ordinary, plug-and-play native libraries—generated bindings instead of hand-written glue. I helped build __WAX__, a Homebrew-compatible package manager with parallel downloads that is typically about 3–20× faster than Homebrew on comparable installs, plus distribution through __SEMI_TAP__ and __UNDI_TAP__. __ATECH__ (__GH_ATECH_ORG__) is where we're building a web-AI-native operating system on Zircon, a Vision Pro HUD, Apple-style native syncing across devices, a spatial web platform that makes 3D sites and experiences accessible broadly, and a browser engine path pairing __GH_ATECH_SERVO__ with __GH_ATECH_V8__. On the side I publish small miniapps—see __GH_PROFILE__ for the full list—including __MINI_ANYWHERE__ (chat surfaces that render interactive artifacts), __MINI_POKE__, __MINI_UNTHINKMAIL__, __MINI_BUBLIK__, and __MINI_ALPHABETS__. More code lives under __GH_UNDIVISIBLE__ and __GH_SEMITECH__.",
         "primary": {
-          "label": "GitHub / undivisible",
-          "href": "https://github.com/undivisible",
+          "label": "Crepuscularity",
+          "href": "https://github.com/semitechnological/crepuscularity",
           "external": true
         },
         "secondary": {
-          "label": "GitHub / semitechnological",
-          "href": "https://github.com/semitechnological",
+          "label": "Atechnology.company",
+          "href": "https://atechnology.company/",
           "external": true
         },
         "media": null
@@ -38,30 +38,40 @@
     },
     {
       "type": "feature_grid",
-      "id": "grid-highlights",
+      "id": "grid-pillars",
       "props": {
-        "eyebrow": "Highlights",
-        "title": "What to open first",
+        "eyebrow": "Pillars",
+        "title": "What this stack is",
         "items": [
           {
             "icon": "layout",
-            "title": "Crepuscularity",
-            "description": "__GH_SEMITECH_CREPUSCULARITY__ — one .crepus syntax for GPUI, HTML, React-shaped output, and MV3 extensions."
+            "title": "GPUI + runtime",
+            "description": "__CREPUS__ — first GPUI-native componentry with hot reload; __CREPUS_DSL__ plus __CREPUS_REACT__."
           },
           {
             "icon": "browser",
-            "title": "anywhere",
-            "description": "__GH_UNDIVISIBLE_ANYWHERE__ — AI browser extension for interactive widgets in chat."
+            "title": "Extensions without JS",
+            "description": "__CREPUS_WEBEXT__ — plug-and-play MV3 from Rust, not a JS/TS web-code pipeline."
+          },
+          {
+            "icon": "code",
+            "title": "FFI for C languages",
+            "description": "__EQUILIBRIUM__ — call C-compiling languages from Rust like native libraries."
           },
           {
             "icon": "zap",
-            "title": "rusty_ai & rusty_foundationmodels",
-            "description": "__GH_UNDIVISIBLE_RUSTY_AI__ and __GH_UNDIVISIBLE_RUSTY_FM__ — AI in Rust, including on-device Apple Intelligence bindings."
+            "title": "Packages",
+            "description": "__WAX__ — parallel downloads; __SEMI_TAP__ / __UNDI_TAP__ for brew-style installs."
           },
           {
             "icon": "globe",
-            "title": "Community & orgs",
-            "description": "__GH_ORG_UNDIVISIBLE__, __GH_ORG_SEMITECH__, __GH_ORG_ATECH__ — sources for everything listed on this page."
+            "title": "Atechnology company",
+            "description": "__ATECH__ — Zircon OS, spatial web, Vision Pro HUD, sync, __GH_ATECH_SERVO__ + __GH_ATECH_V8__."
+          },
+          {
+            "icon": "terminal",
+            "title": "Miniapps",
+            "description": "__MINI_ANYWHERE__, __MINI_POKE__, __MINI_UNTHINKMAIL__, __MINI_BUBLIK__, __MINI_ALPHABETS__ — see __GH_PROFILE__."
           }
         ]
       }

@@ -24,11 +24,15 @@ jobs:
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Cache Cargo (crepuscularity)
+      - name: Cache Cargo (this repo + crepuscularity)
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: |
+            . -> target
             /tmp/crepuscularity-gha -> target
+
+      - name: Build site-tools
+        run: cargo build --release -p site-tools
 
       - name: Clone crepuscularity (web-v3)
         run: |
@@ -42,13 +46,13 @@ jobs:
           cd /tmp/crepuscularity-gha
           cargo build --release -p crepuscularity-cli --no-default-features
 
-      - name: Static site (crepus web + link pass)
+      - name: Static site (crepus web + Rust link pass)
         run: |
           mkdir -p dist
           /tmp/crepuscularity-gha/target/release/crepus web build \
             --site "${GITHUB_WORKSPACE}/crepuscularity-site" \
             -o "${GITHUB_WORKSPACE}/dist/index.html"
-          node "${GITHUB_WORKSPACE}/scripts/apply-crepus-link-placeholders.mjs" \
+          "${GITHUB_WORKSPACE}/target/release/expand-site-links" \
             "${GITHUB_WORKSPACE}/dist/index.html"
 
       - name: Setup Pages
