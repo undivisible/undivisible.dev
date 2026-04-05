@@ -25,13 +25,15 @@ const PROJECTS: Record<string, Project> = {
   crepuscularity: {
     name: "crepuscularity",
     url: "https://github.com/semitechnological/crepuscularity",
-    description: "a declarative ui framework built on gpui (the gpu-accelerated engine from zed). features a tailwind-like syntax and shadcn/ui inspired component library.",
-    stack: ["rust", "gpui", "tailwind"],
+    description:
+      "the first gpui-native component system with hot-reloaded .crepus templates, and the first plug-and-play rust path to manifest v3 extensions (wasm + structured manifests, no separate js bundler). one syntax drives desktop, html, and extensions.",
+    stack: ["rust", "gpui", "wasm", "webext"],
   },
   rusty_foundationmodels: {
     name: "rusty_foundationmodels",
-    url: "https://github.com/undivisible/RUSTY_FOUNDATIONMODELS",
-    description: "safe rust bindings for apple's foundationmodels, bringing on-device apple intelligence to the rust ecosystem with memory safety and performance.",
+    url: "https://github.com/undivisible/rusty_foundationmodels",
+    description:
+      "safe rust bindings for apple's foundationmodels—on-device apple intelligence from rust with an eye on memory safety and performance.",
     stack: ["rust", "swift", "apple intelligence"],
   },
   scape: {
@@ -42,15 +44,17 @@ const PROJECTS: Record<string, Project> = {
   },
   unthinkmail: {
     name: "unthinkmail",
-    url: "https://github.com/undivisible/UNTHINKMAIL",
-    description: "a minimalist, private-first email miniapp designed for speed and clarity in communication.",
-    stack: ["javascript", "rust"],
+    url: "https://github.com/undivisible/unthinkmail",
+    description:
+      "mcp your imap-supported mail—connect assistants and tools to email through a structured protocol instead of ad-hoc scraping.",
+    stack: ["rust", "mcp"],
   },
   unthinkclaw: {
     name: "unthinkclaw",
-    url: "https://github.com/undivisible/UNTHINKCLAW",
-    description: "an autonomous agent runtime built in rust for secure, high-performance messaging and automation tasks.",
-    stack: ["rust"],
+    url: "https://github.com/undivisible/unthinkclaw",
+    description:
+      "openclaw for builders—an agent runtime in rust oriented toward secure, high-performance messaging and automation.",
+    stack: ["rust", "agents"],
   },
   standpoint: {
     name: "standpoint",
@@ -72,9 +76,44 @@ const PROJECTS: Record<string, Project> = {
   },
   alphabets: {
     name: "alphabets",
-    url: "https://github.com/semitechnological/alphabets",
-    description: "a tool for language learning focusing on character recognition and orthography across different writing systems.",
+    url: "https://github.com/undivisible/alphabets",
+    description:
+      "a tool for language learning focusing on character recognition and orthography across different writing systems.",
     stack: ["rust", "language learning"],
+  },
+  anywhere: {
+    name: "anywhere",
+    url: "https://github.com/undivisible/anywhere",
+    description:
+      "an ai browser extension built on crepuscularity-webext so chats can surface interactive widgets and scripts—not only plain text.",
+    stack: ["rust", "wasm", "browser extension"],
+  },
+  poke_around: {
+    name: "poke-around",
+    url: "https://github.com/undivisible/poke-around",
+    description:
+      "let poke-style agents use your computer with first-class support for macos, linux, and windows.",
+    stack: ["rust", "agents"],
+  },
+  rusty_ai: {
+    name: "rusty_ai",
+    url: "https://github.com/undivisible/rusty_ai",
+    description: "an ai sdk for rust—bring model workflows into the same language as the rest of your systems.",
+    stack: ["rust", "ai"],
+  },
+  tile: {
+    name: "tile",
+    url: "https://github.com/undivisible/tile",
+    description:
+      "a macos tiling window manager with stacking, rectangle-style keybinds, and drag-to-snap zones.",
+    stack: ["rust", "macos"],
+  },
+  equilibrium: {
+    name: "equilibrium",
+    url: "https://github.com/semitechnological/equilibrium",
+    description:
+      "automatic c ffi generation for languages that compile to c—less hand-written glue, fewer footguns.",
+    stack: ["rust", "ffi"],
   },
 };
 
@@ -275,23 +314,54 @@ export default function SiteShell() {
             <br />
             i build public software like&nbsp;
             <ProjectLink id="crepuscularity" />
-            , a declarative ui framework for rust,&nbsp;
+            —the first gpui stack with hot-reloaded templates and the first
+            plug-and-play rust story for manifest v3 extensions (same .crepus
+            syntax for desktop, static web, and wasm in the browser). on that
+            path:&nbsp;
+            <ProjectLink id="anywhere" />
+            &nbsp;for ai chats that can ship real widgets;&nbsp;
             <ProjectLink id="rusty_foundationmodels" />
-            , bindings for apple intelligence,&nbsp;
+            &nbsp;for on-device apple intelligence from rust;&nbsp;
+            <ProjectLink id="rusty_ai" />
+            &nbsp;as an ai sdk for rust;&nbsp;
             <ProjectLink id="scape" />
-            , a spatial desktop for vision pro, and&nbsp;
+            , a spatial desktop for vision pro;&nbsp;
+            <ProjectLink id="tile" />
+            &nbsp;for macos tiling;&nbsp;
+            <ProjectLink id="poke_around" />
+            &nbsp;so agents can drive macos, linux, and windows;&nbsp;
             <ProjectLink id="unthinkmail" />
+            &nbsp;(mcp for imap mail); and&nbsp;
+            <ProjectLink id="unthinkclaw" />
             .
             <br />
             <br />
-            my other projects include&nbsp;
-            <ProjectLink id="unthinkclaw" />
-            ,&nbsp;
+            more:&nbsp;
             <ProjectLink id="standpoint" />
             ,&nbsp;
+            <ProjectLink id="equilibrium" />
+            &nbsp;(automatic c ffi),&nbsp;
             <ProjectLink id="wax" />
-            &nbsp;and&nbsp;
+            ,&nbsp;
             <ProjectLink id="bublik" />
+            . i also work with forks under&nbsp;
+            <a
+              href="https://github.com/atechnology-company"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#ff5705] hover:underline"
+            >
+              github.com/atechnology-company
+            </a>
+            &nbsp;(e.g. servo, rusty_v8) and keep an org index at&nbsp;
+            <a
+              href="https://github.com/undivisible/atechnology.company"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#ff5705] hover:underline"
+            >
+              atechnology.company
+            </a>
             .
             <br />
             <br />
