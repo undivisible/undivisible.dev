@@ -1,10 +1,9 @@
 {
   "businessName": "Max Carter",
   "title": "Max Carter | undivisible.dev",
-  "domain": "undivisible.dev",
   "seo": {
     "title": "Max Carter | undivisible.dev",
-    "description": "Rust-first tooling: Crepuscularity (GPUI + webext), Equilibrium FFI, Wax, Atechnology company, and miniapps.",
+    "description": "Rust-first: Crepuscularity (.crepus + WASM), Equilibrium, Wax, Atechnology company, miniapps.",
     "ogImage": null
   },
   "theme": {
@@ -14,69 +13,5 @@
     "text": "#fff8e6",
     "muted": "#a89f8f",
     "border": "#2a2620"
-  },
-  "elements": [
-    {
-      "type": "hero",
-      "id": "hero-main",
-      "props": {
-        "eyebrow": "undivisible.dev",
-        "headline": "Hi, I'm Max Carter.",
-        "subheadline": "I ship systems software in Rust. __CREPUS__ is the world's first GPUI runtime and component stack with live template hot reload: the same tree drives native desktop UI, and you author it with an extremely approachable surface—__CREPUS_DSL__ as our almost-syntaxless, indentation-first frontend language, plus __CREPUS_REACT__ so the component model stays familiar. __CREPUS_WEBEXT__ is the first plug-and-play, non–JS/TS web-extension framework for MV3: write extension UI and glue in Rust and __CREPUS_DSL__, ship a compliant bundle without a separate JS bundler story. __EQUILIBRIUM__ is the world's first FFI system that takes C-compiling languages and lets you call them from Rust like ordinary, plug-and-play native libraries—generated bindings instead of hand-written glue. I helped build __WAX__, a Homebrew-compatible package manager with parallel downloads that is typically about 3–20× faster than Homebrew on comparable installs, plus distribution through __SEMI_TAP__ and __UNDI_TAP__. __ATECH__ (__GH_ATECH_ORG__) is where we're building a web-AI-native operating system on Zircon, a Vision Pro HUD, Apple-style native syncing across devices, a spatial web platform that makes 3D sites and experiences accessible broadly, and a browser engine path pairing __GH_ATECH_SERVO__ with __GH_ATECH_V8__. On the side I publish small miniapps—see __GH_PROFILE__ for the full list—including __MINI_ANYWHERE__ (chat surfaces that render interactive artifacts), __MINI_POKE__, __MINI_UNTHINKMAIL__, __MINI_BUBLIK__, and __MINI_ALPHABETS__. More code lives under __GH_UNDIVISIBLE__ and __GH_SEMITECH__.",
-        "primary": {
-          "label": "Crepuscularity",
-          "href": "https://github.com/semitechnological/crepuscularity",
-          "external": true
-        },
-        "secondary": {
-          "label": "Atechnology.company",
-          "href": "https://atechnology.company/",
-          "external": true
-        },
-        "media": null
-      }
-    },
-    {
-      "type": "feature_grid",
-      "id": "grid-pillars",
-      "props": {
-        "eyebrow": "Pillars",
-        "title": "What this stack is",
-        "items": [
-          {
-            "icon": "layout",
-            "title": "GPUI + runtime",
-            "description": "__CREPUS__ — first GPUI-native componentry with hot reload; __CREPUS_DSL__ plus __CREPUS_REACT__."
-          },
-          {
-            "icon": "browser",
-            "title": "Extensions without JS",
-            "description": "__CREPUS_WEBEXT__ — plug-and-play MV3 from Rust, not a JS/TS web-code pipeline."
-          },
-          {
-            "icon": "code",
-            "title": "FFI for C languages",
-            "description": "__EQUILIBRIUM__ — call C-compiling languages from Rust like native libraries."
-          },
-          {
-            "icon": "zap",
-            "title": "Packages",
-            "description": "__WAX__ — parallel downloads; __SEMI_TAP__ / __UNDI_TAP__ for brew-style installs."
-          },
-          {
-            "icon": "globe",
-            "title": "Atechnology company",
-            "description": "__ATECH__ — Zircon OS, spatial web, Vision Pro HUD, sync, __GH_ATECH_SERVO__ + __GH_ATECH_V8__."
-          },
-          {
-            "icon": "terminal",
-            "title": "Miniapps",
-            "description": "__MINI_ANYWHERE__, __MINI_POKE__, __MINI_UNTHINKMAIL__, __MINI_BUBLIK__, __MINI_ALPHABETS__ — see __GH_PROFILE__."
-          }
-        ]
-      }
-    }
-  ],
-  "analytics": null,
-  "turnstile": null
+  }
 }

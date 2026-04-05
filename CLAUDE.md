@@ -1,38 +1,30 @@
-# Agent notes — undivisible.dev repository
+# Agent notes — undivisible.dev
 
-## What this repo is
+## Build pipeline
 
-A **Rust-only** static site:
+1. Clone or use **`semitechnological/crepuscularity`** branch **`web-v3`**.
+2. Build CLI: `cargo build --release -p crepuscularity-cli --no-default-features`.
+3. Run **`crepus web build --site crepuscularity-site --out-dir dist`**.
+4. Requires **`wasm32-unknown-unknown`** and **`wasm-bindgen-cli`**.
 
-1. **`crepus web build`** (from `semitechnological/crepuscularity`, branch **`web-v3`**) reads `crepuscularity-site/site.json` and writes HTML.
-2. **`expand-site-links`** (`site-tools` crate) post-processes `dist/index.html`, replacing tokens like `__CREPUS__` with anchor tags.
+Do **not** use `crepus web build -o index.html` without **`--legacy-site-json`** — that was the pre-WASM pipeline.
 
-There is **no** Next.js in the production build. Do not reintroduce Node for the main site without an explicit request.
-
-## Tokens
-
-All placeholders live in `site-tools/src/main.rs` (`replacements()`). Any new `__NAME__` in `site.json` must have a matching entry there.
-
-## Crepuscularity facts (avoid mislabeling)
-
-- **`crepus web`** → static HTML from `site.json` (not WASM).
-- **`crepus webext`** → MV3 extensions with WASM + manifests (`crepuscularity-webext`).
-- User-facing claims in copy should match what the upstream README says, extended only when the user explicitly asks.
-
-## Layout
+## Site layout
 
 | Path | Role |
 |------|------|
-| `crepuscularity-site/site.json` | Page content |
-| `site-tools/` | `expand-site-links` binary |
-| `scripts/build-static.sh` | Local full pipeline |
-| `.github/workflows/deploy.yml` | Pages deploy |
-| `old/` | Archived site iterations — not part of build |
+| `crepuscularity-site/index.crepus` | Page markup (primary source) |
+| `crepuscularity-site/runtime/` | WASM shim → `render_bundle` |
+| `crepuscularity-site/site.json` | Optional: `<head>` SEO + theme CSS vars only |
+| `crepuscularity-site/web.toml` | Site metadata for `web.toml` merge |
+| `dist/` | Build output (gitignored) |
 
-## After edits
+## Reference upstream
 
-```bash
-cargo fmt
-cargo clippy -p site-tools -- -D warnings
-./scripts/build-static.sh
-```
+- **Docs site** in Crepuscularity: `docs-site/` (also built with `crepus web build` — see their `.github/workflows/pages.yml`).
+- **Migration doc**: `docs/WEB_BUILD_MIGRATION.md`
+- **CLI doc**: `docs/cli.md` § Static web sites
+
+## Editing copy
+
+Change **`index.crepus`**. Use normal `.crepus` text nodes (`"..."`) and real `<a href="...">` tags where the HTML backend supports them (same as `docs-site/index.crepus`).

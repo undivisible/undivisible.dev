@@ -5,17 +5,25 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CREPUS_DIR="${CREPUSCULARITY_DIR:-/tmp/crepuscularity-build}"
 CREPUS_REF="${CREPUSCULARITY_REF:-web-v3}"
 CREPUS_REMOTE="${CREPUSCULARITY_REMOTE:-https://github.com/semitechnological/crepuscularity.git}"
+SITE_DIR="${ROOT}/crepuscularity-site"
+OUT_DIR="${ROOT}/dist"
 
 cargo_cmd=(cargo)
 if command -v rustup >/dev/null 2>&1 && rustup toolchain list 2>/dev/null | grep -q '^stable'; then
   cargo_cmd=(rustup run stable cargo)
+  export CARGO="$(rustup which --toolchain stable cargo)"
+  export RUSTC="$(rustup which --toolchain stable rustc)"
 fi
 
-echo "Building site-tools (link expander)..."
-(
-  cd "${ROOT}"
-  "${cargo_cmd[@]}" build --release -p site-tools
-)
+if ! rustup target list --toolchain stable --installed 2>/dev/null | grep -q wasm32-unknown-unknown; then
+  echo "Adding wasm32-unknown-unknown for stable (required for crepus web build)..."
+  rustup target add wasm32-unknown-unknown --toolchain stable
+fi
+
+if ! command -v wasm-bindgen >/dev/null 2>&1; then
+  echo "wasm-bindgen not in PATH — install with: cargo install wasm-bindgen-cli"
+  exit 1
+fi
 
 if [[ ! -f "${CREPUS_DIR}/Cargo.toml" ]]; then
   echo "Cloning crepuscularity (${CREPUS_REF}) into ${CREPUS_DIR}..."
@@ -29,11 +37,13 @@ echo "Building crepus CLI (no desktop features, for CI/Linux)..."
   "${cargo_cmd[@]}" build --release -p crepuscularity-cli --no-default-features
 )
 
-OUT="${ROOT}/dist/index.html"
-mkdir -p "${ROOT}/dist"
-"${CREPUS_DIR}/target/release/crepus" web build \
-  --site "${ROOT}/crepuscularity-site" \
-  -o "${OUT}"
+rm -rf "${OUT_DIR}"
+mkdir -p "${OUT_DIR}"
 
-"${ROOT}/target/release/expand-site-links" "${OUT}"
-echo "Static site: file://${OUT}"
+echo "crepus web build → ${OUT_DIR}"
+"${CREPUS_DIR}/target/release/crepus" web build \
+  --site "${SITE_DIR}" \
+  --out-dir "${OUT_DIR}"
+
+echo "Built. Open via HTTP (WASM + fetch need a server), e.g.:"
+echo "  cd ${OUT_DIR} && python3 -m http.server 8080"

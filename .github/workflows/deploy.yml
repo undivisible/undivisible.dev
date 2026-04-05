@@ -24,15 +24,18 @@ jobs:
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Cache Cargo (this repo + crepuscularity)
+      - name: WASM target + wasm-bindgen
+        run: |
+          rustup target add wasm32-unknown-unknown --toolchain stable
+          cargo install wasm-bindgen-cli --locked
+          echo "CARGO=$(rustup which --toolchain stable cargo)" >> "$GITHUB_ENV"
+          echo "RUSTC=$(rustup which --toolchain stable rustc)" >> "$GITHUB_ENV"
+
+      - name: Cache Cargo (crepuscularity clone)
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: |
-            . -> target
             /tmp/crepuscularity-gha -> target
-
-      - name: Build site-tools
-        run: cargo build --release -p site-tools
 
       - name: Clone crepuscularity (web-v3)
         run: |
@@ -46,14 +49,11 @@ jobs:
           cd /tmp/crepuscularity-gha
           cargo build --release -p crepuscularity-cli --no-default-features
 
-      - name: Static site (crepus web + Rust link pass)
+      - name: crepus web build (.crepus + WASM → dist/)
         run: |
-          mkdir -p dist
           /tmp/crepuscularity-gha/target/release/crepus web build \
             --site "${GITHUB_WORKSPACE}/crepuscularity-site" \
-            -o "${GITHUB_WORKSPACE}/dist/index.html"
-          "${GITHUB_WORKSPACE}/target/release/expand-site-links" \
-            "${GITHUB_WORKSPACE}/dist/index.html"
+            --out-dir "${GITHUB_WORKSPACE}/dist"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

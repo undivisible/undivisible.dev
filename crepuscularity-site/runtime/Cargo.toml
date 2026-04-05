@@ -1,0 +1,15 @@
+[package]
+name = "undivisible_dev_runtime"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# crates.io does not ship crepuscularity-web yet — pin the framework repo (same branch as CI).
+crepuscularity-web = { git = "https://github.com/semitechnological/crepuscularity.git", branch = "web-v3" }
+wasm-bindgen = "0.2"
+
+# Standalone workspace so `cargo build --target wasm32-unknown-unknown` works from runtime/
+[workspace]

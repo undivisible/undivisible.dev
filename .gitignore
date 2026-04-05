@@ -4,3 +4,5 @@ dist/
 .DS_Store
 *.rs.bk
 .claude
+# runtime/ is a nested Cargo workspace
+crepuscularity-site/runtime/target/

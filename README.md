@@ -1,35 +1,55 @@
-# undivisible.dev (Rust / Crepuscularity)
+# undivisible.dev
 
-This repository builds **one static site** from structured data with **[Crepuscularity](https://github.com/semitechnological/crepuscularity)** (`crepus web build` on branch **`web-v3`**). There is **no Next.js or Node** in the deployment path—only Rust (plus a clone of the upstream Crepuscularity workspace in CI).
+Static site built with **[Crepuscularity](https://github.com/semitechnological/crepuscularity)** **`crepus web build`** on branch **`web-v3`**.
 
-## Why this repo exists
+## How it works (current upstream)
 
-- **`crepuscularity-site/site.json`** — content for the static generator (hero + feature grid).
-- **`site-tools`** — `expand-site-links` replaces `__TOKEN__` placeholders in the generated HTML with `<a>` tags (because `crepus web` HTML-escapes JSON strings).
-- **`scripts/build-static.sh`** — clones `semitechnological/crepuscularity` @ `web-v3`, builds `crepus` with `--no-default-features` (Linux-friendly), emits **`dist/index.html`**.
+- **Source**: `crepuscularity-site/index.crepus` (and any other `*.crepus` you add).
+- **Runtime**: `crepuscularity-site/runtime/` — wasm32 crate that calls `crepuscularity_web::render_bundle` (same pattern as `examples/web-site` and the repo’s **`docs-site/`**).
+- **Optional `site.json`**: SEO (`title`, `description`) and **CSS variables** for the HTML shell only — **not** page structure. See [WEB_BUILD_MIGRATION.md](https://github.com/semitechnological/crepuscularity/blob/web-v3/docs/WEB_BUILD_MIGRATION.md) in Crepuscularity.
+- **Output**: `dist/` contains `index.html`, `app.js`, `crepus-bundle.json`, `pkg/runtime*.wasm`, `vendor/unocss.js`, etc.
+
+First paint is **`.crepus` → WASM** in the browser; open **`index.html` over HTTP** (GitHub Pages is fine). `file://` will fail `fetch` for the bundle.
+
+## Prerequisites
+
+- Rust **stable** (recent enough for Crepuscularity’s vendored GPUI, typically **1.94+**)
+- `rustup target add wasm32-unknown-unknown --toolchain stable` (nested `cargo` inside `crepus` must see the same toolchain)
+- `cargo install wasm-bindgen-cli`
 
 ## Build locally
 
-Requirements: **Rust stable** recent enough for Crepuscularity’s vendored GPUI (typically **1.94+**), **Git**, **`rustup` optional** (the script prefers `rustup run stable cargo` when available).
-
 ```bash
 ./scripts/build-static.sh
-# output: dist/index.html
 ```
 
-Or manually:
+Or, with a local clone of Crepuscularity at `$CREPUSCULARITY_DIR`:
 
 ```bash
-cargo build --release -p site-tools
-# clone crepuscularity web-v3, then:
-/path/to/crepus web build --site crepuscularity-site -o dist/index.html
-./target/release/expand-site-links dist/index.html
+CREPUSCULARITY_DIR=/path/to/crepuscularity ./scripts/build-static.sh
 ```
 
-## GitHub Actions
+Preview:
 
-`.github/workflows/deploy.yml` uploads **`dist/`** to GitHub Pages after the same steps.
+```bash
+cd dist && python3 -m http.server 8080
+```
+
+Dev loop (hot reload, no WASM):
+
+```bash
+# from a machine with crepus installed from the crepuscularity repo:
+crepus web serve --site crepuscularity-site
+```
+
+## Legacy pipeline
+
+The old **`site.json` → single HTML file** build still exists upstream as:
+
+`crepus web build --legacy-site-json …`
+
+This repo no longer uses it.
 
 ## Historical note
 
-Older Next.js sources lived in this repo previously; the live pipeline is **Rust-only** as described above. Legacy experiments remain under `old/` for reference only.
+Older experiments live under `old/` and are not part of the build.

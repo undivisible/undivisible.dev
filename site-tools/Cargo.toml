@@ -1,9 +1,0 @@
-[package]
-name = "site-tools"
-version = "0.1.0"
-edition = "2021"
-description = "Post-process crepus web HTML: expand __TOKEN__ placeholders to anchors"
-
-[[bin]]
-name = "expand-site-links"
-path = "src/main.rs"

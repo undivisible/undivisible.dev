@@ -1,9 +1,9 @@
 [site]
-name = "undivisible.dev (static)"
+name = "undivisible.dev"
 version = "0.1.0"
-description = "Static landing built with crepus web from semitechnological/crepuscularity (branch web-v3)"
+description = ".crepus + WASM via crepus web build (semitechnological/crepuscularity web-v3)"
 
-# Build (after installing `crepus` from crepuscularity web-v3):
-#   ./scripts/build-static.sh
-# Or: crepus web build --site crepuscularity-site -o dist/index.html
-#     && cargo run --release -p site-tools --bin expand-site-links -- dist/index.html
+# Dev:  crepus web serve --site crepuscularity-site
+# Ship: crepus web build --site crepuscularity-site --out-dir dist
+#
+# site.json here is optional: SEO <title>/meta + CSS variables for the HTML shell only.
