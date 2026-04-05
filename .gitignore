@@ -2,6 +2,7 @@ node_modules/
 .next/
 out/
 dist/
+.crepus-cache/
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
