@@ -1,0 +1,8 @@
+[site]
+name = "undivisible.dev (static)"
+version = "0.1.0"
+description = "Static landing built with crepus web from semitechnological/crepuscularity (branch web-v3)"
+
+# Build (after installing `crepus` from crepuscularity):
+#   crepus web build --site crepuscularity-site -o dist/index.html
+# Or: bun run build:static (see package.json)

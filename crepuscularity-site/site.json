@@ -1,0 +1,72 @@
+{
+  "businessName": "Max Carter",
+  "title": "Max Carter | undivisible.dev",
+  "domain": "undivisible.dev",
+  "seo": {
+    "title": "Max Carter | undivisible.dev",
+    "description": "Artificer and generalist: Crepuscularity, on-device Apple Intelligence in Rust, spatial macOS, AI extensions, and more.",
+    "ogImage": null
+  },
+  "theme": {
+    "accent": "#ff5705",
+    "accentSoft": "#ff8f5c",
+    "surface": "#050505",
+    "text": "#fff8e6",
+    "muted": "#a89f8f",
+    "border": "#2a2620"
+  },
+  "elements": [
+    {
+      "type": "hero",
+      "id": "hero-main",
+      "props": {
+        "eyebrow": "undivisible.dev",
+        "headline": "Hi, I'm Max Carter.",
+        "subheadline": "I build public software that pushes past the usual JS-and-bundler wall: __GH_SEMITECH_CREPUSCULARITY__ is the first GPUI-native component stack with hot-reloaded .crepus templates and the first plug-and-play Rust path to Manifest V3 extensions (WASM in the browser, structured manifests, no separate frontend toolchain). On top of that stack, __GH_UNDIVISIBLE_ANYWHERE__ ships AI chat surfaces that can render real widgets and scripts—not just text—because the extension runtime is designed for it. __GH_UNDIVISIBLE_POKE_AROUND__ lets Poke-class agents drive macOS, Linux, and Windows with one codebase; __GH_UNDIVISIBLE_TILE__ is a macOS tiling manager with stacking, Rectangle-style keys, and drag-to-snap zones; __GH_UNDIVISIBLE_RUSTY_AI__ is an AI SDK for Rust; __GH_UNDIVISIBLE_RUSTY_FM__ exposes Apple Intelligence / FoundationModels to Rust with safety in mind; __GH_UNDIVISIBLE_UNTHINKMAIL__ MCPs your IMAP mail; __GH_UNDIVISIBLE_UNTHINKCLAW__ is an OpenClaw-style agent runtime for builders; __GH_SEMITECH_EQUILIBRIUM__ auto-generates C FFI for C-compiling languages; __GH_UNDIVISIBLE_ALPHABETS__ supports language learning; __GH_UNDIVISIBLE_STANDPOINT__ is an opinion and tier-list platform; __GH_SEMITECH_WAX__ is a fast Homebrew-compatible package manager in Rust; __GH_UNDIVISIBLE_BUBLIK__ is a focused noise generator. I also collaborate with __GH_ATECH_SERVO__ and __GH_ATECH_RUSTY_V8__ under __GH_ORG_ATECH__. Together, these projects are better because they share one coherent Rust-and-.crepus story—native, web, and extension targets—instead of three unrelated stacks. Explore __GH_ORG_UNDIVISIBLE__, __GH_ORG_SEMITECH__, and the org index at __GH_UNDIVISIBLE_ATECH_COMPANY__.",
+        "primary": {
+          "label": "GitHub / undivisible",
+          "href": "https://github.com/undivisible",
+          "external": true
+        },
+        "secondary": {
+          "label": "GitHub / semitechnological",
+          "href": "https://github.com/semitechnological",
+          "external": true
+        },
+        "media": null
+      }
+    },
+    {
+      "type": "feature_grid",
+      "id": "grid-highlights",
+      "props": {
+        "eyebrow": "Highlights",
+        "title": "What to open first",
+        "items": [
+          {
+            "icon": "layout",
+            "title": "Crepuscularity",
+            "description": "__GH_SEMITECH_CREPUSCULARITY__ — one .crepus syntax for GPUI, HTML, React-shaped output, and MV3 extensions."
+          },
+          {
+            "icon": "browser",
+            "title": "anywhere",
+            "description": "__GH_UNDIVISIBLE_ANYWHERE__ — AI browser extension for interactive widgets in chat."
+          },
+          {
+            "icon": "zap",
+            "title": "rusty_ai & rusty_foundationmodels",
+            "description": "__GH_UNDIVISIBLE_RUSTY_AI__ and __GH_UNDIVISIBLE_RUSTY_FM__ — AI in Rust, including on-device Apple Intelligence bindings."
+          },
+          {
+            "icon": "globe",
+            "title": "Community & orgs",
+            "description": "__GH_ORG_UNDIVISIBLE__, __GH_ORG_SEMITECH__, __GH_ORG_ATECH__ — sources for everything listed on this page."
+          }
+        ]
+      }
+    }
+  ],
+  "analytics": null,
+  "turnstile": null
+}

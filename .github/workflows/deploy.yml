@@ -21,22 +21,43 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo (crepuscularity)
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            /tmp/crepuscularity-gha -> target
+
+      - name: Clone crepuscularity (web-v3)
+        run: |
+          rm -rf /tmp/crepuscularity-gha
+          git clone --depth 1 --branch web-v3 \
+            https://github.com/semitechnological/crepuscularity.git \
+            /tmp/crepuscularity-gha
+
+      - name: Build crepus CLI
+        run: |
+          cd /tmp/crepuscularity-gha
+          cargo build --release -p crepuscularity-cli --no-default-features
+
+      - name: Static site (crepus web + link pass)
+        run: |
+          mkdir -p dist
+          /tmp/crepuscularity-gha/target/release/crepus web build \
+            --site "${GITHUB_WORKSPACE}/crepuscularity-site" \
+            -o "${GITHUB_WORKSPACE}/dist/index.html"
+          node "${GITHUB_WORKSPACE}/scripts/apply-crepus-link-placeholders.mjs" \
+            "${GITHUB_WORKSPACE}/dist/index.html"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Build
-        run: bun run build
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: ./dist
 
   deploy:
     environment:
