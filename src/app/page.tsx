@@ -42,7 +42,7 @@ export default function Home() {
       </div>
       <div className="fixed inset-0 z-0 bg-black/70 lg:hidden pointer-events-none" />
 
-      <div className="relative z-10 w-full px-4 lg:hidden">
+      <div className="relative z-10 w-full overflow-x-hidden lg:hidden">
         <Info colors={colors} revealed={revealed} setRevealed={setRevealed} />
       </div>
       

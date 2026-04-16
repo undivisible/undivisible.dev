@@ -147,7 +147,7 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
 
   if (isMobile) {
     return (
-      <div className="relative h-dvh w-full overflow-hidden px-4 text-white">
+      <div className="relative h-dvh w-full overflow-y-hidden px-4 text-white">
         <div className="sticky top-0 h-dvh overflow-y-hidden">
           <div
             className="h-[200dvh] w-full transition-transform duration-700 ease-out"
