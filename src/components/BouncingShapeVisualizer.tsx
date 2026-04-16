@@ -361,7 +361,7 @@ export default function BouncingShapeVisualizer({
         }
       }
 
-      const cell = Math.max(12, Math.min(width, height) / 32);
+      const cell = Math.max(8, Math.min(width, height) / 48);
       const cols = Math.max(1, Math.floor(width / (cell * 0.9)));
       const rows = Math.max(1, Math.floor(height / cell));
 
@@ -447,6 +447,13 @@ export default function BouncingShapeVisualizer({
     >
       <canvas ref={bgCanvasRef} className="pointer-events-none absolute inset-0 h-full w-full opacity-0" />
       <canvas ref={asciiCanvasRef} className="pointer-events-none absolute inset-0 h-full w-full" />
+
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: "radial-gradient(ellipse at 95% 95%, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 20%, transparent 50%)",
+        }}
+      />
 
       {ready && track && (
         <a
