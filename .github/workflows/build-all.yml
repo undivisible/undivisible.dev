@@ -36,7 +36,7 @@ jobs:
           workspaces: old/seven
 
       - name: Install trunk
-        run: bun add -g trunk
+        run: cargo install trunk
 
       - name: Install bun dependencies (current)
         run: bun install --frozen-lockfile
@@ -59,18 +59,18 @@ jobs:
       - name: Copy sites to dist
         run: |
           mkdir -p dist
-          
+
           # Current site
           cp -r out dist/current
-          
+
           # Old eight
           mkdir -p dist/old/eight
           cp -r old/eight/out/* dist/old/eight/ 2>/dev/null || true
-          
+
           # Old seven
           mkdir -p dist/old/seven
           cp -r old/seven/dist/* dist/old/seven/ 2>/dev/null || true
-          
+
           # Static sites
           for dir in one two three four five six; do
             if [ -d "old/$dir" ]; then
@@ -78,11 +78,17 @@ jobs:
               cp -r "old/$dir"/* "dist/old/$dir/" 2>/dev/null || true
             fi
           done
-          
-          # six.five
+
+          # six.five/r1 (Svelte)
           if [ -d "old/six.five/r1" ]; then
             mkdir -p dist/old/six.five
             cp -r old/six.five/r1/* dist/old/six.five/ 2>/dev/null || true
+          fi
+
+          # six.five/r2 (Imba)
+          if [ -d "old/six.five/r2" ]; then
+            mkdir -p dist/old/six.five
+            cp -r old/six.five/r2/* dist/old/six.five/ 2>/dev/null || true
           fi
 
       - name: Upload artifact

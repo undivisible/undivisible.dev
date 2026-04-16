@@ -12,7 +12,8 @@ Personal website for Max Carter.
   - `four/` - HTML/CSS site
   - `five/` - HTML/CSS site
   - `six/` - HTML/CSS site
-  - `six.five/r1/` - Previous Next.js version
+  - `six.five/r1/` - Svelte site
+  - `six.five/r2/` - Imba site
   - `seven/` - Rust/Leptos WASM site
   - `eight/` - Previous version with ASCII art
 
