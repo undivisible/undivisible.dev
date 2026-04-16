@@ -439,28 +439,23 @@ export default function BouncingShapeVisualizer({
   return (
     <div
       ref={containerRef}
-      className={`relative h-full w-full overflow-hidden bg-black transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}
+      className={`relative h-full w-full overflow-hidden transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}
+      style={{ background: "transparent" }}
     >
       <canvas ref={bgCanvasRef} className="pointer-events-none absolute inset-0 h-full w-full opacity-0" />
       <canvas ref={asciiCanvasRef} className="pointer-events-none absolute inset-0 h-full w-full" />
-
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: "radial-gradient(ellipse at 95% 95%, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 20%, transparent 50%)",
-        }}
-      />
 
       {ready && track && (
         <a
           href="https://www.last.fm/user/undivisible"
           target="_blank"
           rel="noreferrer"
-          className="absolute bottom-6 right-6 z-10 max-w-[14rem] text-right font-mono text-white cursor-pointer"
+          className="absolute bottom-6 right-6 z-10 max-w-[14rem] cursor-pointer text-right font-mono"
+          style={{ color: "var(--page-text)" }}
         >
           <div className="text-base leading-snug">{track.artist}</div>
-          <div className="text-sm leading-snug text-white/82">{track.track}</div>
-          <div className="mt-1 text-[10px] uppercase tracking-[0.22em] text-white/55">
+          <div className="text-sm leading-snug" style={{ color: "var(--page-text-muted)" }}>{track.track}</div>
+          <div className="mt-1 text-[10px] uppercase tracking-[0.22em]" style={{ color: "var(--page-text-soft)" }}>
             {track.isNowPlaying ? "now playing" : "last listening to"}
           </div>
         </a>

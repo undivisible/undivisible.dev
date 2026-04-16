@@ -9,13 +9,33 @@
   --font-heading: var(--font-mono);
 }
 
+:root {
+  --page-background: #000000;
+  --page-text: #ffffff;
+  --page-text-muted: rgba(255, 255, 255, 0.72);
+  --page-text-soft: rgba(255, 255, 255, 0.5);
+  --page-surface: #191919;
+  --page-surface-hover: #232323;
+  --page-accent: #ffffff;
+  --transport-text: #ffffff;
+  --neon-shadow: none;
+  --wall-text-shadow: none;
+  --neon-text-glow: none;
+}
+
 body {
   font-family: 'Young Serif', sans-serif;
   margin: 0;
   padding: 0;
-  background: #000;
-  color: #fff;
+  background: var(--page-background);
+  color: var(--page-text);
   scrollbar-width: none;
+  overflow-x: hidden;
+  transition: background-color 700ms ease, color 700ms ease;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 body::-webkit-scrollbar {
@@ -24,4 +44,10 @@ body::-webkit-scrollbar {
 
 * {
   box-sizing: border-box;
+}
+
+.site-shell {
+  background: var(--page-background);
+  color: var(--page-text);
+  isolation: isolate;
 }
