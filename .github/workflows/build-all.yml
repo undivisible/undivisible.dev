@@ -1,0 +1,102 @@
+name: Build All Sites
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: old/seven
+
+      - name: Install trunk
+        run: bun add -g trunk
+
+      - name: Install bun dependencies (current)
+        run: bun install --frozen-lockfile
+
+      - name: Install bun dependencies (old/eight)
+        run: cd old/eight && bun install --frozen-lockfile && cd ..
+
+      - name: Build current site
+        run: bun run build
+        env:
+          NEXT_PUBLIC_LASTFM_API_KEY: ${{ secrets.NEXT_PUBLIC_LASTFM_API_KEY }}
+          NEXT_PUBLIC_LASTFM_USERNAME: ${{ secrets.NEXT_PUBLIC_LASTFM_USERNAME }}
+
+      - name: Build old/eight
+        run: cd old/eight && bun run build && cd ..
+
+      - name: Build old/seven
+        run: cd old/seven && trunk build --release && cd ..
+
+      - name: Copy sites to dist
+        run: |
+          mkdir -p dist
+          
+          # Current site
+          cp -r out dist/current
+          
+          # Old eight
+          mkdir -p dist/old/eight
+          cp -r old/eight/out/* dist/old/eight/ 2>/dev/null || true
+          
+          # Old seven
+          mkdir -p dist/old/seven
+          cp -r old/seven/dist/* dist/old/seven/ 2>/dev/null || true
+          
+          # Static sites
+          for dir in one two three four five six; do
+            if [ -d "old/$dir" ]; then
+              mkdir -p "dist/old/$dir"
+              cp -r "old/$dir"/* "dist/old/$dir/" 2>/dev/null || true
+            fi
+          done
+          
+          # six.five
+          if [ -d "old/six.five/r1" ]; then
+            mkdir -p dist/old/six.five
+            cp -r old/six.five/r1/* dist/old/six.five/ 2>/dev/null || true
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
