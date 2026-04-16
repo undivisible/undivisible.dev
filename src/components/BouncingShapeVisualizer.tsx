@@ -43,11 +43,9 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
-function pointInsideShape(px: number, py: number, shape: ShapeState) {
+function pointInsideShape(px: number, py: number, shape: ShapeState, cos: number, sin: number) {
   const dx = px - shape.x;
   const dy = py - shape.y;
-  const cos = Math.cos(-shape.rotation);
-  const sin = Math.sin(-shape.rotation);
   const rx = dx * cos - dy * sin;
   const ry = dx * sin + dy * cos;
 
@@ -118,19 +116,18 @@ export default function BouncingShapeVisualizer({
   const containerRef = useRef<HTMLDivElement>(null);
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
-  const asciiFrameRef = useRef<number>(0);
-  const shaderFrameRef = useRef<number>(0);
+  const frameRef = useRef<number>(0);
+  const webglRenderRef = useRef<((now: number) => void) | null>(null);
 
+  // WebGL shader effect — re-runs when colors change
   useEffect(() => {
-    if (!ready) {
-      return;
-    }
+    if (!ready) return;
 
     const canvas = bgCanvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
 
-    const gl = canvas.getContext("webgl", { alpha: false, antialias: true, premultipliedAlpha: false });
+    const gl = canvas.getContext("webgl", { alpha: false, antialias: false, premultipliedAlpha: false });
     if (!gl) {
       console.error("[webgl] unavailable");
       return;
@@ -235,8 +232,9 @@ export default function BouncingShapeVisualizer({
     const colorDLocation = gl.getUniformLocation(program, "u_colorD");
     const colorELocation = gl.getUniformLocation(program, "u_colorE");
 
+    // Cap WebGL DPR at 2 — full retina on phone wastes fill rate for a background
     const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const width = container.clientWidth;
       const height = container.clientHeight;
       canvas.width = Math.max(1, Math.floor(width * dpr));
@@ -246,20 +244,12 @@ export default function BouncingShapeVisualizer({
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
 
-    const visibilityHandler = () => {
-      if (document.hidden) {
-        cancelAnimationFrame(shaderFrameRef.current);
-      } else {
-        shaderFrameRef.current = requestAnimationFrame(render);
-      }
-    };
-    document.addEventListener("visibilitychange", visibilityHandler);
-
     const observer = new ResizeObserver(resize);
     observer.observe(container);
     resize();
 
-    const render = (now: number) => {
+    // Store render fn on a ref so the ASCII effect can call it each frame
+    const renderWebGL = (now: number) => {
       if (document.hidden) return;
       gl.useProgram(program);
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -273,36 +263,29 @@ export default function BouncingShapeVisualizer({
       gl.uniform3fv(colorDLocation, hexToRgb(colors[3] ?? DEFAULT_COLORS[3]));
       gl.uniform3fv(colorELocation, hexToRgb(colors[4] ?? DEFAULT_COLORS[4]));
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      shaderFrameRef.current = requestAnimationFrame(render);
     };
 
-    shaderFrameRef.current = requestAnimationFrame(render);
+    webglRenderRef.current = renderWebGL;
 
     return () => {
       observer.disconnect();
-      document.removeEventListener("visibilitychange", visibilityHandler);
-      cancelAnimationFrame(shaderFrameRef.current);
+      webglRenderRef.current = null;
     };
   }, [colors, ready]);
 
+  // ASCII + physics effect — single rAF loop drives both WebGL and ASCII
   useEffect(() => {
-    if (!ready) {
-      return;
-    }
+    if (!ready) return;
 
     const container = containerRef.current;
     const bgCanvas = bgCanvasRef.current;
     const asciiCanvas = asciiCanvasRef.current;
-    if (!container || !bgCanvas || !asciiCanvas) {
-      return;
-    }
+    if (!container || !bgCanvas || !asciiCanvas) return;
 
     const ctx = asciiCanvas.getContext("2d");
     const sampleCanvas = document.createElement("canvas");
     const sampleCtx = sampleCanvas.getContext("2d", { willReadFrequently: true });
-    if (!ctx || !sampleCtx) {
-      return;
-    }
+    if (!ctx || !sampleCtx) return;
 
     const shapes: ShapeState[] = [
       { x: 140, y: 140, vx: 64, vy: 52, size: 160, rotation: 0, rotationSpeed: 0.24, type: "circle" },
@@ -313,9 +296,11 @@ export default function BouncingShapeVisualizer({
     let width = 0;
     let height = 0;
     let last = performance.now();
+    // Cap ASCII rendering at 30 fps — text art doesn't need 60
+    const ASCII_INTERVAL = 1000 / 30;
+    let lastAscii = 0;
 
     const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
       width = container.clientWidth;
       height = container.clientHeight;
       const size = Math.max(170, Math.min(width, height) * 0.31);
@@ -325,14 +310,13 @@ export default function BouncingShapeVisualizer({
       shapes[1].y = height * 0.36;
       shapes[2].x = width * 0.48;
       shapes[2].y = height * 0.74;
-      for (const shape of shapes) {
-        shape.size = size;
-      }
-      asciiCanvas.width = Math.max(1, Math.floor(width * dpr));
-      asciiCanvas.height = Math.max(1, Math.floor(height * dpr));
+      for (const shape of shapes) shape.size = size;
+      // ASCII canvas at 1:1 — retina resolution is wasted on character art
+      asciiCanvas.width = Math.max(1, width);
+      asciiCanvas.height = Math.max(1, height);
       asciiCanvas.style.width = `${width}px`;
       asciiCanvas.style.height = `${height}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
     };
 
     const observer = new ResizeObserver(resize);
@@ -340,6 +324,20 @@ export default function BouncingShapeVisualizer({
     resize();
 
     const render = (now: number) => {
+      if (document.hidden) {
+        frameRef.current = requestAnimationFrame(render);
+        return;
+      }
+
+      // Drive WebGL from this loop so both are in sync
+      webglRenderRef.current?.(now);
+
+      frameRef.current = requestAnimationFrame(render);
+
+      // Throttle ASCII work to 30 fps
+      if (now - lastAscii < ASCII_INTERVAL) return;
+      lastAscii = now;
+
       const delta = Math.min((now - last) / 1000, 0.04);
       last = now;
 
@@ -378,6 +376,13 @@ export default function BouncingShapeVisualizer({
       ctx.textBaseline = "middle";
       ctx.textAlign = "center";
       ctx.font = `${Math.max(12, cell * 0.72)}px "JetBrains Mono", monospace`;
+      ctx.shadowColor = "transparent";
+
+      // Precompute cos/sin per shape — avoids 3× trig per cell per shape
+      const shapeTrig = shapes.map((s) => ({
+        cos: Math.cos(-s.rotation),
+        sin: Math.sin(-s.rotation),
+      }));
 
       for (let row = 0; row < rows; row += 1) {
         for (let col = 0; col < cols; col += 1) {
@@ -388,7 +393,9 @@ export default function BouncingShapeVisualizer({
           let g = pixels[pixelIndex + 1] ?? 0;
           let b = pixels[pixelIndex + 2] ?? 0;
           const brightness = (r + g + b) / 765;
-          const insideAnyShape = shapes.some((shape) => pointInsideShape(x, y, shape));
+          const insideAnyShape = shapes.some((shape, i) =>
+            pointInsideShape(x, y, shape, shapeTrig[i].cos, shapeTrig[i].sin)
+          );
 
           if (insideAnyShape) {
             r = 255 - r;
@@ -403,40 +410,29 @@ export default function BouncingShapeVisualizer({
             charSet.length - 1,
             Math.floor((colorWeight * 0.7 + (hueWeight / 255) * 0.3) * (charSet.length - 1))
           );
-          const char = charSet[charIndex];
 
-          ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-
-          if (insideAnyShape) {
-            const flicker = 0.95 + Math.sin(now * 0.012 + col * 0.3 + row * 0.7) * 0.03;
-            const glowIntensity = 0.55 + Math.sin(now * 0.008 + col * 0.5) * 0.12;
-
-            ctx.shadowColor = `rgba(${r}, ${g}, ${b}, ${glowIntensity})`;
-            ctx.shadowBlur = 12;
-            ctx.fillText(char, x, y);
-
-            ctx.shadowBlur = 6;
-            ctx.fillText(char, x, y);
-
-            ctx.shadowBlur = 0;
-            ctx.globalAlpha = clamp(0.94 * flicker, 0.7, 1.0);
-          } else {
-            ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 0.18)`;
-            ctx.shadowBlur = 1.4;
-            ctx.globalAlpha = clamp(0.52 + brightness * 0.4, 0.52, 0.94);
-          }
-          ctx.fillText(char, x, y);
+          ctx.fillStyle = `rgb(${r},${g},${b})`;
+          ctx.globalAlpha = insideAnyShape
+            ? clamp(0.94 * (0.95 + Math.sin(now * 0.012 + col * 0.3 + row * 0.7) * 0.03), 0.7, 1.0)
+            : clamp(0.52 + brightness * 0.4, 0.52, 0.94);
+          ctx.fillText(charSet[charIndex], x, y);
         }
       }
 
-      asciiFrameRef.current = requestAnimationFrame(render);
+      ctx.globalAlpha = 1;
     };
 
-    asciiFrameRef.current = requestAnimationFrame(render);
+    frameRef.current = requestAnimationFrame(render);
+
+    const visibilityHandler = () => {
+      if (!document.hidden) frameRef.current = requestAnimationFrame(render);
+    };
+    document.addEventListener("visibilitychange", visibilityHandler);
 
     return () => {
       observer.disconnect();
-      cancelAnimationFrame(asciiFrameRef.current);
+      document.removeEventListener("visibilitychange", visibilityHandler);
+      cancelAnimationFrame(frameRef.current);
     };
   }, [ready]);
 
