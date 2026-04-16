@@ -36,7 +36,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-black">
+    <div ref={containerRef} className="h-dvh bg-black">
       <div className="fixed inset-0 z-0 lg:hidden">
         <BouncingShapeVisualizer colors={colors} track={track} ready={ready} />
       </div>
