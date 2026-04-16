@@ -55,12 +55,15 @@ export function Info({ colors }: { colors: string[] }) {
     const scrollOffsetRef = { current: 0, revealed: false };
 
     const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      scrollOffsetRef.current = Math.max(0, scrollOffsetRef.current + e.deltaY * 1.5);
-      const shouldBeRevealed = scrollOffsetRef.current > window.innerHeight * 0.3;
-      if (shouldBeRevealed !== scrollOffsetRef.revealed) {
-        scrollOffsetRef.revealed = shouldBeRevealed;
-        setRevealed(shouldBeRevealed);
+      const isHorizontalScroll = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+      if (!isHorizontalScroll) {
+        e.preventDefault();
+        scrollOffsetRef.current = Math.max(0, scrollOffsetRef.current + e.deltaY * 1.5);
+        const shouldBeRevealed = scrollOffsetRef.current > window.innerHeight * 0.3;
+        if (shouldBeRevealed !== scrollOffsetRef.revealed) {
+          scrollOffsetRef.revealed = shouldBeRevealed;
+          setRevealed(shouldBeRevealed);
+        }
       }
     };
 
