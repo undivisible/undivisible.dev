@@ -18,17 +18,16 @@ export function useLastFmVisualData() {
 
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_LASTFM_API_KEY;
-    const username = process.env.NEXT_PUBLIC_LASTFM_USERNAME;
+    const username = "undivisible";
 
     console.log("[lastfm] init", {
       hasApiKey: Boolean(apiKey),
-      username: username ?? null,
+      username,
     });
 
-    if (!apiKey || !username) {
+    if (!apiKey) {
       console.log("[lastfm] missing env", {
         hasApiKey: Boolean(apiKey),
-        username: username ?? null,
       });
       setReady(true);
       return;
