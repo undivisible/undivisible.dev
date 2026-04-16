@@ -147,10 +147,10 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
 
   if (isMobile) {
     return (
-      <div className="relative min-h-[200dvh] w-full overflow-x-hidden px-4 py-4 text-white">
+      <div className="relative lg:min-h-[200dvh] md:max-h-[100dvh] w-full overflow-x-hidden px-4 py-4 text-white">
         <div className="sticky top-0 h-dvh overflow-hidden">
           <div
-            className="h-[200dvh] w-full transition-transform duration-700 ease-out"
+            className="lg:h-[200dvh] md:h-[100dvh] w-full transition-transform duration-700 ease-out"
             style={{ transform: revealed ? "translateY(-100dvh)" : "translateY(0)" }}
           >
             <section className="flex h-dvh w-full items-center">
