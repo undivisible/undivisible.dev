@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Young+Serif&display=swap');
+
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-mono);
+}
+
+body {
+  font-family: 'Young Serif', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #fff;
+  scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+}
