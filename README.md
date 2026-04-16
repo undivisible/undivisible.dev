@@ -1,7 +1,5 @@
 # undivisible.dev
 
-Personal website for Max Carter.
-
 ## Structure
 
 - `src/` - Next.js 16 application
@@ -15,7 +13,7 @@ Personal website for Max Carter.
   - `six.five/r1/` - Svelte site
   - `six.five/r2/` - Imba site
   - `seven/` - Rust/Leptos WASM site
-  - `eight/` - Previous version with ASCII art
+  - `eight/` - Next.js site
 
 ## Development
 
