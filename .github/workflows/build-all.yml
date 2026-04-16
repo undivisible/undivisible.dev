@@ -24,6 +24,9 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
@@ -44,6 +47,12 @@ jobs:
       - name: Install bun dependencies (old/eight)
         run: cd old/eight && bun install --frozen-lockfile && cd ..
 
+      - name: Install pnpm dependencies (six.five/r1)
+        run: cd old/six.five/r1 && pnpm install && cd ../..
+
+      - name: Install pnpm dependencies (six.five/r2)
+        run: cd old/six.five/r2 && pnpm install && cd ../..
+
       - name: Build current site
         run: bun run build
         env:
@@ -53,7 +62,13 @@ jobs:
       - name: Build old/eight
         run: cd old/eight && bun run build && cd ..
 
-      - name: Build old/seven
+      - name: Build six.five/r1 (React/Vite)
+        run: cd old/six.five/r1 && pnpm run build && cd ../..
+
+      - name: Build six.five/r2 (Imba)
+        run: cd old/six.five/r2 && pnpm run build && cd ../..
+
+      - name: Build old/seven (Leptos/WASM)
         run: |
           cd old/seven
           rustup target add wasm32-unknown-unknown
@@ -65,17 +80,24 @@ jobs:
           mkdir -p dist
 
           # Current site
-          cp -r out dist/current
+          cp -r out dist/current || true
 
-          # Old eight
+          # Old eight (Next.js outputs to out/)
           mkdir -p dist/old/eight
           cp -r old/eight/out/* dist/old/eight/ 2>/dev/null || true
 
-          # Old seven
+          # six.five/r1 (React/Vite outputs to build/)
+          mkdir -p dist/old/six.five
+          cp -r old/six.five/r1/build/* dist/old/six.five/ 2>/dev/null || true
+
+          # six.five/r2 (Imba outputs to dist/)
+          cp -r old/six.five/r2/dist/* dist/old/six.five/ 2>/dev/null || true
+
+          # Old seven (Leptos outputs to dist/)
           mkdir -p dist/old/seven
           cp -r old/seven/dist/* dist/old/seven/ 2>/dev/null || true
 
-          # Static sites
+          # Static sites (just copy as-is)
           for dir in one two three four five six; do
             if [ -d "old/$dir" ]; then
               mkdir -p "dist/old/$dir"
@@ -83,17 +105,11 @@ jobs:
             fi
           done
 
-          # six.five/r1 (Svelte)
-          if [ -d "old/six.five/r1" ]; then
-            mkdir -p dist/old/six.five
-            cp -r old/six.five/r1/* dist/old/six.five/ 2>/dev/null || true
-          fi
-
-          # six.five/r2 (Imba)
-          if [ -d "old/six.five/r2" ]; then
-            mkdir -p dist/old/six.five
-            cp -r old/six.five/r2/* dist/old/six.five/ 2>/dev/null || true
-          fi
+          # Debug: list dist contents
+          echo "=== dist contents ==="
+          ls -la dist/
+          echo "=== dist/old contents ==="
+          ls -la dist/old/ 2>/dev/null || true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
