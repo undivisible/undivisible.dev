@@ -32,9 +32,6 @@ jobs:
 
       - name: Build
         run: bun run build
-        env:
-          NEXT_PUBLIC_LASTFM_API_KEY: ${{ secrets.NEXT_PUBLIC_LASTFM_API_KEY }}
-          NEXT_PUBLIC_LASTFM_USERNAME: ${{ secrets.NEXT_PUBLIC_LASTFM_USERNAME }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
