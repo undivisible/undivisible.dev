@@ -104,7 +104,7 @@ function createProgram(gl: WebGLRenderingContext, vertexSource: string, fragment
   return program;
 }
 
-export default function BouncingShapeVisualizer({
+export default function Ascii({
   colors = DEFAULT_COLORS,
   track = null,
   ready = false,

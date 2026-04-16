@@ -21,7 +21,7 @@ const products = [
   { name: "crepuscularity", desc: "code web, get native, on every device + web.", href: "https://crepuscularity.undivisible.dev" },
   { name: "crepus lite", desc: "native ui for any electron project or website", href: "https://github.com/semitechnological/crepuscularity-lite" },
   { name: "equilibrium", desc: "FFI for C compiling langs, or Swift in 2 lines.", href: "https://github.com/semitechnological/equilibrium" },
-  { name: "wax", desc: "brew but 20x faster, with support for scoop + winget.", href: "https://github.com/semitechnological/wax" },
+  { name: "wax", desc: "brew but up to 20x faster + support for scoop + winget.", href: "https://github.com/semitechnological/wax" },
   { name: "otto", desc: "ai powered ottocomplete everywhere on your mac.", href: "https://github.com/semitechnological/otto" },
   { name: "tile", desc: "canvas, mosaic and tiling window management.", href: "https://github.com/semitechnological/tile" },
 ];
@@ -62,12 +62,17 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
   const [revealed, setRevealed] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
@@ -188,10 +193,19 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
     color: "var(--page-text)",
   }), []);
 
+  const weatherText = hydrated ? dayTheme.weatherDisplay : "--°C --";
+  const hkgText = hydrated ? dayTheme.hkgTime : "--:--:--";
+  const melText = hydrated ? dayTheme.melTime : "--:--:--";
+  const localText = hydrated ? dayTheme.localTime : "--:--:--";
+
   if (isMobile) {
     return (
-      <div ref={mobileContainerRef} className="relative h-dvh w-full overflow-x-hidden overflow-y-hidden px-4" style={{ color: "var(--page-text)" }}>
-        <div className="sticky top-0 h-dvh overflow-y-hidden">
+      <div
+        ref={mobileContainerRef}
+        className="relative mx-4 h-dvh w-[calc(100%-2rem)] overflow-x-visible overflow-y-hidden"
+        style={{ color: "var(--page-text)" }}
+      >
+        <div className="sticky top-0 h-dvh overflow-x-visible overflow-y-hidden">
           <div
             className="h-[200dvh] w-full transition-transform duration-700 ease-out"
             style={{ transform: revealed ? "translateY(-100dvh)" : "translateY(0)" }}
@@ -204,10 +218,10 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                 onMouseLeave={dayTheme.resetScrub}
                 onWheel={dayTheme.onScrubWheel}
               >
-                <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>{dayTheme.weatherDisplay}</div>
-                <div className="grid grid-cols-[3.1rem_auto] items-baseline gap-x-2"><span style={{ color: "var(--page-text-soft)" }}>HKG</span><span>{dayTheme.hkgTime}</span></div>
-                <div className="mt-1 grid grid-cols-[3.1rem_auto] items-baseline gap-x-2"><span style={{ color: "var(--page-text-soft)" }}>MEL</span><span>{dayTheme.melTime}</span></div>
-                {dayTheme.showLocalTime && <div className="mt-1 grid grid-cols-[3.1rem_auto] items-baseline gap-x-2"><span style={{ color: "var(--page-text-soft)" }}>{dayTheme.localLabel}</span><span>{dayTheme.localTime}</span></div>}
+                <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>{weatherText}</div>
+                <div className="grid grid-cols-[3.1rem_auto] items-baseline gap-x-2"><span style={{ color: "var(--page-text-soft)" }}>HKG</span><span>{hkgText}</span></div>
+                <div className="mt-1 grid grid-cols-[3.1rem_auto] items-baseline gap-x-2"><span style={{ color: "var(--page-text-soft)" }}>MEL</span><span>{melText}</span></div>
+                {dayTheme.showLocalTime && <div className="mt-1 grid grid-cols-[3.1rem_auto] items-baseline gap-x-2"><span style={{ color: "var(--page-text-soft)" }}>{dayTheme.localLabel}</span><span>{localText}</span></div>}
               </div>
 
               <div className="w-full min-w-0 max-w-full">
@@ -349,10 +363,10 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
 
   return (
     <div
-      className="relative h-dvh w-full max-w-full overflow-x-hidden overflow-y-hidden bg-transparent"
+      className="relative h-dvh w-full max-w-full overflow-x-visible overflow-y-hidden bg-transparent"
       style={{ color: "var(--page-text)" }}
     >
-      <div className="sticky top-0 flex h-dvh w-full min-w-0 items-center justify-start px-4 overflow-x-hidden md:px-8">
+      <div className="sticky top-0 mx-4 flex h-dvh w-[calc(100%-2rem)] min-w-0 items-center justify-start overflow-x-visible md:mx-8 md:w-[calc(100%-4rem)]">
         <div className="flex h-full w-full min-w-0 max-w-full flex-col items-start justify-center">
           <div
             data-time-scrubber="true"
@@ -361,25 +375,25 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
             onMouseLeave={dayTheme.resetScrub}
             onWheel={dayTheme.onScrubWheel}
           >
-            <div className="w-fit">
-              <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>
-                {dayTheme.weatherDisplay}
-              </div>
-              <div className="grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                <span style={{ color: "var(--page-text-soft)" }}>HKG</span>
-                <span>{dayTheme.hkgTime}</span>
-              </div>
-              <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                <span style={{ color: "var(--page-text-soft)" }}>MEL</span>
-                <span>{dayTheme.melTime}</span>
-              </div>
-              {dayTheme.showLocalTime && (
-                <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                  <span style={{ color: "var(--page-text-soft)" }}>{dayTheme.localLabel}</span>
-                  <span>{dayTheme.localTime}</span>
+              <div className="w-fit">
+                <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>
+                  {weatherText}
                 </div>
-              )}
-            </div>
+                <div className="grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
+                  <span style={{ color: "var(--page-text-soft)" }}>HKG</span>
+                  <span>{hkgText}</span>
+                </div>
+                <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
+                  <span style={{ color: "var(--page-text-soft)" }}>MEL</span>
+                  <span>{melText}</span>
+                </div>
+                {dayTheme.showLocalTime && (
+                  <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
+                    <span style={{ color: "var(--page-text-soft)" }}>{dayTheme.localLabel}</span>
+                    <span>{localText}</span>
+                  </div>
+                )}
+              </div>
           </div>
 
           <div className="transition-all duration-500 ease-out" style={heroStyle}>
@@ -631,13 +645,13 @@ function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode
   const ref = useRef<HTMLDivElement>(null);
 
   return (
-    <div className={`relative max-w-full overflow-x-hidden ${bleedOut ? "-mx-4 w-[calc(100%+2rem)]" : "w-full"}`}>
+    <div className={`relative max-w-full overflow-visible ${bleedOut ? "-mx-4 w-[calc(100%+2rem)]" : "w-full"}`}>
       <div
         ref={ref}
         data-carousel-scroll="true"
-        className={`overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain touch-pan-x ${bleedOut ? "pl-4 pr-4" : ""}`}
+        className={`overflow-x-auto overflow-y-visible pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain touch-pan-x ${bleedOut ? "px-4" : ""}`}
       >
-        <div className="flex w-max flex-nowrap gap-2">{children}</div>
+        <div className={`inline-flex w-max flex-nowrap gap-2 ${bleedOut ? "min-w-[calc(100%+2rem)]" : "min-w-full"}`}>{children}</div>
       </div>
     </div>
   );
