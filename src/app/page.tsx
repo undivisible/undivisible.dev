@@ -1,8 +1,8 @@
 "use client";
 
 import { Info } from "@/components/Info";
-import BouncingShapeVisualizer from "@/components/BouncingShapeVisualizer";
-import { WallLightScene } from "@/components/WallLightScene";
+import Ascii from "@/components/Ascii";
+import { Light } from "@/components/Light";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { useLastFmVisualData } from "@/lib/useLastFmVisualData";
 
@@ -12,10 +12,10 @@ export default function Home() {
 
   return (
     <div className="site-shell relative h-dvh overflow-hidden" style={dayTheme.style}>
-      <WallLightScene scene={dayTheme.shader} className="pointer-events-none fixed inset-0 z-[1] h-full w-full" />
+      <Light scene={dayTheme.shader} className="pointer-events-none fixed inset-0 z-[1] h-full w-full" />
 
       <div className="fixed inset-0 z-0 lg:hidden">
-        <BouncingShapeVisualizer colors={colors} track={track} ready={ready} />
+        <Ascii colors={colors} track={track} ready={ready} />
       </div>
 
       <div className="relative z-10 w-full max-w-full overflow-x-hidden lg:hidden">
@@ -27,7 +27,7 @@ export default function Home() {
           <Info colors={colors} dayTheme={dayTheme} />
         </div>
         <div className="h-full w-1/2 min-w-0 overflow-x-hidden">
-          <BouncingShapeVisualizer colors={colors} track={track} ready={ready} />
+          <Ascii colors={colors} track={track} ready={ready} />
         </div>
       </div>
     </div>

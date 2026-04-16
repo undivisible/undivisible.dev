@@ -58,7 +58,7 @@ function drawBird(ctx: CanvasRenderingContext2D, x: number, y: number, size: num
   ctx.restore();
 }
 
-export function WallLightScene({ scene, className = "", opacity = 1 }: { scene: ShaderPalette; className?: string; opacity?: number }) {
+export function Light({ scene, className = "", opacity = 1 }: { scene: ShaderPalette; className?: string; opacity?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef(scene);
   const frameRef = useRef<number>(0);
