@@ -176,7 +176,13 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
     };
   }, [nameHovered]);
 
-  const heroStyle = useMemo(() => ({
+  const displayNameStyle = useMemo<React.CSSProperties>(() => ({
+    display: "inline-block",
+    minWidth: "7.5em",
+    transition: "opacity 0.5s ease-out",
+  }), []);
+
+  const heroStyle = useMemo<React.CSSProperties>(() => ({
     opacity: revealed ? 0.72 : 1,
     transition: "opacity 0.5s ease-out",
   }), [revealed]);
@@ -229,8 +235,8 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                   <h1 className="max-w-full break-words text-2xl leading-tight">
                     <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
                     <span
-                      className="inline-block transition-opacity duration-500"
-                      style={{ opacity: nameVisible ? (loaded ? 1 : 0) : 0 }}
+                      className="inline-block"
+                      style={{ ...displayNameStyle, opacity: nameVisible ? (loaded ? 1 : 0) : 0 }}
                       onMouseEnter={() => setNameHovered(true)}
                       onMouseLeave={() => setNameHovered(false)}
                     >
@@ -401,8 +407,8 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
               <h1 className="max-w-full break-words text-2xl leading-tight md:text-5xl">
                 <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
                 <span
-                  className="inline-block transition-opacity duration-500"
-                  style={{ opacity: nameVisible ? (loaded ? 1 : 0) : 0 }}
+                  className="inline-block"
+                  style={{ ...displayNameStyle, opacity: nameVisible ? (loaded ? 1 : 0) : 0 }}
                   onMouseEnter={() => setNameHovered(true)}
                   onMouseLeave={() => setNameHovered(false)}
                 >
@@ -595,8 +601,11 @@ function MorphWord({ words }: { words: string[] }) {
 
   return (
     <span
-      className="inline-block transition-opacity duration-200"
-      style={{ opacity: visible ? 1 : 0.32 }}
+      className="inline-block transition-all duration-200"
+      style={{
+        opacity: visible ? 1 : 0.32,
+        color: hovered ? "var(--page-text)" : undefined,
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -608,12 +617,13 @@ function MorphWord({ words }: { words: string[] }) {
 function ScatterWord({ word, colors }: { word: string; colors: string[] }) {
   const [hovered, setHovered] = useState(false);
   const transforms = useMemo(
-    () => word.split("").map((_, index) => ({
-      x: (index % 2 === 0 ? 1 : -1) * (7 + ((index * 5) % 12)),
-      y: (index % 3 === 0 ? -1 : 1) * (5 + ((index * 3) % 8)),
-      r: (index % 2 === 0 ? 1 : -1) * (7 + index * 2),
-      color: colors[index % colors.length] ?? "#ffffff",
-    })),
+    () =>
+      word.split("").map((_, index) => ({
+        x: (index % 2 === 0 ? 1 : -1) * (7 + ((index * 5) % 12)),
+        y: (index % 3 === 0 ? -1 : 1) * (5 + ((index * 3) % 8)),
+        r: (index % 2 === 0 ? 1 : -1) * (7 + index * 2),
+        color: colors[index % colors.length] ?? "#ffffff",
+      })),
     [word, colors],
   );
 
@@ -629,7 +639,7 @@ function ScatterWord({ word, colors }: { word: string; colors: string[] }) {
                 transform: hovered
                   ? `translate(${transform.x}px, ${transform.y}px) rotate(${transform.r}deg)`
                   : "translate(0px, 0px) rotate(0deg)",
-                color: hovered ? transform.color : "var(--page-text)",
+                color: hovered ? "var(--page-text)" : "var(--page-text-muted)",
               }}
             >
               {letter}
