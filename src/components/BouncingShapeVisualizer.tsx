@@ -449,13 +449,18 @@ export default function BouncingShapeVisualizer({
       <canvas ref={asciiCanvasRef} className="pointer-events-none absolute inset-0 h-full w-full" />
 
       {ready && track && (
-        <div className="absolute bottom-6 right-6 z-10 max-w-[14rem] text-right font-mono text-white">
+        <a
+          href="https://www.last.fm/user/undivisible"
+          target="_blank"
+          rel="noreferrer"
+          className="absolute bottom-6 right-6 z-10 max-w-[14rem] text-right font-mono text-white cursor-pointer"
+        >
           <div className="text-base leading-snug">{track.artist}</div>
           <div className="text-sm leading-snug text-white/82">{track.track}</div>
           <div className="mt-1 text-[10px] uppercase tracking-[0.22em] text-white/55">
             {track.isNowPlaying ? "now playing" : "last listening to"}
           </div>
-        </div>
+        </a>
       )}
     </div>
   );
