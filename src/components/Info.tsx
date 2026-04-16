@@ -639,7 +639,7 @@ function ScatterWord({ word, colors }: { word: string; colors: string[] }) {
                 transform: hovered
                   ? `translate(${transform.x}px, ${transform.y}px) rotate(${transform.r}deg)`
                   : "translate(0px, 0px) rotate(0deg)",
-                color: hovered ? "var(--page-text)" : "var(--page-text-muted)",
+                color: hovered ? transform.color : "var(--page-text-muted)",
               }}
             >
               {letter}
