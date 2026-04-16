@@ -106,6 +106,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
 
     const handleWheel = (event: WheelEvent) => {
       if ((event.target as HTMLElement | null)?.closest("[data-time-scrubber='true']")) {
+        event.preventDefault();
         return;
       }
       if ((event.target as HTMLElement | null)?.closest("[data-carousel-scroll='true']")) {
@@ -348,7 +349,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
 
   return (
     <div
-      className="relative min-h-[210dvh] w-full max-w-full overflow-x-hidden bg-transparent pb-12 md:pb-24"
+      className="relative h-dvh w-full max-w-full overflow-x-hidden overflow-y-hidden bg-transparent"
       style={{ color: "var(--page-text)" }}
     >
       <div className="sticky top-0 flex h-dvh w-full min-w-0 items-center justify-start px-4 overflow-x-hidden md:px-8">
