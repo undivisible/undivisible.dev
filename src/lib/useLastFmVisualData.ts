@@ -9,7 +9,7 @@ export interface TrackInfo {
   isNowPlaying: boolean;
 }
 
-const DEFAULT_COLORS = ["#bf616a", "#d08770", "#ebcb8b", "#a3be8c", "#b48ead"];
+const DEFAULT_COLORS = ["#ffffff", "#cccccc", "#999999", "#666666", "#333333"];
 
 export function useLastFmVisualData() {
   const [track, setTrack] = useState<TrackInfo | null>(null);
