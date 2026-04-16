@@ -16,7 +16,7 @@ interface ShapeState {
   type: ShapeType;
 }
 
-const DEFAULT_COLORS = ["#bf616a", "#d08770", "#ebcb8b", "#a3be8c", "#b48ead"];
+const DEFAULT_COLORS = ["#ffffff", "#cccccc", "#999999", "#666666", "#333333"];
 const FIELD_CHARS = ".,:;-=+*#%&";
 const SHAPE_CHARS = "@#MW8$&NBG";
 
