@@ -147,17 +147,17 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
 
   if (isMobile) {
     return (
-      <div className="relative lg:min-h-[200dvh] md:max-h-[100dvh] w-full overflow-x-hidden overflow-y-hidden px-4 py-4 text-white">
-        <div className="sticky top-0 h-dvh overflow-hidden">
+      <div className="relative h-dvh w-full overflow-y-hidden text-white">
+        <div className="sticky top-0 h-dvh overflow-y-hidden">
           <div
-            className="lg:h-[200dvh] md:h-[100dvh] w-full transition-transform duration-700 ease-out"
+            className="h-[200dvh] w-full transition-transform duration-700 ease-out"
             style={{ transform: revealed ? "translateY(-100dvh)" : "translateY(0)" }}
           >
             <section className="flex h-dvh w-full items-center">
               <div className="w-full min-w-0 max-w-full">
                 <div className="transition-all duration-500 ease-out" style={heroStyle}>
-                  <div className="space-y-3 max-w-full">
-                    <h1 className="max-w-full break-words text-2xl leading-tight">
+                  <div className="space-y-3 px-4">
+                    <h1 className="break-words text-2xl leading-tight">
                       <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
                       <span
                         className="inline-block transition-opacity duration-500"
@@ -176,8 +176,8 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
                     </p>
                   </div>
 
-                  <div className="mt-6 space-y-4 max-w-full">
-                    <AnimatedText text="here's my:" className="text-base text-white/58" />
+                  <div className="mt-6 space-y-4">
+                    <div className="px-4"><AnimatedText text="here's my:" className="text-base text-white/58" /></div>
                     <div className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}>
                       <CarouselRow>
                       {socials.map((social) => {
@@ -219,11 +219,13 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
                     </div>
 
                     {!revealed && (
+                      <div className="px-4">
                         <AnimatedText
                           text="swipe up to learn more"
                           className="font-mono text-[10px] tracking-[0.08em] text-white/36 motion-safe:animate-bounce"
                           split="chars"
                         />
+                      </div>
                     )}
                   </div>
                 </div>
@@ -232,14 +234,16 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
 
             <section className="flex h-dvh w-full items-center">
               <div className="w-full min-w-0 max-w-full">
-                <div className="flex min-h-[calc(100dvh-2rem)] w-full items-center overflow-hidden transition-all duration-500 ease-out" style={lowerStyle}>
-                  <div className="space-y-6 pt-0 max-w-full">
+                <div className="flex min-h-dvh w-full items-center overflow-y-hidden transition-all duration-500 ease-out" style={lowerStyle}>
+                  <div className="space-y-6 pt-0">
                     {revealed ? (
-                      <RandomizedText key="lower-text" split="words" className="max-w-full break-words text-sm leading-relaxed text-white">
-                        {introText}
-                      </RandomizedText>
+                      <div className="px-4">
+                        <RandomizedText key="lower-text" split="words" className="break-words text-sm leading-relaxed text-white">
+                          {introText}
+                        </RandomizedText>
+                      </div>
                     ) : (
-                      <div className="max-w-full break-words text-sm leading-relaxed text-white opacity-0">{introText}</div>
+                      <div className="px-4 break-words text-sm leading-relaxed text-white opacity-0">{introText}</div>
                     )}
 
                     <Section title="i make utilities that feel inevitable:" isMobile={true}>
@@ -642,7 +646,9 @@ function CarouselRow({ children }: { children: React.ReactNode }) {
 function Section({ title, children, isMobile = false }: { title: string; children: React.ReactNode; isMobile?: boolean }) {
   return (
     <div className="space-y-4">
-      <AnimatedText text={title} className={isMobile ? "text-sm text-white" : "text-xl text-white"} />
+      <div className={isMobile ? "px-4" : ""}>
+        <AnimatedText text={title} className={isMobile ? "text-sm text-white" : "text-xl text-white"} />
+      </div>
       <CarouselRow>{children}</CarouselRow>
     </div>
   );
