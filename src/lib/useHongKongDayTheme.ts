@@ -921,7 +921,6 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   const style = useMemo<CSSProperties>(() => ({}), []);
 
   const onScrubWheel = (event: ReactWheelEvent<HTMLElement>) => {
-    event.preventDefault();
     if (resetFrameRef.current !== null) {
       window.cancelAnimationFrame(resetFrameRef.current);
       resetFrameRef.current = null;
