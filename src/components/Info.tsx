@@ -233,7 +233,7 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
             <section className="flex h-dvh w-full items-center">
               <div className="w-full min-w-0 max-w-full">
                 <div className="flex min-h-dvh w-full items-center overflow-y-hidden transition-all duration-500 ease-out" style={lowerStyle}>
-                  <div className="space-y-6 pt-0">
+                  <div className="space-y-6 pt-0 w-full min-w-0">
                     {revealed ? (
                       <RandomizedText key="lower-text" split="words" className="max-w-full break-words text-sm leading-relaxed text-white">
                         {introText}
