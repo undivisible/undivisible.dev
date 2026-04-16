@@ -29,7 +29,9 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build with Next.js
-        run: bun run build
+        run: |
+          echo "LASTFM_API_KEY set: ${{ vars.NEXT_PUBLIC_LASTFM_API_KEY != '' }}"
+          bun run build
         env:
           NEXT_PUBLIC_LASTFM_API_KEY: ${{ secrets.NEXT_PUBLIC_LASTFM_API_KEY }}
 
