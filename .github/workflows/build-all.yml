@@ -36,7 +36,9 @@ jobs:
           workspaces: old/seven
 
       - name: Install trunk
-        run: cargo install trunk
+        run: |
+          curl -L https://github.com/thedodd/trunk/releases/latest/download/trunk-x86_64-unknown-linux.tar.gz | tar -xz
+          mv trunk /usr/local/bin/
 
       - name: Install bun dependencies (current)
         run: bun install --frozen-lockfile
