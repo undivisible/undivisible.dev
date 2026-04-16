@@ -155,7 +155,7 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
           >
             <section className="flex h-dvh w-full items-center">
               <div className="w-full min-w-0 max-w-full">
-                <div className="transition-all duration-500 ease-out" style={heroStyle}>
+                <div className="transition-all duration-500 ease-out">
                   <div className="space-y-3">
                     <h1 className="max-w-full break-words text-2xl leading-tight">
                       <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
@@ -330,7 +330,7 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
     <div className="min-h-[210dvh] bg-transparent px-4 md:px-8 pb-12 md:pb-24 text-white w-full max-w-full overflow-x-hidden">
       <div className="sticky top-0 flex h-dvh w-full items-center justify-center lg:justify-start overflow-hidden">
         <div className="flex h-full w-full min-w-0 max-w-full flex-col justify-center items-center lg:items-start lg:max-w-[42rem] lg:mx-0">
-          <div className="transition-all duration-500 ease-out" style={heroStyle}>
+          <div className="transition-all duration-500 ease-out">
             <div className="space-y-3 max-w-full">
               <h1 className="max-w-full break-words text-2xl leading-tight md:text-5xl">
                 <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
@@ -405,7 +405,7 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
             </div>
           </div>
 
-          <div className="mt-8 flex min-h-[calc(100vh-16rem)] w-full items-center overflow-hidden transition-all duration-500 ease-out max-w-full" style={lowerStyle}>
+          <div className="mt-8 w-full overflow-visible transition-all duration-500 ease-out max-w-full lg:relative lg:z-10" style={lowerStyle}>
             <div className="space-y-6 pt-0 max-w-full">
               {revealed ? (
                 <RandomizedText key="lower-text" split="words" className="max-w-full break-words text-sm md:text-xl leading-relaxed text-white">
