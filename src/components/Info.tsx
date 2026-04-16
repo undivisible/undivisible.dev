@@ -147,7 +147,7 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
 
   if (isMobile) {
     return (
-      <div className="relative h-dvh w-full overflow-y-hidden text-white">
+      <div className="relative h-dvh w-full overflow-y-hidden px-4 text-white">
         <div className="sticky top-0 h-dvh overflow-y-hidden">
           <div
             className="h-[200dvh] w-full transition-transform duration-700 ease-out"
@@ -156,8 +156,8 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
             <section className="flex h-dvh w-full items-center">
               <div className="w-full min-w-0 max-w-full">
                 <div className="transition-all duration-500 ease-out" style={heroStyle}>
-                  <div className="space-y-3 px-4">
-                    <h1 className="break-words text-2xl leading-tight">
+                  <div className="space-y-3">
+                    <h1 className="max-w-full break-words text-2xl leading-tight">
                       <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
                       <span
                         className="inline-block transition-opacity duration-500"
@@ -177,9 +177,9 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
                   </div>
 
                   <div className="mt-6 space-y-4">
-                    <div className="px-4"><AnimatedText text="here's my:" className="text-base text-white/58" /></div>
+                    <AnimatedText text="here's my:" className="text-base text-white/58" />
                     <div className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}>
-                      <CarouselRow>
+                      <CarouselRow bleedOut>
                       {socials.map((social) => {
                         const active = hoveredPill === social.name;
 
@@ -219,13 +219,11 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
                     </div>
 
                     {!revealed && (
-                      <div className="px-4">
                         <AnimatedText
                           text="swipe up to learn more"
                           className="font-mono text-[10px] tracking-[0.08em] text-white/36 motion-safe:animate-bounce"
                           split="chars"
                         />
-                      </div>
                     )}
                   </div>
                 </div>
@@ -237,13 +235,11 @@ export function Info({ colors, revealed: revealedProp = false, setRevealed: setR
                 <div className="flex min-h-dvh w-full items-center overflow-y-hidden transition-all duration-500 ease-out" style={lowerStyle}>
                   <div className="space-y-6 pt-0">
                     {revealed ? (
-                      <div className="px-4">
-                        <RandomizedText key="lower-text" split="words" className="break-words text-sm leading-relaxed text-white">
-                          {introText}
-                        </RandomizedText>
-                      </div>
+                      <RandomizedText key="lower-text" split="words" className="max-w-full break-words text-sm leading-relaxed text-white">
+                        {introText}
+                      </RandomizedText>
                     ) : (
-                      <div className="px-4 break-words text-sm leading-relaxed text-white opacity-0">{introText}</div>
+                      <div className="max-w-full break-words text-sm leading-relaxed text-white opacity-0">{introText}</div>
                     )}
 
                     <Section title="i make utilities that feel inevitable:" isMobile={true}>
@@ -600,7 +596,7 @@ function ScatterWord({ word, colors }: { word: string; colors: string[] }) {
   );
 }
 
-function CarouselRow({ children }: { children: React.ReactNode }) {
+function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode; bleedOut?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
@@ -627,8 +623,8 @@ function CarouselRow({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="relative w-full max-w-full">
-      <div ref={ref} className="overflow-x-auto overflow-y-hidden pb-2 pr-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+    <div className={`relative ${bleedOut ? "-mx-4 w-[calc(100%+2rem)]" : "w-full max-w-full"}`}>
+      <div ref={ref} className={`overflow-x-auto overflow-y-hidden pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "pl-4 pr-4" : "pr-6"}`}>
         <div className="flex w-max flex-nowrap gap-2">{children}</div>
       </div>
       <div
@@ -646,10 +642,8 @@ function CarouselRow({ children }: { children: React.ReactNode }) {
 function Section({ title, children, isMobile = false }: { title: string; children: React.ReactNode; isMobile?: boolean }) {
   return (
     <div className="space-y-4">
-      <div className={isMobile ? "px-4" : ""}>
-        <AnimatedText text={title} className={isMobile ? "text-sm text-white" : "text-xl text-white"} />
-      </div>
-      <CarouselRow>{children}</CarouselRow>
+      <AnimatedText text={title} className={isMobile ? "text-sm text-white" : "text-xl text-white"} />
+      <CarouselRow bleedOut={isMobile}>{children}</CarouselRow>
     </div>
   );
 }
