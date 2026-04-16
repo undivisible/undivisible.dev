@@ -33,6 +33,13 @@ jobs:
         env:
           NEXT_PUBLIC_LASTFM_API_KEY: ${{ secrets.NEXT_PUBLIC_LASTFM_API_KEY }}
 
+      - name: Verify build output
+        run: |
+          echo "Checking out/ directory:"
+          ls -la out/ || echo "out/ not found"
+          echo "Checking out/index.html:"
+          test -f out/index.html && echo "index.html exists" || echo "index.html NOT found"
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
