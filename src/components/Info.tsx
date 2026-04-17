@@ -86,7 +86,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
 
     const onTouchEnd = (event: TouchEvent) => {
       const deltaY = touchStartY.current - event.changedTouches[0].clientY;
-      if (Math.abs(deltaY) > 50) {
+      if (Math.abs(deltaY) > 150) {
         setRevealed(deltaY > 0);
       }
     };
