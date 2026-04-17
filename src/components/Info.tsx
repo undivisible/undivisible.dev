@@ -213,7 +213,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
       >
         <div className="sticky top-0 h-dvh overflow-x-visible overflow-y-hidden">
           <div
-            className="h-[200dvh] w-full transition-transform duration-700 ease-out"
+            className={`h-[200dvh] w-full transition-transform duration-700 ease-out ${revealed ? "pointer-events-none" : ""}`}
             style={{ transform: revealed ? "translateY(-100dvh)" : "translateY(0)" }}
           >
             <section className="relative flex h-dvh w-full items-center">
