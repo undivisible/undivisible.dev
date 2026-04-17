@@ -474,7 +474,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
           </div>
 
           <div className="mt-8 w-full max-w-full overflow-visible transition-all duration-500 ease-out" style={lowerStyle}>
-            <div className="space-y-8 pt-0 max-w-full">
+            <div className={`space-y-8 pt-0 max-w-full ${revealed ? "" : "pointer-events-none"}`}>
               {revealed ? (
                 <RandomizedText key="lower-text" split="words" className="text-xl leading-relaxed">
                   {introText}
