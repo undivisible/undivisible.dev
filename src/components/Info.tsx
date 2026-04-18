@@ -659,7 +659,8 @@ function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode
       <div
         ref={ref}
         data-carousel-scroll="true"
-        className={`overflow-x-auto overflow-y-visible pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain touch-pan-x ${bleedOut ? "px-4" : ""}`}
+        style={{ overflowX: "auto", overflowY: "visible", touchAction: "pan-x", overscrollBehaviorX: "contain" }}
+        className={`overflow-x-auto overflow-y-visible pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "px-4" : ""}`}
       >
         <div className={`inline-flex w-max flex-nowrap gap-2 ${bleedOut ? "min-w-[calc(100%+2rem)]" : "min-w-full"}`}>{children}</div>
       </div>
