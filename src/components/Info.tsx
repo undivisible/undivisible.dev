@@ -81,41 +81,47 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
     }
 
     const touchStart = { y: 0, x: 0 };
+    let touchMovedHorizontally = false;
 
     const onTouchStart = (event: TouchEvent) => {
       touchStart.y = event.touches[0].clientY;
       touchStart.x = event.touches[0].clientX;
+      touchMovedHorizontally = false;
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      const deltaX = Math.abs(event.touches[0].clientX - touchStart.x);
+      const deltaY = Math.abs(event.touches[0].clientY - touchStart.y);
+      if (deltaX > 10 && deltaX > deltaY) {
+        touchMovedHorizontally = true;
+      }
     };
 
     const onTouchEnd = (event: TouchEvent) => {
-      const deltaY = touchStart.y - event.changedTouches[0].clientY;
-      const deltaX = touchStart.x - event.changedTouches[0].clientX;
-      const absX = Math.abs(deltaX);
-      const absY = Math.abs(deltaY);
-
-      const target = event.target as HTMLElement | null;
-      const isInCarousel = target?.closest("[data-carousel-scroll='true']");
-
-      if (isInCarousel && absX > absY) {
+      if (touchMovedHorizontally) {
+        touchMovedHorizontally = false;
         return;
       }
-
-      if (absY > 150 && absY > absX) {
+      const deltaY = touchStart.y - event.changedTouches[0].clientY;
+      if (Math.abs(deltaY) > 150) {
         setRevealed(deltaY > 0);
       }
     };
 
-    const node = mobileContainerRef.current;
-    if (!node) {
-      return;
-    }
+    const carousels = document.querySelectorAll("[data-carousel-scroll='true']");
 
-    node.addEventListener("touchstart", onTouchStart, { passive: true });
-    node.addEventListener("touchend", onTouchEnd, { passive: true });
+    carousels.forEach((carousel) => {
+      carousel.addEventListener("touchstart", onTouchStart as EventListener, { passive: true });
+      carousel.addEventListener("touchmove", onTouchMove as EventListener, { passive: true });
+      carousel.addEventListener("touchend", onTouchEnd as EventListener, { passive: true });
+    });
 
     return () => {
-      node.removeEventListener("touchstart", onTouchStart);
-      node.removeEventListener("touchend", onTouchEnd);
+      carousels.forEach((carousel) => {
+        carousel.removeEventListener("touchstart", onTouchStart as EventListener);
+        carousel.removeEventListener("touchmove", onTouchMove as EventListener);
+        carousel.removeEventListener("touchend", onTouchEnd as EventListener);
+      });
     };
   }, [isMobile]);
 
