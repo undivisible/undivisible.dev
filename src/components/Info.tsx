@@ -80,13 +80,27 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
       return;
     }
 
+    const touchStart = { y: 0, x: 0 };
+
     const onTouchStart = (event: TouchEvent) => {
-      touchStartY.current = event.touches[0].clientY;
+      touchStart.y = event.touches[0].clientY;
+      touchStart.x = event.touches[0].clientX;
     };
 
     const onTouchEnd = (event: TouchEvent) => {
-      const deltaY = touchStartY.current - event.changedTouches[0].clientY;
-      if (Math.abs(deltaY) > 150) {
+      const deltaY = touchStart.y - event.changedTouches[0].clientY;
+      const deltaX = touchStart.x - event.changedTouches[0].clientX;
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
+
+      const target = event.target as HTMLElement | null;
+      const isInCarousel = target?.closest("[data-carousel-scroll='true']");
+
+      if (isInCarousel && absX > absY) {
+        return;
+      }
+
+      if (absY > 150 && absY > absX) {
         setRevealed(deltaY > 0);
       }
     };
@@ -659,8 +673,8 @@ function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode
       <div
         ref={ref}
         data-carousel-scroll="true"
-        style={{ overflowX: "auto", overflowY: "visible", touchAction: "pan-x", overscrollBehaviorX: "contain" }}
-        className={`overflow-x-auto overflow-y-visible pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "px-4" : ""}`}
+        style={{ overflowX: "auto", overflowY: "hidden", touchAction: "pan-x", overscrollBehaviorX: "contain" }}
+        className={`overflow-x-auto overflow-y-hidden pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "px-4" : ""}`}
       >
         <div className={`inline-flex w-max flex-nowrap gap-2 ${bleedOut ? "min-w-[calc(100%+2rem)]" : "min-w-full"}`}>{children}</div>
       </div>
