@@ -208,7 +208,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
     return (
       <div
         ref={mobileContainerRef}
-        className="relative mx-4 h-dvh w-[calc(100%-2rem)] overflow-x-visible overflow-y-hidden"
+        className="relative mx-4 h-dvh w-[calc(100%-2rem)] overflow-visible"
         style={{ color: "var(--page-text)" }}
       >
         <div className="sticky top-0 h-dvh overflow-visible">
