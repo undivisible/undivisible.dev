@@ -16,6 +16,16 @@ type BirdGroup = {
   flapSpeed: number;
 };
 
+type RainDrop = {
+  x: number;
+  y: number;
+  length: number;
+  speed: number;
+  drift: number;
+  alpha: number;
+  width: number;
+};
+
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
@@ -85,6 +95,30 @@ export function Light({ scene, className = "", opacity = 1 }: { scene: ShaderPal
       });
     }
     return groups;
+  }, []);
+
+  const rainDrops = useMemo<RainDrop[]>(() => {
+    if (typeof window === "undefined") {
+      return [];
+    }
+
+    const drops: RainDrop[] = [];
+    const dropCount = 180;
+
+    for (let index = 0; index < dropCount; index += 1) {
+      const layer = Math.random();
+      drops.push({
+        x: Math.random(),
+        y: Math.random(),
+        length: 8 + layer * 16,
+        speed: 0.08 + layer * 0.22,
+        drift: -0.018 + Math.random() * 0.036,
+        alpha: 0.08 + layer * 0.18,
+        width: 0.7 + layer * 0.9,
+      });
+    }
+
+    return drops;
   }, []);
 
   useEffect(() => {
@@ -243,24 +277,30 @@ export function Light({ scene, className = "", opacity = 1 }: { scene: ShaderPal
       }
 
       if (current.weatherKind === "rain" || current.weatherKind === "storm") {
-        const rainCount = current.weatherKind === "storm" ? 170 : 110;
+        const rainStrength = current.weatherKind === "storm" ? 1 : 0.72;
         ctx.strokeStyle = current.weatherKind === "storm"
-          ? "rgba(190, 220, 255, 0.24)"
-          : "rgba(170, 205, 240, 0.18)";
-        ctx.lineWidth = current.weatherKind === "storm" ? 1.4 : 1;
-        for (let index = 0; index < rainCount; index += 1) {
-          const seed = index * 37.13;
-          const x = ((seed * 97 + t * 220 + index * 13) % (width + 120)) - 60;
-          const y = ((seed * 53 + t * 440 + index * 7) % (height + 100)) - 50;
-          const length = current.weatherKind === "storm" ? 16 : 12;
+          ? "rgba(205, 228, 255, 0.28)"
+          : "rgba(172, 206, 241, 0.18)";
+
+        for (const drop of rainDrops) {
+          const fall = (drop.y + t * drop.speed) % 1;
+          const xJitter = Math.sin((t * 1.7 + drop.y * 13.1) * Math.PI * 2) * width * 0.006;
+          const drift = Math.sin((t * 0.5 + drop.x * 9.7) * Math.PI * 2) * width * drop.drift;
+          const x = drop.x * width + drift + xJitter;
+          const y = fall * (height + drop.length * 2) - drop.length;
+          const length = drop.length * (current.weatherKind === "storm" ? 1.12 : 0.92);
+          ctx.lineWidth = drop.width * rainStrength;
+          ctx.strokeStyle = current.weatherKind === "storm"
+            ? `rgba(205, 228, 255, ${drop.alpha * 1.15})`
+            : `rgba(172, 206, 241, ${drop.alpha})`;
           ctx.beginPath();
           ctx.moveTo(x, y);
-          ctx.lineTo(x - length * 0.32, y + length);
+          ctx.lineTo(x - length * 0.34, y + length);
           ctx.stroke();
         }
 
         if (current.weatherKind === "storm") {
-          const flash = smoothstep(0.985, 1, Math.sin(t * 0.75) * 0.5 + 0.5);
+          const flash = smoothstep(0.987, 1, Math.sin(t * 0.95) * 0.5 + Math.sin(t * 0.23 + 1.7) * 0.18 + 0.5);
           if (flash > 0.02) {
             ctx.fillStyle = `rgba(220, 235, 255, ${flash * 0.35})`;
             ctx.fillRect(0, 0, width, height);
@@ -277,7 +317,7 @@ export function Light({ scene, className = "", opacity = 1 }: { scene: ShaderPal
       observer.disconnect();
       window.cancelAnimationFrame(frameRef.current);
     };
-  }, [birdGroups]);
+  }, [birdGroups, rainDrops]);
 
   return <canvas ref={canvasRef} className={className} style={{ opacity }} />;
 }
