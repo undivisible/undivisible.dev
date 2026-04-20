@@ -21,9 +21,11 @@ type RainDrop = {
   y: number;
   length: number;
   speed: number;
-  drift: number;
+  slope: number;
   alpha: number;
   width: number;
+  layer: number;
+  phase: number;
 };
 
 function clamp(value: number, min: number, max: number) {
@@ -103,18 +105,21 @@ export function Light({ scene, className = "", opacity = 1 }: { scene: ShaderPal
     }
 
     const drops: RainDrop[] = [];
-    const dropCount = 180;
+    const dropCount = 220;
 
     for (let index = 0; index < dropCount; index += 1) {
       const layer = Math.random();
+      const depth = layer < 0.33 ? 0 : layer < 0.72 ? 1 : 2;
       drops.push({
         x: Math.random(),
         y: Math.random(),
-        length: 8 + layer * 16,
-        speed: 0.08 + layer * 0.22,
-        drift: -0.018 + Math.random() * 0.036,
-        alpha: 0.08 + layer * 0.18,
-        width: 0.7 + layer * 0.9,
+        length: depth === 0 ? 6 + layer * 8 : depth === 1 ? 10 + layer * 12 : 14 + layer * 16,
+        speed: depth === 0 ? 0.09 + layer * 0.06 : depth === 1 ? 0.14 + layer * 0.09 : 0.2 + layer * 0.14,
+        slope: depth === 0 ? -0.06 + Math.random() * 0.12 : depth === 1 ? -0.14 + Math.random() * 0.28 : -0.22 + Math.random() * 0.44,
+        alpha: depth === 0 ? 0.05 + layer * 0.08 : depth === 1 ? 0.09 + layer * 0.1 : 0.14 + layer * 0.14,
+        width: depth === 0 ? 0.55 + layer * 0.35 : depth === 1 ? 0.7 + layer * 0.45 : 0.95 + layer * 0.6,
+        layer: depth,
+        phase: Math.random() * Math.PI * 2,
       });
     }
 
@@ -277,25 +282,26 @@ export function Light({ scene, className = "", opacity = 1 }: { scene: ShaderPal
       }
 
       if (current.weatherKind === "rain" || current.weatherKind === "storm") {
-        const rainStrength = current.weatherKind === "storm" ? 1 : 0.72;
-        ctx.strokeStyle = current.weatherKind === "storm"
-          ? "rgba(205, 228, 255, 0.28)"
-          : "rgba(172, 206, 241, 0.18)";
+        const rainStrength = current.weatherKind === "storm" ? 1 : 0.76;
+        const wind = Math.sin(t * 0.6) * 0.28 + Math.sin(t * 0.11 + 1.9) * 0.18;
+        const gust = 0.5 + Math.sin(t * 0.21 + 2.3) * 0.22 + Math.sin(t * 0.07 + 0.7) * 0.12;
 
         for (const drop of rainDrops) {
-          const fall = (drop.y + t * drop.speed) % 1;
-          const xJitter = Math.sin((t * 1.7 + drop.y * 13.1) * Math.PI * 2) * width * 0.006;
-          const drift = Math.sin((t * 0.5 + drop.x * 9.7) * Math.PI * 2) * width * drop.drift;
-          const x = drop.x * width + drift + xJitter;
+          const layerWeight = drop.layer === 0 ? 0.82 : drop.layer === 1 ? 1 : 1.16;
+          const fallSpeed = drop.speed * (0.82 + gust * 0.46) * (current.weatherKind === "storm" ? 1.12 : 1);
+          const fall = (drop.y + t * fallSpeed) % 1;
+          const motionSlope = drop.slope + wind * (drop.layer === 0 ? 0.45 : drop.layer === 1 ? 0.72 : 1);
+          const xWobble = Math.sin((t * 0.65 + drop.phase) * Math.PI * 2) * width * (0.002 + drop.layer * 0.0012);
+          const x = drop.x * width + (fall * height * motionSlope * 0.62) + xWobble;
           const y = fall * (height + drop.length * 2) - drop.length;
-          const length = drop.length * (current.weatherKind === "storm" ? 1.12 : 0.92);
-          ctx.lineWidth = drop.width * rainStrength;
+          const length = drop.length * (current.weatherKind === "storm" ? 1.08 : 0.94) * layerWeight;
+          ctx.lineWidth = drop.width * rainStrength * (0.9 + drop.layer * 0.25);
           ctx.strokeStyle = current.weatherKind === "storm"
-            ? `rgba(205, 228, 255, ${drop.alpha * 1.15})`
+            ? `rgba(205, 228, 255, ${drop.alpha * 1.2})`
             : `rgba(172, 206, 241, ${drop.alpha})`;
           ctx.beginPath();
           ctx.moveTo(x, y);
-          ctx.lineTo(x - length * 0.34, y + length);
+          ctx.lineTo(x + length * motionSlope, y + length);
           ctx.stroke();
         }
 
