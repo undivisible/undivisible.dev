@@ -19,14 +19,17 @@ const introText = `my favorite thing is chasing new experiences and sharing them
 
 const products = [
   { name: "crepuscularity", desc: "code web, get native, on every device + web.", href: "https://crepuscularity.undivisible.dev" },
-  { name: "crepus lite", desc: "native ui for any electron project or website", href: "https://github.com/semitechnological/crepuscularity-lite" },
+  { name: "crepus lite", desc: "native ui for any electron project or website.", href: "https://github.com/semitechnological/crepuscularity-lite" },
   { name: "equilibrium", desc: "FFI for C compiling langs, or Swift in 2 lines.", href: "https://github.com/semitechnological/equilibrium" },
   { name: "wax", desc: "brew but up to 20x faster + support for scoop + winget.", href: "https://github.com/semitechnological/wax" },
   { name: "otto", desc: "ai powered ottocomplete everywhere on your mac.", href: "https://github.com/semitechnological/otto" },
   { name: "tile", desc: "canvas, mosaic and tiling window management.", href: "https://github.com/semitechnological/tile" },
+  { name: "soliloquy", desc: "an ultralight web native operating system.", href: "#" },
+  { name: "atmosphere", desc: "ecosystem every device.", href: "#" },
+  { name: "experiences", desc: "making the spatial web accessible.", href: "#" },
 ];
 
-const languages = ["rust", "typescript", "python", "go", "v", "zig"];
+const languages = ["rust", "typescript", "swift", "python", "go", "v", "zig"];
 const transport = ["cantonese", "english", "russian", "mandarin", "indonesian", "japanese"];
 
 const tidbits = [
