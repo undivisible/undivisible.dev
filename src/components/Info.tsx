@@ -211,7 +211,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
         className="relative mx-4 h-dvh w-[calc(100%-2rem)] overflow-x-visible overflow-y-hidden"
         style={{ color: "var(--page-text)" }}
       >
-        <div className="sticky top-0 h-dvh overflow-x-visible overflow-y-hidden">
+        <div className="sticky top-0 h-dvh overflow-visible">
           <div
             className={`h-[200dvh] w-full transition-transform duration-700 ease-out ${revealed ? "pointer-events-none" : ""}`}
             style={{ transform: revealed ? "translateY(-100dvh)" : "translateY(0)" }}
@@ -369,10 +369,10 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
 
   return (
     <div
-      className="relative h-dvh w-full max-w-full overflow-x-visible overflow-y-hidden bg-transparent"
+      className="relative h-dvh w-full max-w-full overflow-visible bg-transparent"
       style={{ color: "var(--page-text)" }}
     >
-      <div className="sticky top-0 mx-4 flex h-dvh w-[calc(100%-2rem)] min-w-0 items-center justify-start overflow-x-visible md:mx-8 md:w-[calc(100%-4rem)]">
+      <div className="sticky top-0 mx-4 flex h-dvh w-[calc(100%-2rem)] min-w-0 items-center justify-start overflow-visible md:mx-8 md:w-[calc(100%-4rem)]">
         <div className="flex h-full w-full min-w-0 max-w-full flex-col items-start justify-center">
           <div
             data-time-scrubber="true"

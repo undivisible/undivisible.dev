@@ -18,7 +18,7 @@ export default function Home() {
         <Ascii colors={colors} track={track} ready={ready} />
       </div>
 
-      <div className="relative z-10 w-full max-w-full overflow-x-hidden lg:hidden">
+      <div className="relative z-10 w-full max-w-full lg:hidden">
         <Info colors={colors} dayTheme={dayTheme} />
       </div>
 
