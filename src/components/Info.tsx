@@ -80,48 +80,33 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
       return;
     }
 
-    const touchStart = { y: 0, x: 0 };
-    let touchMovedHorizontally = false;
+    const node = mobileContainerRef.current;
+    if (!node) {
+      return;
+    }
 
     const onTouchStart = (event: TouchEvent) => {
-      touchStart.y = event.touches[0].clientY;
-      touchStart.x = event.touches[0].clientX;
-      touchMovedHorizontally = false;
-    };
-
-    const onTouchMove = (event: TouchEvent) => {
-      const deltaX = Math.abs(event.touches[0].clientX - touchStart.x);
-      const deltaY = Math.abs(event.touches[0].clientY - touchStart.y);
-      if (deltaX > 10 && deltaX > deltaY) {
-        touchMovedHorizontally = true;
-      }
+      touchStartY.current = event.touches[0].clientY;
     };
 
     const onTouchEnd = (event: TouchEvent) => {
-      if (touchMovedHorizontally) {
-        touchMovedHorizontally = false;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("[data-carousel-scroll='true']")) {
         return;
       }
-      const deltaY = touchStart.y - event.changedTouches[0].clientY;
+
+      const deltaY = touchStartY.current - event.changedTouches[0].clientY;
       if (Math.abs(deltaY) > 150) {
         setRevealed(deltaY > 0);
       }
     };
 
-    const carousels = document.querySelectorAll("[data-carousel-scroll='true']");
-
-    carousels.forEach((carousel) => {
-      carousel.addEventListener("touchstart", onTouchStart as EventListener, { passive: true });
-      carousel.addEventListener("touchmove", onTouchMove as EventListener, { passive: true });
-      carousel.addEventListener("touchend", onTouchEnd as EventListener, { passive: true });
-    });
+    node.addEventListener("touchstart", onTouchStart, { passive: true });
+    node.addEventListener("touchend", onTouchEnd, { passive: true });
 
     return () => {
-      carousels.forEach((carousel) => {
-        carousel.removeEventListener("touchstart", onTouchStart as EventListener);
-        carousel.removeEventListener("touchmove", onTouchMove as EventListener);
-        carousel.removeEventListener("touchend", onTouchEnd as EventListener);
-      });
+      node.removeEventListener("touchstart", onTouchStart);
+      node.removeEventListener("touchend", onTouchEnd);
     };
   }, [isMobile]);
 
@@ -233,7 +218,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
       >
         <div className="sticky top-0 h-dvh overflow-visible">
           <div
-            className={`h-[200dvh] w-full transition-transform duration-700 ease-out ${revealed ? "pointer-events-none" : ""}`}
+            className={`h-[200dvh] w-full transition-transform duration-700 ease-out ${revealed ? "pointer-events-auto" : ""}`}
             style={{ transform: revealed ? "translateY(-100dvh)" : "translateY(0)" }}
           >
             <section className="relative flex h-dvh w-full items-center">
@@ -674,13 +659,86 @@ function ScatterWord({ word, colors }: { word: string; colors: string[] }) {
 function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode; bleedOut?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  return (
-    <div className={`relative max-w-full overflow-visible ${bleedOut ? "-mx-4 w-[calc(100%+2rem)]" : "w-full"}`}>
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) {
+      return;
+    }
+
+    let isDragging = false;
+    let didDrag = false;
+    let startX = 0;
+    let startY = 0;
+    let startScrollLeft = 0;
+
+    const onPointerDown = (event: PointerEvent) => {
+      isDragging = true;
+      didDrag = false;
+      startX = event.clientX;
+      startY = event.clientY;
+      startScrollLeft = node.scrollLeft;
+      event.preventDefault();
+      node.setPointerCapture(event.pointerId);
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (!isDragging) {
+        return;
+      }
+
+      const deltaX = event.clientX - startX;
+      const deltaY = event.clientY - startY;
+
+      if (!didDrag && Math.abs(deltaX) < 8) {
+        return;
+      }
+
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        didDrag = true;
+        event.preventDefault();
+        node.scrollLeft = startScrollLeft - deltaX;
+      }
+    };
+
+    const stopDragging = (event: PointerEvent) => {
+      isDragging = false;
+      if (node.hasPointerCapture(event.pointerId)) {
+        node.releasePointerCapture(event.pointerId);
+      }
+    };
+
+    const onClickCapture = (event: MouseEvent) => {
+      if (!didDrag) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      didDrag = false;
+    };
+
+    node.addEventListener("pointerdown", onPointerDown);
+    node.addEventListener("pointermove", onPointerMove);
+    node.addEventListener("pointerup", stopDragging);
+    node.addEventListener("pointercancel", stopDragging);
+    node.addEventListener("click", onClickCapture, true);
+
+    return () => {
+      node.removeEventListener("pointerdown", onPointerDown);
+      node.removeEventListener("pointermove", onPointerMove);
+      node.removeEventListener("pointerup", stopDragging);
+      node.removeEventListener("pointercancel", stopDragging);
+      node.removeEventListener("click", onClickCapture, true);
+    };
+  }, []);
+
+    return (
+      <div className={`relative max-w-full overflow-visible ${bleedOut ? "-mx-4 w-[calc(100%+2rem)]" : "w-full"}`}>
       <div
         ref={ref}
         data-carousel-scroll="true"
-        style={{ overflowX: "auto", overflowY: "hidden", touchAction: "pan-x", overscrollBehaviorX: "contain" }}
-        className={`overflow-x-auto overflow-y-hidden pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "px-4" : ""}`}
+        style={{ overflowX: "auto", overflowY: "hidden", touchAction: "none", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", userSelect: "none" }}
+        className={`cursor-grab active:cursor-grabbing pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "px-4" : ""}`}
       >
         <div className={`inline-flex w-max flex-nowrap gap-2 ${bleedOut ? "min-w-[calc(100%+2rem)]" : "min-w-full"}`}>{children}</div>
       </div>
