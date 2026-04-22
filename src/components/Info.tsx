@@ -681,89 +681,78 @@ function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode
 
   useEffect(() => {
     const node = ref.current;
-    if (!node) {
-      return;
-    }
+    if (!node) return;
 
+    let isDown = false;
     let isDragging = false;
-    let didDrag = false;
     let startX = 0;
-    let startY = 0;
     let startScrollLeft = 0;
+    let suppressNextClick = false;
 
     const onPointerDown = (event: PointerEvent) => {
-      // Only handle primary button (left click / touch)
       if (event.button !== 0) return;
-      isDragging = true;
-      didDrag = false;
+      isDown = true;
+      isDragging = false;
       startX = event.clientX;
-      startY = event.clientY;
       startScrollLeft = node.scrollLeft;
       node.setPointerCapture(event.pointerId);
     };
 
     const onPointerMove = (event: PointerEvent) => {
-      if (!isDragging) {
-        return;
-      }
+      if (!isDown) return;
 
       const deltaX = event.clientX - startX;
-      const deltaY = event.clientY - startY;
 
-      if (!didDrag && Math.abs(deltaX) < 6) {
-        return;
-      }
-
-      if (Math.abs(deltaX) > Math.abs(deltaY)) {
-        didDrag = true;
+      // If moved more than 6px horizontally, it's a drag
+      if (Math.abs(deltaX) > 6) {
+        isDragging = true;
         event.preventDefault();
         node.scrollLeft = startScrollLeft - deltaX;
       }
     };
 
-    const stopDragging = (event: PointerEvent) => {
-      isDragging = false;
+    const onPointerUp = (event: PointerEvent) => {
+      isDown = false;
       if (node.hasPointerCapture(event.pointerId)) {
         node.releasePointerCapture(event.pointerId);
       }
-      // Reset didDrag after a short delay so click can fire if no drag happened
-      if (!didDrag) {
-        didDrag = false;
-      } else {
-        setTimeout(() => { didDrag = false; }, 50);
+
+      // If we dragged, suppress the click that will fire next
+      if (isDragging) {
+        suppressNextClick = true;
       }
+      isDragging = false;
     };
 
     const onClickCapture = (event: MouseEvent) => {
-      if (!didDrag) {
-        return;
+      if (suppressNextClick) {
+        suppressNextClick = false;
+        event.preventDefault();
+        event.stopPropagation();
       }
-      event.preventDefault();
-      event.stopPropagation();
-      didDrag = false;
     };
 
     node.addEventListener("pointerdown", onPointerDown);
     node.addEventListener("pointermove", onPointerMove);
-    node.addEventListener("pointerup", stopDragging);
-    node.addEventListener("pointercancel", stopDragging);
+    node.addEventListener("pointerup", onPointerUp);
+    node.addEventListener("pointercancel", onPointerUp);
     node.addEventListener("click", onClickCapture, true);
 
     return () => {
       node.removeEventListener("pointerdown", onPointerDown);
       node.removeEventListener("pointermove", onPointerMove);
-      node.removeEventListener("pointerup", stopDragging);
-      node.removeEventListener("pointercancel", stopDragging);
+      node.removeEventListener("pointerup", onPointerUp);
+      node.removeEventListener("pointercancel", onPointerUp);
       node.removeEventListener("click", onClickCapture, true);
     };
   }, []);
 
-    return (
-      <div className={`relative max-w-full overflow-visible ${bleedOut ? "-mx-4 w-[calc(100%+2rem)]" : "w-full"}`}>
+  return (
+    <div className={`relative max-w-full overflow-visible ${bleedOut ? "-mx-4 w-[calc(100%+2rem)]" : "w-full"}`}>
       <div
         ref={ref}
         data-carousel-scroll="true"
-        style={{ overflowX: "auto", overflowY: "hidden", touchAction: "none", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", userSelect: "none" }}
+        style={{ overflowX: "auto", overflowY: "hidden", touchAction: "pan-y", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", userSelect: "none" }}
         className={`cursor-grab active:cursor-grabbing pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "px-4" : ""}`}
       >
         <div className={`inline-flex w-max flex-nowrap gap-2 ${bleedOut ? "min-w-[calc(100%+2rem)]" : "min-w-full"}`}>{children}</div>
