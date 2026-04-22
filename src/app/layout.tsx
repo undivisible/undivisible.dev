@@ -93,31 +93,7 @@ export default function RootLayout({
       lang="en"
       className={cn("h-full", "antialiased", "font-mono", jetbrainsMono.variable)}
     >
-      <body className="min-h-full flex flex-col">
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                var navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-                var navType = navEntry && navEntry.type;
-                // Reload if restored from bfcache or on back/forward navigation
-                if (navType === 'back_forward') {
-                  window.location.reload();
-                }
-                window.addEventListener('pageshow', function(event) {
-                  if (event.persisted) {
-                    window.location.reload();
-                  }
-                });
-                window.addEventListener('popstate', function() {
-                  window.location.reload();
-                });
-              })();
-            `,
-          }}
-        />
-        {children}
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

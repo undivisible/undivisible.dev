@@ -104,12 +104,27 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
       }
     };
 
+    const onWheel = (event: WheelEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("[data-carousel-scroll='true']")) {
+        return;
+      }
+
+      if (event.deltaY > 50) {
+        setRevealed(true);
+      } else if (event.deltaY < -50) {
+        setRevealed(false);
+      }
+    };
+
     node.addEventListener("touchstart", onTouchStart, { passive: true });
     node.addEventListener("touchend", onTouchEnd, { passive: true });
+    node.addEventListener("wheel", onWheel, { passive: true });
 
     return () => {
       node.removeEventListener("touchstart", onTouchStart);
       node.removeEventListener("touchend", onTouchEnd);
+      node.removeEventListener("wheel", onWheel);
     };
   }, [isMobile]);
 
@@ -677,12 +692,13 @@ function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode
     let startScrollLeft = 0;
 
     const onPointerDown = (event: PointerEvent) => {
+      // Only handle primary button (left click / touch)
+      if (event.button !== 0) return;
       isDragging = true;
       didDrag = false;
       startX = event.clientX;
       startY = event.clientY;
       startScrollLeft = node.scrollLeft;
-      event.preventDefault();
       node.setPointerCapture(event.pointerId);
     };
 
@@ -694,7 +710,7 @@ function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode
       const deltaX = event.clientX - startX;
       const deltaY = event.clientY - startY;
 
-      if (!didDrag && Math.abs(deltaX) < 8) {
+      if (!didDrag && Math.abs(deltaX) < 6) {
         return;
       }
 
@@ -710,13 +726,18 @@ function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode
       if (node.hasPointerCapture(event.pointerId)) {
         node.releasePointerCapture(event.pointerId);
       }
+      // Reset didDrag after a short delay so click can fire if no drag happened
+      if (!didDrag) {
+        didDrag = false;
+      } else {
+        setTimeout(() => { didDrag = false; }, 50);
+      }
     };
 
     const onClickCapture = (event: MouseEvent) => {
       if (!didDrag) {
         return;
       }
-
       event.preventDefault();
       event.stopPropagation();
       didDrag = false;
