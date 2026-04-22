@@ -336,6 +336,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                         return (
                           <div
                             key={item}
+                            suppressHydrationWarning
                             style={{
                               width: "84px",
                               paddingLeft: "8px",
@@ -509,6 +510,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                   return (
                     <div
                       key={item}
+                      suppressHydrationWarning
                       style={{
                         width: "130px",
                         paddingLeft: "15px",
