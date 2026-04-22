@@ -22,7 +22,7 @@ export default function Home() {
         <Info colors={colors} dayTheme={dayTheme} />
       </div>
 
-      <div className="relative z-10 hidden h-dvh lg:flex lg:w-full lg:max-w-full lg:overflow-x-hidden">
+      <div className="relative z-10 hidden h-dvh overflow-hidden lg:flex lg:w-full lg:max-w-full lg:overflow-x-hidden">
         <div className="relative h-full w-1/2 min-w-0 overflow-x-hidden">
           <Info colors={colors} dayTheme={dayTheme} />
         </div>

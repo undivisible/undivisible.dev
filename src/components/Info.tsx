@@ -58,6 +58,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const mobileContainerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef(0);
+  const touchStartX = useRef(0);
   const [hoveredPill, setHoveredPill] = useState<string | null>(null);
   const [nameHovered, setNameHovered] = useState(false);
   const [displayName, setDisplayName] = useState("max carter");
@@ -90,23 +91,25 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
 
     const onTouchStart = (event: TouchEvent) => {
       touchStartY.current = event.touches[0].clientY;
+      touchStartX.current = event.touches[0].clientX;
     };
 
     const onTouchEnd = (event: TouchEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target?.closest("[data-carousel-scroll='true']")) {
+      const deltaY = touchStartY.current - event.changedTouches[0].clientY;
+      const deltaX = touchStartX.current - event.changedTouches[0].clientX;
+      // Let horizontal swipes pass through for carousel scrolling
+      if (Math.abs(deltaX) >= Math.abs(deltaY)) {
         return;
       }
 
-      const deltaY = touchStartY.current - event.changedTouches[0].clientY;
       if (Math.abs(deltaY) > 150) {
         setRevealed(deltaY > 0);
       }
     };
 
     const onWheel = (event: WheelEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target?.closest("[data-carousel-scroll='true']")) {
+      // Let horizontal wheels pass through for carousel scrolling
+      if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) {
         return;
       }
 
@@ -137,19 +140,19 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
         event.preventDefault();
         return;
       }
-      if ((event.target as HTMLElement | null)?.closest("[data-carousel-scroll='true']")) {
+
+      const isHorizontalScroll = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+      if (isHorizontalScroll) {
+        // Let horizontal wheels control carousel natively
         return;
       }
 
-      const isHorizontalScroll = Math.abs(event.deltaX) > Math.abs(event.deltaY);
-      if (!isHorizontalScroll) {
-        event.preventDefault();
-        scrollOffsetRef.current = Math.max(0, scrollOffsetRef.current + event.deltaY * 1.5);
-        const shouldBeRevealed = scrollOffsetRef.current > window.innerHeight * 0.3;
-        if (shouldBeRevealed !== scrollOffsetRef.revealed) {
-          scrollOffsetRef.revealed = shouldBeRevealed;
-          setRevealed(shouldBeRevealed);
-        }
+      event.preventDefault();
+      scrollOffsetRef.current = Math.max(0, scrollOffsetRef.current + event.deltaY * 1.5);
+      const shouldBeRevealed = scrollOffsetRef.current > window.innerHeight * 0.3;
+      if (shouldBeRevealed !== scrollOffsetRef.revealed) {
+        scrollOffsetRef.revealed = shouldBeRevealed;
+        setRevealed(shouldBeRevealed);
       }
     };
 
@@ -231,10 +234,10 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
     return (
       <div
         ref={mobileContainerRef}
-        className="relative mx-4 h-dvh w-[calc(100%-2rem)] overflow-visible"
+        className="relative mx-4 h-dvh w-[calc(100%-2rem)] overflow-hidden"
         style={{ color: "var(--page-text)" }}
       >
-        <div className="sticky top-0 h-dvh overflow-visible">
+        <div className="sticky top-0 h-dvh overflow-hidden">
           <div
             className={`h-[200dvh] w-full transition-transform duration-700 ease-out ${revealed ? "pointer-events-auto" : ""}`}
             style={{ transform: revealed ? "translateY(-100dvh)" : "translateY(0)" }}
@@ -393,10 +396,10 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
 
   return (
     <div
-      className="relative h-dvh w-full max-w-full overflow-visible bg-transparent"
+      className="relative h-dvh w-full max-w-full overflow-hidden bg-transparent"
       style={{ color: "var(--page-text)" }}
     >
-      <div className="sticky top-0 mx-4 flex h-dvh w-[calc(100%-2rem)] min-w-0 items-center justify-start overflow-visible md:mx-8 md:w-[calc(100%-4rem)]">
+      <div className="sticky top-0 mx-4 flex h-dvh w-[calc(100%-2rem)] min-w-0 items-center justify-start overflow-hidden md:mx-8 md:w-[calc(100%-4rem)]">
         <div className="flex h-full w-full min-w-0 max-w-full flex-col items-start justify-center">
           <div
             data-time-scrubber="true"
@@ -688,6 +691,14 @@ function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode
     let startX = 0;
     let startScrollLeft = 0;
     let suppressNextClick = false;
+    let startTime = 0;
+    let activePointerId: number | null = null;
+
+    const cleanupWindowListeners = () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+    };
 
     const onPointerDown = (event: PointerEvent) => {
       if (event.button !== 0) return;
@@ -695,30 +706,33 @@ function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode
       isDragging = false;
       startX = event.clientX;
       startScrollLeft = node.scrollLeft;
-      node.setPointerCapture(event.pointerId);
+      startTime = Date.now();
+      activePointerId = event.pointerId;
+      window.addEventListener("pointermove", onPointerMove);
+      window.addEventListener("pointerup", onPointerUp);
+      window.addEventListener("pointercancel", onPointerUp);
     };
 
     const onPointerMove = (event: PointerEvent) => {
-      if (!isDown) return;
-
+      if (!isDown || event.pointerId !== activePointerId) return;
       const deltaX = event.clientX - startX;
-
-      // If moved more than 6px horizontally, it's a drag
-      if (Math.abs(deltaX) > 6) {
-        isDragging = true;
-        event.preventDefault();
+      const absDelta = Math.abs(deltaX);
+      if (!isDragging) {
+        if (absDelta > 20) {
+          isDragging = true;
+          node.scrollLeft = startScrollLeft - deltaX;
+        }
+      } else {
         node.scrollLeft = startScrollLeft - deltaX;
       }
     };
 
     const onPointerUp = (event: PointerEvent) => {
+      if (!isDown || event.pointerId !== activePointerId) return;
       isDown = false;
-      if (node.hasPointerCapture(event.pointerId)) {
-        node.releasePointerCapture(event.pointerId);
-      }
-
-      // If we dragged, suppress the click that will fire next
-      if (isDragging) {
+      activePointerId = null;
+      cleanupWindowListeners();
+      if (isDragging && Date.now() - startTime > 120) {
         suppressNextClick = true;
       }
       isDragging = false;
@@ -733,16 +747,11 @@ function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode
     };
 
     node.addEventListener("pointerdown", onPointerDown);
-    node.addEventListener("pointermove", onPointerMove);
-    node.addEventListener("pointerup", onPointerUp);
-    node.addEventListener("pointercancel", onPointerUp);
     node.addEventListener("click", onClickCapture, true);
 
     return () => {
       node.removeEventListener("pointerdown", onPointerDown);
-      node.removeEventListener("pointermove", onPointerMove);
-      node.removeEventListener("pointerup", onPointerUp);
-      node.removeEventListener("pointercancel", onPointerUp);
+      cleanupWindowListeners();
       node.removeEventListener("click", onClickCapture, true);
     };
   }, []);
