@@ -62,6 +62,7 @@ type WeatherResponse = {
   current?: {
     temperature_2m?: number;
     weather_code?: number;
+    rain?: number;
   };
 };
 
@@ -71,6 +72,7 @@ type WeatherInfo = {
   temperatureC: number;
   status: string;
   kind: WeatherKind;
+  rainIntensity: number;
 };
 
 type LocationInfo = {
@@ -113,6 +115,7 @@ export type ShaderPalette = {
   deepNightStrength: number;
   midnightStrength: number;
   weatherKind: WeatherKind;
+  rainIntensity: number;
 };
 
 export type HongKongDayTheme = {
@@ -704,7 +707,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   const [now, setNow] = useState(() => new Date());
   const [solarTimes, setSolarTimes] = useState<SolarTimes>(() => initialCachedSolar ?? buildFallbackSolarTimes(initialDateKey));
   const [location, setLocation] = useState<LocationInfo>(() => initialCachedLocation ?? getFallbackLocationInfo());
-  const [weather, setWeather] = useState<WeatherInfo>({ temperatureC: 24, status: "CLEAR", kind: "clear" });
+  const [weather, setWeather] = useState<WeatherInfo>({ temperatureC: 24, status: "CLEAR", kind: "clear", rainIntensity: 0 });
   const [displayedMinute, setDisplayedMinute] = useState(() => minuteInZone(new Date(), HONG_KONG_TIME_ZONE));
   const [isScrubbing, setIsScrubbing] = useState(false);
   const resetFrameRef = useRef<number | null>(null);
@@ -723,7 +726,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     const url = new URL(WEATHER_API_URL);
     url.searchParams.set("latitude", String(HONG_KONG_COORDS.lat));
     url.searchParams.set("longitude", String(HONG_KONG_COORDS.lng));
-    url.searchParams.set("current", "temperature_2m,weather_code");
+    url.searchParams.set("current", "temperature_2m,weather_code,rain");
     url.searchParams.set("timezone", HONG_KONG_TIME_ZONE);
     logWeather("requesting weather api", url.toString());
 
@@ -735,6 +738,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
         }
         const temperature = payload.current?.temperature_2m;
         const code = payload.current?.weather_code;
+        const rain = payload.current?.rain ?? 0;
         if (typeof temperature !== "number" || typeof code !== "number") {
           logWeather("api response missing weather fields", payload);
           return;
@@ -744,6 +748,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
           temperatureC: temperature,
           status: parsed.status,
           kind: parsed.kind,
+          rainIntensity: rain,
         });
         logWeather("api success, weather updated", { temperature, code, parsed });
       })
@@ -980,6 +985,9 @@ export function useHongKongDayTheme(): HongKongDayTheme {
       deepNightStrength,
       midnightStrength,
       weatherKind: weather.kind,
+      rainIntensity: weather.kind === "rain" || weather.kind === "storm"
+        ? clamp(Math.max(weather.rainIntensity, 0.5) / 5, 0, 1)
+        : clamp(weather.rainIntensity / 5, 0, 1),
     },
     hkgTime: formatTimeForZone(displayedDate, HONG_KONG_TIME_ZONE),
     melTime: formatTimeForZone(displayedDate, MELBOURNE_TIME_ZONE),

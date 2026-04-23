@@ -74,6 +74,8 @@ export function Light({ scene, className = "", opacity = 1 }: { scene: ShaderPal
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef(scene);
   const frameRef = useRef<number>(0);
+  const lastTimeRef = useRef<number>(0);
+  const rainIntensityRef = useRef<number>(0);
 
   const birdGroups = useMemo<BirdGroup[]>(() => {
     if (typeof window === "undefined") {
@@ -157,6 +159,8 @@ export function Light({ scene, className = "", opacity = 1 }: { scene: ShaderPal
 
     const render = (timeMs: number) => {
       const current = sceneRef.current;
+      const dt = lastTimeRef.current ? Math.min((timeMs - lastTimeRef.current) * 0.001, 0.05) : 0.016;
+      lastTimeRef.current = timeMs;
       const t = timeMs * 0.001;
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
@@ -282,23 +286,35 @@ export function Light({ scene, className = "", opacity = 1 }: { scene: ShaderPal
       }
 
       if (current.weatherKind === "rain" || current.weatherKind === "storm") {
+        const targetIntensity = current.rainIntensity;
+        rainIntensityRef.current += (targetIntensity - rainIntensityRef.current) * Math.min(dt * 3, 1);
+        const intensity = rainIntensityRef.current;
+
         const rainStrength = current.weatherKind === "storm" ? 1 : 0.76;
         const wind = Math.sin(t * 0.6) * 0.28 + Math.sin(t * 0.11 + 1.9) * 0.18;
         const gust = 0.5 + Math.sin(t * 0.21 + 2.3) * 0.22 + Math.sin(t * 0.07 + 0.7) * 0.12;
+        const stormBoost = current.weatherKind === "storm" ? 1.12 : 1;
 
-        for (const drop of rainDrops) {
+        const visibleCount = Math.floor(rainDrops.length * (0.15 + intensity * 0.85));
+
+        for (let i = 0; i < rainDrops.length; i += 1) {
+          if (i >= visibleCount) break;
+          const drop = rainDrops[i];
           const layerWeight = drop.layer === 0 ? 0.82 : drop.layer === 1 ? 1 : 1.16;
-          const fallSpeed = drop.speed * (0.82 + gust * 0.46) * (current.weatherKind === "storm" ? 1.12 : 1);
-          const fall = (drop.y + t * fallSpeed) % 1;
+          const fallSpeed = drop.speed * (0.82 + gust * 0.46) * stormBoost;
+          drop.y += dt * fallSpeed;
+          if (drop.y > 1) drop.y -= 1;
+          const fall = drop.y;
           const motionSlope = drop.slope + wind * (drop.layer === 0 ? 0.45 : drop.layer === 1 ? 0.72 : 1);
           const xWobble = Math.sin((t * 0.65 + drop.phase) * Math.PI * 2) * width * (0.002 + drop.layer * 0.0012);
           const x = drop.x * width + (fall * height * motionSlope * 0.62) + xWobble;
           const y = fall * (height + drop.length * 2) - drop.length;
           const length = drop.length * (current.weatherKind === "storm" ? 1.08 : 0.94) * layerWeight;
+          const dropAlpha = drop.alpha * Math.max(0.35, 0.5 + intensity * 0.5);
           ctx.lineWidth = drop.width * rainStrength * (0.9 + drop.layer * 0.25);
           ctx.strokeStyle = current.weatherKind === "storm"
-            ? `rgba(205, 228, 255, ${drop.alpha * 1.2})`
-            : `rgba(172, 206, 241, ${drop.alpha})`;
+            ? `rgba(205, 228, 255, ${dropAlpha * 1.2})`
+            : `rgba(172, 206, 241, ${dropAlpha})`;
           ctx.beginPath();
           ctx.moveTo(x, y);
           ctx.lineTo(x + length * motionSlope, y + length);
