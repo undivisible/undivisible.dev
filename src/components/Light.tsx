@@ -105,7 +105,7 @@ export function Light({ scene, className = "", opacity = 1 }: { scene: ShaderPal
     }
 
     const drops: RainDrop[] = [];
-    const dropCount = 220;
+    const dropCount = 420;
 
     for (let index = 0; index < dropCount; index += 1) {
       const layer = Math.random();
@@ -113,11 +113,11 @@ export function Light({ scene, className = "", opacity = 1 }: { scene: ShaderPal
       drops.push({
         x: Math.random(),
         y: Math.random(),
-        length: depth === 0 ? 6 + layer * 8 : depth === 1 ? 10 + layer * 12 : 14 + layer * 16,
-        speed: depth === 0 ? 0.09 + layer * 0.06 : depth === 1 ? 0.14 + layer * 0.09 : 0.2 + layer * 0.14,
-        slope: depth === 0 ? -0.06 + Math.random() * 0.12 : depth === 1 ? -0.14 + Math.random() * 0.28 : -0.22 + Math.random() * 0.44,
-        alpha: depth === 0 ? 0.05 + layer * 0.08 : depth === 1 ? 0.09 + layer * 0.1 : 0.14 + layer * 0.14,
-        width: depth === 0 ? 0.55 + layer * 0.35 : depth === 1 ? 0.7 + layer * 0.45 : 0.95 + layer * 0.6,
+        length: depth === 0 ? 8 + layer * 12 : depth === 1 ? 14 + layer * 18 : 20 + layer * 24,
+        speed: depth === 0 ? 0.12 + layer * 0.08 : depth === 1 ? 0.18 + layer * 0.12 : 0.26 + layer * 0.18,
+        slope: depth === 0 ? -0.08 + Math.random() * 0.16 : depth === 1 ? -0.18 + Math.random() * 0.36 : -0.28 + Math.random() * 0.56,
+        alpha: depth === 0 ? 0.08 + layer * 0.12 : depth === 1 ? 0.14 + layer * 0.16 : 0.22 + layer * 0.22,
+        width: depth === 0 ? 0.7 + layer * 0.45 : depth === 1 ? 0.9 + layer * 0.55 : 1.2 + layer * 0.75,
         layer: depth,
         phase: Math.random() * Math.PI * 2,
       });
