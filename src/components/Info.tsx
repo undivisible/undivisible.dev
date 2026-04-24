@@ -8,6 +8,7 @@ import { RandomizedText } from "./randomized-text";
 const socials = [
   { name: "instagram", username: "@undivisible.dev", href: "https://instagram.com/undivisible.dev" },
   { name: "twitter", username: "@makethings4ppl", href: "https://twitter.com/makethings4ppl" },
+  { name: "linkedin", username: "max lee carter", href: "https://www.linkedin.com/in/maxleecarter" },
   { name: "email", username: "max@undivisible.dev", href: "mailto:max@undivisible.dev" },
   { name: "github", username: "undivisible", href: "https://github.com/undivisible" },
 ];
@@ -431,7 +432,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
 
           <div className="transition-all duration-500 ease-out" style={heroStyle}>
             <div className="space-y-3">
-              <h1 className="max-w-full break-words text-lg leading-tight md:text-3xl">
+              <h1 className="max-w-full break-words text-lg leading-tight md:text-4xl">
                 <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
                 <span
                   className="inline-block"
@@ -442,7 +443,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                   {displayName}
                 </span>
               </h1>
-              <p className="max-w-full break-words text-xs md:text-base" style={{ color: "var(--page-text-muted)", opacity: 1 }}>
+              <p className="max-w-full break-words text-xs md:text-lg" style={{ color: "var(--page-text-muted)", opacity: 1 }}>
                 <AnimatedText text="i make" className="inline-block" split="chars" />{" "}
                 <MorphWord words={thingWords} />{" "}
                 <AnimatedText text="for" className="inline-block" split="chars" />{" "}
@@ -503,7 +504,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
           <div className="mt-8 w-full max-w-full overflow-visible transition-all duration-500 ease-out" style={lowerStyle}>
             <div className={`space-y-12 pt-0 max-w-full ${revealed ? "" : "pointer-events-none"}`}>
               {revealed ? (
-                <RandomizedText key="lower-text" split="words" className="text-xs md:text-sm">
+                <RandomizedText key="lower-text" split="words" className="text-xs md:text-base">
                   {introText}
                 </RandomizedText>
               ) : (
@@ -803,8 +804,8 @@ function Card({
         color: "var(--page-text)",
       }}
     >
-      <AnimatedText text={title} className={isMobile ? "text-xs" : "text-sm"} />
-      <div className={isMobile ? "mt-0.5 text-[7px] leading-relaxed" : "mt-1 text-[9px] leading-relaxed"} style={{ color: "var(--page-text-muted)" }}>
+      <AnimatedText text={title} className={isMobile ? "text-xs" : "text-base"} />
+      <div className={isMobile ? "mt-0.5 text-[7px] leading-relaxed" : "mt-1 text-sm leading-relaxed"} style={{ color: "var(--page-text-muted)" }}>
         <AnimatedText text={description} />
       </div>
     </a>
@@ -837,7 +838,7 @@ function Badge({ label, isMobile = false }: { label: string; isMobile?: boolean 
           display: "flex",
           flexDirection: "column",
           color: "inherit",
-          fontSize: isMobile ? "10px" : "13px",
+          fontSize: isMobile ? "10px" : "15px",
           fontFamily: "Young Serif",
           fontWeight: 400,
           wordWrap: "break-word",
