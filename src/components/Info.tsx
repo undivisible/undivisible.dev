@@ -245,7 +245,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
             <section className="relative flex h-dvh w-full items-center">
               <div
                 data-time-scrubber="true"
-                className={`absolute top-4 z-20 w-fit font-mono text-[12px] uppercase tracking-[0.18em] transition-all duration-500 ${revealed ? "-translate-y-40 opacity-0 pointer-events-none" : "translate-y-0 opacity-100"}`}
+                className={`absolute top-4 z-20 w-fit font-mono text-[10px] uppercase tracking-[0.18em] transition-all duration-500 ${revealed ? "-translate-y-40 opacity-0 pointer-events-none" : "translate-y-0 opacity-100"}`}
                 style={{ color: "var(--page-text)" }}
                 onMouseLeave={dayTheme.resetScrub}
                 onWheel={dayTheme.onScrubWheel}
@@ -258,7 +258,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
 
               <div className="w-full min-w-0 max-w-full">
                 <div className="space-y-3">
-                  <h1 className="max-w-full break-words text-2xl leading-tight">
+                  <h1 className="max-w-full break-words text-base leading-tight">
                     <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
                     <span
                       className="inline-block"
@@ -269,7 +269,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                       {displayName}
                     </span>
                   </h1>
-                  <p className={`max-w-full break-words text-sm transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`} style={{ color: "var(--page-text-muted)" }}>
+                  <p className={`max-w-full break-words text-xs transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`} style={{ color: "var(--page-text-muted)" }}>
                     <AnimatedText text="i make" className="inline-block" split="chars" />{" "}
                     <MorphWord words={thingWords} />{" "}
                     <AnimatedText text="for" className="inline-block" split="chars" />{" "}
@@ -277,8 +277,8 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                   </p>
                 </div>
 
-                <div className="mt-6 space-y-4">
-                  <AnimatedText text="here's my:" className="text-base" />
+                <div className="mt-4 space-y-3">
+                  <AnimatedText text="here's my:" className="text-xs" />
                   <div className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}>
                     <CarouselRow bleedOut>
                       {socials.map((social) => {
@@ -287,12 +287,12 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                           <a
                             key={social.name}
                             href={social.href}
-                            className="relative block h-10 min-w-[5rem] overflow-hidden rounded-full"
+                            className="relative block h-8 min-w-[4.5rem] overflow-hidden rounded-full"
                             onMouseEnter={() => setHoveredPill(social.name)}
                             onMouseLeave={() => setHoveredPill(null)}
                           >
                             <div className="relative flex h-full items-center justify-center rounded-full px-2" style={pillStyle}>
-                              <span className="text-sm leading-none transition-all duration-300" style={{ transform: active ? "translateY(-0.48rem)" : "translateY(0)" }}>
+                              <span className="text-xs leading-none transition-all duration-300" style={{ transform: active ? "translateY(-0.48rem)" : "translateY(0)" }}>
                                 <AnimatedText text={social.name} className="inline-block" split="chars" />
                               </span>
                               <span
@@ -333,7 +333,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                         {introText}
                       </RandomizedText>
                     ) : (
-                      <div className="max-w-full break-words text-sm leading-relaxed opacity-0">{introText}</div>
+                      <div className="max-w-full break-words text-xs leading-relaxed opacity-0">{introText}</div>
                     )}
 
                     <Section title="i make utilities that feel inevitable:" isMobile>
@@ -403,7 +403,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
         <div className="flex h-full w-full min-w-0 max-w-full flex-col items-start justify-center">
           <div
             data-time-scrubber="true"
-            className={`absolute top-4 z-20 w-fit font-mono text-[13px] uppercase tracking-[0.22em] transition-all duration-500 md:top-8 md:text-[14px] ${revealed ? "-translate-y-40 opacity-0 pointer-events-none lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto" : "translate-y-0 opacity-100"}`}
+            className={`absolute top-4 z-20 w-fit font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-500 md:top-8 md:text-[12px] ${revealed ? "-translate-y-40 opacity-0 pointer-events-none lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto" : "translate-y-0 opacity-100"}`}
             style={{ color: "var(--page-text)" }}
             onMouseLeave={dayTheme.resetScrub}
             onWheel={dayTheme.onScrubWheel}
@@ -431,7 +431,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
 
           <div className="transition-all duration-500 ease-out" style={heroStyle}>
             <div className="space-y-3">
-              <h1 className="max-w-full break-words text-2xl leading-tight md:text-5xl">
+              <h1 className="max-w-full break-words text-lg leading-tight md:text-3xl">
                 <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
                 <span
                   className="inline-block"
@@ -442,7 +442,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                   {displayName}
                 </span>
               </h1>
-              <p className="max-w-full break-words text-sm md:text-2xl" style={{ color: "var(--page-text-muted)", opacity: 1 }}>
+              <p className="max-w-full break-words text-xs md:text-base" style={{ color: "var(--page-text-muted)", opacity: 1 }}>
                 <AnimatedText text="i make" className="inline-block" split="chars" />{" "}
                 <MorphWord words={thingWords} />{" "}
                 <AnimatedText text="for" className="inline-block" split="chars" />{" "}
@@ -451,7 +451,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
             </div>
 
             <div className="mt-8 space-y-4">
-              <AnimatedText text="here's my:" className="text-lg" />
+              <AnimatedText text="here's my:" className="text-xs md:text-sm" />
               <div className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}>
                 <CarouselRow>
                   {socials.map((social) => {
@@ -461,19 +461,19 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                       <a
                         key={social.name}
                         href={social.href}
-                        className="relative block h-[4.5rem] min-w-[8.75rem] overflow-hidden rounded-full"
+                        className="relative block h-[3.25rem] min-w-[6rem] overflow-hidden rounded-full"
                         onMouseEnter={() => setHoveredPill(social.name)}
                         onMouseLeave={() => setHoveredPill(null)}
                       >
-                        <div className="relative flex h-full items-center justify-center rounded-full px-4" style={pillStyle}>
+                        <div className="relative flex h-full items-center justify-center rounded-full px-2" style={pillStyle}>
                           <span
-                            className="text-center text-lg leading-none transition-all duration-300"
+                            className="text-center text-sm leading-none transition-all duration-300"
                             style={{ transform: active ? "translateY(-0.48rem)" : "translateY(0)" }}
                           >
                             <AnimatedText text={social.name} className="inline-block" split="chars" />
                           </span>
                           <span
-                            className="absolute left-1/2 top-1/2 max-w-[calc(100%-1rem)] overflow-hidden text-ellipsis whitespace-nowrap text-center text-[11px] leading-none transition-all duration-300"
+                            className="absolute left-1/2 top-1/2 max-w-[calc(100%-1rem)] overflow-hidden text-ellipsis whitespace-nowrap text-center text-[9px] leading-none transition-all duration-300"
                             style={{
                               transform: active ? "translate(-50%, 0.62rem)" : "translate(-50%, -50%)",
                               opacity: active ? 1 : 0,
@@ -493,7 +493,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
               {!revealed && (
                 <AnimatedText
                   text="scroll to learn about me"
-                  className="font-mono text-[11px] tracking-[0.08em] motion-safe:animate-bounce"
+                  className="font-mono text-[9px] tracking-[0.08em] motion-safe:animate-bounce"
                   split="chars"
                 />
               )}
@@ -503,11 +503,11 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
           <div className="mt-8 w-full max-w-full overflow-visible transition-all duration-500 ease-out" style={lowerStyle}>
             <div className={`space-y-8 pt-0 max-w-full ${revealed ? "" : "pointer-events-none"}`}>
               {revealed ? (
-                <RandomizedText key="lower-text" split="words" className="text-xl leading-relaxed">
+                <RandomizedText key="lower-text" split="words" className="text-xs md:text-sm">
                   {introText}
                 </RandomizedText>
               ) : (
-                <div className="text-xl leading-relaxed opacity-0">{introText}</div>
+                <div className="text-xs md:text-sm leading-relaxed opacity-0">{introText}</div>
               )}
 
               <Section title="i make utilities that feel inevitable:">
@@ -529,12 +529,12 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                     <div
                       key={item}
                       suppressHydrationWarning
-                      style={{
-                        width: "130px",
-                        paddingLeft: "15px",
-                        paddingRight: "15px",
-                        paddingTop: "10px",
-                        paddingBottom: "10px",
+style={{
+                          width: "100px",
+                          paddingLeft: "12px",
+                          paddingRight: "12px",
+                          paddingTop: "8px",
+                          paddingBottom: "8px",
                         overflow: "hidden",
                         borderRadius: "30px",
                         flexDirection: "column",
@@ -551,7 +551,7 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                           display: "flex",
                           flexDirection: "column",
                           color: "var(--transport-text)",
-                          fontSize: "20px",
+                          fontSize: "14px",
                           fontFamily: "Young Serif",
                           fontWeight: 400,
                           wordWrap: "break-word",
@@ -797,14 +797,14 @@ function Card({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`${isMobile ? "min-w-[9rem] max-w-[9rem] rounded-xl p-2" : "min-w-[13rem] max-w-[13rem] rounded-2xl p-3"} transition-colors duration-200 ${dimmed ? "opacity-50" : "opacity-100"}`}
+      className={`${isMobile ? "min-w-[7rem] max-w-[7rem] rounded-lg p-1.5" : "min-w-[9rem] max-w-[9rem] rounded-xl p-2"} transition-colors duration-200 ${dimmed ? "opacity-50" : "opacity-100"}`}
       style={{
         background: "color-mix(in srgb, var(--page-surface) 94%, black)",
         color: "var(--page-text)",
       }}
     >
-      <AnimatedText text={title} className={isMobile ? "text-sm" : "text-xl"} />
-      <div className={isMobile ? "mt-1 text-[8px] leading-relaxed" : "mt-2 text-xs leading-relaxed"} style={{ color: "var(--page-text-muted)" }}>
+      <AnimatedText text={title} className={isMobile ? "text-xs" : "text-sm"} />
+      <div className={isMobile ? "mt-0.5 text-[7px] leading-relaxed" : "mt-1 text-[9px] leading-relaxed"} style={{ color: "var(--page-text-muted)" }}>
         <AnimatedText text={description} />
       </div>
     </a>
@@ -815,11 +815,11 @@ function Badge({ label, isMobile = false }: { label: string; isMobile?: boolean 
   return (
     <div
       style={{
-        width: isMobile ? "68px" : "130px",
-        paddingLeft: isMobile ? "8px" : "15px",
-        paddingRight: isMobile ? "8px" : "15px",
-        paddingTop: isMobile ? "6px" : "10px",
-        paddingBottom: isMobile ? "6px" : "10px",
+        width: isMobile ? "58px" : "80px",
+        paddingLeft: isMobile ? "6px" : "10px",
+        paddingRight: isMobile ? "6px" : "10px",
+        paddingTop: isMobile ? "5px" : "7px",
+        paddingBottom: isMobile ? "5px" : "7px",
         background: "color-mix(in srgb, var(--page-surface) 94%, black)",
         overflow: "hidden",
         borderRadius: "30px",
@@ -837,7 +837,7 @@ function Badge({ label, isMobile = false }: { label: string; isMobile?: boolean 
           display: "flex",
           flexDirection: "column",
           color: "inherit",
-          fontSize: isMobile ? "11px" : "20px",
+          fontSize: isMobile ? "10px" : "13px",
           fontFamily: "Young Serif",
           fontWeight: 400,
           wordWrap: "break-word",
