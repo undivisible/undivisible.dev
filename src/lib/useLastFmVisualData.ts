@@ -45,6 +45,7 @@ export function useLastFmVisualData() {
         const item = data.recenttracks?.track?.[0];
         if (!item) {
           console.log("[lastfm] no recent track found");
+          setReady(true);
           return;
         }
 
@@ -74,6 +75,7 @@ export function useLastFmVisualData() {
             const ctx = canvas.getContext("2d");
             if (!ctx) {
               console.log("[lastfm] color extraction context unavailable");
+              setReady(true);
               return;
             }
 
