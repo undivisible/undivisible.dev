@@ -1161,7 +1161,7 @@ function Card({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`${isMobile ? "min-w-[7rem] max-w-[7rem] rounded-lg p-1.5" : "min-w-[9rem] max-w-[9rem] rounded-xl p-2"} transition-colors duration-200 ${dimmed ? "opacity-50" : "opacity-100"}`}
+      className={`${isMobile ? "min-w-[9rem] max-w-[9rem] rounded-lg p-2" : "min-w-[13rem] max-w-[13rem] rounded-xl p-4"} transition-colors duration-200 ${dimmed ? "opacity-50" : "opacity-100"}`}
       style={{
         background: "color-mix(in srgb, var(--page-surface) 94%, black)",
         color: "var(--page-text)",
@@ -1169,13 +1169,13 @@ function Card({
     >
       <AnimatedText
         text={title}
-        className={isMobile ? "text-xs" : "text-base"}
+        className={isMobile ? "text-sm" : "text-lg"}
       />
       <div
         className={
           isMobile
-            ? "mt-0.5 text-[7px] leading-relaxed"
-            : "mt-1 text-sm leading-relaxed"
+            ? "mt-1 text-[9px] leading-relaxed"
+            : "mt-2 text-base leading-relaxed"
         }
         style={{ color: "var(--page-text-muted)" }}
       >
