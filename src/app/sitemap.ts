@@ -11,7 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: "https://undivisible.dev/about",
+      url: "https://undivisible.dev/brief",
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,

@@ -30,12 +30,32 @@ const projects = [
 ];
 
 const socials = [
-  { label: "instagram", handle: "@makethingsforpeople", href: "https://instagram.com/makethingsforpeople" },
-  { label: "twitter", handle: "@makethings4ppl", href: "https://twitter.com/makethings4ppl" },
-  { label: "github", handle: "/undivisible", href: "https://github.com/undivisible" },
+  {
+    label: "instagram",
+    handle: "@makethingsforpeople",
+    href: "https://instagram.com/makethingsforpeople",
+  },
+  {
+    label: "twitter",
+    handle: "@makethings4ppl",
+    href: "https://twitter.com/makethings4ppl",
+  },
+  {
+    label: "github",
+    handle: "/undivisible",
+    href: "https://github.com/undivisible",
+  },
 ];
 
-function Text({ children, className = "", split = "words" }: { children: string; className?: string; split?: "words" | "chars" }) {
+function Text({
+  children,
+  className = "",
+  split = "words",
+}: {
+  children: string;
+  className?: string;
+  split?: "words" | "chars";
+}) {
   return (
     <RandomizedText className={className} split={split}>
       {children}
@@ -46,7 +66,10 @@ function Text({ children, className = "", split = "words" }: { children: string;
 function ProjectCard({ name, desc }: { name: string; desc: string }) {
   return (
     <article className="group flex flex-col gap-2 border-t border-white/10 pt-5 transition-opacity duration-300 hover:opacity-100 lg:items-end lg:text-right">
-      <h2 className="text-[clamp(1.1rem,2.1vw,1.6rem)] leading-tight lg:text-right" style={sectionTextStyle}>
+      <h2
+        className="text-[clamp(1.1rem,2.1vw,1.6rem)] leading-tight lg:text-right"
+        style={sectionTextStyle}
+      >
         <Text split="chars">{name}</Text>
       </h2>
       <p className="max-w-[34rem] text-[clamp(0.85rem,1.5vw,1.125rem)] leading-snug text-white/80 transition-colors duration-300 group-hover:text-white/95 lg:text-right">
@@ -63,7 +86,10 @@ function EmailDropdown() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -144,11 +170,17 @@ export default function BriefPage() {
       <div className="relative z-10 flex min-h-dvh w-full flex-col lg:flex-row">
         {/* left column */}
         <section className="flex min-h-[50dvh] flex-1 flex-col justify-center gap-5 bg-black px-6 py-12 sm:px-10 md:px-14 lg:min-h-dvh lg:px-16 xl:px-20">
-          <div style={sectionTextStyle} className="text-[clamp(1rem,2vw,1.5rem)] leading-tight">
+          <div
+            style={sectionTextStyle}
+            className="text-[clamp(1rem,2vw,1.5rem)] leading-tight"
+          >
             <Text split="chars">hi, i&apos;m max</Text>
           </div>
 
-          <div className="flex flex-col gap-3 text-[clamp(0.85rem,1.75vw,1.5rem)] leading-snug" style={sectionTextStyle}>
+          <div
+            className="flex flex-col gap-3 text-[clamp(0.85rem,1.75vw,1.5rem)] leading-snug"
+            style={sectionTextStyle}
+          >
             <div>
               <Text>i build inevitable software:</Text>
             </div>
@@ -160,7 +192,10 @@ export default function BriefPage() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 text-[clamp(0.85rem,1.75vw,1.5rem)] leading-snug" style={sectionTextStyle}>
+          <div
+            className="flex flex-col gap-3 text-[clamp(0.85rem,1.75vw,1.5rem)] leading-snug"
+            style={sectionTextStyle}
+          >
             <div>
               <Text>i take on projects that are:</Text>
             </div>
@@ -171,15 +206,24 @@ export default function BriefPage() {
             </div>
           </div>
 
-          <div style={sectionTextStyle} className="text-[clamp(1rem,2vw,1.5rem)] leading-tight">
+          <div
+            style={sectionTextStyle}
+            className="text-[clamp(1rem,2vw,1.5rem)] leading-tight"
+          >
             <Text>give me a problem and i&apos;ll build the solution.</Text>
           </div>
 
-          <div style={sectionTextStyle} className="text-[clamp(1rem,2vw,1.5rem)] leading-tight">
+          <div
+            style={sectionTextStyle}
+            className="text-[clamp(1rem,2vw,1.5rem)] leading-tight"
+          >
             <Text>melbourne/sydney/hong kong</Text>
           </div>
 
-          <div style={sectionTextStyle} className="text-[clamp(1rem,2vw,1.5rem)] leading-tight">
+          <div
+            style={sectionTextStyle}
+            className="text-[clamp(1rem,2vw,1.5rem)] leading-tight"
+          >
             <Text>available for contract and part time work</Text>
           </div>
 
@@ -217,13 +261,20 @@ export default function BriefPage() {
 
           {/* centered content */}
           <div className="relative z-10 flex flex-1 flex-col justify-center gap-6">
-            <div className="text-[clamp(1rem,2vw,1.5rem)] leading-tight lg:text-right" style={sectionTextStyle}>
+            <div
+              className="text-[clamp(1rem,2vw,1.5rem)] leading-tight lg:text-right"
+              style={sectionTextStyle}
+            >
               <Text split="chars">i make things like:</Text>
             </div>
 
             <div className="flex flex-col gap-6">
               {projects.map((project) => (
-                <ProjectCard key={project.name} name={project.name} desc={project.desc} />
+                <ProjectCard
+                  key={project.name}
+                  name={project.name}
+                  desc={project.desc}
+                />
               ))}
             </div>
           </div>

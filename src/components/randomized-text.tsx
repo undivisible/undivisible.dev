@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 type SplitType = "words" | "chars";
 
@@ -22,7 +22,6 @@ export function RandomizedText({
   inView = false,
   once = true,
 }: RandomizedTextProps) {
-
   const expoOut = (t: number): number => {
     return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
   };
@@ -40,11 +39,16 @@ export function RandomizedText({
     }));
   }, [children, split]);
 
-  const randomizedDelays = useMemo(() => {
-    return elements.map(() =>
-      delay + Math.random() * 0.2 + Math.random() * 0.03
-    );
-  }, [elements.length, delay]);
+  const [randomizedDelays, setRandomizedDelays] = useState<number[]>([]);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      setRandomizedDelays(
+        elements.map(() => delay + Math.random() * 0.2 + Math.random() * 0.03),
+      );
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [elements, delay]);
 
   const variants = {
     hidden: { opacity: 0 },
@@ -67,7 +71,7 @@ export function RandomizedText({
           variants={variants}
           transition={{
             duration: 1.2,
-            delay: randomizedDelays[i],
+            delay: randomizedDelays[i] ?? delay,
             ease: expoOut,
           }}
           style={{ display: split === "words" ? "inline-block" : "inline" }}

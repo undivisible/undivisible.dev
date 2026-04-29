@@ -6,44 +6,167 @@ import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { RandomizedText } from "./randomized-text";
 
 const socials = [
-  { name: "instagram", username: "@undivisible.dev", href: "https://instagram.com/undivisible.dev" },
-  { name: "twitter", username: "@makethings4ppl", href: "https://twitter.com/makethings4ppl" },
-  { name: "linkedin", username: "max lee carter", href: "https://www.linkedin.com/in/maxleecarter" },
-  { name: "email", username: "max@undivisible.dev", href: "mailto:max@undivisible.dev" },
-  { name: "github", username: "undivisible", href: "https://github.com/undivisible" },
+  {
+    name: "instagram",
+    username: "@undivisible.dev",
+    href: "https://instagram.com/undivisible.dev",
+  },
+  {
+    name: "twitter",
+    username: "@makethings4ppl",
+    href: "https://twitter.com/makethings4ppl",
+  },
+  {
+    name: "linkedin",
+    username: "max lee carter",
+    href: "https://www.linkedin.com/in/maxleecarter",
+  },
+  {
+    name: "email",
+    username: "max@undivisible.dev",
+    href: "mailto:max@undivisible.dev",
+  },
+  {
+    name: "github",
+    username: "undivisible",
+    href: "https://github.com/undivisible",
+  },
 ];
 
-const hoverNames = ["祁明思", "максим картер", "チー・ミンスー", "مكس الكعطار", "מאקסימ קרתר"];
+const hoverNames = [
+  "祁明思",
+  "максим картер",
+  "チー・ミンスー",
+  "مكس الكعطار",
+  "מאקסימ קרתר",
+];
 const thingWords = ["things", "software", "systems", "products", "tools"];
 
 const introText = `my favorite thing is chasing new experiences and sharing them with others. i do that through software, which i've been building since i was 8. i'm drawn to the frontier, i started making money online and playing with crypto at 11, and i was one of the first to try gpt-3 in 2021. since then, i dropped out of high school and founded tsc.hk, where i make the frontier. outside of that, i adore philosophy, cooking, photography, and gym.`;
 
 const products = [
-  { name: "crepuscularity", desc: "code web, get native, on every device + web.", href: "https://crepuscularity.undivisible.dev" },
-  { name: "crepus lite", desc: "native ui for any electron project or website.", href: "https://github.com/semitechnological/crepuscularity-lite" },
-  { name: "equilibrium", desc: "FFI for C compiling langs, or Swift in 2 lines.", href: "https://github.com/semitechnological/equilibrium" },
-  { name: "wax", desc: "brew but up to 20x faster + support for scoop + winget.", href: "https://github.com/semitechnological/wax" },
-  { name: "otto", desc: "ai powered ottocomplete everywhere on your mac.", href: "https://github.com/semitechnological/otto" },
-  { name: "tile", desc: "canvas, mosaic and tiling window management.", href: "https://github.com/semitechnological/tile" },
-  { name: "soliloquy", desc: "an ultralight web native operating system.", href: "#" },
+  {
+    name: "crepuscularity",
+    desc: "code web, get native, on every device + web.",
+    href: "https://crepuscularity.undivisible.dev",
+  },
+  {
+    name: "aurorality",
+    desc: "code web, get swiftui. rusty logic and batteries included.",
+    href: "https://github.com/semitechnological/aurorality",
+  },
+  {
+    name: "crepus/aurora lite",
+    desc: "native ui for any electron project or website.",
+    href: "https://github.com/semitechnological/crepuscularity-lite",
+  },
+  {
+    name: "equilibrium",
+    desc: "FFI for C compiling langs, or Swift in 2 lines.",
+    href: "https://github.com/semitechnological/equilibrium",
+  },
+  {
+    name: "wax",
+    desc: "brew but up to 20x faster + system package management.",
+    href: "https://github.com/semitechnological/wax",
+  },
+  {
+    name: "rs_ai",
+    desc: "unified rust ai sdk with local and online providers.",
+    href: "https://github.com/undivisible/rs_ai",
+  },
+  {
+    name: "soliloquy",
+    desc: "an ultralight ultrafast web native operating system.",
+    href: "#",
+  },
+  {
+    name: "otto",
+    desc: "ai powered ottocomplete everywhere on your mac.",
+    href: "https://github.com/semitechnological/otto",
+  },
+  {
+    name: "tile",
+    desc: "canvas, mosaic and tiling window management.",
+    href: "https://github.com/semitechnological/tile",
+  },
   { name: "atmosphere", desc: "ecosystem every device.", href: "#" },
-  { name: "experiences", desc: "making the spatial web accessible.", href: "#" },
+  {
+    name: "experiences",
+    desc: "making the spatial web accessible.",
+    href: "#",
+  },
 ];
 
 const languages = ["rust", "typescript", "swift", "python", "go", "v", "zig"];
-const transport = ["cantonese", "english", "russian", "mandarin", "indonesian", "japanese"];
+const transport = [
+  "cantonese",
+  "english",
+  "russian",
+  "mandarin",
+  "indonesian",
+  "japanese",
+];
 
 const tidbits = [
-  { name: "unthinkmail", desc: "mcp your imap supported email", href: "https://unthinkmail.undivisible.dev" },
-  { name: "drift", desc: "the macos screensaver as a wallpaper on every device", href: "https://github.com/undivisible/drift-wallpaper" },
-  { name: "bublik", desc: "frequency terrain noise generator", href: "https://bublik.undivisible.dev" },
-  { name: "alphabets", desc: "learn unicode-supported alphabets.", href: "https://alphabets.undivisible.dev" },
-  { name: "anywhere", desc: "web extension for online ai to code inline interactions", href: "https://github.com/undivisible/anywhere" },
-  { name: "poke around", desc: "let poke around your computer", href: "https://github.com/undivisible/poke-around" },
-  { name: "unthinkclaw", desc: "openclaw but tiny, with agent swarms and online saas.", href: "https://github.com/undivisible/unthinkclaw" },
-  { name: "standpoint", desc: "the opinion based platform with tierlists and polls", href: "https://github.com/undivisible/standpoint", opacity: 50 },
-  { name: "infrastruct", desc: "comparative jurisprudence platform for major religions", href: "https://github.com/undivisible/infrastruct", opacity: 50 },
-  { name: "akh", desc: "software uniplatform for when i was muslim", href: "https://github.com/undivisible/akh", opacity: 50 },
+  {
+    name: "unthinkmail",
+    desc: "mcp your imap supported email",
+    href: "https://unthinkmail.undivisible.dev",
+  },
+  {
+    name: "drift",
+    desc: "the macos screensaver as a wallpaper on every device",
+    href: "https://github.com/undivisible/drift-wallpaper",
+  },
+  {
+    name: "unelaborate",
+    desc: "swiftui minecraft launcher + modrinth mod loading in client",
+    href: "https://github.com/undivisible/drift-wallpaper",
+  },
+  {
+    name: "bublik",
+    desc: "frequency terrain noise generator",
+    href: "https://bublik.undivisible.dev",
+  },
+  {
+    name: "alphabets",
+    desc: "learn unicode-supported alphabets.",
+    href: "https://alphabets.undivisible.dev",
+  },
+  {
+    name: "anywhere",
+    desc: "web extension for online ai to code inline interactions",
+    href: "https://github.com/undivisible/anywhere",
+  },
+  {
+    name: "poke around",
+    desc: "let poke around your computer with openclaw tools.",
+    href: "https://github.com/undivisible/poke-around",
+  },
+  {
+    name: "unthinkclaw",
+    desc: "openclaw but tiny, with agent swarms and online saas.",
+    href: "https://github.com/undivisible/unthinkclaw",
+  },
+  {
+    name: "standpoint",
+    desc: "the opinion based platform with tierlists and polls",
+    href: "https://github.com/undivisible/standpoint",
+    opacity: 50,
+  },
+  {
+    name: "infrastruct",
+    desc: "comparative jurisprudence platform for major religions",
+    href: "https://github.com/undivisible/infrastruct",
+    opacity: 50,
+  },
+  {
+    name: "akh",
+    desc: "software uniplatform for when i was muslim",
+    href: "https://github.com/undivisible/akh",
+    opacity: 50,
+  },
 ];
 
 const transportColors: Record<string, string> = {
@@ -55,7 +178,13 @@ const transportColors: Record<string, string> = {
   japanese: "#221616",
 };
 
-export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKongDayTheme }) {
+export function Info({
+  colors,
+  dayTheme,
+}: {
+  colors: string[];
+  dayTheme: HongKongDayTheme;
+}) {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const mobileContainerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef(0);
@@ -77,7 +206,8 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
   }, []);
 
   useEffect(() => {
-    setHydrated(true);
+    const raf = requestAnimationFrame(() => setHydrated(true));
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   useEffect(() => {
@@ -137,20 +267,29 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
     const scrollOffsetRef = { current: 0, revealed: false };
 
     const handleWheel = (event: WheelEvent) => {
-      if ((event.target as HTMLElement | null)?.closest("[data-time-scrubber='true']")) {
+      if (
+        (event.target as HTMLElement | null)?.closest(
+          "[data-time-scrubber='true']",
+        )
+      ) {
         event.preventDefault();
         return;
       }
 
-      const isHorizontalScroll = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+      const isHorizontalScroll =
+        Math.abs(event.deltaX) > Math.abs(event.deltaY);
       if (isHorizontalScroll) {
         // Let horizontal wheels control carousel natively
         return;
       }
 
       event.preventDefault();
-      scrollOffsetRef.current = Math.max(0, scrollOffsetRef.current + event.deltaY * 1.5);
-      const shouldBeRevealed = scrollOffsetRef.current > window.innerHeight * 0.3;
+      scrollOffsetRef.current = Math.max(
+        0,
+        scrollOffsetRef.current + event.deltaY * 1.5,
+      );
+      const shouldBeRevealed =
+        scrollOffsetRef.current > window.innerHeight * 0.3;
       if (shouldBeRevealed !== scrollOffsetRef.revealed) {
         scrollOffsetRef.revealed = shouldBeRevealed;
         setRevealed(shouldBeRevealed);
@@ -171,7 +310,9 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
-      const hideFrame = window.requestAnimationFrame(() => setNameVisible(false));
+      const hideFrame = window.requestAnimationFrame(() =>
+        setNameVisible(false),
+      );
       const timeout = window.setTimeout(() => {
         setDisplayName("max carter");
         setNameVisible(true);
@@ -203,16 +344,22 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
     };
   }, [nameHovered]);
 
-  const displayNameStyle = useMemo<React.CSSProperties>(() => ({
-    display: "inline-block",
-    minWidth: "7.5em",
-    transition: "opacity 0.5s ease-out",
-  }), []);
+  const displayNameStyle = useMemo<React.CSSProperties>(
+    () => ({
+      display: "inline-block",
+      minWidth: "7.5em",
+      transition: "opacity 0.5s ease-out",
+    }),
+    [],
+  );
 
-  const heroStyle = useMemo<React.CSSProperties>(() => ({
-    opacity: revealed ? 0.72 : 1,
-    transition: "opacity 0.5s ease-out",
-  }), [revealed]);
+  const heroStyle = useMemo<React.CSSProperties>(
+    () => ({
+      opacity: revealed ? 0.72 : 1,
+      transition: "opacity 0.5s ease-out",
+    }),
+    [revealed],
+  );
 
   const lowerStyle = useMemo(() => {
     if (!revealed) {
@@ -221,10 +368,13 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
     return { maxHeight: "120rem", opacity: 1, transform: "translateY(0rem)" };
   }, [revealed]);
 
-  const pillStyle = useMemo<CSSProperties>(() => ({
-    background: "color-mix(in srgb, var(--page-surface) 94%, black)",
-    color: "var(--page-text)",
-  }), []);
+  const pillStyle = useMemo<CSSProperties>(
+    () => ({
+      background: "color-mix(in srgb, var(--page-surface) 94%, black)",
+      color: "var(--page-text)",
+    }),
+    [],
+  );
 
   const weatherText = hydrated ? dayTheme.weatherDisplay : "--°C --";
   const hkgText = hydrated ? dayTheme.hkgTime : "--:--:--";
@@ -241,7 +391,9 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
         <div className="sticky top-0 h-dvh overflow-hidden">
           <div
             className={`h-[200dvh] w-full transition-transform duration-700 ease-out ${revealed ? "pointer-events-auto" : ""}`}
-            style={{ transform: revealed ? "translateY(-100dvh)" : "translateY(0)" }}
+            style={{
+              transform: revealed ? "translateY(-100dvh)" : "translateY(0)",
+            }}
           >
             <section className="relative flex h-dvh w-full items-center">
               <div
@@ -251,36 +403,74 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                 onMouseLeave={dayTheme.resetScrub}
                 onWheel={dayTheme.onScrubWheel}
               >
-                <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>{weatherText}</div>
-                <div className="grid grid-cols-[3.1rem_auto] items-baseline gap-x-2"><span style={{ color: "var(--page-text-soft)" }}>HKG</span><span>{hkgText}</span></div>
-                <div className="mt-1 grid grid-cols-[3.1rem_auto] items-baseline gap-x-2"><span style={{ color: "var(--page-text-soft)" }}>MEL</span><span>{melText}</span></div>
-                {dayTheme.showLocalTime && <div className="mt-1 grid grid-cols-[3.1rem_auto] items-baseline gap-x-2"><span style={{ color: "var(--page-text-soft)" }}>{dayTheme.localLabel}</span><span>{localText}</span></div>}
+                <div
+                  className="mb-2"
+                  style={{ color: "var(--page-text-soft)" }}
+                >
+                  {weatherText}
+                </div>
+                <div className="grid grid-cols-[3.1rem_auto] items-baseline gap-x-2">
+                  <span style={{ color: "var(--page-text-soft)" }}>HKG</span>
+                  <span>{hkgText}</span>
+                </div>
+                <div className="mt-1 grid grid-cols-[3.1rem_auto] items-baseline gap-x-2">
+                  <span style={{ color: "var(--page-text-soft)" }}>MEL</span>
+                  <span>{melText}</span>
+                </div>
+                {dayTheme.showLocalTime && (
+                  <div className="mt-1 grid grid-cols-[3.1rem_auto] items-baseline gap-x-2">
+                    <span style={{ color: "var(--page-text-soft)" }}>
+                      {dayTheme.localLabel}
+                    </span>
+                    <span>{localText}</span>
+                  </div>
+                )}
               </div>
 
               <div className="w-full min-w-0 max-w-full">
                 <div className="space-y-3">
                   <h1 className="max-w-full break-words text-base leading-tight">
-                    <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
+                    <AnimatedText
+                      text="hi, i'm"
+                      className="inline-block"
+                      split="chars"
+                    />{" "}
                     <span
                       className="inline-block"
-                      style={{ ...displayNameStyle, opacity: nameVisible ? (loaded ? 1 : 0) : 0 }}
+                      style={{
+                        ...displayNameStyle,
+                        opacity: nameVisible ? (loaded ? 1 : 0) : 0,
+                      }}
                       onMouseEnter={() => setNameHovered(true)}
                       onMouseLeave={() => setNameHovered(false)}
                     >
                       {displayName}
                     </span>
                   </h1>
-                  <p className={`max-w-full break-words text-xs transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`} style={{ color: "var(--page-text-muted)" }}>
-                    <AnimatedText text="i make" className="inline-block" split="chars" />{" "}
+                  <p
+                    className={`max-w-full break-words text-xs transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
+                    style={{ color: "var(--page-text-muted)" }}
+                  >
+                    <AnimatedText
+                      text="i make"
+                      className="inline-block"
+                      split="chars"
+                    />{" "}
                     <MorphWord words={thingWords} />{" "}
-                    <AnimatedText text="for" className="inline-block" split="chars" />{" "}
+                    <AnimatedText
+                      text="for"
+                      className="inline-block"
+                      split="chars"
+                    />{" "}
                     <ScatterWord word="people" colors={colors} />
                   </p>
                 </div>
 
                 <div className="mt-4 space-y-3">
                   <AnimatedText text="here's my:" className="text-xs" />
-                  <div className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}>
+                  <div
+                    className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
+                  >
                     <CarouselRow bleedOut>
                       {socials.map((social) => {
                         const active = hoveredPill === social.name;
@@ -292,20 +482,40 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                             onMouseEnter={() => setHoveredPill(social.name)}
                             onMouseLeave={() => setHoveredPill(null)}
                           >
-                            <div className="relative flex h-full items-center justify-center rounded-full px-2" style={pillStyle}>
-                              <span className="text-xs leading-none transition-all duration-300" style={{ transform: active ? "translateY(-0.48rem)" : "translateY(0)" }}>
-                                <AnimatedText text={social.name} className="inline-block" split="chars" />
+                            <div
+                              className="relative flex h-full items-center justify-center rounded-full px-2"
+                              style={pillStyle}
+                            >
+                              <span
+                                className="text-xs leading-none transition-all duration-300"
+                                style={{
+                                  transform: active
+                                    ? "translateY(-0.48rem)"
+                                    : "translateY(0)",
+                                }}
+                              >
+                                <AnimatedText
+                                  text={social.name}
+                                  className="inline-block"
+                                  split="chars"
+                                />
                               </span>
                               <span
                                 className="absolute left-1/2 top-1/2 max-w-[calc(100%-1rem)] overflow-hidden text-ellipsis whitespace-nowrap text-center text-[9px] leading-none transition-all duration-300"
                                 style={{
-                                  transform: active ? "translate(-50%, 0.62rem)" : "translate(-50%, -50%)",
+                                  transform: active
+                                    ? "translate(-50%, 0.62rem)"
+                                    : "translate(-50%, -50%)",
                                   opacity: active ? 1 : 0,
                                   filter: active ? "blur(0px)" : "blur(8px)",
                                   color: "var(--page-text-muted)",
                                 }}
                               >
-                                <AnimatedText text={social.username} className="inline-block" split="chars" />
+                                <AnimatedText
+                                  text={social.username}
+                                  className="inline-block"
+                                  split="chars"
+                                />
                               </span>
                             </div>
                           </a>
@@ -327,19 +537,37 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
 
             <section className="flex h-dvh w-full items-center">
               <div className="w-full min-w-0 max-w-full">
-                <div className="flex min-h-dvh w-full items-center overflow-y-hidden transition-all duration-500 ease-out" style={lowerStyle}>
+                <div
+                  className="flex min-h-dvh w-full items-center overflow-y-hidden transition-all duration-500 ease-out"
+                  style={lowerStyle}
+                >
                   <div className="w-full min-w-0 space-y-6 pt-0">
                     {revealed ? (
-                      <RandomizedText key="lower-text" split="words" className="max-w-full break-words text-sm leading-relaxed">
+                      <RandomizedText
+                        key="lower-text"
+                        split="words"
+                        className="max-w-full break-words text-sm leading-relaxed"
+                      >
                         {introText}
                       </RandomizedText>
                     ) : (
-                      <div className="max-w-full break-words text-xs leading-relaxed opacity-0">{introText}</div>
+                      <div className="max-w-full break-words text-xs leading-relaxed opacity-0">
+                        {introText}
+                      </div>
                     )}
 
-                    <Section title="i make utilities that feel inevitable:" isMobile>
+                    <Section
+                      title="i make utilities that feel inevitable:"
+                      isMobile
+                    >
                       {products.map((product) => (
-                        <Card key={product.name} title={product.name} description={product.desc} href={product.href} isMobile />
+                        <Card
+                          key={product.name}
+                          title={product.name}
+                          description={product.desc}
+                          href={product.href}
+                          isMobile
+                        />
                       ))}
                     </Section>
 
@@ -372,7 +600,22 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                               ...dayTheme.getTransportStyle(base),
                             }}
                           >
-                            <div style={{ justifyContent: "center", display: "flex", flexDirection: "column", color: "var(--transport-text)", fontSize: "12px", fontFamily: "Young Serif", fontWeight: 400, wordWrap: "break-word", textAlign: item === "indonesian" || item === "japanese" ? "center" : "left" }}>
+                            <div
+                              style={{
+                                justifyContent: "center",
+                                display: "flex",
+                                flexDirection: "column",
+                                color: "var(--transport-text)",
+                                fontSize: "12px",
+                                fontFamily: "Young Serif",
+                                fontWeight: 400,
+                                wordWrap: "break-word",
+                                textAlign:
+                                  item === "indonesian" || item === "japanese"
+                                    ? "center"
+                                    : "left",
+                              }}
+                            >
                               {item}
                             </div>
                           </div>
@@ -382,7 +625,14 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
 
                     <Section title="cool tidbits:" isMobile>
                       {tidbits.map((tidbit) => (
-                        <Card key={tidbit.name} title={tidbit.name} description={tidbit.desc} href={tidbit.href} dimmed={tidbit.opacity === 50} isMobile />
+                        <Card
+                          key={tidbit.name}
+                          title={tidbit.name}
+                          description={tidbit.desc}
+                          href={tidbit.href}
+                          dimmed={tidbit.opacity === 50}
+                          isMobile
+                        />
                       ))}
                     </Section>
                   </div>
@@ -409,51 +659,76 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
             onMouseLeave={dayTheme.resetScrub}
             onWheel={dayTheme.onScrubWheel}
           >
-              <div className="w-fit">
-                <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>
-                  {weatherText}
-                </div>
-                <div className="grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                  <span style={{ color: "var(--page-text-soft)" }}>HKG</span>
-                  <span>{hkgText}</span>
-                </div>
-                <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                  <span style={{ color: "var(--page-text-soft)" }}>MEL</span>
-                  <span>{melText}</span>
-                </div>
-                {dayTheme.showLocalTime && (
-                  <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                    <span style={{ color: "var(--page-text-soft)" }}>{dayTheme.localLabel}</span>
-                    <span>{localText}</span>
-                  </div>
-                )}
+            <div className="w-fit">
+              <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>
+                {weatherText}
               </div>
+              <div className="grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
+                <span style={{ color: "var(--page-text-soft)" }}>HKG</span>
+                <span>{hkgText}</span>
+              </div>
+              <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
+                <span style={{ color: "var(--page-text-soft)" }}>MEL</span>
+                <span>{melText}</span>
+              </div>
+              {dayTheme.showLocalTime && (
+                <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
+                  <span style={{ color: "var(--page-text-soft)" }}>
+                    {dayTheme.localLabel}
+                  </span>
+                  <span>{localText}</span>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="transition-all duration-500 ease-out" style={heroStyle}>
+          <div
+            className="transition-all duration-500 ease-out"
+            style={heroStyle}
+          >
             <div className="space-y-3">
               <h1 className="max-w-full break-words text-lg leading-tight md:text-4xl">
-                <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
+                <AnimatedText
+                  text="hi, i'm"
+                  className="inline-block"
+                  split="chars"
+                />{" "}
                 <span
                   className="inline-block"
-                  style={{ ...displayNameStyle, opacity: nameVisible ? (loaded ? 1 : 0) : 0 }}
+                  style={{
+                    ...displayNameStyle,
+                    opacity: nameVisible ? (loaded ? 1 : 0) : 0,
+                  }}
                   onMouseEnter={() => setNameHovered(true)}
                   onMouseLeave={() => setNameHovered(false)}
                 >
                   {displayName}
                 </span>
               </h1>
-              <p className="max-w-full break-words text-xs md:text-lg" style={{ color: "var(--page-text-muted)", opacity: 1 }}>
-                <AnimatedText text="i make" className="inline-block" split="chars" />{" "}
+              <p
+                className="max-w-full break-words text-xs md:text-lg"
+                style={{ color: "var(--page-text-muted)", opacity: 1 }}
+              >
+                <AnimatedText
+                  text="i make"
+                  className="inline-block"
+                  split="chars"
+                />{" "}
                 <MorphWord words={thingWords} />{" "}
-                <AnimatedText text="for" className="inline-block" split="chars" />{" "}
+                <AnimatedText
+                  text="for"
+                  className="inline-block"
+                  split="chars"
+                />{" "}
                 <ScatterWord word="people" colors={colors} />
               </p>
             </div>
 
             <div className="mt-8 space-y-4">
               <AnimatedText text="here's my:" className="text-xs md:text-sm" />
-              <div className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}>
+              <div
+                className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
+              >
                 <CarouselRow>
                   {socials.map((social) => {
                     const active = hoveredPill === social.name;
@@ -466,23 +741,40 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                         onMouseEnter={() => setHoveredPill(social.name)}
                         onMouseLeave={() => setHoveredPill(null)}
                       >
-                        <div className="relative flex h-full items-center justify-center rounded-full px-2" style={pillStyle}>
+                        <div
+                          className="relative flex h-full items-center justify-center rounded-full px-2"
+                          style={pillStyle}
+                        >
                           <span
                             className="text-center text-sm leading-none transition-all duration-300"
-                            style={{ transform: active ? "translateY(-0.48rem)" : "translateY(0)" }}
+                            style={{
+                              transform: active
+                                ? "translateY(-0.48rem)"
+                                : "translateY(0)",
+                            }}
                           >
-                            <AnimatedText text={social.name} className="inline-block" split="chars" />
+                            <AnimatedText
+                              text={social.name}
+                              className="inline-block"
+                              split="chars"
+                            />
                           </span>
                           <span
                             className="absolute left-1/2 top-1/2 max-w-[calc(100%-1rem)] overflow-hidden text-ellipsis whitespace-nowrap text-center text-[9px] leading-none transition-all duration-300"
                             style={{
-                              transform: active ? "translate(-50%, 0.62rem)" : "translate(-50%, -50%)",
+                              transform: active
+                                ? "translate(-50%, 0.62rem)"
+                                : "translate(-50%, -50%)",
                               opacity: active ? 1 : 0,
                               filter: active ? "blur(0px)" : "blur(8px)",
                               color: "var(--page-text-muted)",
                             }}
                           >
-                            <AnimatedText text={social.username} className="inline-block" split="chars" />
+                            <AnimatedText
+                              text={social.username}
+                              className="inline-block"
+                              split="chars"
+                            />
                           </span>
                         </div>
                       </a>
@@ -501,19 +793,35 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
             </div>
           </div>
 
-          <div className="mt-8 w-full max-w-full overflow-visible transition-all duration-500 ease-out" style={lowerStyle}>
-            <div className={`space-y-12 pt-0 max-w-full ${revealed ? "" : "pointer-events-none"}`}>
+          <div
+            className="mt-8 w-full max-w-full overflow-visible transition-all duration-500 ease-out"
+            style={lowerStyle}
+          >
+            <div
+              className={`space-y-12 pt-0 max-w-full ${revealed ? "" : "pointer-events-none"}`}
+            >
               {revealed ? (
-                <RandomizedText key="lower-text" split="words" className="text-xs md:text-base">
+                <RandomizedText
+                  key="lower-text"
+                  split="words"
+                  className="text-xs md:text-base"
+                >
                   {introText}
                 </RandomizedText>
               ) : (
-                <div className="text-xs md:text-sm leading-relaxed opacity-0">{introText}</div>
+                <div className="text-xs md:text-sm leading-relaxed opacity-0">
+                  {introText}
+                </div>
               )}
 
               <Section title="i make utilities that feel inevitable:">
                 {products.map((product) => (
-                  <Card key={product.name} title={product.name} description={product.desc} href={product.href} />
+                  <Card
+                    key={product.name}
+                    title={product.name}
+                    description={product.desc}
+                    href={product.href}
+                  />
                 ))}
               </Section>
 
@@ -530,12 +838,12 @@ export function Info({ colors, dayTheme }: { colors: string[]; dayTheme: HongKon
                     <div
                       key={item}
                       suppressHydrationWarning
-style={{
-                          width: "100px",
-                          paddingLeft: "12px",
-                          paddingRight: "12px",
-                          paddingTop: "8px",
-                          paddingBottom: "8px",
+                      style={{
+                        width: "100px",
+                        paddingLeft: "12px",
+                        paddingRight: "12px",
+                        paddingTop: "8px",
+                        paddingBottom: "8px",
                         overflow: "hidden",
                         borderRadius: "30px",
                         flexDirection: "column",
@@ -556,7 +864,10 @@ style={{
                           fontFamily: "Young Serif",
                           fontWeight: 400,
                           wordWrap: "break-word",
-                          textAlign: item === "indonesian" || item === "japanese" ? "center" : "left",
+                          textAlign:
+                            item === "indonesian" || item === "japanese"
+                              ? "center"
+                              : "left",
                         }}
                       >
                         {item}
@@ -585,7 +896,15 @@ style={{
   );
 }
 
-function AnimatedText({ text, className = "", split = "words" }: { text: string; className?: string; split?: "words" | "chars" }) {
+function AnimatedText({
+  text,
+  className = "",
+  split = "words",
+}: {
+  text: string;
+  className?: string;
+  split?: "words" | "chars";
+}) {
   return (
     <RandomizedText split={split} className={className}>
       {text}
@@ -657,11 +976,18 @@ function ScatterWord({ word, colors }: { word: string; colors: string[] }) {
   );
 
   return (
-    <span className="inline-flex cursor-default" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+    <span
+      className="inline-flex cursor-default"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       {word.split("").map((letter, index) => {
         const transform = transforms[index];
         return (
-          <span key={`${letter}-${index}`} className="relative inline-block overflow-visible px-[0.01em]">
+          <span
+            key={`${letter}-${index}`}
+            className="relative inline-block overflow-visible px-[0.01em]"
+          >
             <span
               className="inline-block transition-all duration-500 ease-out"
               style={{
@@ -680,7 +1006,13 @@ function ScatterWord({ word, colors }: { word: string; colors: string[] }) {
   );
 }
 
-function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode; bleedOut?: boolean }) {
+function CarouselRow({
+  children,
+  bleedOut = false,
+}: {
+  children: React.ReactNode;
+  bleedOut?: boolean;
+}) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -758,20 +1090,41 @@ function CarouselRow({ children, bleedOut = false }: { children: React.ReactNode
   }, []);
 
   return (
-    <div className={`relative max-w-full overflow-visible ${bleedOut ? "-mx-4 w-[calc(100%+2rem)]" : "w-full"}`}>
+    <div
+      className={`relative max-w-full overflow-visible ${bleedOut ? "-mx-4 w-[calc(100%+2rem)]" : "w-full"}`}
+    >
       <div
         ref={ref}
         data-carousel-scroll="true"
-        style={{ overflowX: "auto", overflowY: "hidden", touchAction: "pan-y", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", userSelect: "none" }}
+        style={{
+          overflowX: "auto",
+          overflowY: "hidden",
+          touchAction: "pan-y",
+          overscrollBehaviorX: "contain",
+          WebkitOverflowScrolling: "touch",
+          userSelect: "none",
+        }}
         className={`cursor-grab active:cursor-grabbing pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "px-4" : ""}`}
       >
-        <div className={`inline-flex w-max flex-nowrap gap-2 ${bleedOut ? "min-w-[calc(100%+2rem)]" : "min-w-full"}`}>{children}</div>
+        <div
+          className={`inline-flex w-max flex-nowrap gap-2 ${bleedOut ? "min-w-[calc(100%+2rem)]" : "min-w-full"}`}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
 }
 
-function Section({ title, children, isMobile = false }: { title: string; children: React.ReactNode; isMobile?: boolean }) {
+function Section({
+  title,
+  children,
+  isMobile = false,
+}: {
+  title: string;
+  children: React.ReactNode;
+  isMobile?: boolean;
+}) {
   return (
     <div className="space-y-4">
       <AnimatedText text={title} className={isMobile ? "text-sm" : "text-xl"} />
@@ -804,15 +1157,31 @@ function Card({
         color: "var(--page-text)",
       }}
     >
-      <AnimatedText text={title} className={isMobile ? "text-xs" : "text-base"} />
-      <div className={isMobile ? "mt-0.5 text-[7px] leading-relaxed" : "mt-1 text-sm leading-relaxed"} style={{ color: "var(--page-text-muted)" }}>
+      <AnimatedText
+        text={title}
+        className={isMobile ? "text-xs" : "text-base"}
+      />
+      <div
+        className={
+          isMobile
+            ? "mt-0.5 text-[7px] leading-relaxed"
+            : "mt-1 text-sm leading-relaxed"
+        }
+        style={{ color: "var(--page-text-muted)" }}
+      >
         <AnimatedText text={description} />
       </div>
     </a>
   );
 }
 
-function Badge({ label, isMobile = false }: { label: string; isMobile?: boolean }) {
+function Badge({
+  label,
+  isMobile = false,
+}: {
+  label: string;
+  isMobile?: boolean;
+}) {
   return (
     <div
       style={{

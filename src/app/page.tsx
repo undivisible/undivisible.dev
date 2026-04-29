@@ -11,8 +11,14 @@ export default function Home() {
   const dayTheme = useHongKongDayTheme();
 
   return (
-    <div className="site-shell relative h-dvh overflow-hidden" style={dayTheme.style}>
-      <Light scene={dayTheme.shader} className="pointer-events-none fixed inset-0 z-[1] h-full w-full" />
+    <div
+      className="site-shell relative h-dvh overflow-hidden"
+      style={dayTheme.style}
+    >
+      <Light
+        scene={dayTheme.shader}
+        className="pointer-events-none fixed inset-0 z-[1] h-full w-full"
+      />
 
       <div className="fixed inset-0 z-0 lg:hidden">
         <Ascii colors={colors} track={track} ready={ready} />

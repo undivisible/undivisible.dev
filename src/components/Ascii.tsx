@@ -28,9 +28,13 @@ function nextShapeType(type: ShapeType): ShapeType {
 
 function hexToRgb(hex: string) {
   const normalized = hex.replace("#", "");
-  const value = normalized.length === 3
-    ? normalized.split("").map((part) => part + part).join("")
-    : normalized;
+  const value =
+    normalized.length === 3
+      ? normalized
+          .split("")
+          .map((part) => part + part)
+          .join("")
+      : normalized;
 
   return [
     parseInt(value.slice(0, 2), 16) / 255,
@@ -43,7 +47,13 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
-function pointInsideShape(px: number, py: number, shape: ShapeState, cos: number, sin: number) {
+function pointInsideShape(
+  px: number,
+  py: number,
+  shape: ShapeState,
+  cos: number,
+  sin: number,
+) {
   const dx = px - shape.x;
   const dy = py - shape.y;
   const rx = dx * cos - dy * sin;
@@ -84,7 +94,11 @@ function createShader(gl: WebGLRenderingContext, type: number, source: string) {
   return shader;
 }
 
-function createProgram(gl: WebGLRenderingContext, vertexSource: string, fragmentSource: string) {
+function createProgram(
+  gl: WebGLRenderingContext,
+  vertexSource: string,
+  fragmentSource: string,
+) {
   const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexSource);
   const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
   if (!vertexShader || !fragmentShader) return null;
@@ -127,7 +141,11 @@ export default function Ascii({
     const container = containerRef.current;
     if (!canvas || !container) return;
 
-    const gl = canvas.getContext("webgl", { alpha: false, antialias: false, premultipliedAlpha: false });
+    const gl = canvas.getContext("webgl", {
+      alpha: false,
+      antialias: false,
+      premultipliedAlpha: false,
+    });
     if (!gl) {
       console.error("[webgl] unavailable");
       return;
@@ -284,13 +302,42 @@ export default function Ascii({
 
     const ctx = asciiCanvas.getContext("2d");
     const sampleCanvas = document.createElement("canvas");
-    const sampleCtx = sampleCanvas.getContext("2d", { willReadFrequently: true });
+    const sampleCtx = sampleCanvas.getContext("2d", {
+      willReadFrequently: true,
+    });
     if (!ctx || !sampleCtx) return;
 
     const shapes: ShapeState[] = [
-      { x: 140, y: 140, vx: 64, vy: 52, size: 160, rotation: 0, rotationSpeed: 0.24, type: "circle" },
-      { x: 420, y: 240, vx: -56, vy: 60, size: 160, rotation: 0.8, rotationSpeed: -0.22, type: "triangle" },
-      { x: 260, y: 440, vx: 58, vy: -54, size: 160, rotation: -0.4, rotationSpeed: 0.2, type: "square" },
+      {
+        x: 140,
+        y: 140,
+        vx: 64,
+        vy: 52,
+        size: 160,
+        rotation: 0,
+        rotationSpeed: 0.24,
+        type: "circle",
+      },
+      {
+        x: 420,
+        y: 240,
+        vx: -56,
+        vy: 60,
+        size: 160,
+        rotation: 0.8,
+        rotationSpeed: -0.22,
+        type: "triangle",
+      },
+      {
+        x: 260,
+        y: 440,
+        vx: 58,
+        vy: -54,
+        size: 160,
+        rotation: -0.4,
+        rotationSpeed: 0.2,
+        type: "square",
+      },
     ];
 
     let width = 0;
@@ -394,7 +441,7 @@ export default function Ascii({
           let b = pixels[pixelIndex + 2] ?? 0;
           const brightness = (r + g + b) / 765;
           const insideAnyShape = shapes.some((shape, i) =>
-            pointInsideShape(x, y, shape, shapeTrig[i].cos, shapeTrig[i].sin)
+            pointInsideShape(x, y, shape, shapeTrig[i].cos, shapeTrig[i].sin),
           );
 
           if (insideAnyShape) {
@@ -408,12 +455,20 @@ export default function Ascii({
           const hueWeight = (r - g) * 0.5 + 128;
           const charIndex = Math.min(
             charSet.length - 1,
-            Math.floor((colorWeight * 0.7 + (hueWeight / 255) * 0.3) * (charSet.length - 1))
+            Math.floor(
+              (colorWeight * 0.7 + (hueWeight / 255) * 0.3) *
+                (charSet.length - 1),
+            ),
           );
 
           ctx.fillStyle = `rgb(${r},${g},${b})`;
           ctx.globalAlpha = insideAnyShape
-            ? clamp(0.94 * (0.95 + Math.sin(now * 0.012 + col * 0.3 + row * 0.7) * 0.03), 0.7, 1.0)
+            ? clamp(
+                0.94 *
+                  (0.95 + Math.sin(now * 0.012 + col * 0.3 + row * 0.7) * 0.03),
+                0.7,
+                1.0,
+              )
             : clamp(0.52 + brightness * 0.4, 0.52, 0.94);
           ctx.fillText(charSet[charIndex], x, y);
         }
@@ -442,8 +497,14 @@ export default function Ascii({
       className={`relative h-full w-full overflow-hidden transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}
       style={{ background: "transparent" }}
     >
-      <canvas ref={bgCanvasRef} className="pointer-events-none absolute inset-0 h-full w-full opacity-0" />
-      <canvas ref={asciiCanvasRef} className="pointer-events-none absolute inset-0 h-full w-full" />
+      <canvas
+        ref={bgCanvasRef}
+        className="pointer-events-none absolute inset-0 h-full w-full opacity-0"
+      />
+      <canvas
+        ref={asciiCanvasRef}
+        className="pointer-events-none absolute inset-0 h-full w-full"
+      />
 
       {ready && track && (
         <a
@@ -454,8 +515,16 @@ export default function Ascii({
           style={{ color: "var(--page-text)" }}
         >
           <div className="text-base leading-snug">{track.artist}</div>
-          <div className="text-sm leading-snug" style={{ color: "var(--page-text-muted)" }}>{track.track}</div>
-          <div className="mt-1 text-[10px] uppercase tracking-[0.22em]" style={{ color: "var(--page-text-soft)" }}>
+          <div
+            className="text-sm leading-snug"
+            style={{ color: "var(--page-text-muted)" }}
+          >
+            {track.track}
+          </div>
+          <div
+            className="mt-1 text-[10px] uppercase tracking-[0.22em]"
+            style={{ color: "var(--page-text-soft)" }}
+          >
             {track.isNowPlaying ? "now playing" : "last listening to"}
           </div>
         </a>
