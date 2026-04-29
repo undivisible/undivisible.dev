@@ -12,7 +12,7 @@ const sectionTextStyle = {
 
 const projects = [
   {
-    name: "crepuscularity",
+    name: "crepuscularity / aurorality",
     desc: "cross platform ui + runtime for desktop, web, webextensions and mobile.",
   },
   {

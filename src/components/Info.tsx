@@ -90,6 +90,11 @@ const products = [
     desc: "canvas, mosaic and tiling window management.",
     href: "https://github.com/semitechnological/tile",
   },
+  {
+    name: "rover",
+    desc: "all in one blazingly fast execution agent for mac.",
+    href: "https://github.com/semitechnological/tile",
+  },
   { name: "atmosphere", desc: "ecosystem every device.", href: "#" },
   {
     name: "experiences",
@@ -133,6 +138,11 @@ const tidbits = [
     name: "alphabets",
     desc: "learn unicode-supported alphabets.",
     href: "https://alphabets.undivisible.dev",
+  },
+  {
+    name: "notes",
+    desc: "a minimal markdown text editor in the web.",
+    href: "https://notes.undivisible.dev",
   },
   {
     name: "anywhere",
