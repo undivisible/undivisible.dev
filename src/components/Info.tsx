@@ -58,7 +58,7 @@ const products = [
   {
     name: "crepus/aurora lite",
     desc: "native ui for any electron project or website.",
-    href: "https://github.com/semitechnological/crepuscularity-lite",
+    href: "https://github.com/semitechnological/crepuscularity",
   },
   {
     name: "equilibrium",
@@ -1167,10 +1167,7 @@ function Card({
         color: "var(--page-text)",
       }}
     >
-      <AnimatedText
-        text={title}
-        className={isMobile ? "text-sm" : "text-lg"}
-      />
+      <AnimatedText text={title} className={isMobile ? "text-sm" : "text-lg"} />
       <div
         className={
           isMobile
