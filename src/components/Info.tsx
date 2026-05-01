@@ -1109,7 +1109,6 @@ function CarouselRow({
         style={{
           overflowX: "auto",
           overflowY: "hidden",
-          touchAction: "pan-y pinch-zoom",
           overscrollBehaviorX: "contain",
           WebkitOverflowScrolling: "touch",
           userSelect: "none",
