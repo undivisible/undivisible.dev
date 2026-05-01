@@ -1,0 +1,42 @@
+@media screen {
+  .print-only { display: none !important; }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  .screen-only { display: none !important; }
+  .print-only { display: block !important; }
+  html, body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .page-wrapper {
+    box-shadow: none !important;
+    margin: 0 !important;
+    page-break-after: always;
+  }
+  .page-wrapper:last-child {
+    page-break-after: auto;
+  }
+  [style*="translateY"] { transform: none !important; }
+  [style*="translate3d"] { transform: none !important; }
+  #hero, #services, #cases, #projects { display: none !important; }
+}
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+a {
+  text-decoration: none;
+  transition: opacity 0.18s ease;
+}
+
+a:hover {
+  opacity: 1 !important;
+}
