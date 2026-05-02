@@ -556,7 +556,7 @@ export function Info({
                       <RandomizedText
                         key="lower-text"
                         split="words"
-                        className="max-w-full break-words text-sm leading-relaxed"
+                        className="max-w-full break-words text-[10px] sm:text-xs leading-relaxed"
                       >
                         {introText}
                       </RandomizedText>
@@ -610,22 +610,20 @@ export function Info({
                               ...dayTheme.getTransportStyle(base),
                             }}
                           >
-                            <div
-                              style={{
-                                justifyContent: "center",
-                                display: "flex",
-                                flexDirection: "column",
-                                color: "var(--transport-text)",
-                                fontSize: "12px",
-                                fontFamily: "Young Serif",
-                                fontWeight: 400,
-                                wordWrap: "break-word",
-                                textAlign:
-                                  item === "indonesian" || item === "japanese"
-                                    ? "center"
-                                    : "left",
-                              }}
-                            >
+<div
+                        className="text-[9px] sm:text-[10px] md:text-[11px]"
+                        style={{
+                          justifyContent: "center",
+                          display: "flex",
+                          flexDirection: "column",
+                          color: "var(--transport-text)",
+                          fontFamily: "Young Serif",
+                          textAlign:
+                            item === "indonesian" || item === "japanese"
+                              ? "center"
+                              : "left",
+                        }}
+                      >
                               {item}
                             </div>
                           </div>
@@ -660,7 +658,7 @@ export function Info({
       className="relative h-dvh w-full max-w-full overflow-hidden bg-transparent"
       style={{ color: "var(--page-text)" }}
     >
-      <div className="sticky top-0 mx-4 flex h-dvh w-[calc(100%-2rem)] min-w-0 items-center justify-start overflow-hidden md:mx-8 md:w-[calc(100%-4rem)]">
+      <div className="sticky top-0 mx-2 sm:mx-3 md:mx-4 lg:mx-6 w-[calc(100%-1rem)] sm:w-[calc(100%-1.5rem)] md:w-[calc(100%-2rem)] lg:w-[calc(100%-3rem)] flex h-dvh min-w-0 items-center justify-start overflow-hidden">
         <div className="flex h-full w-full min-w-0 max-w-full flex-col items-start justify-center">
           <div
             data-time-scrubber="true"
@@ -697,7 +695,7 @@ export function Info({
             style={heroStyle}
           >
             <div className="space-y-3">
-              <h1 className="max-w-full break-words text-lg leading-tight md:text-4xl">
+              <h1 className="max-w-full break-words text-[10px] md:text-xs lg:text-sm xl:text-base">
                 <AnimatedText
                   text="hi, i'm"
                   className="inline-block"
@@ -716,7 +714,7 @@ export function Info({
                 </span>
               </h1>
               <p
-                className="max-w-full break-words text-xs md:text-lg"
+                className="max-w-full break-words text-[10px] md:text-xs lg:text-xs"
                 style={{ color: "var(--page-text-muted)", opacity: 1 }}
               >
                 <AnimatedText
@@ -734,8 +732,8 @@ export function Info({
               </p>
             </div>
 
-            <div className="mt-8 space-y-4">
-              <AnimatedText text="here's my:" className="text-xs md:text-sm" />
+            <div className="mt-2 sm:mt-2 md:mt-3 lg:mt-4 space-y-2 sm:space-y-3">
+              <AnimatedText text="here's my:" className="text-[10px] md:text-xs" />
               <div
                 className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
               >
@@ -744,20 +742,20 @@ export function Info({
                     const active = hoveredPill === social.name;
 
                     return (
-                      <a
-                        key={social.name}
-                        href={social.href}
-                        className="relative block h-[3.25rem] min-w-[6rem] overflow-hidden rounded-full"
-                        onMouseEnter={() => setHoveredPill(social.name)}
-                        onMouseLeave={() => setHoveredPill(null)}
-                      >
-                        <div
-                          className="relative flex h-full items-center justify-center rounded-full px-2"
-                          style={pillStyle}
-                        >
-                          <span
-                            className="text-center text-sm leading-none transition-all duration-300"
-                            style={{
+<a
+                         key={social.name}
+                         href={social.href}
+                         className="relative block h-4 sm:h-5 md:h-6 lg:h-7 xl:h-8 min-w-[3rem] sm:min-w-[3.5rem] md:min-w-[4rem] lg:min-w-[4.5rem] xl:min-w-[5rem] overflow-hidden rounded-full"
+                         onMouseEnter={() => setHoveredPill(social.name)}
+                         onMouseLeave={() => setHoveredPill(null)}
+                       >
+                         <div
+                           className="relative flex h-full items-center justify-center rounded-full px-1"
+                           style={pillStyle}
+                         >
+                           <span
+                             className="text-center text-[8px] sm:text-[9px] md:text-[10px] lg:text-xs xl:text-sm leading-none transition-all duration-300"
+                             style={{
                               transform: active
                                 ? "translateY(-0.48rem)"
                                 : "translateY(0)",
@@ -848,23 +846,25 @@ export function Info({
                     <div
                       key={item}
                       suppressHydrationWarning
+                      className="min-w-[50px] sm:min-w-[55px] md:min-w-[60px] lg:min-w-[70px]"
                       style={{
-                        width: "100px",
-                        paddingLeft: "12px",
-                        paddingRight: "12px",
-                        paddingTop: "8px",
-                        paddingBottom: "8px",
+                        width: "50px",
+                        paddingLeft: "5px",
+                        paddingRight: "5px",
+                        paddingTop: "4px",
+                        paddingBottom: "4px",
                         overflow: "hidden",
                         borderRadius: "30px",
                         flexDirection: "column",
                         justifyContent: "center",
                         alignItems: "center",
-                        gap: "5px",
+                        gap: "3px",
                         display: "inline-flex",
                         ...dayTheme.getTransportStyle(base),
                       }}
                     >
                       <div
+                        className="text-[9px] sm:text-[10px] md:text-[11px]"
                         style={{
                           justifyContent: "center",
                           display: "flex",
@@ -1136,8 +1136,8 @@ function Section({
   isMobile?: boolean;
 }) {
   return (
-    <div className="space-y-4">
-      <AnimatedText text={title} className={isMobile ? "text-sm" : "text-xl"} />
+    <div className="space-y-2 sm:space-y-3">
+      <AnimatedText text={title} className={isMobile ? "text-sm" : "text-[11px] sm:text-xs md:text-sm"} />
       <CarouselRow bleedOut={isMobile}>{children}</CarouselRow>
     </div>
   );
@@ -1161,18 +1161,25 @@ function Card({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`${isMobile ? "min-w-[9rem] max-w-[9rem] rounded-lg p-2" : "min-w-[13rem] max-w-[13rem] rounded-xl p-4"} transition-colors duration-200 ${dimmed ? "opacity-50" : "opacity-100"}`}
+      className={`${
+        isMobile
+          ? "min-w-[9rem] max-w-[9rem] rounded-lg p-2"
+          : "min-w-[5rem] sm:min-w-[6rem] md:min-w-[7rem] lg:min-w-[8rem] xl:min-w-[10rem] max-w-[5rem] sm:max-w-[6rem] md:max-w-[7rem] lg:max-w-[8rem] xl:max-w-[10rem] rounded-lg p-1 sm:p-1.5 md:p-2 lg:p-2.5 xl:p-3"
+      } transition-colors duration-200 ${dimmed ? "opacity-50" : "opacity-100"}`}
       style={{
         background: "color-mix(in srgb, var(--page-surface) 94%, black)",
         color: "var(--page-text)",
       }}
     >
-      <AnimatedText text={title} className={isMobile ? "text-sm" : "text-lg"} />
+      <AnimatedText
+        text={title}
+        className={isMobile ? "text-sm" : "text-[10px] sm:text-[11px] md:text-xs lg:text-xs xl:text-sm"}
+      />
       <div
         className={
           isMobile
             ? "mt-1 text-[9px] leading-relaxed"
-            : "mt-2 text-base leading-relaxed"
+            : "mt-0.5 text-[8px] sm:text-[9px] md:text-[10px] lg:text-[10px] xl:text-xs leading-relaxed"
         }
         style={{ color: "var(--page-text-muted)" }}
       >
@@ -1191,19 +1198,20 @@ function Badge({
 }) {
   return (
     <div
+      className="min-w-[50px] sm:min-w-[55px] md:min-w-[60px] lg:min-w-[70px] xl:min-w-[85px]"
       style={{
-        width: isMobile ? "58px" : "80px",
-        paddingLeft: isMobile ? "6px" : "10px",
-        paddingRight: isMobile ? "6px" : "10px",
-        paddingTop: isMobile ? "5px" : "7px",
-        paddingBottom: isMobile ? "5px" : "7px",
+        width: "50px",
+        paddingLeft: "5px",
+        paddingRight: "5px",
+        paddingTop: "4px",
+        paddingBottom: "4px",
         background: "color-mix(in srgb, var(--page-surface) 94%, black)",
         overflow: "hidden",
         borderRadius: "30px",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        gap: "5px",
+        gap: "3px",
         display: "inline-flex",
         color: "var(--page-text)",
       }}
@@ -1214,10 +1222,8 @@ function Badge({
           display: "flex",
           flexDirection: "column",
           color: "inherit",
-          fontSize: isMobile ? "10px" : "15px",
+          fontSize: "9px",
           fontFamily: "Young Serif",
-          fontWeight: 400,
-          wordWrap: "break-word",
         }}
       >
         {label}
