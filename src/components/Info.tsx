@@ -660,8 +660,8 @@ export function Info({
       className="relative h-dvh w-full max-w-full overflow-hidden bg-transparent"
       style={{ color: "var(--page-text)" }}
     >
-      <div className="sticky top-0 mx-4 flex h-dvh w-[calc(100%-2rem)] min-w-0 items-center justify-start overflow-hidden md:mx-8 md:w-[calc(100%-4rem)]">
-        <div className="flex h-full w-full min-w-0 max-w-full flex-col items-start justify-center">
+      <div className="sticky top-0 mx-3 sm:mx-4 md:mx-6 lg:mx-8 w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] md:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] flex h-dvh min-w-0 items-center justify-start overflow-y-hidden sm:overflow-y-auto">
+        <div className="flex h-full w-full min-w-0 max-w-full flex-col items-start justify-start sm:justify-center">
           <div
             data-time-scrubber="true"
             className={`absolute top-4 z-20 w-fit font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-500 md:top-8 md:text-[12px] ${revealed ? "-translate-y-40 opacity-0 pointer-events-none lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto" : "translate-y-0 opacity-100"}`}
@@ -697,7 +697,7 @@ export function Info({
             style={heroStyle}
           >
             <div className="space-y-3">
-              <h1 className="max-w-full break-words text-lg leading-tight md:text-4xl">
+              <h1 className="max-w-full break-words text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
                 <AnimatedText
                   text="hi, i'm"
                   className="inline-block"
@@ -716,7 +716,7 @@ export function Info({
                 </span>
               </h1>
               <p
-                className="max-w-full break-words text-xs md:text-lg"
+                className="max-w-full break-words text-[11px] sm:text-xs md:text-sm lg:text-sm"
                 style={{ color: "var(--page-text-muted)", opacity: 1 }}
               >
                 <AnimatedText
@@ -734,8 +734,8 @@ export function Info({
               </p>
             </div>
 
-            <div className="mt-8 space-y-4">
-              <AnimatedText text="here's my:" className="text-xs md:text-sm" />
+            <div className="mt-2 sm:mt-3 md:mt-4 lg:mt-6 space-y-3 sm:space-y-4">
+              <AnimatedText text="here's my:" className="text-[11px] sm:text-xs" />
               <div
                 className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
               >
@@ -744,20 +744,20 @@ export function Info({
                     const active = hoveredPill === social.name;
 
                     return (
-                      <a
-                        key={social.name}
-                        href={social.href}
-                        className="relative block h-[3.25rem] min-w-[6rem] overflow-hidden rounded-full"
-                        onMouseEnter={() => setHoveredPill(social.name)}
-                        onMouseLeave={() => setHoveredPill(null)}
-                      >
-                        <div
-                          className="relative flex h-full items-center justify-center rounded-full px-2"
-                          style={pillStyle}
-                        >
-                          <span
-                            className="text-center text-sm leading-none transition-all duration-300"
-                            style={{
+<a
+                         key={social.name}
+                         href={social.href}
+                         className="relative block h-5 sm:h-6 md:h-7 lg:h-8 xl:h-[3.25rem] min-w-[3.5rem] sm:min-w-[4rem] md:min-w-[4.5rem] lg:min-w-[5rem] xl:min-w-[6rem] overflow-hidden rounded-full"
+                         onMouseEnter={() => setHoveredPill(social.name)}
+                         onMouseLeave={() => setHoveredPill(null)}
+                       >
+                         <div
+                           className="relative flex h-full items-center justify-center rounded-full px-1 sm:px-1.5 md:px-2"
+                           style={pillStyle}
+                         >
+                           <span
+                             className="text-center text-[9px] sm:text-[10px] md:text-xs lg:text-sm leading-none transition-all duration-300"
+                             style={{
                               transform: active
                                 ? "translateY(-0.48rem)"
                                 : "translateY(0)",
@@ -1160,18 +1160,25 @@ function Card({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`${isMobile ? "min-w-[9rem] max-w-[9rem] rounded-lg p-2" : "min-w-[13rem] max-w-[13rem] rounded-xl p-4"} transition-colors duration-200 ${dimmed ? "opacity-50" : "opacity-100"}`}
+      className={`${
+        isMobile
+          ? "min-w-[9rem] max-w-[9rem] rounded-lg p-2"
+          : "min-w-[7rem] sm:min-w-[8rem] md:min-w-[9rem] lg:min-w-[10rem] xl:min-w-[13rem] max-w-[7rem] sm:max-w-[8rem] md:max-w-[9rem] lg:max-w-[10rem] xl:max-w-[13rem] rounded-lg p-1.5 sm:p-2 md:p-2.5 lg:p-3 xl:p-4"
+      } transition-colors duration-200 ${dimmed ? "opacity-50" : "opacity-100"}`}
       style={{
         background: "color-mix(in srgb, var(--page-surface) 94%, black)",
         color: "var(--page-text)",
       }}
     >
-      <AnimatedText text={title} className={isMobile ? "text-sm" : "text-lg"} />
+      <AnimatedText
+        text={title}
+        className={isMobile ? "text-sm" : "text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg"}
+      />
       <div
         className={
           isMobile
             ? "mt-1 text-[9px] leading-relaxed"
-            : "mt-2 text-base leading-relaxed"
+            : "mt-0.5 text-[8px] sm:text-[9px] md:text-[10px] lg:text-xs leading-relaxed"
         }
         style={{ color: "var(--page-text-muted)" }}
       >
@@ -1188,21 +1195,21 @@ function Badge({
   label: string;
   isMobile?: boolean;
 }) {
-  return (
+return (
     <div
       style={{
-        width: isMobile ? "58px" : "80px",
-        paddingLeft: isMobile ? "6px" : "10px",
-        paddingRight: isMobile ? "6px" : "10px",
-        paddingTop: isMobile ? "5px" : "7px",
-        paddingBottom: isMobile ? "5px" : "7px",
+        width: isMobile ? "58px" : "45px",
+        paddingLeft: isMobile ? "6px" : "5px",
+        paddingRight: isMobile ? "6px" : "5px",
+        paddingTop: isMobile ? "5px" : "4px",
+        paddingBottom: isMobile ? "5px" : "4px",
         background: "color-mix(in srgb, var(--page-surface) 94%, black)",
         overflow: "hidden",
         borderRadius: "30px",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        gap: "5px",
+        gap: "4px",
         display: "inline-flex",
         color: "var(--page-text)",
       }}
@@ -1213,10 +1220,8 @@ function Badge({
           display: "flex",
           flexDirection: "column",
           color: "inherit",
-          fontSize: isMobile ? "10px" : "15px",
+          fontSize: isMobile ? "10px" : "9px",
           fontFamily: "Young Serif",
-          fontWeight: 400,
-          wordWrap: "break-word",
         }}
       >
         {label}

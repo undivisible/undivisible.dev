@@ -81,7 +81,7 @@ export function CasesSection() {
           <div style={{ fontFamily: serif, fontSize: "clamp(32px, 3.6vw, 52px)", color: "#ffffff", letterSpacing: "-0.03em", lineHeight: 1 }}>
             Results that speak for{" "}
             <em style={{
-              background: GRADIENT,
+              background: GRADIENT, display: "inline-block",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -127,7 +127,7 @@ export function CasesSection() {
                   letterSpacing: "-0.04em",
                   lineHeight: 1,
                   fontStyle: "italic",
-                  background: GRADIENT,
+                  background: GRADIENT, display: "inline-block",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",

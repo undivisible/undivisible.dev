@@ -94,7 +94,7 @@ export function ProjectsSection() {
           <div style={{ fontFamily: serif, fontSize: "clamp(28px, 3.2vw, 46px)", color: "#ffffff", letterSpacing: "-0.03em", lineHeight: 1 }}>
             Always building.{" "}
             <em style={{
-              background: GRADIENT,
+              background: GRADIENT, display: "inline-block",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",

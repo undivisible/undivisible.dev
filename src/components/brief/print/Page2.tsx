@@ -45,7 +45,7 @@ export function Page2() {
       <div style={{ padding: "14px 26px 11px", borderBottom: "1px solid rgba(255,248,230,0.1)", flexShrink: 0 }}>
         <div style={{ fontFamily: mono, fontSize: 8.5, letterSpacing: "-0.05em", textTransform: "uppercase", color: C.orange, marginBottom: 4 }}>Proven outcomes</div>
         <div style={{ fontFamily: serif, fontSize: 26, color: C.cream, letterSpacing: "-0.02em", lineHeight: 1 }}>
-          Results that speak for <em style={{ background: GRADIENT, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>themselves.</em>
+          Results that speak for <em style={{ display: "inline-block", background: GRADIENT, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>themselves.</em>
         </div>
       </div>
 
