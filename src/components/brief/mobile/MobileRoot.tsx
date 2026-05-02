@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { mono, sans, serif, GRADIENT, C } from "@/components/brief/ui/constants";
+import { Background } from "@/components/brief/desktop/Background";
 
 const fadeIn = {
   initial: { opacity: 0, y: 16 },
@@ -59,15 +60,8 @@ const P = 24; // horizontal padding
 
 export function MobileRoot() {
   return (
-    <div style={{ background: "#050505", color: "#ffffff", fontFamily: sans, minHeight: "100vh", position: "relative" }}>
-      {/* Ambient glow */}
-      <div style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 0,
-        pointerEvents: "none",
-        background: "radial-gradient(ellipse 60% 25% at 50% 0%, rgba(255,87,5,0.18) 0%, transparent 70%)",
-      }} />
+    <div style={{ color: "#ffffff", fontFamily: sans, minHeight: "100vh", position: "relative" }}>
+      <Background />
 
       <div style={{ position: "relative", zIndex: 1 }}>
 
