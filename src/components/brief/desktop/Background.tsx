@@ -219,10 +219,11 @@ export function Background() {
     <>
       <canvas
         ref={canvasRef}
+        className="screen-only"
         style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}
       />
       {/* Dark veil — lifts text contrast while preserving the amber glow */}
-      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", background: "rgba(0,0,0,0.58)" }} />
+      <div className="screen-only" style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", background: "rgba(0,0,0,0.58)" }} />
     </>
   );
 }
