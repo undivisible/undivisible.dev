@@ -151,8 +151,8 @@ export function HeroSection() {
                 color: "#ffffff",
               }}>
                 {v === "∞"
-                  ? <span style={{ display: "inline-block", background: GRADIENT, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>∞</span>
-                  : <>{v}<span style={{ display: "inline-block", background: GRADIENT, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontSize: 20 }}>{s}</span></>
+                  ? <span style={{ background: GRADIENT, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>∞</span>
+                  : <>{v}<span style={{ background: GRADIENT, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontSize: 20 }}>{s}</span></>
                 }
               </div>
               <div style={{

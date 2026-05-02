@@ -57,7 +57,7 @@ export function ServicesSection() {
         }}>
           Your next<br />project deserves<br />someone who&apos;s<br />already built<br />
           <em style={{
-            background: GRADIENT, display: "inline-block",
+            background: GRADIENT,
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",

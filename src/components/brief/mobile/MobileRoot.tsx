@@ -107,8 +107,8 @@ export function MobileRoot() {
               }}>
                 <div style={{ fontFamily: serif, fontSize: 32, lineHeight: 1, marginBottom: 6, letterSpacing: "-0.03em", color: "#ffffff" }}>
                   {v === "∞"
-                    ? <span style={{ display: "inline-block", background: GRADIENT, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>∞</span>
-                    : <>{v}<span style={{ display: "inline-block", background: GRADIENT, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontSize: 16 }}>{s}</span></>
+                    ? <span style={{ background: GRADIENT, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>∞</span>
+                    : <>{v}<span style={{ background: GRADIENT, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontSize: 16 }}>{s}</span></>
                   }
                 </div>
                 <div style={{ fontFamily: mono, fontSize: 9, color: "rgba(255,255,255,0.28)", lineHeight: 1.5, whiteSpace: "pre-line", textTransform: "uppercase", letterSpacing: "-0.02em" }}>{l}</div>

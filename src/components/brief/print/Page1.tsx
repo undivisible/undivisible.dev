@@ -69,7 +69,7 @@ export function Page1() {
       <div style={{ flex: 1, padding: "14px 26px 10px", display: "flex", flexDirection: "column", gap: 10, overflow: "hidden" }}>
 
         <div style={{ display: "inline-block", fontFamily: serif, fontSize: 25, fontWeight: 400, lineHeight: 1.12, color: C.black, letterSpacing: "-0.02em", borderLeft: `3px solid ${C.orange}`, paddingLeft: 14 }}>
-          Your next project deserves someone who&apos;s<br />already built the <em style={{ display: "inline-block", fontStyle: "italic", background: GRADIENT, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>impossible.</em>
+          Your next project deserves someone who&apos;s<br />already built the <em style={{ fontStyle: "italic", color: "#ff5705" }}>impossible.</em>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: C.rule, border: `1px solid ${C.rule}`, flexShrink: 0 }}>

@@ -34,7 +34,7 @@ export function Page3() {
       <div style={{ padding: "12px 26px 10px", borderBottom: `1px solid ${C.rule}`, flexShrink: 0, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
         <div>
           <div style={{ fontFamily: mono, fontSize: 8.5, letterSpacing: "-0.05em", textTransform: "uppercase", color: C.orange, marginBottom: 4 }}>In progress — 40+ repos</div>
-          <div style={{ fontFamily: serif, fontSize: 23, color: C.black, letterSpacing: "-0.02em", lineHeight: 1 }}>Always building.<br /><em style={{ display: "inline-block", background: GRADIENT, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Everything ships.</em></div>
+          <div style={{ fontFamily: serif, fontSize: 23, color: C.black, letterSpacing: "-0.02em", lineHeight: 1 }}>Always building.<br /><em style={{ color: "#ff5705" }}>Everything ships.</em></div>
         </div>
         <div style={{ fontFamily: mono, fontSize: 7.5, letterSpacing: "-0.05em", textTransform: "uppercase", color: C.mid, textAlign: "right", lineHeight: 1.9, whiteSpace: "nowrap" }}>undivisible<br />semitechnological<br />atechnology company</div>
       </div>
