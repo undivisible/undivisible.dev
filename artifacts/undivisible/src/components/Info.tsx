@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
@@ -220,14 +219,10 @@ export function Info({
   }, []);
 
   useEffect(() => {
-    if (!isMobile) {
-      return;
-    }
+    if (!isMobile) return;
 
     const node = mobileContainerRef.current;
-    if (!node) {
-      return;
-    }
+    if (!node) return;
 
     const onTouchStart = (event: TouchEvent) => {
       touchStartY.current = event.touches[0].clientY;
@@ -237,27 +232,14 @@ export function Info({
     const onTouchEnd = (event: TouchEvent) => {
       const deltaY = touchStartY.current - event.changedTouches[0].clientY;
       const deltaX = touchStartX.current - event.changedTouches[0].clientX;
-      // Let horizontal swipes pass through for carousel scrolling
-      if (Math.abs(deltaX) >= Math.abs(deltaY)) {
-        return;
-      }
-
-      if (Math.abs(deltaY) > 150) {
-        setRevealed(deltaY > 0);
-      }
+      if (Math.abs(deltaX) >= Math.abs(deltaY)) return;
+      if (Math.abs(deltaY) > 150) setRevealed(deltaY > 0);
     };
 
     const onWheel = (event: WheelEvent) => {
-      // Let horizontal wheels pass through for carousel scrolling
-      if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) {
-        return;
-      }
-
-      if (event.deltaY > 50) {
-        setRevealed(true);
-      } else if (event.deltaY < -50) {
-        setRevealed(false);
-      }
+      if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
+      if (event.deltaY > 50) setRevealed(true);
+      else if (event.deltaY < -50) setRevealed(false);
     };
 
     node.addEventListener("touchstart", onTouchStart, { passive: true });
@@ -285,20 +267,15 @@ export function Info({
         return;
       }
 
-      const isHorizontalScroll =
-        Math.abs(event.deltaX) > Math.abs(event.deltaY);
-      if (isHorizontalScroll) {
-        // Let horizontal wheels control carousel natively
-        return;
-      }
+      const isHorizontalScroll = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+      if (isHorizontalScroll) return;
 
       event.preventDefault();
       scrollOffsetRef.current = Math.max(
         0,
         scrollOffsetRef.current + event.deltaY * 1.5,
       );
-      const shouldBeRevealed =
-        scrollOffsetRef.current > window.innerHeight * 0.3;
+      const shouldBeRevealed = scrollOffsetRef.current > window.innerHeight * 0.3;
       if (shouldBeRevealed !== scrollOffsetRef.revealed) {
         scrollOffsetRef.revealed = shouldBeRevealed;
         setRevealed(shouldBeRevealed);
@@ -319,9 +296,7 @@ export function Info({
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
-      const hideFrame = window.requestAnimationFrame(() =>
-        setNameVisible(false),
-      );
+      const hideFrame = window.requestAnimationFrame(() => setNameVisible(false));
       const timeout = window.setTimeout(() => {
         setDisplayName("max carter");
         setNameVisible(true);
@@ -390,260 +365,241 @@ export function Info({
   const melText = hydrated ? dayTheme.melTime : "--:--:--";
   const localText = hydrated ? dayTheme.localTime : "--:--:--";
 
+  const clockPanel = (
+    <div
+      data-time-scrubber="true"
+      className={`absolute top-4 z-20 w-fit font-mono text-[10px] uppercase tracking-[0.18em] transition-all duration-500 ${
+        revealed ? "-translate-y-40 opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
+      }`}
+      style={{ color: "var(--page-text)" }}
+      onMouseLeave={dayTheme.resetScrub}
+      onWheel={dayTheme.onScrubWheel}
+    >
+      <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>
+        {weatherText}
+      </div>
+      <div className="grid grid-cols-[3.2rem_auto] items-baseline gap-x-2">
+        <span style={{ color: "var(--page-text-soft)" }}>HKG</span>
+        <span>{hkgText}</span>
+      </div>
+      <div className="mt-1 grid grid-cols-[3.2rem_auto] items-baseline gap-x-2">
+        <span style={{ color: "var(--page-text-soft)" }}>MEL</span>
+        <span>{melText}</span>
+      </div>
+      {dayTheme.showLocalTime && (
+        <div className="mt-1 grid grid-cols-[3.2rem_auto] items-baseline gap-x-2">
+          <span style={{ color: "var(--page-text-soft)" }}>{dayTheme.localLabel}</span>
+          <span>{localText}</span>
+        </div>
+      )}
+    </div>
+  );
+
+  const socialPills = (
+    <CarouselRow bleedOut={isMobile}>
+      {socials.map((social) => {
+        const active = hoveredPill === social.name;
+        return (
+          <a
+            key={social.name}
+            href={social.href}
+            className="relative block h-8 min-w-[4.5rem] overflow-hidden rounded-full flex-shrink-0"
+            onMouseEnter={() => setHoveredPill(social.name)}
+            onMouseLeave={() => setHoveredPill(null)}
+          >
+            <div
+              className="relative flex h-full items-center justify-center rounded-full px-3"
+              style={pillStyle}
+            >
+              <span
+                className="text-xs leading-none transition-all duration-300"
+                style={{
+                  transform: active ? "translateY(-0.48rem)" : "translateY(0)",
+                }}
+              >
+                <AnimatedText text={social.name} className="inline-block" split="chars" />
+              </span>
+              <span
+                className="absolute left-1/2 top-1/2 max-w-[calc(100%-1rem)] overflow-hidden text-ellipsis whitespace-nowrap text-center text-[9px] leading-none transition-all duration-300"
+                style={{
+                  transform: active
+                    ? "translate(-50%, 0.62rem)"
+                    : "translate(-50%, -50%)",
+                  opacity: active ? 1 : 0,
+                  filter: active ? "blur(0px)" : "blur(8px)",
+                  color: "var(--page-text-muted)",
+                }}
+              >
+                <AnimatedText text={social.username} className="inline-block" split="chars" />
+              </span>
+            </div>
+          </a>
+        );
+      })}
+    </CarouselRow>
+  );
+
+  const heroBlock = (
+    <div className="transition-all duration-500 ease-out" style={heroStyle}>
+      <div className="space-y-3">
+        <h1 className="text-base leading-tight">
+          <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
+          <span
+            className="inline-block"
+            style={{
+              ...displayNameStyle,
+              opacity: nameVisible ? (loaded ? 1 : 0) : 0,
+            }}
+            onMouseEnter={() => setNameHovered(true)}
+            onMouseLeave={() => setNameHovered(false)}
+          >
+            {displayName}
+          </span>
+        </h1>
+        <p
+          className={`text-xs transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
+          style={{ color: "var(--page-text-muted)" }}
+        >
+          <AnimatedText text="i make" className="inline-block" split="chars" />{" "}
+          <MorphWord words={thingWords} />{" "}
+          <AnimatedText text="for" className="inline-block" split="chars" />{" "}
+          <ScatterWord word="people" colors={colors} />
+        </p>
+      </div>
+
+      <div className="mt-4 space-y-3">
+        <AnimatedText text="here's my:" className="text-xs" />
+        <div className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}>
+          {socialPills}
+        </div>
+        {!revealed && (
+          <AnimatedText
+            text={isMobile ? "swipe up to learn more" : "scroll to learn about me"}
+            className="font-mono text-[10px] tracking-[0.08em] motion-safe:animate-bounce"
+            split="chars"
+          />
+        )}
+      </div>
+    </div>
+  );
+
+  const lowerBlock = (
+    <div
+      className="w-full overflow-visible transition-all duration-500 ease-out"
+      style={lowerStyle}
+    >
+      <div className={`space-y-8 pt-0 ${revealed ? "" : "pointer-events-none"}`}>
+        {revealed ? (
+          <RandomizedText
+            key="lower-text"
+            split="words"
+            className="text-[10px] sm:text-xs leading-relaxed"
+          >
+            {introText}
+          </RandomizedText>
+        ) : (
+          <div className="text-xs leading-relaxed opacity-0">{introText}</div>
+        )}
+
+        <Section title="i make utilities that feel inevitable:" isMobile={isMobile}>
+          {products.map((product) => (
+            <Card
+              key={product.name}
+              title={product.name}
+              description={product.desc}
+              href={product.href}
+              isMobile={isMobile}
+            />
+          ))}
+        </Section>
+
+        <Section title="the works:" isMobile={isMobile}>
+          {languages.map((item) => (
+            <Badge key={item} label={item} />
+          ))}
+        </Section>
+
+        <Section title="the transport:" isMobile={isMobile}>
+          {transport.map((item) => {
+            const base = transportColors[item] ?? "#16221B";
+            return (
+              <div
+                key={item}
+                suppressHydrationWarning
+                style={{
+                  width: "84px",
+                  flexShrink: 0,
+                  paddingLeft: "8px",
+                  paddingRight: "8px",
+                  paddingTop: "6px",
+                  paddingBottom: "6px",
+                  overflow: "hidden",
+                  borderRadius: "30px",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "5px",
+                  display: "inline-flex",
+                  ...dayTheme.getTransportStyle(base),
+                }}
+              >
+                <div
+                  style={{
+                    justifyContent: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                    color: "var(--transport-text)",
+                    fontFamily: "Young Serif",
+                    fontSize: "10px",
+                    textAlign:
+                      item === "indonesian" || item === "japanese" ? "center" : "left",
+                  }}
+                >
+                  {item}
+                </div>
+              </div>
+            );
+          })}
+        </Section>
+
+        <Section title="cool tidbits:" isMobile={isMobile}>
+          {tidbits.map((tidbit) => (
+            <Card
+              key={tidbit.name}
+              title={tidbit.name}
+              description={tidbit.desc}
+              href={tidbit.href}
+              dimmed={tidbit.opacity === 50}
+              isMobile={isMobile}
+            />
+          ))}
+        </Section>
+      </div>
+    </div>
+  );
+
   if (isMobile) {
     return (
       <div
         ref={mobileContainerRef}
-        className="relative mx-4 h-dvh w-[calc(100%-2rem)] overflow-hidden"
+        className="relative h-dvh w-full overflow-hidden"
         style={{ color: "var(--page-text)" }}
       >
         <div className="sticky top-0 h-dvh overflow-hidden">
           <div
-            className={`h-[200dvh] w-full transition-transform duration-700 ease-out ${revealed ? "pointer-events-auto" : ""}`}
-            style={{
-              transform: revealed ? "translateY(-100dvh)" : "translateY(0)",
-            }}
+            className="h-[200dvh] w-full transition-transform duration-700 ease-out"
+            style={{ transform: revealed ? "translateY(-100dvh)" : "translateY(0)" }}
           >
-            <section className="relative flex h-dvh w-full items-center">
-              <div
-                data-time-scrubber="true"
-                className={`absolute top-4 z-20 w-fit font-mono text-[10px] uppercase tracking-[0.18em] transition-all duration-500 ${revealed ? "-translate-y-40 opacity-0 pointer-events-none" : "translate-y-0 opacity-100"}`}
-                style={{ color: "var(--page-text)" }}
-                onMouseLeave={dayTheme.resetScrub}
-                onWheel={dayTheme.onScrubWheel}
-              >
-                <div
-                  className="mb-2"
-                  style={{ color: "var(--page-text-soft)" }}
-                >
-                  {weatherText}
-                </div>
-                <div className="grid grid-cols-[3.1rem_auto] items-baseline gap-x-2">
-                  <span style={{ color: "var(--page-text-soft)" }}>HKG</span>
-                  <span>{hkgText}</span>
-                </div>
-                <div className="mt-1 grid grid-cols-[3.1rem_auto] items-baseline gap-x-2">
-                  <span style={{ color: "var(--page-text-soft)" }}>MEL</span>
-                  <span>{melText}</span>
-                </div>
-                {dayTheme.showLocalTime && (
-                  <div className="mt-1 grid grid-cols-[3.1rem_auto] items-baseline gap-x-2">
-                    <span style={{ color: "var(--page-text-soft)" }}>
-                      {dayTheme.localLabel}
-                    </span>
-                    <span>{localText}</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="w-full min-w-0 max-w-full">
-                <div className="space-y-3">
-                  <h1 className="max-w-full break-words text-base leading-tight">
-                    <AnimatedText
-                      text="hi, i'm"
-                      className="inline-block"
-                      split="chars"
-                    />{" "}
-                    <span
-                      className="inline-block"
-                      style={{
-                        ...displayNameStyle,
-                        opacity: nameVisible ? (loaded ? 1 : 0) : 0,
-                      }}
-                      onMouseEnter={() => setNameHovered(true)}
-                      onMouseLeave={() => setNameHovered(false)}
-                    >
-                      {displayName}
-                    </span>
-                  </h1>
-                  <p
-                    className={`max-w-full break-words text-xs transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
-                    style={{ color: "var(--page-text-muted)" }}
-                  >
-                    <AnimatedText
-                      text="i make"
-                      className="inline-block"
-                      split="chars"
-                    />{" "}
-                    <MorphWord words={thingWords} />{" "}
-                    <AnimatedText
-                      text="for"
-                      className="inline-block"
-                      split="chars"
-                    />{" "}
-                    <ScatterWord word="people" colors={colors} />
-                  </p>
-                </div>
-
-                <div className="mt-4 space-y-3">
-                  <AnimatedText text="here's my:" className="text-xs" />
-                  <div
-                    className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
-                  >
-                    <CarouselRow bleedOut>
-                      {socials.map((social) => {
-                        const active = hoveredPill === social.name;
-                        return (
-                          <a
-                            key={social.name}
-                            href={social.href}
-                            className="relative block h-8 min-w-[4.5rem] overflow-hidden rounded-full"
-                            onMouseEnter={() => setHoveredPill(social.name)}
-                            onMouseLeave={() => setHoveredPill(null)}
-                          >
-                            <div
-                              className="relative flex h-full items-center justify-center rounded-full px-2"
-                              style={pillStyle}
-                            >
-                              <span
-                                className="text-xs leading-none transition-all duration-300"
-                                style={{
-                                  transform: active
-                                    ? "translateY(-0.48rem)"
-                                    : "translateY(0)",
-                                }}
-                              >
-                                <AnimatedText
-                                  text={social.name}
-                                  className="inline-block"
-                                  split="chars"
-                                />
-                              </span>
-                              <span
-                                className="absolute left-1/2 top-1/2 max-w-[calc(100%-1rem)] overflow-hidden text-ellipsis whitespace-nowrap text-center text-[9px] leading-none transition-all duration-300"
-                                style={{
-                                  transform: active
-                                    ? "translate(-50%, 0.62rem)"
-                                    : "translate(-50%, -50%)",
-                                  opacity: active ? 1 : 0,
-                                  filter: active ? "blur(0px)" : "blur(8px)",
-                                  color: "var(--page-text-muted)",
-                                }}
-                              >
-                                <AnimatedText
-                                  text={social.username}
-                                  className="inline-block"
-                                  split="chars"
-                                />
-                              </span>
-                            </div>
-                          </a>
-                        );
-                      })}
-                    </CarouselRow>
-                  </div>
-
-                  {!revealed && (
-                    <AnimatedText
-                      text="swipe up to learn more"
-                      className="font-mono text-[10px] tracking-[0.08em] motion-safe:animate-bounce"
-                      split="chars"
-                    />
-                  )}
-                </div>
-              </div>
+            {/* Screen 1 — hero */}
+            <section className="relative flex h-dvh w-full items-center px-5">
+              {clockPanel}
+              <div className="w-full min-w-0">{heroBlock}</div>
             </section>
 
-            <section className="flex h-dvh w-full items-center">
-              <div className="w-full min-w-0 max-w-full">
-                <div
-                  className="flex min-h-dvh w-full items-center overflow-y-hidden transition-all duration-500 ease-out"
-                  style={lowerStyle}
-                >
-                  <div className="w-full min-w-0 space-y-6 pt-0">
-                    {revealed ? (
-                      <RandomizedText
-                        key="lower-text"
-                        split="words"
-                        className="max-w-full break-words text-[10px] sm:text-xs leading-relaxed"
-                      >
-                        {introText}
-                      </RandomizedText>
-                    ) : (
-                      <div className="max-w-full break-words text-xs leading-relaxed opacity-0">
-                        {introText}
-                      </div>
-                    )}
-
-                    <Section
-                      title="i make utilities that feel inevitable:"
-                      isMobile
-                    >
-                      {products.map((product) => (
-                        <Card
-                          key={product.name}
-                          title={product.name}
-                          description={product.desc}
-                          href={product.href}
-                          isMobile
-                        />
-                      ))}
-                    </Section>
-
-                    <Section title="the works:" isMobile>
-                      {languages.map((item) => (
-                        <Badge key={item} label={item} isMobile />
-                      ))}
-                    </Section>
-
-                    <Section title="the transport:" isMobile>
-                      {transport.map((item) => {
-                        const base = transportColors[item] ?? "#16221B";
-                        return (
-                          <div
-                            key={item}
-                            suppressHydrationWarning
-                            style={{
-                              width: "84px",
-                              paddingLeft: "8px",
-                              paddingRight: "8px",
-                              paddingTop: "6px",
-                              paddingBottom: "6px",
-                              overflow: "hidden",
-                              borderRadius: "30px",
-                              flexDirection: "column",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              gap: "5px",
-                              display: "inline-flex",
-                              ...dayTheme.getTransportStyle(base),
-                            }}
-                          >
-<div
-                        className="text-[9px] sm:text-[10px] md:text-[11px]"
-                        style={{
-                          justifyContent: "center",
-                          display: "flex",
-                          flexDirection: "column",
-                          color: "var(--transport-text)",
-                          fontFamily: "Young Serif",
-                          textAlign:
-                            item === "indonesian" || item === "japanese"
-                              ? "center"
-                              : "left",
-                        }}
-                      >
-                              {item}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </Section>
-
-                    <Section title="cool tidbits:" isMobile>
-                      {tidbits.map((tidbit) => (
-                        <Card
-                          key={tidbit.name}
-                          title={tidbit.name}
-                          description={tidbit.desc}
-                          href={tidbit.href}
-                          dimmed={tidbit.opacity === 50}
-                          isMobile
-                        />
-                      ))}
-                    </Section>
-                  </div>
-                </div>
+            {/* Screen 2 — expanded content */}
+            <section className="flex h-dvh w-full items-center px-5">
+              <div className="flex min-h-dvh w-full items-center overflow-y-hidden transition-all duration-500 ease-out" style={lowerStyle}>
+                <div className="w-full min-w-0 py-4">{lowerBlock}</div>
               </div>
             </section>
           </div>
@@ -654,14 +610,19 @@ export function Info({
 
   return (
     <div
-      className="relative h-dvh w-full max-w-full overflow-hidden bg-transparent"
+      className="relative h-dvh w-full overflow-hidden"
       style={{ color: "var(--page-text)" }}
     >
-      <div className="sticky top-0 mx-2 sm:mx-3 md:mx-4 lg:mx-6 w-[calc(100%-1rem)] sm:w-[calc(100%-1.5rem)] md:w-[calc(100%-2rem)] lg:w-[calc(100%-3rem)] flex h-dvh min-w-0 items-center justify-start overflow-hidden">
-        <div className="flex h-full w-full min-w-0 max-w-full flex-col items-start justify-center">
+      <div className="sticky top-0 flex h-dvh w-full items-center justify-start px-4 sm:px-6 md:px-8 lg:px-10 overflow-hidden">
+        <div className="flex h-full w-full min-w-0 flex-col items-start justify-center">
+          {/* Clock panel — always visible on desktop */}
           <div
             data-time-scrubber="true"
-            className={`absolute top-4 z-20 w-fit font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-500 md:top-8 md:text-[12px] ${revealed ? "-translate-y-40 opacity-0 pointer-events-none lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto" : "translate-y-0 opacity-100"}`}
+            className={`absolute top-4 sm:top-6 md:top-8 z-20 w-fit font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-500 ${
+              revealed
+                ? "-translate-y-40 opacity-0 pointer-events-none lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto"
+                : "translate-y-0 opacity-100"
+            }`}
             style={{ color: "var(--page-text)" }}
             onMouseLeave={dayTheme.resetScrub}
             onWheel={dayTheme.onScrubWheel}
@@ -680,145 +641,26 @@ export function Info({
               </div>
               {dayTheme.showLocalTime && (
                 <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                  <span style={{ color: "var(--page-text-soft)" }}>
-                    {dayTheme.localLabel}
-                  </span>
+                  <span style={{ color: "var(--page-text-soft)" }}>{dayTheme.localLabel}</span>
                   <span>{localText}</span>
                 </div>
               )}
             </div>
           </div>
 
-          <div
-            className="transition-all duration-500 ease-out"
-            style={heroStyle}
-          >
-            <div className="space-y-3">
-              <h1 className="max-w-full break-words text-[10px] md:text-xs lg:text-sm xl:text-base">
-                <AnimatedText
-                  text="hi, i'm"
-                  className="inline-block"
-                  split="chars"
-                />{" "}
-                <span
-                  className="inline-block"
-                  style={{
-                    ...displayNameStyle,
-                    opacity: nameVisible ? (loaded ? 1 : 0) : 0,
-                  }}
-                  onMouseEnter={() => setNameHovered(true)}
-                  onMouseLeave={() => setNameHovered(false)}
-                >
-                  {displayName}
-                </span>
-              </h1>
-              <p
-                className="max-w-full break-words text-[10px] md:text-xs lg:text-xs"
-                style={{ color: "var(--page-text-muted)", opacity: 1 }}
-              >
-                <AnimatedText
-                  text="i make"
-                  className="inline-block"
-                  split="chars"
-                />{" "}
-                <MorphWord words={thingWords} />{" "}
-                <AnimatedText
-                  text="for"
-                  className="inline-block"
-                  split="chars"
-                />{" "}
-                <ScatterWord word="people" colors={colors} />
-              </p>
-            </div>
-
-            <div className="mt-2 sm:mt-2 md:mt-3 lg:mt-4 space-y-2 sm:space-y-3">
-              <AnimatedText text="here's my:" className="text-[10px] md:text-xs" />
-              <div
-                className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
-              >
-                <CarouselRow>
-                  {socials.map((social) => {
-                    const active = hoveredPill === social.name;
-
-                    return (
-<a
-                         key={social.name}
-                         href={social.href}
-                         className="relative block h-4 sm:h-5 md:h-6 lg:h-7 xl:h-8 min-w-[3rem] sm:min-w-[3.5rem] md:min-w-[4rem] lg:min-w-[4.5rem] xl:min-w-[5rem] overflow-hidden rounded-full"
-                         onMouseEnter={() => setHoveredPill(social.name)}
-                         onMouseLeave={() => setHoveredPill(null)}
-                       >
-                         <div
-                           className="relative flex h-full items-center justify-center rounded-full px-1"
-                           style={pillStyle}
-                         >
-                           <span
-                             className="text-center text-[8px] sm:text-[9px] md:text-[10px] lg:text-xs xl:text-sm leading-none transition-all duration-300"
-                             style={{
-                              transform: active
-                                ? "translateY(-0.48rem)"
-                                : "translateY(0)",
-                            }}
-                          >
-                            <AnimatedText
-                              text={social.name}
-                              className="inline-block"
-                              split="chars"
-                            />
-                          </span>
-                          <span
-                            className="absolute left-1/2 top-1/2 max-w-[calc(100%-1rem)] overflow-hidden text-ellipsis whitespace-nowrap text-center text-[9px] leading-none transition-all duration-300"
-                            style={{
-                              transform: active
-                                ? "translate(-50%, 0.62rem)"
-                                : "translate(-50%, -50%)",
-                              opacity: active ? 1 : 0,
-                              filter: active ? "blur(0px)" : "blur(8px)",
-                              color: "var(--page-text-muted)",
-                            }}
-                          >
-                            <AnimatedText
-                              text={social.username}
-                              className="inline-block"
-                              split="chars"
-                            />
-                          </span>
-                        </div>
-                      </a>
-                    );
-                  })}
-                </CarouselRow>
-              </div>
-
-              {!revealed && (
-                <AnimatedText
-                  text="scroll to learn about me"
-                  className="font-mono text-[9px] tracking-[0.08em] motion-safe:animate-bounce"
-                  split="chars"
-                />
-              )}
-            </div>
-          </div>
+          {heroBlock}
 
           <div
             className="mt-8 w-full max-w-full overflow-visible transition-all duration-500 ease-out"
             style={lowerStyle}
           >
-            <div
-              className={`space-y-12 pt-0 max-w-full ${revealed ? "" : "pointer-events-none"}`}
-            >
+            <div className={`space-y-10 pt-0 max-w-full ${revealed ? "" : "pointer-events-none"}`}>
               {revealed ? (
-                <RandomizedText
-                  key="lower-text"
-                  split="words"
-                  className="text-xs md:text-base"
-                >
+                <RandomizedText key="lower-text" split="words" className="text-xs md:text-sm">
                   {introText}
                 </RandomizedText>
               ) : (
-                <div className="text-xs md:text-sm leading-relaxed opacity-0">
-                  {introText}
-                </div>
+                <div className="text-xs md:text-sm leading-relaxed opacity-0">{introText}</div>
               )}
 
               <Section title="i make utilities that feel inevitable:">
@@ -845,13 +687,13 @@ export function Info({
                     <div
                       key={item}
                       suppressHydrationWarning
-                      className="min-w-[50px] sm:min-w-[55px] md:min-w-[60px] lg:min-w-[70px]"
                       style={{
-                        width: "50px",
-                        paddingLeft: "5px",
-                        paddingRight: "5px",
-                        paddingTop: "4px",
-                        paddingBottom: "4px",
+                        width: "70px",
+                        flexShrink: 0,
+                        paddingLeft: "6px",
+                        paddingRight: "6px",
+                        paddingTop: "5px",
+                        paddingBottom: "5px",
                         overflow: "hidden",
                         borderRadius: "30px",
                         flexDirection: "column",
@@ -863,20 +705,16 @@ export function Info({
                       }}
                     >
                       <div
-                        className="text-[9px] sm:text-[10px] md:text-[11px]"
                         style={{
                           justifyContent: "center",
                           display: "flex",
                           flexDirection: "column",
                           color: "var(--transport-text)",
-                          fontSize: "14px",
                           fontFamily: "Young Serif",
+                          fontSize: "11px",
                           fontWeight: 400,
-                          wordWrap: "break-word",
                           textAlign:
-                            item === "indonesian" || item === "japanese"
-                              ? "center"
-                              : "left",
+                            item === "indonesian" || item === "japanese" ? "center" : "left",
                         }}
                       >
                         {item}
@@ -1099,9 +937,7 @@ function CarouselRow({
   }, []);
 
   return (
-    <div
-      className={`relative max-w-full overflow-visible ${bleedOut ? "-mx-4 w-[calc(100%+2rem)]" : "w-full"}`}
-    >
+    <div className={`relative w-full overflow-visible ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""}`}>
       <div
         ref={ref}
         data-carousel-scroll="true"
@@ -1113,11 +949,9 @@ function CarouselRow({
           WebkitOverflowScrolling: "touch",
           userSelect: "none",
         }}
-        className={`cursor-grab active:cursor-grabbing pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "px-4" : ""}`}
+        className={`cursor-grab active:cursor-grabbing pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "px-5" : ""}`}
       >
-        <div
-          className={`inline-flex w-max flex-nowrap gap-2 ${bleedOut ? "min-w-[calc(100%+2rem)]" : "min-w-full"}`}
-        >
+        <div className="inline-flex w-max flex-nowrap gap-2">
           {children}
         </div>
       </div>
@@ -1135,8 +969,8 @@ function Section({
   isMobile?: boolean;
 }) {
   return (
-    <div className="space-y-2 sm:space-y-3">
-      <AnimatedText text={title} className={isMobile ? "text-sm" : "text-[11px] sm:text-xs md:text-sm"} />
+    <div className="space-y-2">
+      <AnimatedText text={title} className="text-xs" />
       <CarouselRow bleedOut={isMobile}>{children}</CarouselRow>
     </div>
   );
@@ -1160,26 +994,17 @@ function Card({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`${
-        isMobile
-          ? "min-w-[9rem] max-w-[9rem] rounded-lg p-2"
-          : "min-w-[5rem] sm:min-w-[6rem] md:min-w-[7rem] lg:min-w-[8rem] xl:min-w-[10rem] max-w-[5rem] sm:max-w-[6rem] md:max-w-[7rem] lg:max-w-[8rem] xl:max-w-[10rem] rounded-lg p-1 sm:p-1.5 md:p-2 lg:p-2.5 xl:p-3"
-      } transition-colors duration-200 ${dimmed ? "opacity-50" : "opacity-100"}`}
+      className={`flex-shrink-0 rounded-lg p-2 transition-colors duration-200 ${
+        isMobile ? "min-w-[9rem] max-w-[9rem]" : "min-w-[8rem] max-w-[8rem]"
+      } ${dimmed ? "opacity-50" : "opacity-100"}`}
       style={{
         background: "color-mix(in srgb, var(--page-surface) 94%, black)",
         color: "var(--page-text)",
       }}
     >
-      <AnimatedText
-        text={title}
-        className={isMobile ? "text-sm" : "text-[10px] sm:text-[11px] md:text-xs lg:text-xs xl:text-sm"}
-      />
+      <AnimatedText text={title} className="text-xs" />
       <div
-        className={
-          isMobile
-            ? "mt-1 text-[9px] leading-relaxed"
-            : "mt-0.5 text-[8px] sm:text-[9px] md:text-[10px] lg:text-[10px] xl:text-xs leading-relaxed"
-        }
+        className="mt-1 text-[9px] leading-relaxed"
         style={{ color: "var(--page-text-muted)" }}
       >
         <AnimatedText text={description} />
@@ -1188,22 +1013,16 @@ function Card({
   );
 }
 
-function Badge({
-  label,
-  isMobile = false,
-}: {
-  label: string;
-  isMobile?: boolean;
-}) {
+function Badge({ label }: { label: string }) {
   return (
     <div
-      className="min-w-[50px] sm:min-w-[55px] md:min-w-[60px] lg:min-w-[70px] xl:min-w-[85px]"
+      className="flex-shrink-0"
       style={{
-        width: "50px",
-        paddingLeft: "5px",
-        paddingRight: "5px",
-        paddingTop: "4px",
-        paddingBottom: "4px",
+        width: "60px",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingTop: "5px",
+        paddingBottom: "5px",
         background: "color-mix(in srgb, var(--page-surface) 94%, black)",
         overflow: "hidden",
         borderRadius: "30px",
