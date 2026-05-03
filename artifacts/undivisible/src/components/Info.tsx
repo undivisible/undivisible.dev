@@ -1021,8 +1021,8 @@ function Card({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`flex-shrink-0 rounded-lg p-2 transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110 ${
-        isMobile ? "min-w-[9rem] max-w-[9rem]" : "min-w-[8rem] max-w-[8rem]"
+      className={`flex-shrink-0 rounded-lg p-2 transition-all duration-150 ${
+        isMobile ? "min-w-[9rem] max-w-[9rem]" : "min-w-[8rem] max-w-[8rem] hover:-translate-y-1 hover:shadow-md hover:brightness-105"
       } ${dimmed ? "opacity-50" : "opacity-100"}`}
       style={{
         background: "color-mix(in srgb, var(--page-surface) 94%, black)",
