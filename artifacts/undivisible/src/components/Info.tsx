@@ -414,7 +414,7 @@ export function Info({
               <span
                 className="text-xs leading-none transition-all duration-300"
                 style={{
-                  transform: active ? "translateY(-0.48rem)" : "translateY(0)",
+                  transform: active ? "translateY(-0.35rem)" : "translateY(0)",
                 }}
               >
                 <AnimatedText text={social.name} className="inline-block" split="chars" />
@@ -423,7 +423,7 @@ export function Info({
                 className="absolute left-1/2 top-1/2 max-w-[calc(100%-1rem)] overflow-hidden text-ellipsis whitespace-nowrap text-center text-[9px] leading-none transition-all duration-300"
                 style={{
                   transform: active
-                    ? "translate(-50%, 0.62rem)"
+                    ? "translate(-50%, 0.15rem)"
                     : "translate(-50%, -50%)",
                   opacity: active ? 1 : 0,
                   filter: active ? "blur(0px)" : "blur(8px)",
