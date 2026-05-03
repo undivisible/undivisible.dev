@@ -861,14 +861,15 @@ function CarouselRow({
   bleedOut?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [atEnd, setAtEnd] = useState(false);
+  const [atEnd, setAtEnd] = useState(true);
 
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
 
     const checkEnd = () => {
-      setAtEnd(node.scrollLeft + node.clientWidth >= node.scrollWidth - 4);
+      const hasOverflow = node.scrollWidth > node.clientWidth + 4;
+      setAtEnd(!hasOverflow || node.scrollLeft + node.clientWidth >= node.scrollWidth - 4);
     };
 
     checkEnd();
@@ -956,8 +957,16 @@ function CarouselRow({
     };
   }, []);
 
+  const maskStyle: React.CSSProperties = atEnd ? {} : {
+    maskImage: "linear-gradient(to right, black calc(100% - 5rem), transparent 100%)",
+    WebkitMaskImage: "linear-gradient(to right, black calc(100% - 5rem), transparent 100%)",
+  };
+
   return (
-    <div className={`relative w-full overflow-visible ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""}`}>
+    <div
+      className={`relative w-full overflow-visible ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""}`}
+      style={maskStyle}
+    >
       <div
         ref={ref}
         data-carousel-scroll="true"
@@ -975,13 +984,6 @@ function CarouselRow({
           {children}
         </div>
       </div>
-      <div
-        className="pointer-events-none absolute right-0 top-0 h-full w-20 z-10 transition-opacity duration-300"
-        style={{
-          background: "linear-gradient(to right, var(--page-background-transparent), var(--page-background))",
-          opacity: atEnd ? 0 : 1,
-        }}
-      />
     </div>
   );
 }
@@ -1019,7 +1021,7 @@ function Card({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`flex-shrink-0 rounded-lg p-2 transition-colors duration-200 ${
+      className={`flex-shrink-0 rounded-lg p-2 transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110 ${
         isMobile ? "min-w-[9rem] max-w-[9rem]" : "min-w-[8rem] max-w-[8rem]"
       } ${dimmed ? "opacity-50" : "opacity-100"}`}
       style={{
@@ -1043,18 +1045,18 @@ function Badge({ label }: { label: string }) {
     <div
       className="flex-shrink-0"
       style={{
-        width: "60px",
-        paddingLeft: "6px",
-        paddingRight: "6px",
-        paddingTop: "5px",
-        paddingBottom: "5px",
+        width: "84px",
+        paddingLeft: "8px",
+        paddingRight: "8px",
+        paddingTop: "6px",
+        paddingBottom: "6px",
         background: "color-mix(in srgb, var(--page-surface) 94%, black)",
         overflow: "hidden",
         borderRadius: "30px",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        gap: "3px",
+        gap: "5px",
         display: "inline-flex",
         color: "var(--page-text)",
       }}
@@ -1065,7 +1067,7 @@ function Badge({ label }: { label: string }) {
           display: "flex",
           flexDirection: "column",
           color: "inherit",
-          fontSize: "9px",
+          fontSize: "10px",
           fontFamily: "Young Serif",
         }}
       >
