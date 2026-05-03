@@ -19,7 +19,7 @@ const socials = [
   {
     name: "linkedin",
     username: "max lee carter",
-    href: "https://www.linkedin.com/in/maxleecarter",
+    href: "https://www.linkedin.com/in/undivisible",
   },
   {
     name: "email",
