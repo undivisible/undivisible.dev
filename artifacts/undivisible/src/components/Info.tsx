@@ -613,130 +613,136 @@ export function Info({
       className="relative h-dvh w-full overflow-hidden"
       style={{ color: "var(--page-text)" }}
     >
-      <div className="sticky top-0 flex h-dvh w-full items-center justify-start px-5 overflow-y-hidden">
-        <div className="flex h-full w-full min-w-0 flex-col items-start justify-center">
-          {/* Clock panel — always visible on desktop */}
-          <div
-            data-time-scrubber="true"
-            className={`absolute top-4 sm:top-6 md:top-8 z-20 w-fit font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-500 ${
-              revealed
-                ? "-translate-y-40 opacity-0 pointer-events-none lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto"
-                : "translate-y-0 opacity-100"
-            }`}
-            style={{ color: "var(--page-text)" }}
-            onMouseLeave={dayTheme.resetScrub}
-            onWheel={dayTheme.onScrubWheel}
-          >
-            <div className="w-fit">
-              <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>
-                {weatherText}
-              </div>
-              <div className="grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                <span style={{ color: "var(--page-text-soft)" }}>HKG</span>
-                <span>{hkgText}</span>
-              </div>
-              <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                <span style={{ color: "var(--page-text-soft)" }}>MEL</span>
-                <span>{melText}</span>
-              </div>
-              {dayTheme.showLocalTime && (
-                <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                  <span style={{ color: "var(--page-text-soft)" }}>{dayTheme.localLabel}</span>
-                  <span>{localText}</span>
+      <div className="sticky top-0 h-dvh overflow-hidden">
+        <div
+          className="h-[200dvh] w-full transition-transform duration-700 ease-out"
+          style={{ transform: revealed ? "translateY(-100dvh)" : "translateY(0)" }}
+        >
+          {/* Screen 1 — hero */}
+          <section className="relative flex h-dvh w-full items-center justify-start px-5">
+            <div
+              data-time-scrubber="true"
+              className={`absolute top-4 sm:top-6 md:top-8 z-20 w-fit font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-500 ${
+                revealed
+                  ? "-translate-y-40 opacity-0 pointer-events-none lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto"
+                  : "translate-y-0 opacity-100"
+              }`}
+              style={{ color: "var(--page-text)" }}
+              onMouseLeave={dayTheme.resetScrub}
+              onWheel={dayTheme.onScrubWheel}
+            >
+              <div className="w-fit">
+                <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>
+                  {weatherText}
                 </div>
-              )}
+                <div className="grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
+                  <span style={{ color: "var(--page-text-soft)" }}>HKG</span>
+                  <span>{hkgText}</span>
+                </div>
+                <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
+                  <span style={{ color: "var(--page-text-soft)" }}>MEL</span>
+                  <span>{melText}</span>
+                </div>
+                {dayTheme.showLocalTime && (
+                  <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
+                    <span style={{ color: "var(--page-text-soft)" }}>{dayTheme.localLabel}</span>
+                    <span>{localText}</span>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+            <div className="w-full min-w-0">{heroBlock}</div>
+          </section>
 
-          {heroBlock}
+          {/* Screen 2 — lower content */}
+          <section className="flex h-dvh w-full items-center justify-start px-5 overflow-y-auto">
+            <div className="flex min-h-dvh w-full items-center overflow-y-hidden transition-all duration-500 ease-out" style={lowerStyle}>
+              <div className="w-full min-w-0 py-8">
+                <div className="space-y-10">
+                  {revealed ? (
+                    <RandomizedText key="lower-text" split="words" className="text-xs md:text-sm">
+                      {introText}
+                    </RandomizedText>
+                  ) : (
+                    <div className="text-xs md:text-sm leading-relaxed opacity-0">{introText}</div>
+                  )}
 
-          <div
-            className="mt-8 w-full max-w-full overflow-visible transition-all duration-500 ease-out"
-            style={lowerStyle}
-          >
-            <div className={`space-y-10 pt-0 max-w-full ${revealed ? "" : "pointer-events-none"}`}>
-              {revealed ? (
-                <RandomizedText key="lower-text" split="words" className="text-xs md:text-sm">
-                  {introText}
-                </RandomizedText>
-              ) : (
-                <div className="text-xs md:text-sm leading-relaxed opacity-0">{introText}</div>
-              )}
+                  <Section title="i make utilities that feel inevitable:">
+                    {products.map((product) => (
+                      <Card
+                        key={product.name}
+                        title={product.name}
+                        description={product.desc}
+                        href={product.href}
+                      />
+                    ))}
+                  </Section>
 
-              <Section title="i make utilities that feel inevitable:">
-                {products.map((product) => (
-                  <Card
-                    key={product.name}
-                    title={product.name}
-                    description={product.desc}
-                    href={product.href}
-                  />
-                ))}
-              </Section>
+                  <Section title="the works:">
+                    {languages.map((item) => (
+                      <Badge key={item} label={item} />
+                    ))}
+                  </Section>
 
-              <Section title="the works:">
-                {languages.map((item) => (
-                  <Badge key={item} label={item} />
-                ))}
-              </Section>
+                  <Section title="the transport:">
+                    {transport.map((item) => {
+                      const base = transportColors[item] ?? "#16221B";
+                      return (
+                        <div
+                          key={item}
+                          suppressHydrationWarning
+                          style={{
+                            width: "70px",
+                            flexShrink: 0,
+                            paddingLeft: "6px",
+                            paddingRight: "6px",
+                            paddingTop: "5px",
+                            paddingBottom: "5px",
+                            overflow: "hidden",
+                            borderRadius: "30px",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            gap: "3px",
+                            display: "inline-flex",
+                            ...dayTheme.getTransportStyle(base),
+                          }}
+                        >
+                          <div
+                            style={{
+                              justifyContent: "center",
+                              display: "flex",
+                              flexDirection: "column",
+                              color: "var(--transport-text)",
+                              fontFamily: "Young Serif",
+                              fontSize: "11px",
+                              fontWeight: 400,
+                              textAlign:
+                                item === "indonesian" || item === "japanese" ? "center" : "left",
+                            }}
+                          >
+                            {item}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </Section>
 
-              <Section title="the transport:">
-                {transport.map((item) => {
-                  const base = transportColors[item] ?? "#16221B";
-                  return (
-                    <div
-                      key={item}
-                      suppressHydrationWarning
-                      style={{
-                        width: "70px",
-                        flexShrink: 0,
-                        paddingLeft: "6px",
-                        paddingRight: "6px",
-                        paddingTop: "5px",
-                        paddingBottom: "5px",
-                        overflow: "hidden",
-                        borderRadius: "30px",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        gap: "3px",
-                        display: "inline-flex",
-                        ...dayTheme.getTransportStyle(base),
-                      }}
-                    >
-                      <div
-                        style={{
-                          justifyContent: "center",
-                          display: "flex",
-                          flexDirection: "column",
-                          color: "var(--transport-text)",
-                          fontFamily: "Young Serif",
-                          fontSize: "11px",
-                          fontWeight: 400,
-                          textAlign:
-                            item === "indonesian" || item === "japanese" ? "center" : "left",
-                        }}
-                      >
-                        {item}
-                      </div>
-                    </div>
-                  );
-                })}
-              </Section>
-
-              <Section title="cool tidbits:">
-                {tidbits.map((tidbit) => (
-                  <Card
-                    key={tidbit.name}
-                    title={tidbit.name}
-                    description={tidbit.desc}
-                    href={tidbit.href}
-                    dimmed={tidbit.opacity === 50}
-                  />
-                ))}
-              </Section>
+                  <Section title="cool tidbits:">
+                    {tidbits.map((tidbit) => (
+                      <Card
+                        key={tidbit.name}
+                        title={tidbit.name}
+                        description={tidbit.desc}
+                        href={tidbit.href}
+                        dimmed={tidbit.opacity === 50}
+                      />
+                    ))}
+                  </Section>
+                </div>
+              </div>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </div>
