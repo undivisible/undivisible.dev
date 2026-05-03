@@ -958,7 +958,7 @@ function CarouselRow({
       <div
         className="pointer-events-none absolute right-0 top-0 h-full w-20 z-10"
         style={{
-          background: "linear-gradient(to right, transparent, var(--page-background))",
+          background: "linear-gradient(to right, var(--page-background-transparent), var(--page-background))",
         }}
       />
     </div>

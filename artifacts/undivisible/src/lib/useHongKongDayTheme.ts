@@ -910,6 +910,8 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--page-background", palette.background);
+    const { r, g, b } = hexToRgb(palette.background);
+    root.style.setProperty("--page-background-transparent", `rgba(${r}, ${g}, ${b}, 0)`);
     root.style.setProperty("--page-text", "#ffffff");
     root.style.setProperty("--page-text-muted", "rgba(255, 255, 255, 0.76)");
     root.style.setProperty("--page-text-soft", "rgba(255, 255, 255, 0.54)");
