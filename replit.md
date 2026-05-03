@@ -52,7 +52,6 @@ src/
     useHongKongDayTheme.ts        — Hong Kong time/solar/weather theme hook
     useLastFmVisualData.ts        — LastFM API hook (needs VITE_LASTFM_API_KEY)
     utils.ts                      — cn() helper
-  app/                            — Legacy Next.js files (not used by Vite, safe to ignore)
 ```
 
 #### Environment variables
