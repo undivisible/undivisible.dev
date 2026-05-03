@@ -403,12 +403,12 @@ export function Info({
           <a
             key={social.name}
             href={social.href}
-            className="relative block h-8 min-w-[4.5rem] overflow-hidden rounded-full flex-shrink-0"
+            className="relative block h-8 min-w-[3.5rem] sm:min-w-[4rem] md:min-w-[4.5rem] overflow-hidden rounded-full flex-shrink-0"
             onMouseEnter={() => setHoveredPill(social.name)}
             onMouseLeave={() => setHoveredPill(null)}
           >
             <div
-              className="relative flex h-full items-center justify-center rounded-full px-3"
+              className="relative flex h-full items-center justify-center rounded-full px-2 sm:px-3"
               style={pillStyle}
             >
               <span
@@ -974,7 +974,7 @@ function CarouselRow({
         }}
         className={`cursor-grab active:cursor-grabbing pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "px-5" : ""}`}
       >
-        <div className="inline-flex w-max flex-nowrap gap-1 sm:gap-1.5 md:gap-2">
+        <div className="inline-flex w-max flex-nowrap gap-px sm:gap-0.5 md:gap-1">
           {children}
         </div>
       </div>
