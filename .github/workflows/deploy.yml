@@ -25,7 +25,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -37,7 +37,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build site
-        run: pnpm --filter @workspace/undivisible build
+        run: pnpm run build:web
         env:
           # For a project page use /<repo-name>/ e.g. /undivisible.dev/
           # For a personal page (username.github.io) use /
