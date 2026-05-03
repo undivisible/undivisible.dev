@@ -93,3 +93,22 @@ a {
 a:hover {
   opacity: 1 !important;
 }
+
+.carousel-mask {
+  mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent);
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent);
+}
+
+@media (min-width: 480px) {
+  .carousel-mask {
+    mask-image: linear-gradient(to right, black calc(100% - 4rem), transparent);
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 4rem), transparent);
+  }
+}
+
+@media (min-width: 640px) {
+  .carousel-mask {
+    mask-image: linear-gradient(to right, black calc(100% - 5rem), transparent);
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 5rem), transparent);
+  }
+}

@@ -957,15 +957,9 @@ function CarouselRow({
     };
   }, []);
 
-  const maskStyle: React.CSSProperties = atEnd ? {} : {
-    maskImage: "linear-gradient(to right, black calc(100% - 5rem), transparent 100%)",
-    WebkitMaskImage: "linear-gradient(to right, black calc(100% - 5rem), transparent 100%)",
-  };
-
   return (
     <div
-      className={`relative w-full overflow-visible ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""}`}
-      style={maskStyle}
+      className={`relative w-full overflow-visible ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""} ${atEnd ? "" : "carousel-mask"}`}
     >
       <div
         ref={ref}
@@ -980,7 +974,7 @@ function CarouselRow({
         }}
         className={`cursor-grab active:cursor-grabbing pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "px-5" : ""}`}
       >
-        <div className="inline-flex w-max flex-nowrap gap-2">
+        <div className="inline-flex w-max flex-nowrap gap-1 sm:gap-1.5 md:gap-2">
           {children}
         </div>
       </div>
