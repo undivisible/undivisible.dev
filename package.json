@@ -9,6 +9,7 @@
     "typecheck": "turbo run typecheck",
     "dev": "turbo run dev"
   },
+  "packageManager": "pnpm@10.26.1",
   "private": true,
   "devDependencies": {
     "prettier": "^3.8.1",
