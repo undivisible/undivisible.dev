@@ -34,3 +34,6 @@ externalPort = 3001
 [[ports]]
 localPort = 19669
 externalPort = 80
+
+[nix]
+packages = ["gh"]
