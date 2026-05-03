@@ -861,6 +861,26 @@ function CarouselRow({
   bleedOut?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [atEnd, setAtEnd] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    const checkEnd = () => {
+      setAtEnd(node.scrollLeft + node.clientWidth >= node.scrollWidth - 4);
+    };
+
+    checkEnd();
+    node.addEventListener("scroll", checkEnd, { passive: true });
+    const ro = new ResizeObserver(checkEnd);
+    ro.observe(node);
+
+    return () => {
+      node.removeEventListener("scroll", checkEnd);
+      ro.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     const node = ref.current;
@@ -956,9 +976,10 @@ function CarouselRow({
         </div>
       </div>
       <div
-        className="pointer-events-none absolute right-0 top-0 h-full w-20 z-10"
+        className="pointer-events-none absolute right-0 top-0 h-full w-20 z-10 transition-opacity duration-300"
         style={{
           background: "linear-gradient(to right, var(--page-background-transparent), var(--page-background))",
+          opacity: atEnd ? 0 : 1,
         }}
       />
     </div>
