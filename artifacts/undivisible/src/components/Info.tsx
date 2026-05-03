@@ -440,7 +440,7 @@ export function Info({
   );
 
   const heroBlock = (
-    <div className="transition-all duration-500 ease-out" style={heroStyle}>
+    <div className="w-full transition-all duration-500 ease-out" style={heroStyle}>
       <div className="space-y-3">
         <h1 className="text-base leading-tight">
           <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
