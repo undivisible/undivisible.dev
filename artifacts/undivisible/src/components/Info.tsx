@@ -396,7 +396,7 @@ export function Info({
   );
 
   const socialPills = (
-    <CarouselRow bleedOut={isMobile}>
+    <CarouselRow bleedOut>
       {socials.map((social) => {
         const active = hoveredPill === social.name;
         return (
@@ -501,7 +501,7 @@ export function Info({
           <div className="text-xs leading-relaxed opacity-0">{introText}</div>
         )}
 
-        <Section title="i make utilities that feel inevitable:" isMobile={isMobile}>
+        <Section title="i make utilities that feel inevitable:">
           {products.map((product) => (
             <Card
               key={product.name}
@@ -513,13 +513,13 @@ export function Info({
           ))}
         </Section>
 
-        <Section title="the works:" isMobile={isMobile}>
+        <Section title="the works:">
           {languages.map((item) => (
             <Badge key={item} label={item} />
           ))}
         </Section>
 
-        <Section title="the transport:" isMobile={isMobile}>
+        <Section title="the transport:">
           {transport.map((item) => {
             const base = transportColors[item] ?? "#16221B";
             return (
@@ -562,7 +562,7 @@ export function Info({
           })}
         </Section>
 
-        <Section title="cool tidbits:" isMobile={isMobile}>
+        <Section title="cool tidbits:">
           {tidbits.map((tidbit) => (
             <Card
               key={tidbit.name}
@@ -613,7 +613,7 @@ export function Info({
       className="relative h-dvh w-full overflow-hidden"
       style={{ color: "var(--page-text)" }}
     >
-      <div className="sticky top-0 flex h-dvh w-full items-center justify-start px-4 sm:px-6 md:px-8 lg:px-10 overflow-hidden">
+      <div className="sticky top-0 flex h-dvh w-full items-center justify-start px-5 overflow-y-hidden">
         <div className="flex h-full w-full min-w-0 flex-col items-start justify-center">
           {/* Clock panel — always visible on desktop */}
           <div
@@ -962,16 +962,14 @@ function CarouselRow({
 function Section({
   title,
   children,
-  isMobile = false,
 }: {
   title: string;
   children: React.ReactNode;
-  isMobile?: boolean;
 }) {
   return (
     <div className="space-y-2">
       <AnimatedText text={title} className="text-xs" />
-      <CarouselRow bleedOut={isMobile}>{children}</CarouselRow>
+      <CarouselRow bleedOut>{children}</CarouselRow>
     </div>
   );
 }
