@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 
 export interface TrackInfo {
@@ -19,15 +18,7 @@ export function useLastFmVisualData() {
     const apiKey = import.meta.env.VITE_LASTFM_API_KEY;
     const username = "undivisible";
 
-    console.log("[lastfm] init", {
-      hasApiKey: Boolean(apiKey),
-      username,
-    });
-
     if (!apiKey) {
-      console.log("[lastfm] missing env", {
-        hasApiKey: Boolean(apiKey),
-      });
       setReady(true);
       return;
     }
@@ -35,31 +26,24 @@ export function useLastFmVisualData() {
     fetch(
       `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${apiKey}&format=json&limit=1`,
     )
-      .then((res) => {
-        console.log("[lastfm] response", { ok: res.ok, status: res.status });
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
-        console.log("[lastfm] payload", data);
         const item = data.recenttracks?.track?.[0];
         if (!item) {
-          console.log("[lastfm] no recent track found");
           setReady(true);
           return;
         }
 
-        const nextTrack = {
+        const nextTrack: TrackInfo = {
           artist: item.artist?.["#text"] || "Unknown Artist",
           track: item.name || "Unknown Track",
           albumArt: item.image?.[item.image.length - 1]?.["#text"] || "",
           isNowPlaying: item["@attr"]?.nowplaying === "true",
-        } satisfies TrackInfo;
+        };
 
         setTrack(nextTrack);
-        console.log("[lastfm] track", nextTrack);
 
         if (!nextTrack.albumArt) {
-          console.log("[lastfm] missing album art");
           setReady(true);
           return;
         }
@@ -73,7 +57,6 @@ export function useLastFmVisualData() {
             canvas.height = 12;
             const ctx = canvas.getContext("2d");
             if (!ctx) {
-              console.log("[lastfm] color extraction context unavailable");
               setReady(true);
               return;
             }
@@ -95,32 +78,20 @@ export function useLastFmVisualData() {
             if (bucket.length >= 5) {
               const step = Math.max(1, Math.floor(bucket.length / 5));
               const nextColors = [0, 1, 2, 3, 4].map((index) => {
-                  const [r, g, b] = bucket[Math.min(index * step, bucket.length - 1)];
-                  return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
-                });
+                const [r, g, b] = bucket[Math.min(index * step, bucket.length - 1)];
+                return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+              });
               setColors(nextColors);
-              console.log("[lastfm] extracted colors", nextColors);
-            } else {
-              console.log("[lastfm] insufficient colors extracted", { bucketSize: bucket.length });
             }
             setReady(true);
-          } catch (error) {
-            console.log("[lastfm] color extraction failed", error);
+          } catch {
             setReady(true);
-            // Keep defaults when extraction is blocked.
           }
         };
-        img.onerror = () => {
-          console.log("[lastfm] album art image failed to load", nextTrack.albumArt);
-          setReady(true);
-        };
+        img.onerror = () => setReady(true);
         img.src = nextTrack.albumArt;
       })
-      .catch((error) => {
-        console.error("[lastfm] request failed", error);
-        setReady(true);
-        // Keep defaults if Last.fm is unavailable.
-      });
+      .catch(() => setReady(true));
   }, []);
 
   return { track, colors, ready };
