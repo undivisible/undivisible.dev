@@ -239,6 +239,10 @@ export function Info({
     };
 
     const onWheel = (event: WheelEvent) => {
+      if ((event.target as HTMLElement | null)?.closest("[data-carousel-scroll='true']")) {
+        return;
+      }
+
       if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
       if (event.deltaY > 50) setRevealed(true);
       else if (event.deltaY < -50) setRevealed(false);
@@ -262,10 +266,9 @@ export function Info({
     const handleWheel = (event: WheelEvent) => {
       if (
         (event.target as HTMLElement | null)?.closest(
-          "[data-time-scrubber='true']",
+          "[data-time-scrubber='true'], [data-carousel-scroll='true']",
         )
       ) {
-        event.preventDefault();
         return;
       }
 
@@ -1182,18 +1185,18 @@ function CarouselRow({
 
   return (
     <div
-      className={`relative w-full overflow-hidden ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""} ${canLoop && edgeFade ? "carousel-mask" : ""}`}
+      className={`relative w-full overflow-x-hidden overflow-y-visible ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""} ${canLoop && edgeFade ? "carousel-mask" : ""}`}
     >
       <div
         ref={viewportRef}
         data-carousel-scroll="true"
         style={{
           overflowX: autoLoop ? "hidden" : "auto",
-          overflowY: "hidden",
+          overflowY: "visible",
           touchAction: "pan-y pinch-zoom",
           userSelect: "none",
         }}
-        className="cursor-grab pb-2 [scrollbar-width:none] active:cursor-grabbing [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        className="cursor-grab py-2 [scrollbar-width:none] active:cursor-grabbing [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
         <div
           ref={trackRef}
@@ -1255,14 +1258,25 @@ function Card({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`flex-shrink-0 rounded-lg p-2 transition-all duration-150 ${
+      className={`relative z-0 flex-shrink-0 rounded-lg p-2 ${
         isMobile
           ? "min-w-[9rem] max-w-[9rem]"
-          : "min-w-[8rem] max-w-[8rem] hover:-translate-y-1 hover:shadow-md hover:brightness-105"
+          : "min-w-[8rem] max-w-[8rem]"
       } ${dimmed ? "opacity-50" : "opacity-100"}`}
       style={{
-        background: "color-mix(in srgb, var(--page-surface) 94%, black)",
+        backgroundColor: "color-mix(in srgb, var(--page-surface) 94%, black)",
         color: "var(--page-text)",
+        transition: "background-color 180ms ease-out",
+      }}
+      onMouseEnter={(event) => {
+        if (!isMobile) {
+          event.currentTarget.style.backgroundColor =
+            "color-mix(in srgb, var(--page-surface) 90%, var(--page-text) 4%)";
+        }
+      }}
+      onMouseLeave={(event) => {
+        event.currentTarget.style.backgroundColor =
+          "color-mix(in srgb, var(--page-surface) 94%, black)";
       }}
     >
       <AnimatedText text={title} className="text-xs" />
