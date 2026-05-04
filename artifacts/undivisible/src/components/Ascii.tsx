@@ -1,5 +1,4 @@
-
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { TrackInfo } from "@/lib/useLastFmVisualData";
 
 type ShapeType = "circle" | "triangle" | "square";
@@ -18,6 +17,8 @@ interface ShapeState {
 const DEFAULT_COLORS = ["#ffffff", "#cccccc", "#999999", "#666666", "#333333"];
 const FIELD_CHARS = ".,:;-=+*#%&";
 const SHAPE_CHARS = "@#MW8$&NBG";
+const SHADER_DPR_CAP = 1;
+const WEBGL_INTERVAL = 1000 / 24;
 
 function nextShapeType(type: ShapeType): ShapeType {
   if (type === "circle") return "triangle";
@@ -131,6 +132,17 @@ export default function Ascii({
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef<number>(0);
   const webglRenderRef = useRef<((now: number) => void) | null>(null);
+  const colorUniforms = useMemo(
+    () =>
+      [
+        colors[0] ?? DEFAULT_COLORS[0],
+        colors[1] ?? DEFAULT_COLORS[1],
+        colors[2] ?? DEFAULT_COLORS[2],
+        colors[3] ?? DEFAULT_COLORS[3],
+        colors[4] ?? DEFAULT_COLORS[4],
+      ].map(hexToRgb),
+    [colors],
+  );
 
   // WebGL shader effect — re-runs when colors change
   useEffect(() => {
@@ -188,7 +200,7 @@ export default function Ascii({
       float fbm(vec2 p) {
         float value = 0.0;
         float amplitude = 0.5;
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
           value += amplitude * noise(p);
           p = p * 1.7 + vec2(1.7, 9.2);
           amplitude *= 0.58;
@@ -249,9 +261,9 @@ export default function Ascii({
     const colorDLocation = gl.getUniformLocation(program, "u_colorD");
     const colorELocation = gl.getUniformLocation(program, "u_colorE");
 
-    // Cap WebGL DPR at 2 — full retina on phone wastes fill rate for a background
+    // Keep the hidden shader canvas cheap; the visible ASCII layer samples it down.
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, SHADER_DPR_CAP);
       const width = container.clientWidth;
       const height = container.clientHeight;
       canvas.width = Math.max(1, Math.floor(width * dpr));
@@ -266,21 +278,27 @@ export default function Ascii({
     resize();
 
     // Store render fn on a ref so the ASCII effect can call it each frame
+    let lastWebgl = -Infinity;
     const renderWebGL = (now: number) => {
       if (document.hidden) return;
+      if (now - lastWebgl < WEBGL_INTERVAL) return;
+      lastWebgl = now;
+
       gl.useProgram(program);
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       gl.enableVertexAttribArray(positionLocation);
       gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
       gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
       gl.uniform1f(timeLocation, now * 0.001);
-      gl.uniform3fv(colorALocation, hexToRgb(colors[0] ?? DEFAULT_COLORS[0]));
-      gl.uniform3fv(colorBLocation, hexToRgb(colors[1] ?? DEFAULT_COLORS[1]));
-      gl.uniform3fv(colorCLocation, hexToRgb(colors[2] ?? DEFAULT_COLORS[2]));
-      gl.uniform3fv(colorDLocation, hexToRgb(colors[3] ?? DEFAULT_COLORS[3]));
-      gl.uniform3fv(colorELocation, hexToRgb(colors[4] ?? DEFAULT_COLORS[4]));
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     };
+
+    gl.useProgram(program);
+    gl.uniform3fv(colorALocation, colorUniforms[0]);
+    gl.uniform3fv(colorBLocation, colorUniforms[1]);
+    gl.uniform3fv(colorCLocation, colorUniforms[2]);
+    gl.uniform3fv(colorDLocation, colorUniforms[3]);
+    gl.uniform3fv(colorELocation, colorUniforms[4]);
 
     webglRenderRef.current = renderWebGL;
 
@@ -288,7 +306,7 @@ export default function Ascii({
       observer.disconnect();
       webglRenderRef.current = null;
     };
-  }, [colors, ready]);
+  }, [colorUniforms, ready]);
 
   // ASCII + physics effect — single rAF loop drives both WebGL and ASCII
   useEffect(() => {

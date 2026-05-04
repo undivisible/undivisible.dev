@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from "react";
 
 // Canvas 2D port of drift-wallpaper's line + place_lines system.
@@ -20,6 +19,8 @@ const LAVA: [
   [0.99, 0.65, 0.05],
 ];
 
+const COLOR_STEPS = 72;
+
 function lerpColor(
   a: [number, number, number],
   b: [number, number, number],
@@ -33,11 +34,15 @@ function lavaColor(t: number): string {
     ? lerpColor(LAVA[0], LAVA[1], t * 2)
     : lerpColor(LAVA[1], LAVA[2], (t - 0.5) * 2);
 }
+const LAVA_LUT = Array.from({ length: COLOR_STEPS }, (_, i) =>
+  lavaColor(i / (COLOR_STEPS - 1)),
+);
 
 // Value noise + fbm — one call per line per frame
 function hash(x: number, y: number): number {
-  const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453123;
-  return n - Math.floor(n);
+  let h = Math.imul(x, 374761393) + Math.imul(y, 668265263);
+  h = Math.imul(h ^ (h >>> 13), 1274126177);
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
 }
 function noise(x: number, y: number): number {
   const ix = Math.floor(x),
@@ -56,7 +61,7 @@ function noise(x: number, y: number): number {
 function fbm(x: number, y: number): number {
   let v = 0,
     w = 0.5;
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 2; i++) {
     v += w * noise(x, y);
     x = x * 2.07 + 3.13;
     y = y * 2.07 + 1.97;
@@ -66,7 +71,8 @@ function fbm(x: number, y: number): number {
 }
 
 // Grid + spring parameters (tuned to match drift-wallpaper visuals)
-const GRID = 15; // px between basepoints — denser grid
+const DESKTOP_GRID = 20; // px between basepoints
+const MOBILE_GRID = 24; // px between basepoints
 const LINE_LEN = 128; // max endpoint length (px) — longer lines
 const LINE_WIDTH = 5; // stroke width — thicker
 const BEGIN_OFF = 0.15; // fraction of line to skip at start (tail fade-in)
@@ -76,6 +82,7 @@ const NOISE_SCALE = 0.002; // noise spatial frequency
 const TIME_SCALE = 0.25; // how fast noise evolves
 const REPEL_RADIUS = 130; // cursor repulsion radius (px)
 const REPEL_STR = 700.0; // repulsion force (px/s²) — equilibrium offset ≈ STR/SPRING_K
+const FRAME_INTERVAL = 1000 / 30;
 
 interface Line {
   bx: number;
@@ -102,11 +109,13 @@ export function Background() {
     let raf: number;
     const startT = performance.now();
     let lastT = startT;
+    let lastDrawT = 0;
 
     function buildGrid() {
       lines = [];
-      for (let bx = GRID / 2; bx < W; bx += GRID) {
-        for (let by = GRID / 2; by < H; by += GRID) {
+      const grid = W < 768 ? MOBILE_GRID : DESKTOP_GRID;
+      for (let bx = grid / 2; bx < W; bx += grid) {
+        for (let by = grid / 2; by < H; by += grid) {
           // Seed endpoint in a random direction so lines don't all start at zero
           const seedAngle = Math.random() * Math.PI * 2;
           lines.push({
@@ -136,9 +145,15 @@ export function Background() {
 
     function draw() {
       const now = performance.now();
+      raf = requestAnimationFrame(draw);
+      if (document.hidden || now - lastDrawT < FRAME_INTERVAL) return;
+
       const dt = Math.min((now - lastT) / 1000, 0.05); // cap at 50ms
       lastT = now;
+      lastDrawT = now;
       const t = ((now - startT) / 1000) * TIME_SCALE;
+      const wobbleX = Math.sin(t * 0.07) * 0.4;
+      const wobbleY = Math.cos(t * 0.05) * 0.4;
 
       // Render: near-black fill each frame (tiny alpha preserves 1-frame ghost)
       ctx.fillStyle = "rgba(2,1,0,0.92)";
@@ -151,8 +166,8 @@ export function Background() {
       for (const ln of lines) {
         // Organic time evolution: offset x and y at different rates so the
         // flow field rotates slowly rather than translating left.
-        const nx = ln.bx * NOISE_SCALE + t * 0.13 + Math.sin(t * 0.07) * 0.4;
-        const ny = ln.by * NOISE_SCALE + t * 0.09 + Math.cos(t * 0.05) * 0.4;
+        const nx = ln.bx * NOISE_SCALE + t * 0.13 + wobbleX;
+        const ny = ln.by * NOISE_SCALE + t * 0.09 + wobbleY;
         const eps = 0.3;
         // Curl of fbm scalar → divergence-free flow (no sources/sinks)
         const dfdx = (fbm(nx + eps, ny) - fbm(nx - eps, ny)) / (2 * eps);
@@ -163,7 +178,8 @@ export function Background() {
         // Cursor repulsion: add a radial velocity impulse each frame.
         // Target stays pure noise — lines get nudged away and spring back,
         // so the effect is a fluid disturbance wake, not a frozen circle.
-        const dx = ln.bx - mx, dy = ln.by - my;
+        const dx = ln.bx - mx,
+          dy = ln.by - my;
         const d2 = dx * dx + dy * dy;
         if (d2 < REPEL_RADIUS * REPEL_RADIUS && d2 > 1) {
           const d = Math.sqrt(d2);
@@ -177,14 +193,15 @@ export function Background() {
         const ay = (ty - ln.ey) * SPRING_K - ln.evy * DAMPING;
         ln.evx += ax * dt;
         ln.evy += ay * dt;
-        ln.ex  += ln.evx * dt;
-        ln.ey  += ln.evy * dt;
+        ln.ex += ln.evx * dt;
+        ln.ey += ln.evy * dt;
 
         // Draw: tail offset → tip, rounded caps
         const elen = Math.sqrt(ln.ex * ln.ex + ln.ey * ln.ey);
         if (elen < 0.5) continue;
 
-        const ndx = ln.ex / elen, ndy = ln.ey / elen;
+        const ndx = ln.ex / elen,
+          ndy = ln.ey / elen;
         const x0 = ln.bx + ndx * elen * BEGIN_OFF;
         const y0 = ln.by + ndy * elen * BEGIN_OFF;
         const x1 = ln.bx + ln.ex;
@@ -196,14 +213,13 @@ export function Background() {
         ctx.beginPath();
         ctx.moveTo(x0, y0);
         ctx.lineTo(x1, y1);
-        ctx.strokeStyle = lavaColor(t_col);
+        ctx.strokeStyle =
+          LAVA_LUT[Math.min(COLOR_STEPS - 1, (t_col * (COLOR_STEPS - 1)) | 0)];
         ctx.lineWidth = LINE_WIDTH * (0.5 + t_col * 0.8);
         ctx.globalAlpha = opacity;
         ctx.stroke();
       }
       ctx.globalAlpha = 1;
-
-      raf = requestAnimationFrame(draw);
     }
     draw();
 
@@ -219,10 +235,24 @@ export function Background() {
       <canvas
         ref={canvasRef}
         className="screen-only"
-        style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
       />
       {/* Dark veil — lifts text contrast while preserving the amber glow */}
-      <div className="screen-only" style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", background: "rgba(0,0,0,0.58)" }} />
+      <div
+        className="screen-only"
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 0,
+          pointerEvents: "none",
+          background: "rgba(0,0,0,0.58)",
+        }}
+      />
     </>
   );
 }
