@@ -177,6 +177,8 @@ const tidbits = [
   },
 ];
 
+let carouselRowSeed = 0;
+
 const transportColors: Record<string, string> = {
   cantonese: "#16221B",
   english: "#16221B",
@@ -267,7 +269,8 @@ export function Info({
         return;
       }
 
-      const isHorizontalScroll = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+      const isHorizontalScroll =
+        Math.abs(event.deltaX) > Math.abs(event.deltaY);
       if (isHorizontalScroll) return;
 
       event.preventDefault();
@@ -275,7 +278,8 @@ export function Info({
         0,
         scrollOffsetRef.current + event.deltaY * 1.5,
       );
-      const shouldBeRevealed = scrollOffsetRef.current > window.innerHeight * 0.3;
+      const shouldBeRevealed =
+        scrollOffsetRef.current > window.innerHeight * 0.3;
       if (shouldBeRevealed !== scrollOffsetRef.revealed) {
         scrollOffsetRef.revealed = shouldBeRevealed;
         setRevealed(shouldBeRevealed);
@@ -296,7 +300,9 @@ export function Info({
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
-      const hideFrame = window.requestAnimationFrame(() => setNameVisible(false));
+      const hideFrame = window.requestAnimationFrame(() =>
+        setNameVisible(false),
+      );
       const timeout = window.setTimeout(() => {
         setDisplayName("max carter");
         setNameVisible(true);
@@ -369,7 +375,9 @@ export function Info({
     <div
       data-time-scrubber="true"
       className={`absolute top-4 z-20 w-fit font-mono text-[10px] uppercase tracking-[0.18em] transition-all duration-500 ${
-        revealed ? "-translate-y-40 opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
+        revealed
+          ? "-translate-y-40 opacity-0 pointer-events-none"
+          : "translate-y-0 opacity-100"
       }`}
       style={{ color: "var(--page-text)" }}
       onMouseLeave={dayTheme.resetScrub}
@@ -388,7 +396,9 @@ export function Info({
       </div>
       {dayTheme.showLocalTime && (
         <div className="mt-1 grid grid-cols-[3.2rem_auto] items-baseline gap-x-2">
-          <span style={{ color: "var(--page-text-soft)" }}>{dayTheme.localLabel}</span>
+          <span style={{ color: "var(--page-text-soft)" }}>
+            {dayTheme.localLabel}
+          </span>
           <span>{localText}</span>
         </div>
       )}
@@ -396,7 +406,7 @@ export function Info({
   );
 
   const socialPills = (
-    <CarouselRow bleedOut>
+    <CarouselRow bleedOut autoLoop={false} edgeFade={false}>
       {socials.map((social) => {
         const active = hoveredPill === social.name;
         return (
@@ -417,7 +427,11 @@ export function Info({
                   transform: active ? "translateY(-0.35rem)" : "translateY(0)",
                 }}
               >
-                <AnimatedText text={social.name} className="inline-block" split="chars" />
+                <AnimatedText
+                  text={social.name}
+                  className="inline-block"
+                  split="chars"
+                />
               </span>
               <span
                 className="absolute left-1/2 top-1/2 max-w-[calc(100%-1rem)] overflow-hidden text-ellipsis whitespace-nowrap text-center text-[9px] leading-none transition-all duration-300"
@@ -430,7 +444,11 @@ export function Info({
                   color: "var(--page-text-muted)",
                 }}
               >
-                <AnimatedText text={social.username} className="inline-block" split="chars" />
+                <AnimatedText
+                  text={social.username}
+                  className="inline-block"
+                  split="chars"
+                />
               </span>
             </div>
           </a>
@@ -440,7 +458,10 @@ export function Info({
   );
 
   const heroBlock = (
-    <div className="w-full transition-all duration-500 ease-out" style={heroStyle}>
+    <div
+      className="w-full transition-all duration-500 ease-out"
+      style={heroStyle}
+    >
       <div className="space-y-3">
         <h1 className="text-base leading-tight">
           <AnimatedText text="hi, i'm" className="inline-block" split="chars" />{" "}
@@ -469,12 +490,16 @@ export function Info({
 
       <div className="mt-4 space-y-3">
         <AnimatedText text="here's my:" className="text-xs" />
-        <div className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}>
+        <div
+          className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
+        >
           {socialPills}
         </div>
         {!revealed && (
           <AnimatedText
-            text={isMobile ? "swipe up to learn more" : "scroll to learn about me"}
+            text={
+              isMobile ? "swipe up to learn more" : "scroll to learn about me"
+            }
             className="font-mono text-[10px] tracking-[0.08em] motion-safe:animate-bounce"
             split="chars"
           />
@@ -488,7 +513,9 @@ export function Info({
       className="w-full overflow-visible transition-all duration-500 ease-out"
       style={lowerStyle}
     >
-      <div className={`space-y-8 pt-0 ${revealed ? "" : "pointer-events-none"}`}>
+      <div
+        className={`space-y-8 pt-0 ${revealed ? "" : "pointer-events-none"}`}
+      >
         {revealed ? (
           <RandomizedText
             key="lower-text"
@@ -552,7 +579,9 @@ export function Info({
                     fontFamily: "Young Serif",
                     fontSize: "10px",
                     textAlign:
-                      item === "indonesian" || item === "japanese" ? "center" : "left",
+                      item === "indonesian" || item === "japanese"
+                        ? "center"
+                        : "left",
                   }}
                 >
                   {item}
@@ -582,13 +611,15 @@ export function Info({
     return (
       <div
         ref={mobileContainerRef}
-        className="relative h-dvh w-full overflow-hidden"
+        className="relative h-dvh w-full overflow-x-visible overflow-y-hidden"
         style={{ color: "var(--page-text)" }}
       >
-        <div className="sticky top-0 h-dvh overflow-hidden">
+        <div className="sticky top-0 h-dvh overflow-x-visible overflow-y-hidden">
           <div
             className="h-[200dvh] w-full transition-transform duration-700 ease-out"
-            style={{ transform: revealed ? "translateY(-100dvh)" : "translateY(0)" }}
+            style={{
+              transform: revealed ? "translateY(-100dvh)" : "translateY(0)",
+            }}
           >
             {/* Screen 1 — hero */}
             <section className="relative flex h-dvh w-full items-center px-5">
@@ -598,7 +629,10 @@ export function Info({
 
             {/* Screen 2 — expanded content */}
             <section className="flex h-dvh w-full items-center px-5">
-              <div className="flex min-h-dvh w-full items-center overflow-y-hidden transition-all duration-500 ease-out" style={lowerStyle}>
+              <div
+                className="flex min-h-dvh w-full items-center overflow-visible transition-all duration-500 ease-out"
+                style={lowerStyle}
+              >
                 <div className="w-full min-w-0 py-4">{lowerBlock}</div>
               </div>
             </section>
@@ -610,13 +644,15 @@ export function Info({
 
   return (
     <div
-      className="relative h-dvh w-full overflow-hidden"
+      className="relative h-dvh w-full overflow-x-visible overflow-y-hidden"
       style={{ color: "var(--page-text)" }}
     >
-      <div className="sticky top-0 h-dvh overflow-hidden">
+      <div className="sticky top-0 h-dvh overflow-x-visible overflow-y-hidden">
         <div
           className="h-[200dvh] w-full transition-transform duration-700 ease-out"
-          style={{ transform: revealed ? "translateY(-100dvh)" : "translateY(0)" }}
+          style={{
+            transform: revealed ? "translateY(-100dvh)" : "translateY(0)",
+          }}
         >
           {/* Screen 1 — hero */}
           <section className="relative flex h-dvh w-full items-center justify-start px-5">
@@ -632,7 +668,10 @@ export function Info({
               onWheel={dayTheme.onScrubWheel}
             >
               <div className="w-fit">
-                <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>
+                <div
+                  className="mb-2"
+                  style={{ color: "var(--page-text-soft)" }}
+                >
                   {weatherText}
                 </div>
                 <div className="grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
@@ -645,7 +684,9 @@ export function Info({
                 </div>
                 {dayTheme.showLocalTime && (
                   <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                    <span style={{ color: "var(--page-text-soft)" }}>{dayTheme.localLabel}</span>
+                    <span style={{ color: "var(--page-text-soft)" }}>
+                      {dayTheme.localLabel}
+                    </span>
                     <span>{localText}</span>
                   </div>
                 )}
@@ -656,15 +697,24 @@ export function Info({
 
           {/* Screen 2 — lower content */}
           <section className="flex h-dvh w-full items-center justify-start px-5 overflow-y-auto">
-            <div className="flex min-h-dvh w-full items-center overflow-y-hidden transition-all duration-500 ease-out" style={lowerStyle}>
+            <div
+              className="flex min-h-dvh w-full items-center overflow-visible transition-all duration-500 ease-out"
+              style={lowerStyle}
+            >
               <div className="w-full min-w-0 py-8">
                 <div className="space-y-10">
                   {revealed ? (
-                    <RandomizedText key="lower-text" split="words" className="text-xs md:text-sm">
+                    <RandomizedText
+                      key="lower-text"
+                      split="words"
+                      className="text-xs md:text-sm"
+                    >
                       {introText}
                     </RandomizedText>
                   ) : (
-                    <div className="text-xs md:text-sm leading-relaxed opacity-0">{introText}</div>
+                    <div className="text-xs md:text-sm leading-relaxed opacity-0">
+                      {introText}
+                    </div>
                   )}
 
                   <Section title="i make utilities that feel inevitable:">
@@ -718,7 +768,9 @@ export function Info({
                               fontSize: "11px",
                               fontWeight: 400,
                               textAlign:
-                                item === "indonesian" || item === "japanese" ? "center" : "left",
+                                item === "indonesian" || item === "japanese"
+                                  ? "center"
+                                  : "left",
                             }}
                           >
                             {item}
@@ -862,41 +914,142 @@ function ScatterWord({ word, colors }: { word: string; colors: string[] }) {
 function CarouselRow({
   children,
   bleedOut = false,
+  autoLoop = true,
+  edgeFade = true,
 }: {
   children: React.ReactNode;
   bleedOut?: boolean;
+  autoLoop?: boolean;
+  edgeFade?: boolean;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [atEnd, setAtEnd] = useState(true);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    const checkEnd = () => {
-      const hasOverflow = node.scrollWidth > node.clientWidth + 4;
-      setAtEnd(!hasOverflow || node.scrollLeft + node.clientWidth >= node.scrollWidth - 4);
-    };
-
-    checkEnd();
-    node.addEventListener("scroll", checkEnd, { passive: true });
-    const ro = new ResizeObserver(checkEnd);
-    ro.observe(node);
-
-    return () => {
-      node.removeEventListener("scroll", checkEnd);
-      ro.disconnect();
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef(0);
+  const loopWidthRef = useRef(0);
+  const pointerActiveRef = useRef(false);
+  const hoveredRef = useRef(false);
+  const hoverPauseUntilRef = useRef(0);
+  const visibleRef = useRef(false);
+  const startDelayUntilRef = useRef(0);
+  const [canLoop, setCanLoop] = useState(false);
+  const rowMotion = useMemo(() => {
+    const index = carouselRowSeed;
+    carouselRowSeed += 1;
+    return {
+      delay: (index % 5) * 520,
+      speed: 13 + (index % 4) * 2,
     };
   }, []);
 
   useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
+    const viewport = viewportRef.current;
+    const content = contentRef.current;
+    const track = trackRef.current;
+    if (!viewport || !content || !track) return;
+
+    const applyOffset = (value: number) => {
+      const loopWidth = loopWidthRef.current;
+      const normalized =
+        loopWidth > 0 ? ((value % loopWidth) + loopWidth) % loopWidth : 0;
+      offsetRef.current = normalized;
+      track.style.transform = `translate3d(${-normalized}px, 0, 0)`;
+    };
+
+    const measure = () => {
+      const next = content.nextElementSibling as HTMLElement | null;
+      const loopWidth = next
+        ? next.offsetLeft - content.offsetLeft
+        : content.scrollWidth;
+      loopWidthRef.current = Math.max(0, loopWidth);
+      setCanLoop(autoLoop && loopWidth > 1);
+      applyOffset(offsetRef.current);
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(viewport);
+    ro.observe(content);
+
+    return () => ro.disconnect();
+  }, [autoLoop]);
+
+  useEffect(() => {
+    if (!autoLoop) return;
+
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const wasVisible = visibleRef.current;
+        visibleRef.current = entry.isIntersecting;
+        if (!wasVisible && entry.isIntersecting) {
+          startDelayUntilRef.current = performance.now() + rowMotion.delay;
+        }
+      },
+      { threshold: 0.15 },
+    );
+
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, [autoLoop, rowMotion.delay]);
+
+  useEffect(() => {
+    if (!autoLoop) return;
+
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    if (!viewport || !track || !canLoop) return;
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reducedMotion) return;
+
+    let frame = 0;
+    let last = performance.now();
+
+    const applyOffset = (value: number) => {
+      const loopWidth = loopWidthRef.current;
+      if (loopWidth <= 0) return;
+      const normalized = ((value % loopWidth) + loopWidth) % loopWidth;
+      offsetRef.current = normalized;
+      track.style.transform = `translate3d(${-normalized}px, 0, 0)`;
+    };
+
+    const tick = (now: number) => {
+      const delta = Math.min(now - last, 80);
+      last = now;
+
+      if (
+        !document.hidden &&
+        visibleRef.current &&
+        !viewport.matches(":hover") &&
+        !hoveredRef.current &&
+        now >= hoverPauseUntilRef.current &&
+        !pointerActiveRef.current &&
+        now >= startDelayUntilRef.current
+      ) {
+        applyOffset(offsetRef.current + (delta / 1000) * rowMotion.speed);
+      }
+
+      frame = window.requestAnimationFrame(tick);
+    };
+
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
+  }, [autoLoop, canLoop, rowMotion.speed]);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    if (!viewport || !track) return;
 
     let isDown = false;
     let isDragging = false;
     let startX = 0;
-    let startScrollLeft = 0;
+    let startOffset = 0;
     let suppressNextClick = false;
     let startTime = 0;
     let activePointerId: number | null = null;
@@ -904,20 +1057,30 @@ function CarouselRow({
     const cleanupWindowListeners = () => {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp);
-      window.removeEventListener("pointercancel", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerCancel);
+    };
+
+    const applyOffset = (value: number) => {
+      const loopWidth = loopWidthRef.current;
+      if (loopWidth <= 0) return;
+      const normalized = ((value % loopWidth) + loopWidth) % loopWidth;
+      offsetRef.current = normalized;
+      track.style.transform = `translate3d(${-normalized}px, 0, 0)`;
     };
 
     const onPointerDown = (event: PointerEvent) => {
+      if (!autoLoop) return;
       if (event.button !== 0) return;
+      pointerActiveRef.current = true;
       isDown = true;
       isDragging = false;
       startX = event.clientX;
-      startScrollLeft = node.scrollLeft;
+      startOffset = offsetRef.current;
       startTime = Date.now();
       activePointerId = event.pointerId;
       window.addEventListener("pointermove", onPointerMove);
       window.addEventListener("pointerup", onPointerUp);
-      window.addEventListener("pointercancel", onPointerUp);
+      window.addEventListener("pointercancel", onPointerCancel);
     };
 
     const onPointerMove = (event: PointerEvent) => {
@@ -927,21 +1090,31 @@ function CarouselRow({
       if (!isDragging) {
         if (absDelta > 20) {
           isDragging = true;
-          node.scrollLeft = startScrollLeft - deltaX;
+          applyOffset(startOffset - deltaX);
         }
       } else {
-        node.scrollLeft = startScrollLeft - deltaX;
+        applyOffset(startOffset - deltaX);
       }
     };
 
     const onPointerUp = (event: PointerEvent) => {
       if (!isDown || event.pointerId !== activePointerId) return;
       isDown = false;
+      pointerActiveRef.current = false;
       activePointerId = null;
       cleanupWindowListeners();
       if (isDragging && Date.now() - startTime > 120) {
         suppressNextClick = true;
       }
+      isDragging = false;
+    };
+
+    const onPointerCancel = (event: PointerEvent) => {
+      if (!isDown || event.pointerId !== activePointerId) return;
+      isDown = false;
+      pointerActiveRef.current = false;
+      activePointerId = null;
+      cleanupWindowListeners();
       isDragging = false;
     };
 
@@ -953,35 +1126,96 @@ function CarouselRow({
       }
     };
 
-    node.addEventListener("pointerdown", onPointerDown);
-    node.addEventListener("click", onClickCapture, true);
+    const onPointerEnter = () => {
+      hoveredRef.current = true;
+      hoverPauseUntilRef.current = Number.POSITIVE_INFINITY;
+    };
+
+    const onPointerLeave = () => {
+      hoveredRef.current = false;
+      hoverPauseUntilRef.current = performance.now() + 400;
+      pointerActiveRef.current = false;
+    };
+
+    const onMouseMove = () => {
+      hoveredRef.current = true;
+      hoverPauseUntilRef.current = performance.now() + 1200;
+    };
+
+    const onMouseLeave = () => {
+      hoveredRef.current = false;
+      hoverPauseUntilRef.current = performance.now() + 400;
+    };
+
+    const onWheel = (event: WheelEvent) => {
+      if (!autoLoop || loopWidthRef.current <= 0) return;
+      hoveredRef.current = true;
+      hoverPauseUntilRef.current = performance.now() + 1200;
+      const delta =
+        Math.abs(event.deltaX) > Math.abs(event.deltaY)
+          ? event.deltaX
+          : event.deltaY;
+      if (Math.abs(delta) < 0.5) return;
+      event.preventDefault();
+      applyOffset(offsetRef.current + delta);
+    };
+
+    viewport.addEventListener("pointerenter", onPointerEnter);
+    viewport.addEventListener("pointerleave", onPointerLeave);
+    viewport.addEventListener("mousemove", onMouseMove);
+    viewport.addEventListener("mouseleave", onMouseLeave);
+    viewport.addEventListener("pointerdown", onPointerDown);
+    viewport.addEventListener("click", onClickCapture, true);
+    viewport.addEventListener("wheel", onWheel, { passive: false });
 
     return () => {
-      node.removeEventListener("pointerdown", onPointerDown);
+      viewport.removeEventListener("pointerenter", onPointerEnter);
+      viewport.removeEventListener("pointerleave", onPointerLeave);
+      viewport.removeEventListener("mousemove", onMouseMove);
+      viewport.removeEventListener("mouseleave", onMouseLeave);
+      viewport.removeEventListener("pointerdown", onPointerDown);
       cleanupWindowListeners();
-      node.removeEventListener("click", onClickCapture, true);
+      viewport.removeEventListener("click", onClickCapture, true);
+      viewport.removeEventListener("wheel", onWheel);
     };
-  }, []);
+  }, [autoLoop]);
 
   return (
     <div
-      className={`relative w-full overflow-visible ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""} ${atEnd ? "" : "carousel-mask"}`}
+      className={`relative w-full overflow-hidden ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""} ${canLoop && edgeFade ? "carousel-mask" : ""}`}
     >
       <div
-        ref={ref}
+        ref={viewportRef}
         data-carousel-scroll="true"
         style={{
-          overflowX: "auto",
+          overflowX: autoLoop ? "hidden" : "auto",
           overflowY: "hidden",
           touchAction: "pan-y pinch-zoom",
-          overscrollBehaviorX: "contain",
-          WebkitOverflowScrolling: "touch",
           userSelect: "none",
         }}
-        className={`cursor-grab active:cursor-grabbing pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${bleedOut ? "px-5" : ""}`}
+        className="cursor-grab pb-2 [scrollbar-width:none] active:cursor-grabbing [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
-        <div className="inline-flex w-max flex-nowrap gap-px sm:gap-0.5 md:gap-1">
-          {children}
+        <div
+          ref={trackRef}
+          className={`inline-flex w-max flex-nowrap gap-px will-change-transform sm:gap-0.5 md:gap-1 ${bleedOut ? "pl-5" : ""}`}
+        >
+          <div
+            ref={contentRef}
+            className="inline-flex flex-nowrap gap-px sm:gap-0.5 md:gap-1"
+          >
+            {children}
+          </div>
+          {autoLoop &&
+            Array.from({ length: 3 }).map((_, index) => (
+              <div
+                key={index}
+                aria-hidden="true"
+                inert={true}
+                className="inline-flex flex-nowrap gap-px sm:gap-0.5 md:gap-1"
+              >
+                {children}
+              </div>
+            ))}
         </div>
       </div>
     </div>
@@ -1022,7 +1256,9 @@ function Card({
       target="_blank"
       rel="noreferrer"
       className={`flex-shrink-0 rounded-lg p-2 transition-all duration-150 ${
-        isMobile ? "min-w-[9rem] max-w-[9rem]" : "min-w-[8rem] max-w-[8rem] hover:-translate-y-1 hover:shadow-md hover:brightness-105"
+        isMobile
+          ? "min-w-[9rem] max-w-[9rem]"
+          : "min-w-[8rem] max-w-[8rem] hover:-translate-y-1 hover:shadow-md hover:brightness-105"
       } ${dimmed ? "opacity-50" : "opacity-100"}`}
       style={{
         background: "color-mix(in srgb, var(--page-surface) 94%, black)",

@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Young+Serif&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&family=Chivo+Mono:wght@300;400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Young+Serif&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&family=Chivo+Mono:wght@300;400;500&display=swap");
 
 @import "tailwindcss";
 
@@ -11,7 +11,7 @@
 }
 
 :root {
-  --font-mono-var: 'JetBrains Mono', monospace;
+  --font-mono-var: "JetBrains Mono", monospace;
   --page-background: #000000;
   --page-text: #ffffff;
   --page-text-muted: rgba(255, 255, 255, 0.72);
@@ -26,14 +26,16 @@
 }
 
 body {
-  font-family: 'Young Serif', sans-serif;
+  font-family: "Young Serif", sans-serif;
   margin: 0;
   padding: 0;
   background: var(--page-background);
   color: var(--page-text);
   scrollbar-width: none;
   overflow-x: hidden;
-  transition: background-color 700ms ease, color 700ms ease;
+  transition:
+    background-color 700ms ease,
+    color 700ms ease;
 }
 
 html {
@@ -55,7 +57,9 @@ body::-webkit-scrollbar {
 }
 
 @media screen {
-  .print-only { display: none !important; }
+  .print-only {
+    display: none !important;
+  }
 }
 
 @media print {
@@ -64,9 +68,14 @@ body::-webkit-scrollbar {
     print-color-adjust: exact !important;
     color-adjust: exact !important;
   }
-  .screen-only { display: none !important; }
-  .print-only { display: block !important; }
-  html, body {
+  .screen-only {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  html,
+  body {
     background: white !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -81,9 +90,16 @@ body::-webkit-scrollbar {
   }
 }
 
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+::-webkit-scrollbar {
+  width: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
 
 a {
   text-decoration: none;
@@ -95,20 +111,56 @@ a:hover {
 }
 
 .carousel-mask {
-  mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent);
-  -webkit-mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent);
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 2rem,
+    black calc(100% - 2.5rem),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 2rem,
+    black calc(100% - 2.5rem),
+    transparent
+  );
 }
 
 @media (min-width: 480px) {
   .carousel-mask {
-    mask-image: linear-gradient(to right, black calc(100% - 4rem), transparent);
-    -webkit-mask-image: linear-gradient(to right, black calc(100% - 4rem), transparent);
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 2.5rem,
+      black calc(100% - 4rem),
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 2.5rem,
+      black calc(100% - 4rem),
+      transparent
+    );
   }
 }
 
 @media (min-width: 640px) {
   .carousel-mask {
-    mask-image: linear-gradient(to right, black calc(100% - 5rem), transparent);
-    -webkit-mask-image: linear-gradient(to right, black calc(100% - 5rem), transparent);
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 3rem,
+      black calc(100% - 5rem),
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 3rem,
+      black calc(100% - 5rem),
+      transparent
+    );
   }
 }
