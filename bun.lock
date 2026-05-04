@@ -9,6 +9,12 @@
         "turbo": "^2.9.7",
         "typescript": "~5.9.2",
       },
+      "optionalDependencies": {
+        "@esbuild/darwin-arm64": "0.27.3",
+        "@rollup/rollup-darwin-arm64": "4.59.0",
+        "@tailwindcss/oxide-darwin-arm64": "4.2.1",
+        "lightningcss-darwin-arm64": "1.31.1",
+      },
     },
     "artifacts/api-server": {
       "name": "@workspace/api-server",
@@ -233,8 +239,6 @@
     "@expo/ngrok-bin>@expo/ngrok-bin-win32-ia32": "-",
     "@expo/ngrok-bin>@expo/ngrok-bin-win32-x64": "-",
     "@tailwindcss/oxide>@tailwindcss/oxide-android-arm64": "-",
-    "@tailwindcss/oxide>@tailwindcss/oxide-darwin-arm64": "-",
-    "@tailwindcss/oxide>@tailwindcss/oxide-darwin-x64": "-",
     "@tailwindcss/oxide>@tailwindcss/oxide-freebsd-x64": "-",
     "@tailwindcss/oxide>@tailwindcss/oxide-linux-arm-gnueabihf": "-",
     "@tailwindcss/oxide>@tailwindcss/oxide-linux-arm64-gnu": "-",
@@ -247,8 +251,6 @@
     "esbuild>@esbuild/android-arm": "-",
     "esbuild>@esbuild/android-arm64": "-",
     "esbuild>@esbuild/android-x64": "-",
-    "esbuild>@esbuild/darwin-arm64": "-",
-    "esbuild>@esbuild/darwin-x64": "-",
     "esbuild>@esbuild/freebsd-arm64": "-",
     "esbuild>@esbuild/freebsd-x64": "-",
     "esbuild>@esbuild/linux-arm": "-",
@@ -269,8 +271,6 @@
     "esbuild>@esbuild/win32-ia32": "-",
     "esbuild>@esbuild/win32-x64": "-",
     "lightningcss>lightningcss-android-arm64": "-",
-    "lightningcss>lightningcss-darwin-arm64": "-",
-    "lightningcss>lightningcss-darwin-x64": "-",
     "lightningcss>lightningcss-freebsd-x64": "-",
     "lightningcss>lightningcss-linux-arm-gnueabihf": "-",
     "lightningcss>lightningcss-linux-arm64-gnu": "-",
@@ -280,8 +280,6 @@
     "lightningcss>lightningcss-win32-x64-msvc": "-",
     "rollup>@rollup/rollup-android-arm-eabi": "-",
     "rollup>@rollup/rollup-android-arm64": "-",
-    "rollup>@rollup/rollup-darwin-arm64": "-",
-    "rollup>@rollup/rollup-darwin-x64": "-",
     "rollup>@rollup/rollup-freebsd-arm64": "-",
     "rollup>@rollup/rollup-freebsd-x64": "-",
     "rollup>@rollup/rollup-linux-arm-gnueabihf": "-",
@@ -375,6 +373,8 @@
     "@drizzle-team/brocli": ["@drizzle-team/brocli@0.10.2", "", {}, "sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w=="],
 
     "@esbuild-kit/esm-loader": ["tsx@4.21.0", "", { "dependencies": { "esbuild": "0.27.3", "get-tsconfig": "4.13.6" }, "optionalDependencies": { "fsevents": "2.3.3" }, "bin": { "tsx": "dist/cli.mjs" } }, "sha512-5C1sg4USs1lfG0GFb2RLXsdpXqBSEhAaA/0kPL01wxzpMqLILNxIxIOKiILz+cdg/pLnOUxFYOR5yhHU666wbw=="],
+
+    "@esbuild/darwin-arm64": ["@esbuild/darwin-arm64@0.27.3", "", { "os": "darwin", "cpu": "arm64" }, "sha512-Re491k7ByTVRy0t3EKWajdLIr0gz2kKKfzafkth4Q8A5n1xTHrkqZgLLjFEHVD+AXdUGgQMq+Godfq45mGpCKg=="],
 
     "@esbuild/linux-x64": ["@esbuild/linux-x64@0.27.3", "", { "os": "linux", "cpu": "x64" }, "sha512-Czi8yzXUWIQYAtL/2y6vogER8pvcsOsk5cpwL4Gk5nJqH5UZiVByIY8Eorm5R13gq+DQKYg0+JyQoytLQas4dA=="],
 
@@ -548,6 +548,8 @@
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.0-rc.3", "", {}, "sha512-eybk3TjzzzV97Dlj5c+XrBFW57eTNhzod66y9HrBlzJ6NsCrWCp/2kaPS3K9wJmurBC0Tdw4yPjXKZqlznim3Q=="],
 
+    "@rollup/rollup-darwin-arm64": ["@rollup/rollup-darwin-arm64@4.59.0", "", { "os": "darwin", "cpu": "arm64" }, "sha512-W2Psnbh1J8ZJw0xKAd8zdNgF9HRLkdWwwdWqubSVk0pUuQkoHnv7rx4GiF9rT4t5DIZGAsConRE3AxCdJ4m8rg=="],
+
     "@rollup/rollup-linux-x64-gnu": ["@rollup/rollup-linux-x64-gnu@4.59.0", "", { "os": "linux", "cpu": "x64" }, "sha512-3AHmtQq/ppNuUspKAlvA8HtLybkDflkMuLK4DPo77DfthRb71V84/c4MlWJXixZz4uruIH4uaa07IqoAkG64fg=="],
 
     "@scalar/helpers": ["@scalar/helpers@0.2.18", "", {}, "sha512-w1d4tpNEVZ293oB2BAgLrS0kVPUtG3eByNmOCJA5eK9vcT4D3cmsGtWjUaaqit0BQCsBFHK51rasGvSWnApYTw=="],
@@ -579,6 +581,8 @@
     "@tailwindcss/node": ["@tailwindcss/node@4.2.1", "", { "dependencies": { "@jridgewell/remapping": "2.3.5", "enhanced-resolve": "5.20.0", "jiti": "2.6.1", "lightningcss": "1.31.1", "magic-string": "0.30.21", "source-map-js": "1.2.1", "tailwindcss": "4.2.1" } }, "sha512-jlx6sLk4EOwO6hHe1oCGm1Q4AN/s0rSrTTPBGPM0/RQ6Uylwq17FuU8IeJJKEjtc6K6O07zsvP+gDO6MMWo7pg=="],
 
     "@tailwindcss/oxide": ["@tailwindcss/oxide@4.2.1", "", { "optionalDependencies": { "@tailwindcss/oxide-linux-x64-gnu": "4.2.1", "@tailwindcss/oxide-wasm32-wasi": "4.2.1" } }, "sha512-yv9jeEFWnjKCI6/T3Oq50yQEOqmpmpfzG1hcZsAOaXFQPfzWprWrlHSdGPEF3WQTi8zu8ohC9Mh9J470nT5pUw=="],
+
+    "@tailwindcss/oxide-darwin-arm64": ["@tailwindcss/oxide-darwin-arm64@4.2.1", "", { "os": "darwin", "cpu": "arm64" }, "sha512-q/LHkOstoJ7pI1J0q6djesLzRvQSIfEto148ppAd+BVQK0JYjQIFSK3JgYZJa+Yzi0DDa52ZsQx2rqytBnf8Hw=="],
 
     "@tailwindcss/oxide-linux-x64-gnu": ["@tailwindcss/oxide-linux-x64-gnu@4.2.1", "", { "os": "linux", "cpu": "x64" }, "sha512-qMFzxI2YlBOLW5PhblzuSWlWfwLHaneBE0xHzLrBgNtqN6mWfs+qYbhryGSXQjFYB1Dzf5w+LN5qbUTPhW7Y5g=="],
 
@@ -971,6 +975,8 @@
     "leven": ["leven@4.1.0", "", {}, "sha512-KZ9W9nWDT7rF7Dazg8xyLHGLrmpgq2nVNFUckhqdW3szVP6YhCpp/RAnpmVExA9JvrMynjwSLVrEj3AepHR6ew=="],
 
     "lightningcss": ["lightningcss@1.31.1", "", { "dependencies": { "detect-libc": "2.1.2" }, "optionalDependencies": { "lightningcss-linux-x64-gnu": "1.31.1" } }, "sha512-l51N2r93WmGUye3WuFoN5k10zyvrVs0qfKBhyC5ogUQ6Ew6JUSswh78mbSO+IU3nTWsyOArqPCcShdQSadghBQ=="],
+
+    "lightningcss-darwin-arm64": ["lightningcss-darwin-arm64@1.31.1", "", { "os": "darwin", "cpu": "arm64" }, "sha512-02uTEqf3vIfNMq3h/z2cJfcOXnQ0GRwQrkmPafhueLb2h7mqEidiCzkE4gBMEH65abHRiQvhdcQ+aP0D0g67sg=="],
 
     "lightningcss-linux-x64-gnu": ["lightningcss-linux-x64-gnu@1.31.1", "", { "os": "linux", "cpu": "x64" }, "sha512-xGlFWRMl+0KvUhgySdIaReQdB4FNudfUTARn7q0hh/V67PVGCs3ADFjw+6++kG1RNd0zdGRlEKa+T13/tQjPMA=="],
 

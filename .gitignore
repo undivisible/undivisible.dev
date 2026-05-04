@@ -3,10 +3,14 @@
 # compiled output
 dist
 tmp
+out
+.next/
+.turbo/
 out-tsc
 *.tsbuildinfo
 .expo
 .expo-shared
+next-env.d.ts
 
 # dependencies
 node_modules
@@ -28,6 +32,10 @@ node_modules
 !.vscode/extensions.json
 
 # misc
+.env
+.env.*
+!.env.example
+AGENTS.md
 /.sass-cache
 /connect.lock
 /coverage
@@ -40,6 +48,9 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# historical site snapshots
+!old/**/*.png
 
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
