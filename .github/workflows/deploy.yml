@@ -35,7 +35,7 @@ jobs:
         env:
           # For a project page use /<repo-name>/ e.g. /undivisible.dev/
           # For a personal page / custom domain use /
-          BASE_PATH: /${{ github.event.repository.name }}/
+          BASE_PATH: /
           VITE_LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
 
       - name: Upload artifact
