@@ -1,6 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Young+Serif&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&family=Chivo+Mono:wght@300;400;500&display=swap");
-
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -11,7 +8,7 @@
 }
 
 :root {
-  --font-mono-var: "JetBrains Mono", monospace;
+  --font-mono-var: var(--font-jetbrains-mono), monospace;
   --page-background: #000000;
   --page-text: #ffffff;
   --page-text-muted: rgba(255, 255, 255, 0.72);
@@ -26,7 +23,7 @@
 }
 
 body {
-  font-family: "Young Serif", sans-serif;
+  font-family: var(--font-young-serif), serif;
   margin: 0;
   padding: 0;
   background: var(--page-background);
@@ -36,6 +33,18 @@ body {
   transition:
     background-color 700ms ease,
     color 700ms ease;
+}
+
+@media (min-width: 1600px) and (min-height: 850px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 2100px) and (min-height: 1000px) {
+  html {
+    font-size: 18px;
+  }
 }
 
 html {

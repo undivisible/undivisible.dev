@@ -7,7 +7,8 @@
     "build": "turbo run build",
     "build:web": "turbo run build --filter=@workspace/undivisible",
     "typecheck": "turbo run typecheck",
-    "dev": "turbo run dev"
+    "dev": "turbo run dev --filter=@workspace/undivisible",
+    "dev:all": "turbo run dev"
   },
   "packageManager": "bun@1.3.11",
   "private": true,

@@ -439,7 +439,11 @@ export default function Ascii({
       ctx.clearRect(0, 0, width, height);
       ctx.textBaseline = "middle";
       ctx.textAlign = "center";
-      ctx.font = `${Math.max(12, cell * 0.72)}px "JetBrains Mono", monospace`;
+      const monoFont =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--font-jetbrains-mono")
+          .trim() || "monospace";
+      ctx.font = `${Math.max(12, cell * 0.72)}px ${monoFont}, monospace`;
       ctx.shadowColor = "transparent";
 
       // Precompute cos/sin per shape — avoids 3× trig per cell per shape

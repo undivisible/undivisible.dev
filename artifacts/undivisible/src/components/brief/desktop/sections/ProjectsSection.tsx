@@ -1,4 +1,3 @@
-
 import { motion } from "motion/react";
 import { GRADIENT, mono, sans, serif } from "@/components/brief/ui/constants";
 
@@ -9,7 +8,7 @@ const projs = [
     org: "semitechnological",
     name: "Crepuscularity + Aurorality",
     tech: ["Rust", "Swift", "GPUI", "SwiftUI", "UniFFI"],
-    desc: "First GPUI component system with hot reload. One template ships to desktop, TUI, browser extensions, HTML, and mobile. Aurorality compiles to native SwiftUI.",
+    desc: "Experimental GPUI component system with hot reload. One template targets desktop, TUI, browser extensions, HTML, and mobile. Aurorality compiles to native SwiftUI.",
     tag: "Framework",
     accent: true,
     href: "https://github.com/semitechnological",
@@ -36,7 +35,7 @@ const projs = [
     org: "atechnology company",
     name: "Soliloquy + rv8",
     tech: ["Rust", "Servo", "V8", "Alpine"],
-    desc: "Experimental OS on Alpine with kernel-level modifications — Rust shell, Servo rendering, V8 runtime. Custom process scheduling and memory. Goal: 30× faster than Chrome at 1/25 the RAM.",
+    desc: "Experimental OS on Alpine with kernel-level modifications — Rust shell, Servo rendering, V8 runtime. Prototype target: much faster browser-like runtime with sharply lower memory use.",
     tag: "OS / Runtime",
     accent: false,
     href: "https://github.com/semitechnological",
@@ -84,42 +83,94 @@ export function ProjectsSection() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.55 }}
-        style={{ marginBottom: 28, display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}
+        style={{
+          marginBottom: 28,
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+        }}
       >
         <div>
-          <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.04em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 8 }}>
+          <div
+            style={{
+              fontFamily: mono,
+              fontSize: 12,
+              letterSpacing: "0.04em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.3)",
+              marginBottom: 8,
+            }}
+          >
             40+ repos · in progress
           </div>
-          <div style={{ fontFamily: serif, fontSize: "clamp(28px, 3.2vw, 46px)", color: "#ffffff", letterSpacing: "-0.03em", lineHeight: 1 }}>
-            Always building.{" "}
-            <em style={{
-              background: GRADIENT,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}>Everything ships.</em>
+          <div
+            style={{
+              fontFamily: serif,
+              fontSize: "clamp(32px, 3.7vw, 56px)",
+              color: "#ffffff",
+              letterSpacing: "-0.03em",
+              lineHeight: 1,
+            }}
+          >
+            Building sharp tools.{" "}
+            <em
+              style={{
+                background: GRADIENT,
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              Real work ships.
+            </em>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 20, fontFamily: mono, fontSize: 8.5, letterSpacing: "-0.03em", textTransform: "uppercase" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 20,
+            fontFamily: mono,
+            fontSize: 9.5,
+            letterSpacing: "-0.03em",
+            textTransform: "uppercase",
+          }}
+        >
           {[
-            ["github.com/undivisible",      "https://github.com/undivisible"],
-            ["github.com/semitechnological", "https://github.com/semitechnological"],
+            ["github.com/undivisible", "https://github.com/undivisible"],
+            [
+              "github.com/semitechnological",
+              "https://github.com/semitechnological",
+            ],
           ].map(([label, href]) => (
-            <a key={label} href={href} target="_blank" rel="noopener noreferrer" style={{ color: "#ffffff", opacity: 0.25, textDecoration: "none" }}>{label}</a>
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: "#ffffff",
+                opacity: 0.25,
+                textDecoration: "none",
+              }}
+            >
+              {label}
+            </a>
           ))}
         </div>
       </motion.div>
 
       {/* Bento grid */}
-      <div style={{
-        flex: 1,
-        display: "grid",
-        gridTemplateColumns: "repeat(3, 1fr)",
-        gridTemplateRows: "repeat(2, 1fr)",
-        gap: 1,
-        background: "rgba(255,255,255,0.1)",
-        minHeight: 0,
-      }}>
+      <div
+        style={{
+          flex: 1,
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gridTemplateRows: "repeat(2, 1fr)",
+          gap: 1,
+          background: "rgba(255,255,255,0.1)",
+          minHeight: 0,
+        }}
+      >
         {projs.map((p, i) => (
           <motion.a
             key={p.name}
@@ -144,56 +195,77 @@ export function ProjectsSection() {
               cursor: "pointer",
             }}
           >
-            <div style={{
-              fontFamily: mono,
-              fontSize: 8,
-              letterSpacing: "0.04em",
-              textTransform: "uppercase",
-              color: "rgba(255,255,255,0.28)",
-            }}>{p.org}</div>
+            <div
+              style={{
+                fontFamily: mono,
+                fontSize: 8.5,
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                color: "rgba(255,255,255,0.28)",
+              }}
+            >
+              {p.org}
+            </div>
 
-            <div style={{
-              fontSize: 17,
-              fontWeight: 600,
-              letterSpacing: "-0.02em",
-              lineHeight: 1.15,
-              color: "#ffffff",
-              fontFamily: serif,
-            }}>{p.name}</div>
+            <div
+              style={{
+                fontSize: 19,
+                fontWeight: 600,
+                letterSpacing: "-0.02em",
+                lineHeight: 1.15,
+                color: "#ffffff",
+                fontFamily: serif,
+              }}
+            >
+              {p.name}
+            </div>
 
             <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-              {p.tech.map(t => (
-                <span key={t} style={{
-                  fontFamily: mono,
-                  fontSize: 8,
-                  letterSpacing: "-0.02em",
-                  padding: "2px 7px",
-                  background: "rgba(255,255,255,0.08)",
-                  color: "rgba(255,255,255,0.55)",
-                  borderRadius: 3,
-                }}>{t}</span>
+              {p.tech.map((t) => (
+                <span
+                  key={t}
+                  style={{
+                    fontFamily: mono,
+                    fontSize: 8.5,
+                    letterSpacing: "-0.02em",
+                    padding: "2px 7px",
+                    background: "rgba(255,255,255,0.08)",
+                    color: "rgba(255,255,255,0.55)",
+                    borderRadius: 3,
+                  }}
+                >
+                  {t}
+                </span>
               ))}
             </div>
 
-            <div style={{
-              fontSize: 13,
-              lineHeight: 1.65,
-              flex: 1,
-              color: "rgba(255,255,255,0.4)",
-              overflow: "hidden",
-            }}>{p.desc}</div>
+            <div
+              style={{
+                fontSize: 14,
+                lineHeight: 1.65,
+                flex: 1,
+                color: "rgba(255,255,255,0.4)",
+                overflow: "hidden",
+              }}
+            >
+              {p.desc}
+            </div>
 
-            <div style={{
-              fontFamily: mono,
-              fontSize: 8,
-              letterSpacing: "0.02em",
-              textTransform: "uppercase",
-              padding: "3px 9px",
-              alignSelf: "flex-start",
-              border: "1px solid rgba(255,255,255,0.15)",
-              color: "rgba(255,255,255,0.4)",
-              borderRadius: 75,
-            }}>{p.tag}</div>
+            <div
+              style={{
+                fontFamily: mono,
+                fontSize: 8.5,
+                letterSpacing: "0.02em",
+                textTransform: "uppercase",
+                padding: "3px 9px",
+                alignSelf: "flex-start",
+                border: "1px solid rgba(255,255,255,0.15)",
+                color: "rgba(255,255,255,0.4)",
+                borderRadius: 75,
+              }}
+            >
+              {p.tag}
+            </div>
           </motion.a>
         ))}
       </div>

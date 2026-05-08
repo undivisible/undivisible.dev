@@ -33,15 +33,13 @@ jobs:
       - name: Build site
         run: bun run build:web
         env:
-          # For a project page use /<repo-name>/ e.g. /undivisible.dev/
-          # For a personal page / custom domain use /
-          BASE_PATH: /
-          VITE_LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+          NEXT_PUBLIC_LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+          NEXT_PUBLIC_LASTFM_USERNAME: undivisible
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: artifacts/undivisible/dist/public
+          path: artifacts/undivisible/out
 
   deploy:
     environment:

@@ -138,6 +138,12 @@ const tidbits = [
     href: "https://alphabets.undivisible.dev",
   },
   {
+    name: "standpoint",
+    desc: "the opinion based platform with tierlists and polls",
+    href: "https://standpoint.undivisible.dev",
+    opacity: 50,
+  },
+  {
     name: "notes",
     desc: "a minimal markdown text editor in the web.",
     href: "https://notes.undivisible.dev",
@@ -156,12 +162,6 @@ const tidbits = [
     name: "unthinkclaw",
     desc: "openclaw but tiny, with agent swarms and online saas.",
     href: "https://github.com/undivisible/unthinkclaw",
-  },
-  {
-    name: "standpoint",
-    desc: "the opinion based platform with tierlists and polls",
-    href: "https://github.com/undivisible/standpoint",
-    opacity: 50,
   },
   {
     name: "infrastruct",
@@ -239,7 +239,11 @@ export function Info({
     };
 
     const onWheel = (event: WheelEvent) => {
-      if ((event.target as HTMLElement | null)?.closest("[data-carousel-scroll='true']")) {
+      if (
+        (event.target as HTMLElement | null)?.closest(
+          "[data-carousel-scroll='true']",
+        )
+      ) {
         return;
       }
 
@@ -579,7 +583,7 @@ export function Info({
                     display: "flex",
                     flexDirection: "column",
                     color: "var(--transport-text)",
-                    fontFamily: "Young Serif",
+                    fontFamily: "var(--font-young-serif), serif",
                     fontSize: "10px",
                     textAlign:
                       item === "indonesian" || item === "japanese"
@@ -767,7 +771,7 @@ export function Info({
                               display: "flex",
                               flexDirection: "column",
                               color: "var(--transport-text)",
-                              fontFamily: "Young Serif",
+                              fontFamily: "var(--font-young-serif), serif",
                               fontSize: "11px",
                               fontWeight: 400,
                               textAlign:
@@ -940,8 +944,8 @@ function CarouselRow({
     const index = carouselRowSeed;
     carouselRowSeed += 1;
     return {
-      delay: (index % 5) * 520,
-      speed: 13 + (index % 4) * 2,
+      delay: (index % 5) * 320,
+      speed: 24 + (index % 4) * 4,
     };
   }, []);
 
@@ -1259,9 +1263,7 @@ function Card({
       target="_blank"
       rel="noreferrer"
       className={`relative z-0 flex-shrink-0 rounded-lg p-2 ${
-        isMobile
-          ? "min-w-[9rem] max-w-[9rem]"
-          : "min-w-[8rem] max-w-[8rem]"
+        isMobile ? "min-w-[9rem] max-w-[9rem]" : "min-w-[8rem] max-w-[8rem]"
       } ${dimmed ? "opacity-50" : "opacity-100"}`}
       style={{
         backgroundColor: "color-mix(in srgb, var(--page-surface) 94%, black)",
@@ -1318,7 +1320,7 @@ function Badge({ label }: { label: string }) {
           flexDirection: "column",
           color: "inherit",
           fontSize: "10px",
-          fontFamily: "Young Serif",
+          fontFamily: "var(--font-young-serif), serif",
         }}
       >
         {label}

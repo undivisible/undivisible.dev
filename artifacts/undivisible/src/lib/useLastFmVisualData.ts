@@ -15,8 +15,8 @@ export function useLastFmVisualData() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const apiKey = import.meta.env.VITE_LASTFM_API_KEY;
-    const username = "undivisible";
+    const apiKey = process.env.NEXT_PUBLIC_LASTFM_API_KEY;
+    const username = process.env.NEXT_PUBLIC_LASTFM_USERNAME ?? "undivisible";
 
     if (!apiKey) {
       setReady(true);
@@ -78,7 +78,8 @@ export function useLastFmVisualData() {
             if (bucket.length >= 5) {
               const step = Math.max(1, Math.floor(bucket.length / 5));
               const nextColors = [0, 1, 2, 3, 4].map((index) => {
-                const [r, g, b] = bucket[Math.min(index * step, bucket.length - 1)];
+                const [r, g, b] =
+                  bucket[Math.min(index * step, bucket.length - 1)];
                 return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
               });
               setColors(nextColors);

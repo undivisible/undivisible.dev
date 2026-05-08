@@ -1,14 +1,29 @@
-
 import { motion } from "motion/react";
 import { GRADIENT, mono, sans, serif } from "@/components/brief/ui/constants";
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const svcs = [
-  { n: "01", title: "Micro-Startup Studio",  body: "Napkin sketch to live product in weeks. Full stack, designed to scale, built to feel inevitable." },
-  { n: "02", title: "AI Automation",          body: "Audit → eliminate. AI agents handling phone reception, quote pipelines, client comms, intake." },
-  { n: "03", title: "Bespoke Web & Apps",     body: "WebGL, spatial interfaces, bleeding-edge eCommerce. Sites people stop to ask who built them." },
-  { n: "04", title: "Complex & Unusual",      body: "OS kernels. Compilers. Browser runtimes. Cybersecurity tooling. If it runs on a machine, I can build it." },
+  {
+    n: "01",
+    title: "Micro-Startup Studio",
+    body: "Napkin sketch to live product in weeks. Full stack, designed, deployed, and shaped around a clear commercial outcome.",
+  },
+  {
+    n: "02",
+    title: "AI Automation",
+    body: "Audit → build. AI agents and integrations for phone reception, quote pipelines, client comms, intake, reporting, and admin.",
+  },
+  {
+    n: "03",
+    title: "Bespoke Web & Apps",
+    body: "WebGL, spatial interfaces, eCommerce, dashboards, and native-feeling apps. Built around the business, not a template.",
+  },
+  {
+    n: "04",
+    title: "Complex & Unusual",
+    body: "OS kernels, compilers, browser runtimes, AI agents, CRMs, and cybersecurity tooling. Product, design, and infrastructure together.",
+  },
 ];
 
 export function ServicesSection() {
@@ -43,42 +58,91 @@ export function ServicesSection() {
           position: "relative",
         }}
       >
-        <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.04em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 20 }}>
+        <div
+          style={{
+            fontFamily: mono,
+            fontSize: 12,
+            letterSpacing: "0.04em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.3)",
+            marginBottom: 20,
+          }}
+        >
           What I do
         </div>
-        <div style={{
-          fontFamily: serif,
-          fontSize: "clamp(32px, 3.2vw, 50px)",
-          color: "#ffffff",
-          letterSpacing: "-0.03em",
-          lineHeight: 1.08,
-          marginBottom: 28,
-        }}>
-          Your next<br />project deserves<br />someone who&apos;s<br />already built<br />
-          <em style={{
-            background: GRADIENT,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}>the impossible.</em>
+        <div
+          style={{
+            fontFamily: serif,
+            fontSize: "clamp(36px, 3.7vw, 60px)",
+            color: "#ffffff",
+            letterSpacing: "-0.03em",
+            lineHeight: 1.08,
+            marginBottom: 28,
+          }}
+        >
+          Your next
+          <br />
+          project needs
+          <br />
+          someone who can
+          <br />
+          ship the
+          <br />
+          <em
+            style={{
+              background: GRADIENT,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
+            unusual.
+          </em>
         </div>
-        <p style={{ fontSize: 15, color: "rgba(255,255,255,0.55)", lineHeight: 1.7, maxWidth: 300, fontStyle: "italic" }}>
+        <p
+          style={{
+            fontSize: 16,
+            color: "rgba(255,255,255,0.55)",
+            lineHeight: 1.7,
+            maxWidth: 300,
+            fontStyle: "italic",
+          }}
+        >
           Contract work across time zones. I charge for outcomes, not hours.
         </p>
-        <div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 6 }}>
-          {["max@undivisible.dev", "undivisible.dev"].map(v => (
-            <div key={v} style={{ fontFamily: mono, fontSize: 11, letterSpacing: "-0.03em", color: "rgba(255,255,255,0.45)" }}>{v}</div>
+        <div
+          style={{
+            marginTop: 36,
+            display: "flex",
+            flexDirection: "column",
+            gap: 6,
+          }}
+        >
+          {["max@undivisible.dev", "undivisible.dev"].map((v) => (
+            <div
+              key={v}
+              style={{
+                fontFamily: mono,
+                fontSize: 12,
+                letterSpacing: "-0.03em",
+                color: "rgba(255,255,255,0.45)",
+              }}
+            >
+              {v}
+            </div>
           ))}
         </div>
       </motion.div>
 
       {/* RIGHT — service rows */}
-      <div style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        padding: "0 72px 0 56px",
-      }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          padding: "0 72px 0 56px",
+        }}
+      >
         {svcs.map(({ n, title, body }, i) => (
           <motion.div
             key={n}
@@ -88,17 +152,49 @@ export function ServicesSection() {
             transition={{ duration: 0.65, ease: EASE, delay: i * 0.1 }}
             style={{
               padding: "26px 0",
-              borderBottom: i < svcs.length - 1 ? "1px solid rgba(255,255,255,0.08)" : "none",
+              borderBottom:
+                i < svcs.length - 1
+                  ? "1px solid rgba(255,255,255,0.08)"
+                  : "none",
               display: "grid",
               gridTemplateColumns: "28px 1fr",
               gap: "0 22px",
               alignItems: "start",
             }}
           >
-            <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "-0.03em", color: "rgba(255,255,255,0.22)", paddingTop: 4 }}>{n}</div>
+            <div
+              style={{
+                fontFamily: mono,
+                fontSize: 12,
+                letterSpacing: "-0.03em",
+                color: "rgba(255,255,255,0.22)",
+                paddingTop: 4,
+              }}
+            >
+              {n}
+            </div>
             <div>
-              <div style={{ fontFamily: serif, fontSize: "clamp(20px, 1.8vw, 28px)", color: "#ffffff", letterSpacing: "-0.02em", marginBottom: 8, lineHeight: 1.1 }}>{title}</div>
-              <div style={{ fontSize: 15, color: "rgba(255,255,255,0.55)", lineHeight: 1.7 }}>{body}</div>
+              <div
+                style={{
+                  fontFamily: serif,
+                  fontSize: "clamp(22px, 2vw, 32px)",
+                  color: "#ffffff",
+                  letterSpacing: "-0.02em",
+                  marginBottom: 8,
+                  lineHeight: 1.1,
+                }}
+              >
+                {title}
+              </div>
+              <div
+                style={{
+                  fontSize: 16,
+                  color: "rgba(255,255,255,0.55)",
+                  lineHeight: 1.7,
+                }}
+              >
+                {body}
+              </div>
             </div>
           </motion.div>
         ))}
