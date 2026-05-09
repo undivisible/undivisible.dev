@@ -500,7 +500,29 @@ export function Info({
         <div
           className={`transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
         >
-          {socialPills}
+          <div className="flex w-full items-center gap-1.5 sm:gap-2">
+            <a
+              href="https://ring.liampas.ca/left"
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-8 flex-shrink-0 items-center justify-center px-1 text-sm leading-none transition-opacity hover:opacity-80"
+              style={{ color: "var(--page-text-muted)" }}
+              aria-label="Webring previous"
+            >
+              ←
+            </a>
+            <div className="min-w-0 flex-1">{socialPills}</div>
+            <a
+              href="https://ring.liampas.ca/right"
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-8 flex-shrink-0 items-center justify-center px-1 text-sm leading-none transition-opacity hover:opacity-80"
+              style={{ color: "var(--page-text-muted)" }}
+              aria-label="Webring next"
+            >
+              →
+            </a>
+          </div>
         </div>
         {!revealed && (
           <AnimatedText
