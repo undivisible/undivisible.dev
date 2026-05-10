@@ -714,6 +714,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   const hktParts = useMemo(() => getTimeZoneParts(now, HONG_KONG_TIME_ZONE), [now]);
   const hktDateKey = useMemo(() => getDateKey(hktParts), [hktParts]);
   const liveMinute = hktParts.hour * 60 + hktParts.minute + hktParts.second / 60;
+  const liveMinuteDiscrete = hktParts.hour * 60 + hktParts.minute;
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000);
@@ -853,50 +854,51 @@ export function useHongKongDayTheme(): HongKongDayTheme {
 
   const stops = useMemo(() => buildThemeStops(solarTimes), [solarTimes]);
   const effectiveDisplayedMinute = isScrubbing ? displayedMinute : liveMinute;
-  const palette = useMemo(() => interpolatePalette(stops, effectiveDisplayedMinute), [effectiveDisplayedMinute, stops]);
-  const phase = getPhase(effectiveDisplayedMinute, solarTimes);
+  const themeMinute = isScrubbing ? displayedMinute : liveMinuteDiscrete;
+  const palette = useMemo(() => interpolatePalette(stops, themeMinute), [themeMinute, stops]);
+  const phase = getPhase(themeMinute, solarTimes);
   const displayedDate = useMemo(() => {
     const delta = shortestWrappedDelta(liveMinute, effectiveDisplayedMinute);
     return new Date(now.getTime() + delta * 60 * 1000);
   }, [effectiveDisplayedMinute, liveMinute, now]);
 
   const daylightStrength = useMemo(() => {
-    if (effectiveDisplayedMinute <= solarTimes.sunrise || effectiveDisplayedMinute >= solarTimes.sunset) {
+    if (themeMinute <= solarTimes.sunrise || themeMinute >= solarTimes.sunset) {
       return 0;
     }
     const solarNoon = (solarTimes.sunrise + solarTimes.sunset) * 0.5;
-    if (effectiveDisplayedMinute <= solarNoon) {
+    if (themeMinute <= solarNoon) {
       return clamp(
-        (effectiveDisplayedMinute - solarTimes.sunrise) / Math.max(1, solarNoon - solarTimes.sunrise),
+        (themeMinute - solarTimes.sunrise) / Math.max(1, solarNoon - solarTimes.sunrise),
         0,
         1,
       );
     }
     return clamp(
-      1 - (effectiveDisplayedMinute - solarNoon) / Math.max(1, solarTimes.sunset - solarNoon),
+      1 - (themeMinute - solarNoon) / Math.max(1, solarTimes.sunset - solarNoon),
       0,
       1,
     );
-  }, [effectiveDisplayedMinute, solarTimes.sunrise, solarTimes.sunset]);
+  }, [themeMinute, solarTimes.sunrise, solarTimes.sunset]);
   const morningTwilight = triangleStrength(
-    effectiveDisplayedMinute,
+    themeMinute,
     solarTimes.nauticalTwilightBegin,
     solarTimes.sunrise,
   );
   const eveningTwilight = triangleStrength(
-    effectiveDisplayedMinute,
+    themeMinute,
     solarTimes.sunset,
     solarTimes.nauticalTwilightEnd,
   );
   const twilightStrength = clamp(Math.max(morningTwilight, eveningTwilight), 0, 1);
   const midnightCenter = 0;
   const midnightDistance = Math.min(
-    Math.abs(effectiveDisplayedMinute - midnightCenter),
-    MINUTES_IN_DAY - Math.abs(effectiveDisplayedMinute - midnightCenter),
+    Math.abs(themeMinute - midnightCenter),
+    MINUTES_IN_DAY - Math.abs(themeMinute - midnightCenter),
   );
   const midnightStrength = clamp(1 - midnightDistance / 180, 0, 1);
   const deepNightStrength = isWithinWrappedRange(
-    effectiveDisplayedMinute,
+    themeMinute,
     solarTimes.nauticalTwilightEnd,
     solarTimes.nauticalTwilightBegin,
   )
@@ -904,7 +906,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     : 0;
   const fullSpan = solarTimes.civilTwilightEnd - solarTimes.civilTwilightBegin;
   const sunProgress = fullSpan > 0
-    ? clamp((effectiveDisplayedMinute - solarTimes.civilTwilightBegin) / fullSpan, 0, 1)
+    ? clamp((themeMinute - solarTimes.civilTwilightBegin) / fullSpan, 0, 1)
     : 0;
 
   useEffect(() => {
@@ -922,7 +924,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     root.style.setProperty("--wall-text-shadow", "none");
     root.style.setProperty("--neon-shadow", "none");
     root.style.setProperty("--neon-text-glow", "none");
-  }, [palette, phase]);
+  }, [palette]);
 
   const style = useMemo<CSSProperties>(() => ({}), []);
 
@@ -1000,7 +1002,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     onScrubWheel,
     resetScrub,
     getTransportStyle: (baseHex: string) => {
-      const background = adjustPillColor(baseHex, palette.accent, effectiveDisplayedMinute, phase);
+      const background = adjustPillColor(baseHex, palette.accent, themeMinute, phase);
       return {
         background,
         color: palette.transportText,

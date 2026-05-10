@@ -381,7 +381,7 @@ export function Info({
   const clockPanel = (
     <div
       data-time-scrubber="true"
-      className={`absolute top-4 z-20 w-fit font-mono text-[10px] uppercase tracking-[0.18em] transition-all duration-500 ${
+      className={`absolute left-5 top-4 z-20 w-fit text-[10px] uppercase tracking-[0.18em] transition-all duration-500 [font-family:var(--font-jetbrains-mono),monospace] ${
         revealed
           ? "-translate-y-40 opacity-0 pointer-events-none"
           : "translate-y-0 opacity-100"
@@ -651,7 +651,7 @@ export function Info({
             }}
           >
             {/* Screen 1 — hero */}
-            <section className="relative flex h-dvh w-full items-center px-5">
+            <section className="relative flex h-dvh w-full items-center px-5 pb-10 pt-24">
               {clockPanel}
               <div className="w-full min-w-0">{heroBlock}</div>
             </section>
@@ -684,10 +684,10 @@ export function Info({
           }}
         >
           {/* Screen 1 — hero */}
-          <section className="relative flex h-dvh w-full items-center justify-start px-5">
+          <section className="relative flex h-dvh w-full items-center justify-start px-5 max-lg:pb-10 max-lg:pt-24">
             <div
               data-time-scrubber="true"
-              className={`absolute top-4 sm:top-6 md:top-8 z-20 w-fit font-mono text-[11px] uppercase tracking-[0.22em] transition-all duration-500 ${
+              className={`absolute left-5 top-4 z-20 w-fit text-[11px] uppercase tracking-[0.22em] transition-all duration-500 [font-family:var(--font-jetbrains-mono),monospace] sm:left-6 sm:top-6 md:left-8 md:top-8 ${
                 revealed
                   ? "-translate-y-40 opacity-0 pointer-events-none lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto"
                   : "translate-y-0 opacity-100"
@@ -1219,18 +1219,19 @@ function CarouselRow({
         style={{
           overflowX: autoLoop ? "hidden" : "auto",
           overflowY: "visible",
-          touchAction: "pan-y pinch-zoom",
+          touchAction: autoLoop ? "none" : "pan-x pinch-zoom",
+          overscrollBehaviorX: autoLoop ? undefined : "contain",
           userSelect: "none",
         }}
         className="cursor-grab py-2 [scrollbar-width:none] active:cursor-grabbing [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
         <div
           ref={trackRef}
-          className={`inline-flex w-max flex-nowrap gap-px will-change-transform sm:gap-0.5 md:gap-1 ${bleedOut ? "pl-5" : ""}`}
+          className={`inline-flex w-max flex-nowrap gap-2 will-change-transform sm:gap-1.5 md:gap-1 ${bleedOut ? "pl-5" : ""}`}
         >
           <div
             ref={contentRef}
-            className="inline-flex flex-nowrap gap-px sm:gap-0.5 md:gap-1"
+            className="inline-flex flex-nowrap gap-2 sm:gap-1.5 md:gap-1"
           >
             {children}
           </div>
@@ -1240,7 +1241,7 @@ function CarouselRow({
                 key={index}
                 aria-hidden="true"
                 inert={true}
-                className="inline-flex flex-nowrap gap-px sm:gap-0.5 md:gap-1"
+                className="inline-flex flex-nowrap gap-2 sm:gap-1.5 md:gap-1"
               >
                 {children}
               </div>
