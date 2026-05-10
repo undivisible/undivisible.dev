@@ -413,7 +413,7 @@ export function Info({
   );
 
   const socialPills = (
-    <CarouselRow bleedOut autoLoop={false} edgeFade={false}>
+    <CarouselRow bleedOut autoLoop={false} edgeFade>
       {socials.map((social) => {
         const active = hoveredPill === social.name;
         return (
@@ -1211,16 +1211,21 @@ function CarouselRow({
 
   return (
     <div
-      className={`relative w-full overflow-x-hidden overflow-y-visible ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""} ${canLoop && edgeFade ? "carousel-mask" : ""}`}
+      className={`relative w-full overflow-y-visible ${autoLoop ? "overflow-x-hidden" : "overflow-x-visible"} ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""} ${edgeFade ? "carousel-mask" : ""}`}
     >
       <div
         ref={viewportRef}
         data-carousel-scroll="true"
         style={{
           overflowX: autoLoop ? "hidden" : "auto",
-          overflowY: "visible",
-          touchAction: autoLoop ? "none" : "pan-x pinch-zoom",
+          overflowY: "hidden",
+          ...(autoLoop
+            ? { touchAction: "none" as const }
+            : {
+                WebkitOverflowScrolling: "touch",
+              } satisfies Pick<CSSProperties, "WebkitOverflowScrolling">),
           overscrollBehaviorX: autoLoop ? undefined : "contain",
+          overscrollBehaviorY: "contain",
           userSelect: "none",
         }}
         className="cursor-grab py-2 [scrollbar-width:none] active:cursor-grabbing [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
