@@ -1,0 +1,402 @@
+# Instincts generated from https://github.com/undivisible/undivisible.dev
+# Generated: 2026-05-10T03:02:49.141Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: undivisible.dev-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: fix
+
+## Evidence
+
+- 3 commits analyzed
+- Detected conventional commit pattern
+- Examples: fix(mobile): hero carousel scroll, stable theme, mono UI, fix(carousel): enable hero horizontal scroll + edge fades
+
+---
+id: undivisible.dev-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Commit Length
+
+## Action
+
+Write moderate-length commit messages (~57 characters)
+
+## Evidence
+
+- Average commit message length: 57 chars
+- Based on 3 commits
+
+---
+id: undivisible.dev-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: undivisible.dev-import-alias
+trigger: "when importing modules"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Import Alias
+
+## Action
+
+Use path aliases (@/, ~/) instead of relative imports
+
+## Evidence
+
+- Import analysis shows alias pattern
+- Example: import { x } from '@/lib/x'
+
+---
+id: undivisible.dev-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Export Style
+
+## Action
+
+Prefer mixed exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: mixed
+
+---
+id: undivisible.dev-arch-type-based
+trigger: "when adding new code"
+confidence: 0.8
+domain: architecture
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Arch Type Based
+
+## Action
+
+Place code in the appropriate type folder (components/, services/, utils/, etc.)
+
+## Evidence
+
+- Type-based module organization detected
+- Folders: 
+
+---
+id: undivisible.dev-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: undivisible.dev-workflow-ui-component-update
+trigger: "when doing ui component update"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Workflow Ui Component Update
+
+## Action
+
+Follow the ui-component-update workflow:
+1. Edit one or more files in src/components (e.g., Info.tsx, PrintActions.tsx) to adjust UI behavior or appearance.
+2. Possibly update related hooks or utility files in src/lib if the UI change depends on theme or state logic.
+3. Test changes on relevant viewports (mobile/desktop).
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: artifacts/undivisible/src/components/Info.tsx, artifacts/undivisible/src/components/PrintActions.tsx, artifacts/undivisible/src/lib/useHongKongDayTheme.ts
+
+---
+id: undivisible.dev-instinct-file-naming
+trigger: "When creating a new file in the codebase"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct File Naming
+
+## Action
+
+Name the file using camelCase (e.g., useHongKongDayTheme.ts)
+
+## Evidence
+
+- Pattern in files: artifacts/undivisible/src/lib/useHongKongDayTheme.ts
+
+---
+id: undivisible.dev-instinct-function-naming
+trigger: "When defining a function"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Function Naming
+
+## Action
+
+Name the function using camelCase (e.g., useHongKongDayTheme)
+
+## Evidence
+
+- Pattern in files: artifacts/undivisible/src/lib/useHongKongDayTheme.ts
+
+---
+id: undivisible.dev-instinct-class-naming
+trigger: "When defining a class"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Class Naming
+
+## Action
+
+Name the class using PascalCase
+
+## Evidence
+
+- Naming convention stated in analysis
+
+---
+id: undivisible.dev-instinct-constant-naming
+trigger: "When defining a constant"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Constant Naming
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE
+
+## Evidence
+
+- Naming convention stated in analysis
+
+---
+id: undivisible.dev-instinct-import-style
+trigger: "When importing modules"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Import Style
+
+## Action
+
+Use alias import style
+
+## Evidence
+
+- Import style stated as 'alias' in analysis
+
+---
+id: undivisible.dev-instinct-export-style
+trigger: "When exporting modules or functions"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Export Style
+
+## Action
+
+Use mixed export style (both named and default exports as appropriate)
+
+## Evidence
+
+- Export style stated as 'mixed' in analysis
+
+---
+id: undivisible.dev-instinct-try-catch-error-handling
+trigger: "When handling errors in code"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Try Catch Error Handling
+
+## Action
+
+Use try-catch blocks for error handling
+
+## Evidence
+
+- Error handling style: try-catch (analysis)
+
+---
+id: undivisible.dev-instinct-test-location
+trigger: "When adding or updating tests"
+confidence: 0.7
+domain: testing
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Test Location
+
+## Action
+
+Place test files in a separate location from source files
+
+## Evidence
+
+- Architecture: testLocation is 'separate'
+
+---
+id: undivisible.dev-instinct-test-type
+trigger: "When writing tests for components or logic"
+confidence: 0.7
+domain: testing
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Test Type
+
+## Action
+
+Write tests in TypeScript, matching the main code language
+
+## Evidence
+
+- CodeStyle: language is TypeScript
+
+---
+id: undivisible.dev-instinct-git-commit-format
+trigger: "When making a git commit"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Git Commit Format
+
+## Action
+
+Format the commit message using Conventional Commits, starting with a 'fix' prefix for bug fixes (e.g., 'fix(mobile): ...')
+
+## Evidence
+
+- Seen in commit: fix(mobile): hero carousel scroll, stable theme, mono UI
+- Pattern: commits use 'fix' prefix
+
+---
+id: undivisible.dev-instinct-git-commit-length
+trigger: "When writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Git Commit Length
+
+## Action
+
+Keep the commit message concise, around 57 characters on average
+
+## Evidence
+
+- Commits: averageLength is 57
+
+---
+id: undivisible.dev-instinct-ui-component-update
+trigger: "When someone wants to improve or fix visual/UI behavior in a component, especially related to Info.tsx or PrintActions.tsx"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Ui Component Update
+
+## Action
+
+Edit one or more files in src/components (e.g., Info.tsx, PrintActions.tsx) to adjust UI behavior or appearance; possibly update related hooks or utility files in src/lib if the UI change depends on theme or state logic; test changes on relevant viewports (mobile/desktop)
+
+## Evidence
+
+- Workflow: ui-component-update
+- Files: artifacts/undivisible/src/components/Info.tsx, PrintActions.tsx, useHongKongDayTheme.ts
+- Commit examples: fix(mobile): hero carousel scroll, stable theme, mono UI
+
