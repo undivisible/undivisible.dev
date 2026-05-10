@@ -19,6 +19,49 @@ const FIELD_CHARS = ".,:;-=+*#%&";
 const SHAPE_CHARS = "@#MW8$&NBG";
 const SHADER_DPR_CAP = 1;
 const WEBGL_INTERVAL = 1000 / 24;
+/** Ignore sub-pixel/layout-thrash resizes so mobile viewport bars do not wipe canvases each frame */
+const RESIZE_STABILITY_PX = 10;
+
+function attachStableResize(container: HTMLElement, apply: () => void) {
+  let lastW = Number.NEGATIVE_INFINITY;
+  let lastH = Number.NEGATIVE_INFINITY;
+  let rafId = 0;
+
+  const run = () => {
+    rafId = 0;
+    const w = Math.round(container.clientWidth);
+    const h = Math.round(container.clientHeight);
+    if (w < 8 || h < 8) {
+      return;
+    }
+    if (
+      Math.abs(w - lastW) < RESIZE_STABILITY_PX &&
+      Math.abs(h - lastH) < RESIZE_STABILITY_PX
+    ) {
+      return;
+    }
+    lastW = w;
+    lastH = h;
+    apply();
+  };
+
+  const schedule = () => {
+    if (!rafId) {
+      rafId = requestAnimationFrame(run);
+    }
+  };
+
+  const observer = new ResizeObserver(schedule);
+  observer.observe(container);
+  run();
+
+  return () => {
+    observer.disconnect();
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+    }
+  };
+}
 
 function nextShapeType(type: ShapeType): ShapeType {
   if (type === "circle") return "triangle";
@@ -122,10 +165,12 @@ export default function Ascii({
   colors = DEFAULT_COLORS,
   track = null,
   ready = false,
+  lastFmUsername = "undivisible",
 }: {
   colors?: string[];
   track?: TrackInfo | null;
   ready?: boolean;
+  lastFmUsername?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -273,9 +318,7 @@ export default function Ascii({
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
 
-    const observer = new ResizeObserver(resize);
-    observer.observe(container);
-    resize();
+    const detachResize = attachStableResize(container, resize);
 
     // Store render fn on a ref so the ASCII effect can call it each frame
     let lastWebgl = -Infinity;
@@ -303,7 +346,7 @@ export default function Ascii({
     webglRenderRef.current = renderWebGL;
 
     return () => {
-      observer.disconnect();
+      detachResize();
       webglRenderRef.current = null;
     };
   }, [colorUniforms, ready]);
@@ -383,9 +426,7 @@ export default function Ascii({
       ctx.setTransform(1, 0, 0, 1, 0, 0);
     };
 
-    const observer = new ResizeObserver(resize);
-    observer.observe(container);
-    resize();
+    const detachResize = attachStableResize(container, resize);
 
     const render = (now: number) => {
       if (document.hidden) {
@@ -484,12 +525,7 @@ export default function Ascii({
 
           ctx.fillStyle = `rgb(${r},${g},${b})`;
           ctx.globalAlpha = insideAnyShape
-            ? clamp(
-                0.94 *
-                  (0.95 + Math.sin(now * 0.012 + col * 0.3 + row * 0.7) * 0.03),
-                0.7,
-                1.0,
-              )
+            ? clamp(0.86 + brightness * 0.1, 0.78, 0.94)
             : clamp(0.52 + brightness * 0.4, 0.52, 0.94);
           ctx.fillText(charSet[charIndex], x, y);
         }
@@ -506,7 +542,7 @@ export default function Ascii({
     document.addEventListener("visibilitychange", visibilityHandler);
 
     return () => {
-      observer.disconnect();
+      detachResize();
       document.removeEventListener("visibilitychange", visibilityHandler);
       cancelAnimationFrame(frameRef.current);
     };
@@ -529,7 +565,7 @@ export default function Ascii({
 
       {ready && track && (
         <a
-          href="https://www.last.fm/user/undivisible"
+          href={`https://www.last.fm/user/${encodeURIComponent(lastFmUsername)}`}
           target="_blank"
           rel="noreferrer"
           className="absolute bottom-6 right-6 z-10 max-w-[14rem] cursor-pointer text-right font-mono"

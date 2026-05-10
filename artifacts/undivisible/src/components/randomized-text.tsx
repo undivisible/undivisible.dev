@@ -1,6 +1,5 @@
-
 import { motion } from "motion/react";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 
 type SplitType = "words" | "chars";
 
@@ -11,6 +10,17 @@ interface RandomizedTextProps {
   delay?: number;
   inView?: boolean;
   once?: boolean;
+}
+
+/** Deterministic per-index jitter so SSR and hydration match React #418 safeguards. */
+function staggerDelay(delay: number, seed: string, index: number) {
+  let h = index + 913;
+  const cap = Math.min(seed.length, 160);
+  for (let i = 0; i < cap; i += 1) {
+    h = Math.imul(31, h) + seed.charCodeAt(i);
+  }
+  const t = Math.abs(Math.sin(h * 0.00013));
+  return delay + t * 0.22 + (index % 7) * 0.009;
 }
 
 export function RandomizedText({
@@ -38,16 +48,10 @@ export function RandomizedText({
     }));
   }, [children, split]);
 
-  const [randomizedDelays, setRandomizedDelays] = useState<number[]>([]);
-
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => {
-      setRandomizedDelays(
-        elements.map(() => delay + Math.random() * 0.2 + Math.random() * 0.03),
-      );
-    });
-    return () => cancelAnimationFrame(raf);
-  }, [elements, delay]);
+  const randomizedDelays = useMemo(
+    () => elements.map((_, i) => staggerDelay(delay, children, i)),
+    [elements, delay, children],
+  );
 
   const variants = {
     hidden: { opacity: 0 },
