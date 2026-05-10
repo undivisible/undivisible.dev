@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { fetchLastFmRecent } from "./lastfmClient";
+
 export interface TrackInfo {
   artist: string;
   track: string;
@@ -8,16 +10,6 @@ export interface TrackInfo {
 }
 
 const DEFAULT_COLORS = ["#ffffff", "#cccccc", "#999999", "#666666", "#333333"];
-
-type RecentPayload = {
-  configured?: boolean;
-  track?: {
-    artist: string;
-    track: string;
-    albumArt: string;
-    isNowPlaying?: boolean;
-  } | null;
-};
 
 function extractColorsFromCanvasImage(
   image: CanvasImageSource,
@@ -55,7 +47,10 @@ function extractColorsFromCanvasImage(
   }
 }
 
-/** Last.fm + album palette via Next API routes (avoids leaked keys & client CORS/adblock pitfalls). */
+/**
+ * Last.fm recent track + palette from album art.
+ * Uses static export–friendly client fetch (Audioscrobbler allows CORS; art CDN sends `Access-Control-Allow-Origin: *`).
+ */
 export function useLastFmVisualData() {
   const publicUsername =
     process.env.NEXT_PUBLIC_LASTFM_USERNAME ?? "undivisible";
@@ -75,14 +70,11 @@ export function useLastFmVisualData() {
 
     void (async () => {
       try {
-        const response = await fetch("/api/lastfm/recent", {
-          cache: "no-store",
-        });
-        const payload = (await response.json()) as RecentPayload;
+        const payload = await fetchLastFmRecent();
 
         if (cancelled) return;
 
-        const raw = payload?.track;
+        const raw = payload.track;
         if (!raw) {
           finish();
           return;
@@ -103,13 +95,9 @@ export function useLastFmVisualData() {
           return;
         }
 
-        /**
-         * Same-origin proxy image — no `crossOrigin` needed, so sampling is not blocked
-         * and ad blockers rarely tag first-party URLs the way they flag Last.fm CDN.
-         */
-        const proxiedSrc = `/api/lastfm/album-art?u=${encodeURIComponent(artHref)}`;
         const img = new Image();
         img.decoding = "async";
+        img.crossOrigin = "anonymous";
         img.onload = () => {
           if (cancelled) return;
           const sampled = extractColorsFromCanvasImage(img);
@@ -119,7 +107,7 @@ export function useLastFmVisualData() {
           finish();
         };
         img.onerror = finish;
-        img.src = proxiedSrc;
+        img.src = artHref;
       } catch {
         finish();
       }

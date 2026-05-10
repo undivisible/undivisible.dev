@@ -1,9 +1,16 @@
-import { NextResponse } from "next/server";
-
 const USERNAME =
-  process.env.LASTFM_USERNAME ??
-  process.env.NEXT_PUBLIC_LASTFM_USERNAME ??
-  "undivisible";
+  process.env.NEXT_PUBLIC_LASTFM_USERNAME ?? "undivisible";
+
+export type LastFmRecentPayload = {
+  configured: boolean;
+  track: {
+    artist: string;
+    track: string;
+    albumArt: string;
+    isNowPlaying: boolean;
+  } | null;
+  error?: string;
+};
 
 function normalizeTrack(track: unknown) {
   if (!track || typeof track !== "object") {
@@ -41,16 +48,12 @@ function normalizeTrack(track: unknown) {
   };
 }
 
-/** GET proxied Last.fm recent track (API key stays on the server). */
-export async function GET() {
-  const apiKey =
-    process.env.LASTFM_API_KEY ?? process.env.NEXT_PUBLIC_LASTFM_API_KEY ?? "";
+/** Browser fetch — Last.fm allows `Access-Control-Allow-Origin: *` on ws.audioscrobbler.com. */
+export async function fetchLastFmRecent(): Promise<LastFmRecentPayload> {
+  const apiKey = process.env.NEXT_PUBLIC_LASTFM_API_KEY ?? "";
 
   if (!apiKey) {
-    return NextResponse.json({
-      configured: false,
-      track: null,
-    });
+    return { configured: false, track: null };
   }
 
   try {
@@ -62,7 +65,7 @@ export async function GET() {
     url.searchParams.set("limit", "1");
 
     const res = await fetch(url.toString(), {
-      next: { revalidate: 45 },
+      cache: "no-store",
       headers: { Accept: "application/json" },
     });
 
@@ -73,29 +76,27 @@ export async function GET() {
     };
 
     if (!res.ok || data?.error !== undefined) {
-      return NextResponse.json(
-        {
-          configured: true,
-          track: null,
-          error: typeof data.message === "string" ? data.message : "lastfm_error",
-        },
-        { status: 200 },
-      );
+      return {
+        configured: true,
+        track: null,
+        error:
+          typeof data.message === "string" ? data.message : "lastfm_error",
+      };
     }
 
     const rawTracks = data.recenttracks?.track;
     const first = Array.isArray(rawTracks) ? rawTracks[0] : rawTracks;
     const track = normalizeTrack(first);
 
-    return NextResponse.json({
+    return {
       configured: true,
       track,
-    });
+    };
   } catch {
-    return NextResponse.json({
+    return {
       configured: true,
       track: null,
       error: "network_error",
-    });
+    };
   }
 }
