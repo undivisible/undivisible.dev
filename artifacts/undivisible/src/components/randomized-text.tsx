@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type SplitType = "words" | "chars";
 
@@ -31,6 +31,12 @@ export function RandomizedText({
   inView = false,
   once = true,
 }: RandomizedTextProps) {
+  const [motionReady, setMotionReady] = useState(false);
+
+  useEffect(() => {
+    setMotionReady(true);
+  }, []);
+
   const expoOut = (t: number): number => {
     return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
   };
@@ -57,6 +63,14 @@ export function RandomizedText({
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
   };
+
+  if (!motionReady) {
+    return (
+      <span className={className} aria-label={children}>
+        {children}
+      </span>
+    );
+  }
 
   return (
     <motion.span

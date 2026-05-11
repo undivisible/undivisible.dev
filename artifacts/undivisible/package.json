@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "next dev",
     "sync:readme": "bun run scripts/sync-readme-projects.ts",
-    "prebuild": "bun run sync:readme",
+    "sync:lastfm": "bun run scripts/sync-lastfm-snapshot.ts",
+    "prebuild": "bun run sync:readme && bun run sync:lastfm",
     "build": "next build",
     "serve": "next start",
     "typecheck": "tsc -p tsconfig.json --noEmit"

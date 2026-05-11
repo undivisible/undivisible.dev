@@ -69,10 +69,14 @@ export function Info({
   colors,
   dayTheme,
   readme,
+  nowMarkdown,
+  onOpenNow,
 }: {
   colors: string[];
   dayTheme: HongKongDayTheme;
   readme: ReadmeBundle;
+  nowMarkdown: string | null;
+  onOpenNow: () => void;
 }) {
   const tidbits = useMemo((): Array<{
     name: string;
@@ -102,6 +106,7 @@ export function Info({
   const [loaded, setLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [clockHovered, setClockHovered] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
@@ -273,37 +278,82 @@ export function Info({
   const melText = hydrated ? dayTheme.melTime : "--:--:--";
   const localText = hydrated ? dayTheme.localTime : "--:--:--";
 
+  const clockInner = (labelColClass: string) => (
+    <>
+      <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>
+        {weatherText}
+      </div>
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <span
+          className={`${labelColClass} shrink-0`}
+          style={{ color: "var(--page-text-soft)" }}
+        >
+          HKG
+        </span>
+        <span>{hkgText}</span>
+        {clockHovered && nowMarkdown ? (
+          <button
+            type="button"
+            className="cursor-pointer border-none bg-transparent p-0 normal-case tracking-normal underline decoration-dotted underline-offset-4"
+            style={{ color: "var(--page-text-muted)" }}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onOpenNow();
+            }}
+          >
+            now
+          </button>
+        ) : null}
+      </div>
+      <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <span
+          className={`${labelColClass} shrink-0`}
+          style={{ color: "var(--page-text-soft)" }}
+        >
+          MEL
+        </span>
+        <span>{melText}</span>
+        {clockHovered ? (
+          <span
+            className="max-w-[10rem] normal-case tracking-normal text-[9px] leading-snug sm:max-w-none"
+            style={{ color: "var(--page-text-muted)" }}
+          >
+            scroll to change time
+          </span>
+        ) : null}
+      </div>
+      {dayTheme.showLocalTime ? (
+        <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
+          <span
+            className={`${labelColClass} shrink-0`}
+            style={{ color: "var(--page-text-soft)" }}
+          >
+            {dayTheme.localLabel}
+          </span>
+          <span>{localText}</span>
+        </div>
+      ) : null}
+    </>
+  );
+
   const clockPanel = (
     <div
       data-time-scrubber="true"
-      className={`absolute left-5 top-4 z-20 w-fit text-[10px] uppercase tracking-[0.18em] transition-all duration-500 [font-family:var(--font-jetbrains-mono),monospace] ${
+      className={`absolute left-5 top-4 z-20 w-fit max-w-[min(100vw-2.5rem,20rem)] text-[10px] uppercase tracking-[0.18em] transition-all duration-500 [font-family:var(--font-jetbrains-mono),monospace] ${
         revealed
           ? "-translate-y-40 opacity-0 pointer-events-none"
           : "translate-y-0 opacity-100"
       }`}
       style={{ color: "var(--page-text)" }}
-      onMouseLeave={dayTheme.resetScrub}
+      onMouseEnter={() => setClockHovered(true)}
+      onMouseLeave={() => {
+        setClockHovered(false);
+        dayTheme.resetScrub();
+      }}
       onWheel={dayTheme.onScrubWheel}
     >
-      <div className="mb-2" style={{ color: "var(--page-text-soft)" }}>
-        {weatherText}
-      </div>
-      <div className="grid grid-cols-[3.2rem_auto] items-baseline gap-x-2">
-        <span style={{ color: "var(--page-text-soft)" }}>HKG</span>
-        <span>{hkgText}</span>
-      </div>
-      <div className="mt-1 grid grid-cols-[3.2rem_auto] items-baseline gap-x-2">
-        <span style={{ color: "var(--page-text-soft)" }}>MEL</span>
-        <span>{melText}</span>
-      </div>
-      {dayTheme.showLocalTime && (
-        <div className="mt-1 grid grid-cols-[3.2rem_auto] items-baseline gap-x-2">
-          <span style={{ color: "var(--page-text-soft)" }}>
-            {dayTheme.localLabel}
-          </span>
-          <span>{localText}</span>
-        </div>
-      )}
+      {clockInner("w-[3.2rem]")}
     </div>
   );
 
@@ -572,39 +622,20 @@ export function Info({
           <section className="relative flex h-dvh w-full items-center justify-start px-5 max-lg:pb-10 max-lg:pt-24">
             <div
               data-time-scrubber="true"
-              className={`absolute left-5 top-4 z-20 w-fit text-[11px] uppercase tracking-[0.22em] transition-all duration-500 [font-family:var(--font-jetbrains-mono),monospace] sm:left-6 sm:top-6 md:left-8 md:top-8 ${
+              className={`absolute left-5 top-4 z-20 w-fit max-w-[min(100vw-2.5rem,22rem)] text-[11px] uppercase tracking-[0.22em] transition-all duration-500 [font-family:var(--font-jetbrains-mono),monospace] sm:left-6 sm:top-6 md:left-8 md:top-8 ${
                 revealed
                   ? "-translate-y-40 opacity-0 pointer-events-none lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto"
                   : "translate-y-0 opacity-100"
               }`}
               style={{ color: "var(--page-text)" }}
-              onMouseLeave={dayTheme.resetScrub}
+              onMouseEnter={() => setClockHovered(true)}
+              onMouseLeave={() => {
+                setClockHovered(false);
+                dayTheme.resetScrub();
+              }}
               onWheel={dayTheme.onScrubWheel}
             >
-              <div className="w-fit">
-                <div
-                  className="mb-2"
-                  style={{ color: "var(--page-text-soft)" }}
-                >
-                  {weatherText}
-                </div>
-                <div className="grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                  <span style={{ color: "var(--page-text-soft)" }}>HKG</span>
-                  <span>{hkgText}</span>
-                </div>
-                <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                  <span style={{ color: "var(--page-text-soft)" }}>MEL</span>
-                  <span>{melText}</span>
-                </div>
-                {dayTheme.showLocalTime && (
-                  <div className="mt-1 grid grid-cols-[3.6rem_auto] items-baseline gap-x-2">
-                    <span style={{ color: "var(--page-text-soft)" }}>
-                      {dayTheme.localLabel}
-                    </span>
-                    <span>{localText}</span>
-                  </div>
-                )}
-              </div>
+              <div className="w-fit">{clockInner("w-[3.6rem]")}</div>
             </div>
             <div className="w-full min-w-0">{heroBlock}</div>
           </section>

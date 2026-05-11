@@ -48,55 +48,107 @@ function normalizeTrack(track: unknown) {
   };
 }
 
-/** Browser fetch — Last.fm allows `Access-Control-Allow-Origin: *` on ws.audioscrobbler.com. */
+function parseSnapshotTrack(raw: unknown): LastFmRecentPayload["track"] {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+  const o = raw as Record<string, unknown>;
+  const artist = typeof o.artist === "string" ? o.artist : "";
+  const track = typeof o.track === "string" ? o.track : "";
+  if (!artist || !track) {
+    return null;
+  }
+  return {
+    artist,
+    track,
+    albumArt: typeof o.albumArt === "string" ? o.albumArt : "",
+    isNowPlaying: o.isNowPlaying === true,
+  };
+}
+
+async function fetchSnapshotTrack(): Promise<LastFmRecentPayload["track"]> {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  try {
+    const res = await fetch(
+      new URL("/lastfm-recent.json", window.location.origin).toString(),
+      { cache: "no-store" },
+    );
+    if (!res.ok) {
+      return null;
+    }
+    const data = (await res.json()) as { track?: unknown };
+    return parseSnapshotTrack(data.track);
+  } catch {
+    return null;
+  }
+}
+
+/** Browser fetch — Last.fm allows CORS on ws.audioscrobbler.com; falls back to same-origin snapshot when live API is blocked or fails. */
 export async function fetchLastFmRecent(): Promise<LastFmRecentPayload> {
   const apiKey = process.env.NEXT_PUBLIC_LASTFM_API_KEY ?? "";
+  let fallback: LastFmRecentPayload | undefined;
 
-  if (!apiKey) {
-    return { configured: false, track: null };
-  }
+  if (apiKey) {
+    try {
+      const url = new URL("https://ws.audioscrobbler.com/2.0/");
+      url.searchParams.set("method", "user.getrecenttracks");
+      url.searchParams.set("user", USERNAME);
+      url.searchParams.set("api_key", apiKey);
+      url.searchParams.set("format", "json");
+      url.searchParams.set("limit", "1");
 
-  try {
-    const url = new URL("https://ws.audioscrobbler.com/2.0/");
-    url.searchParams.set("method", "user.getrecenttracks");
-    url.searchParams.set("user", USERNAME);
-    url.searchParams.set("api_key", apiKey);
-    url.searchParams.set("format", "json");
-    url.searchParams.set("limit", "1");
+      const res = await fetch(url.toString(), {
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+      });
 
-    const res = await fetch(url.toString(), {
-      cache: "no-store",
-      headers: { Accept: "application/json" },
-    });
+      const data = (await res.json()) as {
+        recenttracks?: { track?: unknown | unknown[] };
+        message?: string;
+        error?: number;
+      };
 
-    const data = (await res.json()) as {
-      recenttracks?: { track?: unknown | unknown[] };
-      message?: string;
-      error?: number;
-    };
-
-    if (!res.ok || data?.error !== undefined) {
-      return {
+      if (!res.ok || data?.error !== undefined) {
+        fallback = {
+          configured: true,
+          track: null,
+          error:
+            typeof data.message === "string" ? data.message : "lastfm_error",
+        };
+      } else {
+        const rawTracks = data.recenttracks?.track;
+        const first = Array.isArray(rawTracks) ? rawTracks[0] : rawTracks;
+        const track = normalizeTrack(first);
+        if (track) {
+          return {
+            configured: true,
+            track,
+          };
+        }
+        fallback = { configured: true, track: null };
+      }
+    } catch {
+      fallback = {
         configured: true,
         track: null,
-        error:
-          typeof data.message === "string" ? data.message : "lastfm_error",
+        error: "network_error",
       };
     }
+  }
 
-    const rawTracks = data.recenttracks?.track;
-    const first = Array.isArray(rawTracks) ? rawTracks[0] : rawTracks;
-    const track = normalizeTrack(first);
-
+  const snapTrack = await fetchSnapshotTrack();
+  if (snapTrack) {
     return {
       configured: true,
-      track,
-    };
-  } catch {
-    return {
-      configured: true,
-      track: null,
-      error: "network_error",
+      track: snapTrack,
     };
   }
+
+  if (fallback) {
+    return fallback;
+  }
+
+  return { configured: false, track: null };
 }
