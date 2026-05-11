@@ -504,7 +504,7 @@ export function Info({
             <a
               href="https://ring.liampas.ca/left"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener"
               className="flex h-8 flex-shrink-0 items-center justify-center px-1 text-sm leading-none transition-opacity hover:opacity-80"
               style={{ color: "var(--page-text-muted)" }}
               aria-label="Webring previous"
@@ -515,7 +515,7 @@ export function Info({
             <a
               href="https://ring.liampas.ca/right"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener"
               className="flex h-8 flex-shrink-0 items-center justify-center px-1 text-sm leading-none transition-opacity hover:opacity-80"
               style={{ color: "var(--page-text-muted)" }}
               aria-label="Webring next"
