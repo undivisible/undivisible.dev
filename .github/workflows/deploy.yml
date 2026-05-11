@@ -33,7 +33,7 @@ jobs:
       - name: Build site
         run: bun run build:web
         env:
-          NEXT_PUBLIC_LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+          NEXT_PUBLIC_LASTFM_API_KEY: ${{ secrets.NEXT_PUBLIC_LASTFM_API_KEY }}
           NEXT_PUBLIC_LASTFM_USERNAME: undivisible
 
       - name: Upload artifact
