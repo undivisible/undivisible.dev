@@ -119,14 +119,13 @@ export async function fetchLastFmRecent(): Promise<LastFmRecentPayload> {
       const data = (await res.json()) as {
         recenttracks?: { track?: unknown | unknown[] };
         message?: string;
-        error?: number;
+        error?: unknown;
       };
 
-      const err = data?.error;
+      const err: unknown = data?.error;
       const hasApiError =
-        typeof err === "number"
-          ? err > 0
-          : typeof err === "string" && err.length > 0;
+        (typeof err === "number" && err > 0) ||
+        (typeof err === "string" && err.length > 0);
 
       if (!res.ok || hasApiError) {
         fallback = {
