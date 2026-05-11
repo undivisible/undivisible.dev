@@ -188,8 +188,11 @@ export default function Ascii({
       ].map(hexToRgb),
     [colors],
   );
+  const colorUniformsRef = useRef(colorUniforms);
+  colorUniformsRef.current = colorUniforms;
 
-  // WebGL shader effect — re-runs when colors change
+  // WebGL shader — lifecycle keyed only to `ready`. Palette updates go through
+  // colorUniformsRef so Last.fm color changes do not tear down GL (Safari flash).
   useEffect(() => {
     if (!ready) return;
 
@@ -327,21 +330,27 @@ export default function Ascii({
       if (now - lastWebgl < WEBGL_INTERVAL) return;
       lastWebgl = now;
 
+      const cu = colorUniformsRef.current;
       gl.useProgram(program);
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       gl.enableVertexAttribArray(positionLocation);
       gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
       gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
       gl.uniform1f(timeLocation, now * 0.001);
+      gl.uniform3fv(colorALocation, cu[0]!);
+      gl.uniform3fv(colorBLocation, cu[1]!);
+      gl.uniform3fv(colorCLocation, cu[2]!);
+      gl.uniform3fv(colorDLocation, cu[3]!);
+      gl.uniform3fv(colorELocation, cu[4]!);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     };
 
     gl.useProgram(program);
-    gl.uniform3fv(colorALocation, colorUniforms[0]);
-    gl.uniform3fv(colorBLocation, colorUniforms[1]);
-    gl.uniform3fv(colorCLocation, colorUniforms[2]);
-    gl.uniform3fv(colorDLocation, colorUniforms[3]);
-    gl.uniform3fv(colorELocation, colorUniforms[4]);
+    gl.uniform3fv(colorALocation, colorUniformsRef.current[0]!);
+    gl.uniform3fv(colorBLocation, colorUniformsRef.current[1]!);
+    gl.uniform3fv(colorCLocation, colorUniformsRef.current[2]!);
+    gl.uniform3fv(colorDLocation, colorUniformsRef.current[3]!);
+    gl.uniform3fv(colorELocation, colorUniformsRef.current[4]!);
 
     webglRenderRef.current = renderWebGL;
 
@@ -349,7 +358,7 @@ export default function Ascii({
       detachResize();
       webglRenderRef.current = null;
     };
-  }, [colorUniforms, ready]);
+  }, [ready]);
 
   // ASCII + physics effect — single rAF loop drives both WebGL and ASCII
   useEffect(() => {

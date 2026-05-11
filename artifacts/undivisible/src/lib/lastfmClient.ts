@@ -18,7 +18,7 @@ function normalizeTrack(track: unknown) {
   }
 
   const t = track as Record<string, unknown>;
-  const artistField = t.artist as Record<string, string> | undefined;
+  const artistRaw = t.artist;
   const images = t.image;
 
   let albumArt = "";
@@ -38,10 +38,18 @@ function normalizeTrack(track: unknown) {
   const name = typeof t.name === "string" ? t.name : "Unknown Track";
   const attrs = t["@attr"] as Record<string, string> | undefined;
 
+  let artist = "Unknown Artist";
+  if (typeof artistRaw === "string" && artistRaw.trim()) {
+    artist = artistRaw.trim();
+  } else if (artistRaw && typeof artistRaw === "object") {
+    const af = artistRaw as Record<string, string>;
+    if (typeof af["#text"] === "string" && af["#text"].trim()) {
+      artist = af["#text"].trim();
+    }
+  }
+
   return {
-    artist:
-      (typeof artistField?.["#text"] === "string" && artistField["#text"]) ||
-      "Unknown Artist",
+    artist,
     track: name,
     albumArt,
     isNowPlaying: attrs?.nowplaying === "true",
@@ -66,15 +74,19 @@ function parseSnapshotTrack(raw: unknown): LastFmRecentPayload["track"] {
   };
 }
 
+function snapshotUrl(): string {
+  if (typeof window === "undefined") {
+    return "/lastfm-recent.json";
+  }
+  return new URL("./lastfm-recent.json", window.location.href).toString();
+}
+
 async function fetchSnapshotTrack(): Promise<LastFmRecentPayload["track"]> {
   if (typeof window === "undefined") {
     return null;
   }
   try {
-    const res = await fetch(
-      new URL("/lastfm-recent.json", window.location.origin).toString(),
-      { cache: "no-store" },
-    );
+    const res = await fetch(snapshotUrl(), { cache: "no-store" });
     if (!res.ok) {
       return null;
     }
@@ -110,7 +122,13 @@ export async function fetchLastFmRecent(): Promise<LastFmRecentPayload> {
         error?: number;
       };
 
-      if (!res.ok || data?.error !== undefined) {
+      const err = data?.error;
+      const hasApiError =
+        typeof err === "number"
+          ? err > 0
+          : typeof err === "string" && err.length > 0;
+
+      if (!res.ok || hasApiError) {
         fallback = {
           configured: true,
           track: null,
