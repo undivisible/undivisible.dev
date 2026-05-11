@@ -291,10 +291,14 @@ export function Info({
           HKG
         </span>
         <span>{hkgText}</span>
-        {clockHovered && nowMarkdown ? (
+        {nowMarkdown ? (
           <button
             type="button"
-            className="cursor-pointer border-none bg-transparent p-0 normal-case tracking-normal underline decoration-dotted underline-offset-4"
+            className={`cursor-pointer border-none bg-transparent p-0 normal-case tracking-normal underline decoration-dotted underline-offset-4 transition-opacity duration-300 ease-out ${
+              clockHovered
+                ? "pointer-events-auto opacity-100"
+                : "pointer-events-none opacity-0"
+            }`}
             style={{ color: "var(--page-text-muted)" }}
             onClick={(event) => {
               event.preventDefault();
@@ -314,14 +318,15 @@ export function Info({
           MEL
         </span>
         <span>{melText}</span>
-        {clockHovered ? (
-          <span
-            className="max-w-[10rem] normal-case tracking-normal text-[9px] leading-snug sm:max-w-none"
-            style={{ color: "var(--page-text-muted)" }}
-          >
-            scroll to change time
-          </span>
-        ) : null}
+        <span
+          aria-hidden={!clockHovered}
+          className={`max-w-[10rem] normal-case tracking-normal text-[9px] leading-snug transition-opacity duration-300 ease-out sm:max-w-none ${
+            clockHovered ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+          style={{ color: "var(--page-text-muted)" }}
+        >
+          scroll to change time
+        </span>
       </div>
       {dayTheme.showLocalTime ? (
         <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
