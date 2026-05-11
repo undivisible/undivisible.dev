@@ -823,151 +823,47 @@ function UtilitiesBlock({
   isMobile: boolean;
   readme: ReadmeBundle;
 }) {
-  const hasMain =
-    readme.mainProjects.length > 0 || readme.mainHeroQuote.length > 0;
-
-  const utilitiesSection = (
-    <div className="space-y-2">
-      <AnimatedText
-        text="i make utilities that feel inevitable:"
-        className="text-xs"
-      />
-      <CarouselRow bleedOut edgeFade>
-        {readme.utilities.map((product) => (
-          <Card
-            key={product.key}
-            title={product.name}
-            description={product.desc}
-            href={product.href}
-            isMobile={isMobile}
-          />
-        ))}
-      </CarouselRow>
-    </div>
-  );
-
-  if (!hasMain) {
-    return <div className="space-y-8">{utilitiesSection}</div>;
-  }
-
   return (
     <div className="space-y-8">
-      <section
-        className="relative overflow-hidden rounded-2xl border border-solid p-4 sm:p-6"
-        style={{
-          borderColor: "color-mix(in srgb, var(--page-text) 14%, transparent)",
-          backgroundColor:
-            "color-mix(in srgb, var(--page-surface) 88%, black 6%)",
-        }}
-      >
-        <div
-          className="pointer-events-none absolute -right-16 -top-24 h-48 w-48 rounded-full opacity-[0.07]"
-          style={{ background: "var(--page-text)" }}
+      <div className="space-y-2">
+        {readme.mainHeroQuote ? (
+          <blockquote
+            className="max-w-3xl border-l-2 pl-3 text-[10px] leading-relaxed sm:text-[11px] [font-family:var(--font-jetbrains-mono),monospace]"
+            style={{
+              borderColor:
+                "color-mix(in srgb, var(--page-text) 28%, transparent)",
+              color: "var(--page-text-muted)",
+            }}
+          >
+            {readme.mainHeroQuote}
+          </blockquote>
+        ) : null}
+        <AnimatedText
+          text="i make utilities that feel inevitable:"
+          className="text-xs"
         />
-        <div className="relative">
-          <div className="mb-4">
-            <AnimatedText
-              text="main projects"
-              className="text-[10px] uppercase tracking-[0.22em] sm:text-xs"
-              split="chars"
+        <CarouselRow bleedOut edgeFade>
+          {readme.mainProjects.map((product) => (
+            <Card
+              key={`main-${product.key}`}
+              title={product.name}
+              description={product.desc}
+              href={product.href}
+              isMobile={isMobile}
             />
-          </div>
-          {readme.mainHeroQuote ? (
-            <blockquote
-              className="mb-5 max-w-3xl border-l-2 pl-3 text-[11px] leading-relaxed sm:text-xs [font-family:var(--font-jetbrains-mono),monospace]"
-              style={{
-                borderColor:
-                  "color-mix(in srgb, var(--page-text) 28%, transparent)",
-                color: "var(--page-text-muted)",
-              }}
-            >
-              {readme.mainHeroQuote}
-            </blockquote>
-          ) : null}
-          <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
-            {readme.mainProjects.map((p) => (
-              <MainProjectCard
-                key={p.key}
-                title={p.name}
-                description={p.desc}
-                href={p.href}
-                isMobile={isMobile}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-      {utilitiesSection}
+          ))}
+          {readme.utilities.map((product) => (
+            <Card
+              key={`util-${product.key}`}
+              title={product.name}
+              description={product.desc}
+              href={product.href}
+              isMobile={isMobile}
+            />
+          ))}
+        </CarouselRow>
+      </div>
     </div>
-  );
-}
-
-function MainProjectCard({
-  title,
-  description,
-  href,
-  isMobile = false,
-}: {
-  title: string;
-  description: string;
-  href: string;
-  isMobile?: boolean;
-}) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`group relative flex min-h-[11rem] w-full flex-col rounded-xl border border-solid p-4 transition-colors sm:min-h-[12rem] sm:p-5 ${
-        isMobile ? "max-w-full" : ""
-      }`}
-      style={{
-        borderColor: "color-mix(in srgb, var(--page-text) 12%, transparent)",
-        backgroundColor: "color-mix(in srgb, var(--page-surface) 94%, black)",
-        color: "var(--page-text)",
-      }}
-      onMouseEnter={(event) => {
-        if (!isMobile) {
-          event.currentTarget.style.backgroundColor =
-            "color-mix(in srgb, var(--page-surface) 90%, var(--page-text) 4%)";
-          event.currentTarget.style.borderColor =
-            "color-mix(in srgb, var(--page-text) 22%, transparent)";
-        }
-      }}
-      onMouseLeave={(event) => {
-        event.currentTarget.style.backgroundColor =
-          "color-mix(in srgb, var(--page-surface) 94%, black)";
-        event.currentTarget.style.borderColor =
-          "color-mix(in srgb, var(--page-text) 12%, transparent)";
-      }}
-    >
-      <span
-        className="text-[9px] uppercase tracking-[0.22em] [font-family:var(--font-jetbrains-mono),monospace]"
-        style={{ color: "var(--page-text-soft)" }}
-      >
-        flagship
-      </span>
-      <div className="mt-1 text-lg font-semibold leading-tight tracking-tight sm:text-xl">
-        <AnimatedText text={title} className="inline-block" split="words" />
-      </div>
-      <div
-        className="mt-3 flex-1 overflow-y-auto text-xs leading-relaxed sm:text-sm"
-        style={{
-          color: "var(--page-text-muted)",
-          maxHeight: "7.75rem",
-        }}
-      >
-        {description}
-      </div>
-      <div
-        className={`mt-3 text-[10px] uppercase tracking-[0.18em] [font-family:var(--font-jetbrains-mono),monospace] transition-opacity ${
-          isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-        }`}
-        style={{ color: "var(--page-text-soft)" }}
-      >
-        open →
-      </div>
-    </a>
   );
 }
 
