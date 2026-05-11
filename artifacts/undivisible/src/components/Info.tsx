@@ -1279,7 +1279,7 @@ function Card({
       target="_blank"
       rel="noreferrer"
       className={`relative z-0 flex-shrink-0 rounded-lg p-2.5 ${
-        isMobile ? "min-w-[12rem] max-w-[12rem]" : "min-w-[11rem] max-w-[11rem]"
+        isMobile ? "min-w-[13rem] max-w-[13rem]" : "min-w-[12rem] max-w-[12rem]"
       } ${dimmed ? "opacity-50" : "opacity-100"}`}
       style={{
         backgroundColor: "color-mix(in srgb, var(--page-surface) 94%, black)",
