@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "sync:readme": "bun run scripts/sync-readme-projects.ts",
+    "prebuild": "bun run sync:readme",
     "build": "next build",
     "serve": "next start",
     "typecheck": "tsc -p tsconfig.json --noEmit"

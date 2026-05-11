@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
+import { tidbitExtras } from "@/data/project-descriptions";
+import type { ReadmeBundle } from "@/lib/profile-readme";
 import { RandomizedText } from "./randomized-text";
 
 const socials = [
@@ -42,65 +44,6 @@ const thingWords = ["things", "software", "systems", "products", "tools"];
 
 const introText = `my favorite thing is chasing new experiences and sharing them with others. i do that through software, which i've been building since i was 8. i'm drawn to the frontier, i started making money online and playing with crypto at 11, and i was one of the first to try gpt-3 in 2021. since then, i dropped out of high school and founded tsc.hk, where i make the frontier. outside of that, i adore philosophy, cooking, photography, and gym.`;
 
-const products = [
-  {
-    name: "crepuscularity",
-    desc: "code web, get native, on every device + web.",
-    href: "https://crepuscularity.undivisible.dev",
-  },
-  {
-    name: "aurorality",
-    desc: "code web, get swiftui. rusty logic and batteries included.",
-    href: "https://github.com/semitechnological/aurorality",
-  },
-  {
-    name: "crepus/aurora lite",
-    desc: "native ui for any electron project or website.",
-    href: "https://github.com/semitechnological/crepuscularity",
-  },
-  {
-    name: "equilibrium",
-    desc: "FFI for C compiling langs, or Swift in 2 lines.",
-    href: "https://github.com/semitechnological/equilibrium",
-  },
-  {
-    name: "wax",
-    desc: "brew but up to 20x faster + system package management.",
-    href: "https://github.com/semitechnological/wax",
-  },
-  {
-    name: "rs_ai",
-    desc: "unified rust ai sdk with local and online providers.",
-    href: "https://github.com/undivisible/rs_ai",
-  },
-  {
-    name: "soliloquy",
-    desc: "an ultralight ultrafast web native operating system.",
-    href: "#",
-  },
-  {
-    name: "otto",
-    desc: "ai powered ottocomplete everywhere on your mac.",
-    href: "https://github.com/semitechnological/otto",
-  },
-  {
-    name: "tile",
-    desc: "canvas, mosaic and tiling window management.",
-    href: "https://github.com/semitechnological/tile",
-  },
-  {
-    name: "rover",
-    desc: "all in one blazingly fast execution agent for mac.",
-    href: "https://github.com/semitechnological/tile",
-  },
-  { name: "atmosphere", desc: "ecosystem every device.", href: "#" },
-  {
-    name: "experiences",
-    desc: "making the spatial web accessible.",
-    href: "#",
-  },
-];
-
 const languages = ["rust", "typescript", "swift", "python", "go", "v", "zig"];
 const transport = [
   "cantonese",
@@ -109,72 +52,6 @@ const transport = [
   "mandarin",
   "indonesian",
   "japanese",
-];
-
-const tidbits = [
-  {
-    name: "unthinkmail",
-    desc: "mcp your imap supported email",
-    href: "https://unthinkmail.undivisible.dev",
-  },
-  {
-    name: "drift",
-    desc: "the macos screensaver as a wallpaper on every device",
-    href: "https://github.com/undivisible/drift-wallpaper",
-  },
-  {
-    name: "unelaborate",
-    desc: "swiftui minecraft launcher + modrinth mod loading in client",
-    href: "https://github.com/undivisible/drift-wallpaper",
-  },
-  {
-    name: "bublik",
-    desc: "frequency terrain noise generator",
-    href: "https://bublik.undivisible.dev",
-  },
-  {
-    name: "alphabets",
-    desc: "learn unicode-supported alphabets.",
-    href: "https://alphabets.undivisible.dev",
-  },
-  {
-    name: "standpoint",
-    desc: "the opinion based platform with tierlists and polls",
-    href: "https://standpoint.undivisible.dev",
-    opacity: 50,
-  },
-  {
-    name: "notes",
-    desc: "a minimal markdown text editor in the web.",
-    href: "https://notes.undivisible.dev",
-  },
-  {
-    name: "anywhere",
-    desc: "web extension for online ai to code inline interactions",
-    href: "https://github.com/undivisible/anywhere",
-  },
-  {
-    name: "poke around",
-    desc: "let poke around your computer with openclaw tools.",
-    href: "https://github.com/undivisible/poke-around",
-  },
-  {
-    name: "unthinkclaw",
-    desc: "openclaw but tiny, with agent swarms and online saas.",
-    href: "https://github.com/undivisible/unthinkclaw",
-  },
-  {
-    name: "infrastruct",
-    desc: "comparative jurisprudence platform for major religions",
-    href: "https://github.com/undivisible/infrastruct",
-    opacity: 50,
-  },
-  {
-    name: "akh",
-    desc: "software uniplatform for when i was muslim",
-    href: "https://github.com/undivisible/akh",
-    opacity: 50,
-  },
 ];
 
 let carouselRowSeed = 0;
@@ -191,10 +68,28 @@ const transportColors: Record<string, string> = {
 export function Info({
   colors,
   dayTheme,
+  readme,
 }: {
   colors: string[];
   dayTheme: HongKongDayTheme;
+  readme: ReadmeBundle;
 }) {
+  const tidbits = useMemo((): Array<{
+    name: string;
+    href: string;
+    desc: string;
+    opacity?: 50;
+  }> => {
+    return [
+      ...readme.miniapps.map((p) => ({
+        name: p.name,
+        href: p.href,
+        desc: p.desc,
+      })),
+      ...tidbitExtras,
+    ];
+  }, [readme]);
+
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const mobileContainerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef(0);
@@ -557,17 +452,7 @@ export function Info({
           <div className="text-xs leading-relaxed opacity-0">{introText}</div>
         )}
 
-        <Section title="i make utilities that feel inevitable:">
-          {products.map((product) => (
-            <Card
-              key={product.name}
-              title={product.name}
-              description={product.desc}
-              href={product.href}
-              isMobile={isMobile}
-            />
-          ))}
-        </Section>
+        <UtilitiesBlock isMobile={isMobile} readme={readme} />
 
         <Section title="the works:">
           {languages.map((item) => (
@@ -746,16 +631,7 @@ export function Info({
                     </div>
                   )}
 
-                  <Section title="i make utilities that feel inevitable:">
-                    {products.map((product) => (
-                      <Card
-                        key={product.name}
-                        title={product.name}
-                        description={product.desc}
-                        href={product.href}
-                      />
-                    ))}
-                  </Section>
+                  <UtilitiesBlock isMobile={isMobile} readme={readme} />
 
                   <Section title="the works:">
                     {languages.map((item) => (
@@ -940,10 +816,165 @@ function ScatterWord({ word, colors }: { word: string; colors: string[] }) {
   );
 }
 
+function UtilitiesBlock({
+  isMobile,
+  readme,
+}: {
+  isMobile: boolean;
+  readme: ReadmeBundle;
+}) {
+  const hasMain =
+    readme.mainProjects.length > 0 || readme.mainHeroQuote.length > 0;
+
+  const utilitiesSection = (
+    <div className="space-y-2">
+      <AnimatedText
+        text="i make utilities that feel inevitable:"
+        className="text-xs"
+      />
+      <CarouselRow bleedOut edgeFade>
+        {readme.utilities.map((product) => (
+          <Card
+            key={product.key}
+            title={product.name}
+            description={product.desc}
+            href={product.href}
+            isMobile={isMobile}
+          />
+        ))}
+      </CarouselRow>
+    </div>
+  );
+
+  if (!hasMain) {
+    return <div className="space-y-8">{utilitiesSection}</div>;
+  }
+
+  return (
+    <div className="space-y-8">
+      <section
+        className="relative overflow-hidden rounded-2xl border border-solid p-4 sm:p-6"
+        style={{
+          borderColor: "color-mix(in srgb, var(--page-text) 14%, transparent)",
+          backgroundColor:
+            "color-mix(in srgb, var(--page-surface) 88%, black 6%)",
+        }}
+      >
+        <div
+          className="pointer-events-none absolute -right-16 -top-24 h-48 w-48 rounded-full opacity-[0.07]"
+          style={{ background: "var(--page-text)" }}
+        />
+        <div className="relative">
+          <div className="mb-4">
+            <AnimatedText
+              text="main projects"
+              className="text-[10px] uppercase tracking-[0.22em] sm:text-xs"
+              split="chars"
+            />
+          </div>
+          {readme.mainHeroQuote ? (
+            <blockquote
+              className="mb-5 max-w-3xl border-l-2 pl-3 text-[11px] leading-relaxed sm:text-xs [font-family:var(--font-jetbrains-mono),monospace]"
+              style={{
+                borderColor:
+                  "color-mix(in srgb, var(--page-text) 28%, transparent)",
+                color: "var(--page-text-muted)",
+              }}
+            >
+              {readme.mainHeroQuote}
+            </blockquote>
+          ) : null}
+          <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
+            {readme.mainProjects.map((p) => (
+              <MainProjectCard
+                key={p.key}
+                title={p.name}
+                description={p.desc}
+                href={p.href}
+                isMobile={isMobile}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+      {utilitiesSection}
+    </div>
+  );
+}
+
+function MainProjectCard({
+  title,
+  description,
+  href,
+  isMobile = false,
+}: {
+  title: string;
+  description: string;
+  href: string;
+  isMobile?: boolean;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`group relative flex min-h-[11rem] w-full flex-col rounded-xl border border-solid p-4 transition-colors sm:min-h-[12rem] sm:p-5 ${
+        isMobile ? "max-w-full" : ""
+      }`}
+      style={{
+        borderColor: "color-mix(in srgb, var(--page-text) 12%, transparent)",
+        backgroundColor: "color-mix(in srgb, var(--page-surface) 94%, black)",
+        color: "var(--page-text)",
+      }}
+      onMouseEnter={(event) => {
+        if (!isMobile) {
+          event.currentTarget.style.backgroundColor =
+            "color-mix(in srgb, var(--page-surface) 90%, var(--page-text) 4%)";
+          event.currentTarget.style.borderColor =
+            "color-mix(in srgb, var(--page-text) 22%, transparent)";
+        }
+      }}
+      onMouseLeave={(event) => {
+        event.currentTarget.style.backgroundColor =
+          "color-mix(in srgb, var(--page-surface) 94%, black)";
+        event.currentTarget.style.borderColor =
+          "color-mix(in srgb, var(--page-text) 12%, transparent)";
+      }}
+    >
+      <span
+        className="text-[9px] uppercase tracking-[0.22em] [font-family:var(--font-jetbrains-mono),monospace]"
+        style={{ color: "var(--page-text-soft)" }}
+      >
+        flagship
+      </span>
+      <div className="mt-1 text-lg font-semibold leading-tight tracking-tight sm:text-xl">
+        <AnimatedText text={title} className="inline-block" split="words" />
+      </div>
+      <div
+        className="mt-3 flex-1 overflow-y-auto text-xs leading-relaxed sm:text-sm"
+        style={{
+          color: "var(--page-text-muted)",
+          maxHeight: "7.75rem",
+        }}
+      >
+        {description}
+      </div>
+      <div
+        className={`mt-3 text-[10px] uppercase tracking-[0.18em] [font-family:var(--font-jetbrains-mono),monospace] transition-opacity ${
+          isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+        }`}
+        style={{ color: "var(--page-text-soft)" }}
+      >
+        open →
+      </div>
+    </a>
+  );
+}
+
 function CarouselRow({
   children,
   bleedOut = false,
-  autoLoop = true,
+  autoLoop = false,
   edgeFade = true,
 }: {
   children: React.ReactNode;
@@ -971,6 +1002,27 @@ function CarouselRow({
     };
   }, []);
 
+  const [edgeMask, setEdgeMask] = useState({ la: 1, ra: 1 });
+
+  const syncEdgeMask = useCallback(() => {
+    const el = viewportRef.current;
+    if (!el || autoLoop) return;
+    const max = el.scrollWidth - el.clientWidth;
+    const fadePx = 48;
+    if (max <= 1) {
+      setEdgeMask((prev) =>
+        prev.la === 1 && prev.ra === 1 ? prev : { la: 1, ra: 1 },
+      );
+      return;
+    }
+    const sl = el.scrollLeft;
+    const la = Math.max(0, 1 - Math.min(1, sl / fadePx));
+    const ra = Math.max(0, 1 - Math.min(1, (max - sl) / fadePx));
+    setEdgeMask((prev) =>
+      prev.la === la && prev.ra === ra ? prev : { la, ra },
+    );
+  }, [autoLoop]);
+
   useEffect(() => {
     const viewport = viewportRef.current;
     const content = contentRef.current;
@@ -993,6 +1045,7 @@ function CarouselRow({
       loopWidthRef.current = Math.max(0, loopWidth);
       setCanLoop(autoLoop && loopWidth > 1);
       applyOffset(offsetRef.current);
+      syncEdgeMask();
     };
 
     measure();
@@ -1000,8 +1053,19 @@ function CarouselRow({
     ro.observe(viewport);
     ro.observe(content);
 
-    return () => ro.disconnect();
-  }, [autoLoop]);
+    const scrollMask = () => syncEdgeMask();
+    if (edgeFade && !autoLoop) {
+      viewport.addEventListener("scroll", scrollMask, { passive: true });
+      syncEdgeMask();
+    }
+
+    return () => {
+      ro.disconnect();
+      if (edgeFade && !autoLoop) {
+        viewport.removeEventListener("scroll", scrollMask);
+      }
+    };
+  }, [autoLoop, syncEdgeMask, edgeFade]);
 
   useEffect(() => {
     if (!autoLoop) return;
@@ -1209,9 +1273,18 @@ function CarouselRow({
     };
   }, [autoLoop]);
 
+  const edgeFadeStyle: CSSProperties | undefined =
+    edgeFade && !autoLoop
+      ? {
+          WebkitMaskImage: `linear-gradient(to right, rgba(0,0,0,${edgeMask.la}) 0px, #000 2rem, #000 calc(100% - 2.5rem), rgba(0,0,0,${edgeMask.ra}) 100%)`,
+          maskImage: `linear-gradient(to right, rgba(0,0,0,${edgeMask.la}) 0px, #000 2rem, #000 calc(100% - 2.5rem), rgba(0,0,0,${edgeMask.ra}) 100%)`,
+        }
+      : undefined;
+
   return (
     <div
-      className={`relative w-full overflow-y-visible ${autoLoop ? "overflow-x-hidden" : "overflow-x-visible"} ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""} ${edgeFade ? "carousel-mask" : ""}`}
+      className={`relative w-full overflow-y-visible ${autoLoop ? "overflow-x-hidden" : "overflow-x-visible"} ${bleedOut ? "-mx-5 w-[calc(100%+2.5rem)]" : ""} ${edgeFade && autoLoop ? "carousel-mask" : ""}`}
+      style={edgeFadeStyle}
     >
       <div
         ref={viewportRef}

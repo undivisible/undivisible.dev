@@ -568,7 +568,7 @@ export default function Ascii({
           href={`https://www.last.fm/user/${encodeURIComponent(lastFmUsername)}`}
           target="_blank"
           rel="noreferrer"
-          className="absolute bottom-6 right-6 z-10 max-w-[14rem] cursor-pointer text-right font-mono"
+          className="absolute bottom-6 right-6 z-10 max-w-[14rem] cursor-pointer text-right [font-family:var(--font-jetbrains-mono),monospace]"
           style={{ color: "var(--page-text)" }}
         >
           <div className="text-base leading-snug">{track.artist}</div>
