@@ -857,18 +857,6 @@ function UtilitiesBlock({
   return (
     <div className="space-y-8">
       <div className="space-y-2">
-        {readme.mainHeroQuote ? (
-          <blockquote
-            className="max-w-3xl border-l-2 pl-3 text-[10px] leading-relaxed sm:text-[11px] [font-family:var(--font-jetbrains-mono),monospace]"
-            style={{
-              borderColor:
-                "color-mix(in srgb, var(--page-text) 28%, transparent)",
-              color: "var(--page-text-muted)",
-            }}
-          >
-            {readme.mainHeroQuote}
-          </blockquote>
-        ) : null}
         <AnimatedText
           text="i make utilities that feel inevitable:"
           className="text-xs"
@@ -1290,8 +1278,8 @@ function Card({
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`relative z-0 flex-shrink-0 rounded-lg p-2 ${
-        isMobile ? "min-w-[9rem] max-w-[9rem]" : "min-w-[8rem] max-w-[8rem]"
+      className={`relative z-0 flex-shrink-0 rounded-lg p-2.5 ${
+        isMobile ? "min-w-[12rem] max-w-[12rem]" : "min-w-[11rem] max-w-[11rem]"
       } ${dimmed ? "opacity-50" : "opacity-100"}`}
       style={{
         backgroundColor: "color-mix(in srgb, var(--page-surface) 94%, black)",
