@@ -177,6 +177,7 @@ export default function Ascii({
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef<number>(0);
   const webglRenderRef = useRef<((now: number) => void) | null>(null);
+  const monoFontStackRef = useRef("monospace");
   const colorUniforms = useMemo(
     () =>
       [
@@ -433,6 +434,10 @@ export default function Ascii({
       asciiCanvas.style.width = `${width}px`;
       asciiCanvas.style.height = `${height}px`;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
+      monoFontStackRef.current =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--font-jetbrains-mono")
+          .trim() || "monospace";
     };
 
     const detachResize = attachStableResize(container, resize);
@@ -489,10 +494,7 @@ export default function Ascii({
       ctx.clearRect(0, 0, width, height);
       ctx.textBaseline = "middle";
       ctx.textAlign = "center";
-      const monoFont =
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--font-jetbrains-mono")
-          .trim() || "monospace";
+      const monoFont = monoFontStackRef.current;
       ctx.font = `${Math.max(12, cell * 0.72)}px ${monoFont}, monospace`;
       ctx.shadowColor = "transparent";
 

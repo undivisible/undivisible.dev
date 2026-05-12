@@ -914,6 +914,40 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     ? clamp((themeMinute - solarTimes.civilTwilightBegin) / fullSpan, 0, 1)
     : 0;
 
+  const shader = useMemo<ShaderPalette>(
+    () => ({
+      base: palette.background,
+      beam: palette.beam,
+      beamSecondary: palette.beamSecondary,
+      shadow: palette.shadow,
+      accent: palette.accent,
+      sunProgress,
+      daylightStrength,
+      twilightStrength,
+      deepNightStrength,
+      midnightStrength,
+      weatherKind: weather.kind,
+      rainIntensity:
+        weather.kind === "rain" || weather.kind === "storm"
+          ? clamp(Math.max(weather.rainIntensity, 0.5) / 5, 0, 1)
+          : clamp(weather.rainIntensity / 5, 0, 1),
+    }),
+    [
+      palette.background,
+      palette.beam,
+      palette.beamSecondary,
+      palette.shadow,
+      palette.accent,
+      sunProgress,
+      daylightStrength,
+      twilightStrength,
+      deepNightStrength,
+      midnightStrength,
+      weather.kind,
+      weather.rainIntensity,
+    ],
+  );
+
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--page-background", palette.background);
@@ -996,22 +1030,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     ready: true,
     phase,
     style,
-    shader: {
-      base: palette.background,
-      beam: palette.beam,
-      beamSecondary: palette.beamSecondary,
-      shadow: palette.shadow,
-      accent: palette.accent,
-      sunProgress,
-      daylightStrength,
-      twilightStrength,
-      deepNightStrength,
-      midnightStrength,
-      weatherKind: weather.kind,
-      rainIntensity: weather.kind === "rain" || weather.kind === "storm"
-        ? clamp(Math.max(weather.rainIntensity, 0.5) / 5, 0, 1)
-        : clamp(weather.rainIntensity / 5, 0, 1),
-    },
+    shader,
     hkgTime: formatTimeForZone(displayedDate, HONG_KONG_TIME_ZONE),
     melTime: formatTimeForZone(displayedDate, MELBOURNE_TIME_ZONE),
     localTime: formatTimeForZone(displayedDate, location.timeZone),

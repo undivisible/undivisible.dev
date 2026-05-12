@@ -94,6 +94,16 @@ export function Light({
   const frameRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
   const rainIntensityRef = useRef<number>(0);
+  const gradientFillCacheRef = useRef<{
+    key: string;
+    wall: CanvasGradient;
+    weather: CanvasGradient | null;
+    wash: CanvasGradient | null;
+    streakA: CanvasGradient | null;
+    streakB: CanvasGradient | null;
+    twilightBand: CanvasGradient | null;
+    coolFog: CanvasGradient | null;
+  } | null>(null);
 
   const [birdGroups, setBirdGroups] = useState<BirdGroup[]>([]);
   const [rainDrops, setRainDrops] = useState<RainDrop[]>([]);
@@ -121,7 +131,7 @@ export function Light({
       setBirdGroups(groups);
 
       const drops: RainDrop[] = [];
-      const dropCount = 420;
+      const dropCount = 220;
 
       for (let index = 0; index < dropCount; index += 1) {
         const layer = Math.random();
@@ -209,8 +219,6 @@ export function Light({
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
 
-      ctx.clearRect(0, 0, width, height);
-
       const day = clamp(current.daylightStrength, 0, 1);
       const dayFlat = 1 - Math.pow(1 - day, 4);
       const twilight = clamp(current.twilightStrength, 0, 1);
@@ -219,38 +227,140 @@ export function Light({
       const night = clamp(Math.max(1 - day, deepNight), 0, 1);
       const sun = clamp(current.sunProgress, 0, 1);
 
-      const wallGradient = ctx.createLinearGradient(0, 0, 0, height);
-      wallGradient.addColorStop(
-        0,
-        rgba(current.base, 0.2 + day * 0.25 + twilight * 0.15),
-      );
-      wallGradient.addColorStop(1, rgba(current.shadow, 0.3 + night * 0.35));
-      ctx.fillStyle = wallGradient;
+      const dawnWeight = twilight * (1 - smoothstep(0.5, 0.72, sun));
+      const duskWeight = twilight * smoothstep(0.28, 0.5, sun);
+      const streakWeight = clamp(Math.max(dawnWeight, duskWeight), 0, 1);
+      const twilightFog = clamp(twilight * 0.8 + night * 0.16, 0, 1);
+      const colorStrength = dayFlat * 0.95 + twilight * 1.08;
+
+      const cacheKey = [
+        width,
+        height,
+        current.weatherKind,
+        current.base,
+        current.beam,
+        current.beamSecondary,
+        current.shadow,
+        current.accent,
+        day.toFixed(4),
+        twilight.toFixed(4),
+        deepNight.toFixed(4),
+        midnight.toFixed(4),
+        night.toFixed(4),
+        sun.toFixed(4),
+        dayFlat.toFixed(4),
+        streakWeight.toFixed(4),
+        twilightFog.toFixed(4),
+      ].join("\0");
+
+      let fills = gradientFillCacheRef.current;
+      if (!fills || fills.key !== cacheKey) {
+        const wall = ctx.createLinearGradient(0, 0, 0, height);
+        wall.addColorStop(
+          0,
+          rgba(current.base, 0.2 + day * 0.25 + twilight * 0.15),
+        );
+        wall.addColorStop(1, rgba(current.shadow, 0.3 + night * 0.35));
+
+        let weather: CanvasGradient | null = null;
+        if (current.weatherKind === "clear") {
+          weather = ctx.createLinearGradient(0, 0, 0, height * 0.6);
+          weather.addColorStop(0, "rgba(226, 240, 255, 0.34)");
+          weather.addColorStop(0.6, "rgba(174, 203, 238, 0.22)");
+          weather.addColorStop(1, "rgba(120, 155, 194, 0)");
+        } else if (current.weatherKind === "cloudy") {
+          weather = ctx.createLinearGradient(0, 0, 0, height);
+          weather.addColorStop(0, "rgba(170, 178, 192, 0.18)");
+          weather.addColorStop(0.5, "rgba(132, 144, 160, 0.14)");
+          weather.addColorStop(1, "rgba(96, 108, 124, 0.1)");
+        } else if (
+          current.weatherKind === "rain" ||
+          current.weatherKind === "storm"
+        ) {
+          weather = ctx.createLinearGradient(0, 0, 0, height);
+          weather.addColorStop(0, "rgba(94, 109, 130, 0.24)");
+          weather.addColorStop(0.5, "rgba(73, 86, 104, 0.2)");
+          weather.addColorStop(1, "rgba(44, 52, 65, 0.18)");
+        }
+
+        let wash: CanvasGradient | null = null;
+        if (colorStrength > 0.02) {
+          const centerX = width * (0.33 + sun * 0.34);
+          const centerY = height * (0.25 + (1 - day) * 0.09);
+          wash = ctx.createRadialGradient(
+            centerX,
+            centerY,
+            Math.min(width, height) * 0.05,
+            width * 0.5,
+            height * 0.55,
+            Math.max(width, height) * 0.8,
+          );
+          wash.addColorStop(0, rgba(current.beam, 0.08 + colorStrength * 0.2));
+          wash.addColorStop(
+            0.5,
+            rgba(current.beamSecondary, 0.06 + colorStrength * 0.14),
+          );
+          wash.addColorStop(1, rgba(current.accent, 0));
+        }
+
+        let streakA: CanvasGradient | null = null;
+        let streakB: CanvasGradient | null = null;
+        let twilightBand: CanvasGradient | null = null;
+        if (streakWeight > 0.01) {
+          streakA = ctx.createLinearGradient(
+            width * 0.04,
+            0,
+            width * 0.96,
+            height,
+          );
+          streakA.addColorStop(0, rgba(current.beamSecondary, 0));
+          streakA.addColorStop(0.5, rgba(current.beam, streakWeight * 0.34));
+          streakA.addColorStop(1, rgba(current.beamSecondary, 0));
+
+          streakB = ctx.createLinearGradient(
+            0,
+            height * 0.15,
+            width,
+            height * 0.9,
+          );
+          streakB.addColorStop(0, rgba(current.accent, 0));
+          streakB.addColorStop(0.55, rgba(current.accent, streakWeight * 0.26));
+          streakB.addColorStop(1, rgba(current.accent, 0));
+
+          twilightBand = ctx.createLinearGradient(0, 0, 0, height);
+          twilightBand.addColorStop(0, rgba("#8F78A7", streakWeight * 0.2));
+          twilightBand.addColorStop(0.5, rgba("#6D7594", streakWeight * 0.16));
+          twilightBand.addColorStop(1, rgba("#43546F", streakWeight * 0.12));
+        }
+
+        let coolFog: CanvasGradient | null = null;
+        if (twilightFog > 0.01) {
+          coolFog = ctx.createLinearGradient(0, 0, width, height);
+          coolFog.addColorStop(0, rgba("#8E86A5", twilightFog * 0.16));
+          coolFog.addColorStop(0.5, rgba("#6D7690", twilightFog * 0.12));
+          coolFog.addColorStop(1, rgba("#4E5F77", twilightFog * 0.1));
+        }
+
+        fills = {
+          key: cacheKey,
+          wall,
+          weather,
+          wash,
+          streakA,
+          streakB,
+          twilightBand,
+          coolFog,
+        };
+        gradientFillCacheRef.current = fills;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      ctx.fillStyle = fills.wall;
       ctx.fillRect(0, 0, width, height);
 
-      if (current.weatherKind === "clear") {
-        const sky = ctx.createLinearGradient(0, 0, 0, height * 0.6);
-        sky.addColorStop(0, "rgba(226, 240, 255, 0.34)");
-        sky.addColorStop(0.6, "rgba(174, 203, 238, 0.22)");
-        sky.addColorStop(1, "rgba(120, 155, 194, 0)");
-        ctx.fillStyle = sky;
-        ctx.fillRect(0, 0, width, height);
-      } else if (current.weatherKind === "cloudy") {
-        const cloud = ctx.createLinearGradient(0, 0, 0, height);
-        cloud.addColorStop(0, "rgba(170, 178, 192, 0.18)");
-        cloud.addColorStop(0.5, "rgba(132, 144, 160, 0.14)");
-        cloud.addColorStop(1, "rgba(96, 108, 124, 0.1)");
-        ctx.fillStyle = cloud;
-        ctx.fillRect(0, 0, width, height);
-      } else if (
-        current.weatherKind === "rain" ||
-        current.weatherKind === "storm"
-      ) {
-        const overcast = ctx.createLinearGradient(0, 0, 0, height);
-        overcast.addColorStop(0, "rgba(94, 109, 130, 0.24)");
-        overcast.addColorStop(0.5, "rgba(73, 86, 104, 0.2)");
-        overcast.addColorStop(1, "rgba(44, 52, 65, 0.18)");
-        ctx.fillStyle = overcast;
+      if (fills.weather) {
+        ctx.fillStyle = fills.weather;
         ctx.fillRect(0, 0, width, height);
       }
 
@@ -259,71 +369,22 @@ export function Light({
         ctx.fillRect(0, 0, width, height);
       }
 
-      const colorStrength = dayFlat * 0.95 + twilight * 1.08;
-      if (colorStrength > 0.02) {
-        const centerX = width * (0.33 + sun * 0.34);
-        const centerY = height * (0.25 + (1 - day) * 0.09);
-        const wash = ctx.createRadialGradient(
-          centerX,
-          centerY,
-          Math.min(width, height) * 0.05,
-          width * 0.5,
-          height * 0.55,
-          Math.max(width, height) * 0.8,
-        );
-        wash.addColorStop(0, rgba(current.beam, 0.08 + colorStrength * 0.2));
-        wash.addColorStop(
-          0.5,
-          rgba(current.beamSecondary, 0.06 + colorStrength * 0.14),
-        );
-        wash.addColorStop(1, rgba(current.accent, 0));
-        ctx.fillStyle = wash;
+      if (fills.wash) {
+        ctx.fillStyle = fills.wash;
         ctx.fillRect(0, 0, width, height);
       }
 
-      const dawnWeight = twilight * (1 - smoothstep(0.5, 0.72, sun));
-      const duskWeight = twilight * smoothstep(0.28, 0.5, sun);
-      const streakWeight = clamp(Math.max(dawnWeight, duskWeight), 0, 1);
-      if (streakWeight > 0.01) {
-        const streakA = ctx.createLinearGradient(
-          width * 0.04,
-          0,
-          width * 0.96,
-          height,
-        );
-        streakA.addColorStop(0, rgba(current.beamSecondary, 0));
-        streakA.addColorStop(0.5, rgba(current.beam, streakWeight * 0.34));
-        streakA.addColorStop(1, rgba(current.beamSecondary, 0));
-        ctx.fillStyle = streakA;
+      if (fills.streakA && fills.streakB && fills.twilightBand) {
+        ctx.fillStyle = fills.streakA;
         ctx.fillRect(0, 0, width, height);
-
-        const streakB = ctx.createLinearGradient(
-          0,
-          height * 0.15,
-          width,
-          height * 0.9,
-        );
-        streakB.addColorStop(0, rgba(current.accent, 0));
-        streakB.addColorStop(0.55, rgba(current.accent, streakWeight * 0.26));
-        streakB.addColorStop(1, rgba(current.accent, 0));
-        ctx.fillStyle = streakB;
+        ctx.fillStyle = fills.streakB;
         ctx.fillRect(0, 0, width, height);
-
-        const twilightBand = ctx.createLinearGradient(0, 0, 0, height);
-        twilightBand.addColorStop(0, rgba("#8F78A7", streakWeight * 0.2));
-        twilightBand.addColorStop(0.5, rgba("#6D7594", streakWeight * 0.16));
-        twilightBand.addColorStop(1, rgba("#43546F", streakWeight * 0.12));
-        ctx.fillStyle = twilightBand;
+        ctx.fillStyle = fills.twilightBand;
         ctx.fillRect(0, 0, width, height);
       }
 
-      const twilightFog = clamp(twilight * 0.8 + night * 0.16, 0, 1);
-      if (twilightFog > 0.01) {
-        const coolFog = ctx.createLinearGradient(0, 0, width, height);
-        coolFog.addColorStop(0, rgba("#8E86A5", twilightFog * 0.16));
-        coolFog.addColorStop(0.5, rgba("#6D7690", twilightFog * 0.12));
-        coolFog.addColorStop(1, rgba("#4E5F77", twilightFog * 0.1));
-        ctx.fillStyle = coolFog;
+      if (fills.coolFog) {
+        ctx.fillStyle = fills.coolFog;
         ctx.fillRect(0, 0, width, height);
       }
 
