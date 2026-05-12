@@ -125,6 +125,18 @@ export function Info({
   }, []);
 
   useEffect(() => {
+    const clock = clockRef.current;
+    if (!clock) {
+      return;
+    }
+
+    clock.addEventListener("wheel", dayTheme.onClockWheel, { passive: false });
+    return () => {
+      clock.removeEventListener("wheel", dayTheme.onClockWheel);
+    };
+  }, [dayTheme.onClockWheel]);
+
+  useEffect(() => {
     const raf = requestAnimationFrame(() => setHydrated(true));
     return () => cancelAnimationFrame(raf);
   }, []);
@@ -212,7 +224,6 @@ export function Info({
         setClockHovered(false);
         dayTheme.resetScrub();
       }}
-      onWheel={(event) => dayTheme.onScrubWheel(event)}
     >
       <div className="mb-2">
         <a
