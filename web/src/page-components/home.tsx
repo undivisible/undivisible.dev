@@ -19,10 +19,12 @@ export default function Home({
   readme,
   nowMarkdown,
   initialHash,
+  printLayout = "resume",
 }: {
   readme: ReadmeBundle;
   nowMarkdown: string | null;
   initialHash?: string | null;
+  printLayout?: "resume" | "brief";
 }) {
   const { track, colors, ready, lastFmUsername } = useLastFmVisualData();
   const dayTheme = useHongKongDayTheme();
@@ -81,7 +83,7 @@ export default function Home({
             {formatNowMarkdown(nowMarkdown)}
           </article>
         </div>
-        <HomePrintRoot />
+        {printLayout === "resume" ? <HomePrintRoot /> : <PrintRoot />}
       </>
     );
   }
@@ -139,8 +141,7 @@ export default function Home({
           </div>
         </div>
       </div>
-      <HomePrintRoot />
-      <PrintRoot />
+      {printLayout === "resume" ? <HomePrintRoot /> : <PrintRoot />}
     </>
   );
 }

@@ -8,6 +8,11 @@ export default async function BriefPage() {
   const readme = await getProfileReadmeProjects();
   const nowMarkdown = getNowMarkdown();
   return (
-    <Home readme={readme} nowMarkdown={nowMarkdown} initialHash="outcomes" />
+    <Home
+      readme={readme}
+      nowMarkdown={nowMarkdown}
+      initialHash="outcomes"
+      printLayout="brief"
+    />
   );
 }
