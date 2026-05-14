@@ -311,10 +311,13 @@ export default function Ascii({
     const colorELocation = gl.getUniformLocation(program, "u_colorE");
 
     // Keep the hidden shader canvas cheap; the visible ASCII layer samples it down.
+    let webglThrottleMs = WEBGL_INTERVAL;
+
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, SHADER_DPR_CAP);
       const width = container.clientWidth;
       const height = container.clientHeight;
+      webglThrottleMs = width < 1024 ? 1000 / 14 : WEBGL_INTERVAL;
       canvas.width = Math.max(1, Math.floor(width * dpr));
       canvas.height = Math.max(1, Math.floor(height * dpr));
       canvas.style.width = `${width}px`;
@@ -328,7 +331,7 @@ export default function Ascii({
     let lastWebgl = -Infinity;
     const renderWebGL = (now: number) => {
       if (document.hidden) return;
-      if (now - lastWebgl < WEBGL_INTERVAL) return;
+      if (now - lastWebgl < webglThrottleMs) return;
       lastWebgl = now;
 
       const cu = colorUniformsRef.current;
@@ -413,13 +416,14 @@ export default function Ascii({
     let width = 0;
     let height = 0;
     let last = performance.now();
-    // Cap ASCII rendering at 30 fps — text art doesn't need 60
-    const ASCII_INTERVAL = 1000 / 30;
+    let asciiIntervalMs = 1000 / 30;
     let lastAscii = 0;
 
     const resize = () => {
       width = container.clientWidth;
       height = container.clientHeight;
+      const narrow = width < 1024;
+      asciiIntervalMs = narrow ? 1000 / 16 : 1000 / 30;
       const size = Math.max(170, Math.min(width, height) * 0.31);
       shapes[0].x = width * 0.22;
       shapes[0].y = height * 0.22;
@@ -453,8 +457,7 @@ export default function Ascii({
 
       frameRef.current = requestAnimationFrame(render);
 
-      // Throttle ASCII work to 30 fps
-      if (now - lastAscii < ASCII_INTERVAL) return;
+      if (now - lastAscii < asciiIntervalMs) return;
       lastAscii = now;
 
       const delta = Math.min((now - last) / 1000, 0.04);
@@ -478,7 +481,8 @@ export default function Ascii({
         }
       }
 
-      const cell = Math.max(8, Math.min(width, height) / 48);
+      const cellDiv = width < 1024 ? 28 : 48;
+      const cell = Math.max(8, Math.min(width, height) / cellDiv);
       const cols = Math.max(1, Math.floor(width / (cell * 0.9)));
       const rows = Math.max(1, Math.floor(height / cell));
 

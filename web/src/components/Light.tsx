@@ -112,7 +112,10 @@ export function Light({
     if (typeof window === "undefined") return;
 
     const raf = requestAnimationFrame(() => {
-      const groupCount = 2 + Math.floor(Math.random() * 3);
+      const narrow = window.innerWidth < 1024;
+      const groupCount = narrow
+        ? 1 + Math.floor(Math.random() * 2)
+        : 2 + Math.floor(Math.random() * 3);
       const groups: BirdGroup[] = [];
       for (let index = 0; index < groupCount; index += 1) {
         groups.push({
@@ -121,7 +124,9 @@ export function Light({
           duration: 14 + Math.random() * 18,
           direction: Math.random() > 0.5 ? 1 : -1,
           offset: Math.random() * 50,
-          count: 4 + Math.floor(Math.random() * 5),
+          count: narrow
+            ? 3 + Math.floor(Math.random() * 3)
+            : 4 + Math.floor(Math.random() * 5),
           spreadX: 24 + Math.random() * 52,
           spreadY: 8 + Math.random() * 26,
           depth: 0.7 + Math.random() * 0.6,
@@ -131,7 +136,7 @@ export function Light({
       setBirdGroups(groups);
 
       const drops: RainDrop[] = [];
-      const dropCount = 220;
+      const dropCount = narrow ? 88 : 220;
 
       for (let index = 0; index < dropCount; index += 1) {
         const layer = Math.random();
@@ -193,9 +198,15 @@ export function Light({
     const resize = () => {
       const parent = canvas.parentElement;
       if (!parent) return;
-      const dpr = window.devicePixelRatio || 1;
       const width = parent.clientWidth;
       const height = parent.clientHeight;
+      const rawDpr = window.devicePixelRatio || 1;
+      const dpr =
+        width < 640
+          ? Math.min(rawDpr, 1)
+          : width < 1024
+            ? Math.min(rawDpr, 1.25)
+            : Math.min(rawDpr, 2);
       canvas.width = Math.max(1, Math.floor(width * dpr));
       canvas.height = Math.max(1, Math.floor(height * dpr));
       canvas.style.width = `${width}px`;
@@ -210,6 +221,11 @@ export function Light({
     resize();
 
     const render = (timeMs: number) => {
+      if (document.hidden) {
+        frameRef.current = window.requestAnimationFrame(render);
+        return;
+      }
+
       const current = sceneRef.current;
       const dt = lastTimeRef.current
         ? Math.min((timeMs - lastTimeRef.current) * 0.001, 0.05)
