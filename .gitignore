@@ -62,3 +62,10 @@ Thumbs.db
 .replit
 replit.md
 .breakpoints
+**/.replit-artifact/
+
+# Vercel (local link metadata)
+.vercel/
+
+# Scratch snapshot — not part of tracked history tree
+old/nine/
