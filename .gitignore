@@ -67,5 +67,11 @@ replit.md
 # Vercel (local link metadata)
 .vercel/
 
-# Scratch snapshot — not part of tracked history tree
-old/nine/
+# Removed from tree; snapshot still in git history if needed
+.migration-backup/
+
+# Archived nine: allow paths that match repo-wide ignores above
+!old/nine/.replit-artifact/
+!old/nine/.replit-artifact/**
+!old/nine/dist/
+!old/nine/dist/**

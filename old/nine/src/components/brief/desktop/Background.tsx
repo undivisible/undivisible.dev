@@ -1,0 +1,303 @@
+import { useEffect, useMemo, useRef, type RefObject } from "react";
+
+// Canvas 2D port of drift-wallpaper's line + place_lines system.
+//
+// Architecture: grid of fixed basepoints, each with a spring-elastic endpoint
+// that oscillates toward the local noise-flow direction. Lines are rendered
+// fresh each frame (no persistent trails) — matches the GPU renderer's look.
+// Cursor creates a radial repulsion field that perturbs nearby endpoints.
+//
+// Lava palette: near-black → dark-orange → bright-amber
+
+const LAVA: [
+  [number, number, number],
+  [number, number, number],
+  [number, number, number],
+] = [
+  [0.08, 0.01, 0.01],
+  [0.6, 0.1, 0.02],
+  [0.99, 0.65, 0.05],
+];
+
+const COLOR_STEPS = 72;
+
+function lerpColor(
+  a: [number, number, number],
+  b: [number, number, number],
+  t: number,
+): string {
+  return `rgb(${((a[0] + (b[0] - a[0]) * t) * 255) | 0},${((a[1] + (b[1] - a[1]) * t) * 255) | 0},${((a[2] + (b[2] - a[2]) * t) * 255) | 0})`;
+}
+function lavaColor(t: number): string {
+  t = Math.max(0, Math.min(1, t));
+  return t < 0.5
+    ? lerpColor(LAVA[0], LAVA[1], t * 2)
+    : lerpColor(LAVA[1], LAVA[2], (t - 0.5) * 2);
+}
+const LAVA_LUT = Array.from({ length: COLOR_STEPS }, (_, i) =>
+  lavaColor(i / (COLOR_STEPS - 1)),
+);
+
+// Value noise + fbm — one call per line per frame
+function hash(x: number, y: number): number {
+  let h = Math.imul(x, 374761393) + Math.imul(y, 668265263);
+  h = Math.imul(h ^ (h >>> 13), 1274126177);
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
+}
+function noise(x: number, y: number): number {
+  const ix = Math.floor(x),
+    iy = Math.floor(y);
+  const fx = x - ix,
+    fy = y - iy;
+  const ux = fx * fx * fx * (fx * (fx * 6 - 15) + 10);
+  const uy = fy * fy * fy * (fy * (fy * 6 - 15) + 10);
+  return (
+    hash(ix, iy) * (1 - ux) * (1 - uy) +
+    hash(ix + 1, iy) * ux * (1 - uy) +
+    hash(ix, iy + 1) * (1 - ux) * uy +
+    hash(ix + 1, iy + 1) * ux * uy
+  );
+}
+function fbm(x: number, y: number): number {
+  let v = 0,
+    w = 0.5;
+  for (let i = 0; i < 2; i++) {
+    v += w * noise(x, y);
+    x = x * 2.07 + 3.13;
+    y = y * 2.07 + 1.97;
+    w *= 0.5;
+  }
+  return v;
+}
+
+// Grid + spring parameters (tuned to match drift-wallpaper visuals)
+const DESKTOP_GRID = 20; // px between basepoints
+const MOBILE_GRID = 24; // px between basepoints
+const LINE_LEN = 128; // max endpoint length (px) — longer lines
+const LINE_WIDTH = 5; // stroke width — thicker
+const BEGIN_OFF = 0.15; // fraction of line to skip at start (tail fade-in)
+const SPRING_K = 14.0; // spring stiffness
+const DAMPING = 5.0; // spring damping
+const NOISE_SCALE = 0.002; // noise spatial frequency
+const TIME_SCALE = 0.25; // how fast noise evolves
+const REPEL_RADIUS = 130; // cursor repulsion radius (px)
+const REPEL_STR = 700.0; // repulsion force (px/s²) — equilibrium offset ≈ STR/SPRING_K
+const FRAME_INTERVAL = 1000 / 30;
+
+interface Line {
+  bx: number;
+  by: number; // basepoint (fixed grid position)
+  ex: number;
+  ey: number; // endpoint offset (spring position)
+  evx: number;
+  evy: number; // endpoint spring velocity
+}
+
+export function Background({
+  containerRef,
+}: {
+  containerRef?: RefObject<HTMLElement | null>;
+} = {}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouseRef = useRef<[number, number]>([-9999, -9999]);
+  const embedded = !!containerRef;
+
+  const layerStyle = useMemo(
+    () =>
+      embedded
+        ? ({
+            position: "absolute" as const,
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: "none" as const,
+          })
+        : ({
+            position: "fixed" as const,
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: "none" as const,
+          }),
+    [embedded],
+  );
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    const cvs = canvas;
+
+    let W = 0,
+      H = 0;
+    let lines: Line[] = [];
+    let raf: number;
+    const startT = performance.now();
+    let lastT = startT;
+    let lastDrawT = 0;
+    let ro: ResizeObserver | null = null;
+
+    function buildGrid() {
+      lines = [];
+      const grid = W < 768 ? MOBILE_GRID : DESKTOP_GRID;
+      for (let bx = grid / 2; bx < W; bx += grid) {
+        for (let by = grid / 2; by < H; by += grid) {
+          // Seed endpoint in a random direction so lines don't all start at zero
+          const seedAngle = Math.random() * Math.PI * 2;
+          lines.push({
+            bx,
+            by,
+            ex: Math.cos(seedAngle) * LINE_LEN * 0.3,
+            ey: Math.sin(seedAngle) * LINE_LEN * 0.3,
+            evx: 0,
+            evy: 0,
+          });
+        }
+      }
+    }
+
+    function resize() {
+      if (embedded) {
+        const el = containerRef?.current;
+        if (!el) return;
+        W = Math.max(1, Math.floor(el.clientWidth));
+        H = Math.max(1, Math.floor(el.clientHeight));
+      } else {
+        W = window.innerWidth;
+        H = window.innerHeight;
+      }
+      cvs.width = W;
+      cvs.height = H;
+      buildGrid();
+    }
+
+    if (embedded) {
+      const el = containerRef?.current;
+      if (!el) return;
+      ro = new ResizeObserver(() => resize());
+      ro.observe(el);
+      resize();
+    } else {
+      resize();
+      window.addEventListener("resize", resize);
+    }
+
+    const onMouse = (e: MouseEvent) => {
+      if (embedded) {
+        const el = containerRef?.current;
+        if (!el) {
+          mouseRef.current = [-9999, -9999];
+          return;
+        }
+        const r = el.getBoundingClientRect();
+        mouseRef.current = [e.clientX - r.left, e.clientY - r.top];
+      } else {
+        mouseRef.current = [e.clientX, e.clientY];
+      }
+    };
+    window.addEventListener("mousemove", onMouse, { passive: true });
+
+    function draw() {
+      const now = performance.now();
+      raf = requestAnimationFrame(draw);
+      if (document.hidden || now - lastDrawT < FRAME_INTERVAL) return;
+
+      const dt = Math.min((now - lastT) / 1000, 0.05); // cap at 50ms
+      lastT = now;
+      lastDrawT = now;
+      const t = ((now - startT) / 1000) * TIME_SCALE;
+      const wobbleX = Math.sin(t * 0.07) * 0.4;
+      const wobbleY = Math.cos(t * 0.05) * 0.4;
+
+      // Render: near-black fill each frame (tiny alpha preserves 1-frame ghost)
+      ctx.fillStyle = "rgba(2,1,0,0.92)";
+      ctx.fillRect(0, 0, W, H);
+
+      const [mx, my] = mouseRef.current;
+
+      ctx.lineCap = "round";
+
+      for (const ln of lines) {
+        // Organic time evolution: offset x and y at different rates so the
+        // flow field rotates slowly rather than translating left.
+        const nx = ln.bx * NOISE_SCALE + t * 0.13 + wobbleX;
+        const ny = ln.by * NOISE_SCALE + t * 0.09 + wobbleY;
+        const eps = 0.3;
+        // Curl of fbm scalar → divergence-free flow (no sources/sinks)
+        const dfdx = (fbm(nx + eps, ny) - fbm(nx - eps, ny)) / (2 * eps);
+        const dfdy = (fbm(nx, ny + eps) - fbm(nx, ny - eps)) / (2 * eps);
+        let tx = dfdy * LINE_LEN;
+        let ty = -dfdx * LINE_LEN;
+
+        // Cursor repulsion: add a radial velocity impulse each frame.
+        // Target stays pure noise — lines get nudged away and spring back,
+        // so the effect is a fluid disturbance wake, not a frozen circle.
+        const dx = ln.bx - mx,
+          dy = ln.by - my;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < REPEL_RADIUS * REPEL_RADIUS && d2 > 1) {
+          const d = Math.sqrt(d2);
+          const impulse = REPEL_STR * (1 - d / REPEL_RADIUS);
+          ln.evx += (dx / d) * impulse * dt;
+          ln.evy += (dy / d) * impulse * dt;
+        }
+
+        // Spring physics: endpoint springs toward (possibly cursor-displaced) target
+        const ax = (tx - ln.ex) * SPRING_K - ln.evx * DAMPING;
+        const ay = (ty - ln.ey) * SPRING_K - ln.evy * DAMPING;
+        ln.evx += ax * dt;
+        ln.evy += ay * dt;
+        ln.ex += ln.evx * dt;
+        ln.ey += ln.evy * dt;
+
+        // Draw: tail offset → tip, rounded caps
+        const elen = Math.sqrt(ln.ex * ln.ex + ln.ey * ln.ey);
+        if (elen < 0.5) continue;
+
+        const ndx = ln.ex / elen,
+          ndy = ln.ey / elen;
+        const x0 = ln.bx + ndx * elen * BEGIN_OFF;
+        const y0 = ln.by + ndy * elen * BEGIN_OFF;
+        const x1 = ln.bx + ln.ex;
+        const y1 = ln.by + ln.ey;
+
+        const t_col = Math.min(elen / LINE_LEN, 1.0);
+        const opacity = Math.min(t_col * 2.2, 1.0);
+
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
+        ctx.strokeStyle =
+          LAVA_LUT[Math.min(COLOR_STEPS - 1, (t_col * (COLOR_STEPS - 1)) | 0)];
+        ctx.lineWidth = LINE_WIDTH * (0.5 + t_col * 0.8);
+        ctx.globalAlpha = opacity;
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+    draw();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro?.disconnect();
+      if (!embedded) window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMouse);
+    };
+  }, [embedded, containerRef]);
+
+  return (
+    <>
+      <canvas
+        ref={canvasRef}
+        className="screen-only"
+        style={layerStyle}
+      />
+      {/* Dark veil — lifts text contrast while preserving the amber glow */}
+      <div
+        className="screen-only"
+        style={{
+          ...layerStyle,
+          background: "rgba(0,0,0,0.58)",
+        }}
+      />
+    </>
+  );
+}
