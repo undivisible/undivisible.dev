@@ -12,7 +12,7 @@ import {
   resumeProjectsNotInReadme,
   resumeSkillGroups,
 } from "@/data/resume-document";
-import type { ReadmeBundle } from "@/lib/profile-readme";
+import { projectKey, type ReadmeBundle } from "@/lib/profile-readme";
 import { pillarKeys } from "@/data/portfolio-featured";
 import { TILE_LINK_HOVER } from "@/components/brief/ui/constants";
 import { RandomizedText } from "./randomized-text";
@@ -98,19 +98,34 @@ export function Info({
   const showFolio = slice === "all" || slice === "folio";
   const showBio = slice === "all" || slice === "bio";
   const tidbits = useMemo((): Array<{
+    key: string;
     name: string;
     href: string;
     desc: string;
     opacity?: 50;
   }> => {
-    return [
-      ...readme.miniapps.map((p) => ({
-        name: p.name,
-        href: p.href,
-        desc: p.desc,
+    const seen = new Set<string>();
+    const out: Array<{
+      key: string;
+      name: string;
+      href: string;
+      desc: string;
+      opacity?: 50;
+    }> = [];
+    for (const p of [
+      ...readme.miniapps.map((m) => ({
+        name: m.name,
+        href: m.href,
+        desc: m.desc,
       })),
       ...tidbitExtras,
-    ];
+    ]) {
+      const key = projectKey(p.name);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({ key, ...p });
+    }
+    return out;
   }, [readme]);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -530,7 +545,7 @@ export function Info({
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {tidbits.map((tidbit, i) => (
                 <motion.a
-                  key={tidbit.name}
+                  key={tidbit.key}
                   href={tidbit.href}
                   target="_blank"
                   rel="noopener noreferrer"

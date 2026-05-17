@@ -58,6 +58,8 @@ function rgba(hex: string, alpha: number) {
   return `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
 }
 
+const LIGHT_FRAME_MS = 1000 / 30;
+
 function drawBird(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -198,6 +200,7 @@ export function Light({
     if (!ctx) return;
 
     let animFrameId = 0;
+    let lastFrameMs = 0;
 
     const resize = () => {
       const parent = canvas.parentElement;
@@ -225,12 +228,18 @@ export function Light({
     resize();
 
     const render = (timeMs: number) => {
+      if (animated) {
+        animFrameId = window.requestAnimationFrame(render);
+      }
+
       if (document.hidden) {
-        if (animated) {
-          animFrameId = window.requestAnimationFrame(render);
-        }
         return;
       }
+
+      if (animated && timeMs - lastFrameMs < LIGHT_FRAME_MS) {
+        return;
+      }
+      lastFrameMs = timeMs;
 
       const current = sceneRef.current;
       const dt = lastTimeRef.current
@@ -506,9 +515,6 @@ export function Light({
         }
       }
 
-      if (animated) {
-        animFrameId = window.requestAnimationFrame(render);
-      }
     };
 
     resize();
@@ -521,7 +527,7 @@ export function Light({
       observer.disconnect();
       window.cancelAnimationFrame(animFrameId);
     };
-  }, [animated, birdGroups, rainDrops, scene]);
+  }, [animated, birdGroups, rainDrops]);
 
   return <canvas ref={canvasRef} className={className} style={{ opacity }} />;
 }

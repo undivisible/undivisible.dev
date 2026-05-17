@@ -101,7 +101,11 @@ body::-webkit-scrollbar {
   .page-wrapper {
     box-shadow: none !important;
     margin: 0 !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    overflow: hidden !important;
     page-break-after: always;
+    break-after: page;
   }
   .page-wrapper:last-child {
     page-break-after: auto;

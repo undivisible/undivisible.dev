@@ -49,7 +49,7 @@ function extractColorsFromCanvasImage(
  * Last.fm recent track + palette from album art.
  * Uses static export–friendly client fetch (Audioscrobbler allows CORS; art CDN sends `Access-Control-Allow-Origin: *`).
  */
-export function useLastFmVisualData() {
+export function useLastFmVisualData(enabled = true) {
   const publicUsername =
     process.env.NEXT_PUBLIC_LASTFM_USERNAME ?? "undivisible";
 
@@ -58,6 +58,11 @@ export function useLastFmVisualData() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    if (!enabled) {
+      setReady(true);
+      return undefined;
+    }
+
     let cancelled = false;
 
     const finish = () => {
@@ -118,7 +123,7 @@ export function useLastFmVisualData() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [enabled]);
 
   return { track, colors, ready, lastFmUsername: publicUsername };
 }

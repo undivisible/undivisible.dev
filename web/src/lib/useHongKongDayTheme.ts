@@ -140,7 +140,10 @@ export type HongKongDayTheme = {
   attributionUrl: string;
 };
 
+const themeDebug = process.env.NODE_ENV !== "production";
+
 function logSolar(message: string, extra?: unknown) {
+  if (!themeDebug) return;
   if (extra === undefined) {
     console.info(`[hkt-solar] ${message}`);
     return;
@@ -149,6 +152,7 @@ function logSolar(message: string, extra?: unknown) {
 }
 
 function logLocation(message: string, extra?: unknown) {
+  if (!themeDebug) return;
   if (extra === undefined) {
     console.info(`[ip-location] ${message}`);
     return;
@@ -157,6 +161,7 @@ function logLocation(message: string, extra?: unknown) {
 }
 
 function logWeather(message: string, extra?: unknown) {
+  if (!themeDebug) return;
   if (extra === undefined) {
     console.info(`[hkt-weather] ${message}`);
     return;
@@ -708,7 +713,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   const initialDateKey = getDateKey(getTimeZoneParts(new Date(), HONG_KONG_TIME_ZONE));
   const initialCachedSolar = readCachedSolarTimes(initialDateKey);
   const initialCachedLocation = readCachedLocationInfo();
-  const [now, setNow] = useState(() => new Date());
+  const [clockMs, setClockMs] = useState(() => Date.now());
   const [solarTimes, setSolarTimes] = useState<SolarTimes>(() => initialCachedSolar ?? buildFallbackSolarTimes(initialDateKey));
   const [location, setLocation] = useState<LocationInfo>(() => initialCachedLocation ?? getFallbackLocationInfo());
   const [weather, setWeather] = useState<WeatherInfo>({ temperatureC: 24, status: "CLEAR", kind: "clear", rainIntensity: 0 });
@@ -716,13 +721,21 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   const [isScrubbing, setIsScrubbing] = useState(false);
   const resetFrameRef = useRef<number | null>(null);
 
-  const hktParts = useMemo(() => getTimeZoneParts(now, HONG_KONG_TIME_ZONE), [now]);
+  const minuteKey = Math.floor(clockMs / 60_000);
+
+  const hktParts = useMemo(
+    () => getTimeZoneParts(new Date(clockMs), HONG_KONG_TIME_ZONE),
+    [minuteKey],
+  );
   const hktDateKey = useMemo(() => getDateKey(hktParts), [hktParts]);
-  const liveMinute = hktParts.hour * 60 + hktParts.minute + hktParts.second / 60;
   const liveMinuteDiscrete = hktParts.hour * 60 + hktParts.minute;
+  const liveMinute = useMemo(() => {
+    const parts = getTimeZoneParts(new Date(clockMs), HONG_KONG_TIME_ZONE);
+    return parts.hour * 60 + parts.minute + parts.second / 60;
+  }, [clockMs]);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setNow(new Date()), 1000);
+    const timer = window.setInterval(() => setClockMs(Date.now()), 1000);
     return () => window.clearInterval(timer);
   }, []);
 
@@ -864,8 +877,8 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   const phase = getPhase(themeMinute, solarTimes);
   const displayedDate = useMemo(() => {
     const delta = shortestWrappedDelta(liveMinute, effectiveDisplayedMinute);
-    return new Date(now.getTime() + delta * 60 * 1000);
-  }, [effectiveDisplayedMinute, liveMinute, now]);
+    return new Date(clockMs + delta * 60 * 1000);
+  }, [clockMs, effectiveDisplayedMinute, liveMinute]);
 
   const daylightStrength = useMemo(() => {
     if (themeMinute <= solarTimes.sunrise || themeMinute >= solarTimes.sunset) {

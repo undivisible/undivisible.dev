@@ -57,6 +57,31 @@ function collapseWs(text: string): string {
   return text.replace(/\s+/g, " ").trim();
 }
 
+export type InlineMdSegment =
+  | { type: "text"; value: string }
+  | { type: "link"; label: string; href: string };
+
+export function parseInlineMdSegments(text: string): InlineMdSegment[] {
+  const segments: InlineMdSegment[] = [];
+  const re = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ type: "text", value: text.slice(lastIndex, match.index) });
+    }
+    segments.push({ type: "link", label: match[1]!.trim(), href: match[2]!.trim() });
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) {
+    segments.push({ type: "text", value: text.slice(lastIndex) });
+  }
+  if (segments.length === 0) {
+    segments.push({ type: "text", value: text });
+  }
+  return segments;
+}
+
 function stripInlineMd(text: string): string {
   return collapseWs(
     text
@@ -368,6 +393,22 @@ export function parseResumeMarkdown(md: string): ResumeDocument {
     community,
     interests,
   };
+}
+
+export function resumeItemBlurb(
+  item: Pick<ResumeListItem, "name" | "meta" | "desc" | "stack">,
+): string {
+  const parts: string[] = [];
+  const name = item.name.trim();
+  const meta = item.meta.trim();
+  if (meta && meta.toLowerCase() !== name.toLowerCase()) {
+    parts.push(meta);
+  }
+  const desc = item.desc.trim();
+  if (desc) parts.push(desc);
+  const stack = item.stack.trim();
+  if (stack) parts.push(stack);
+  return parts.join(" — ");
 }
 
 export function resumeItemKey(

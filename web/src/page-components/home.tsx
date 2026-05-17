@@ -45,13 +45,16 @@ export default function Home({
   const [nowMode, setNowMode] = useState(false);
   const [printMounted, setPrintMounted] = useState(false);
 
-  const runPrint = useCallback(async (target: SitePrintTarget) => {
+  useEffect(() => {
+    void import("@/components/home/print/HomePrintRoot");
+    void import("@/components/brief/print/PrintRoot");
     setPrintMounted(true);
-    await new Promise<void>((resolve) => {
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-    });
-    await printSitePdf(target);
   }, []);
+
+  const runPrint = useCallback(async (target: SitePrintTarget) => {
+    if (!printMounted) setPrintMounted(true);
+    await printSitePdf(target);
+  }, [printMounted]);
 
   useEffect(() => {
     const onAfterPrint = () => clearSitePrintTarget();

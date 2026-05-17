@@ -1,6 +1,7 @@
 import type { ReadmeBundle } from "@/lib/profile-readme";
 import {
   flattenPrintProjects,
+  resumeItemBlurb,
   type ResumeContactRow,
   type ResumeDocument,
   type ResumeExperience,
@@ -25,7 +26,7 @@ export const resumePrintProjects: ResumeProject[] = flattenPrintProjects(
 ).map((item) => ({
   name: item.name,
   href: item.href,
-  desc: [item.meta, item.desc].filter(Boolean).join(" — "),
+  desc: resumeItemBlurb(item),
   stack: item.stack,
 }));
 

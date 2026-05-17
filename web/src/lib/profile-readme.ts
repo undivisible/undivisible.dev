@@ -12,7 +12,7 @@ export type ReadmeBundle = {
   miniapps: ReadmeProject[];
 };
 
-function projectKey(name: string): string {
+export function projectKey(name: string): string {
   return name
     .replace(/\s*\(wip\)\s*/gi, "")
     .trim()

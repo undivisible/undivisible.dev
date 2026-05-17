@@ -18,7 +18,8 @@ const DEFAULT_COLORS = ["#ffffff", "#cccccc", "#999999", "#666666", "#333333"];
 const FIELD_CHARS = ".,:;-=+*#%&";
 const SHAPE_CHARS = "@#MW8$&NBG";
 const SHADER_DPR_CAP = 1;
-const WEBGL_INTERVAL = 1000 / 24;
+const WEBGL_INTERVAL = 1000 / 20;
+const LOOP_INTERVAL = 1000 / 30;
 /** Ignore sub-pixel/layout-thrash resizes so mobile viewport bars do not wipe canvases each frame */
 const RESIZE_STABILITY_PX = 10;
 
@@ -321,7 +322,7 @@ export default function Ascii({
       const dpr = Math.min(window.devicePixelRatio || 1, SHADER_DPR_CAP);
       const width = container.clientWidth;
       const height = container.clientHeight;
-      webglThrottleMs = width < 1024 ? 1000 / 14 : WEBGL_INTERVAL;
+      webglThrottleMs = width < 1024 ? 1000 / 12 : WEBGL_INTERVAL;
       canvas.width = Math.max(1, Math.floor(width * dpr));
       canvas.height = Math.max(1, Math.floor(height * dpr));
       canvas.style.width = `${width}px`;
@@ -423,14 +424,15 @@ export default function Ascii({
     let width = 0;
     let height = 0;
     let last = performance.now();
-    let asciiIntervalMs = 1000 / 30;
+    let asciiIntervalMs = 1000 / 24;
     let lastAscii = 0;
+    let lastLoop = 0;
 
     const resize = () => {
       width = container.clientWidth;
       height = container.clientHeight;
       const narrow = width < 1024;
-      asciiIntervalMs = narrow ? 1000 / 16 : 1000 / 30;
+      asciiIntervalMs = narrow ? 1000 / 12 : 1000 / 24;
       const size = Math.max(170, Math.min(width, height) * 0.31);
       shapes[0].x = width * 0.22;
       shapes[0].y = height * 0.22;
@@ -461,13 +463,18 @@ export default function Ascii({
     const detachResize = attachStableResize(container, resize);
 
     const render = (now: number) => {
+      frameRef.current = requestAnimationFrame(render);
+
       if (document.hidden) {
         return;
       }
 
-      webglRenderRef.current?.(now);
+      if (now - lastLoop < LOOP_INTERVAL) {
+        return;
+      }
+      lastLoop = now;
 
-      frameRef.current = requestAnimationFrame(render);
+      webglRenderRef.current?.(now);
 
       if (now - lastAscii < asciiIntervalMs) return;
       lastAscii = now;
@@ -493,7 +500,7 @@ export default function Ascii({
         }
       }
 
-      const cellDiv = width < 1024 ? 28 : 48;
+      const cellDiv = width < 1024 ? 32 : 56;
       const cell = Math.max(8, Math.min(width, height) / cellDiv);
       const cols = Math.max(1, Math.floor(width / (cell * 0.9)));
       const rows = Math.max(1, Math.floor(height / cell));
@@ -562,6 +569,7 @@ export default function Ascii({
       }
 
       frameCtx.globalAlpha = 1;
+      ctx.clearRect(0, 0, width, height);
       ctx.drawImage(frameCanvas, 0, 0);
     };
 
@@ -588,7 +596,7 @@ export default function Ascii({
       <canvas
         ref={bgCanvasRef}
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 h-full w-full opacity-[0.004]"
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full invisible"
       />
       <canvas
         ref={asciiCanvasRef}

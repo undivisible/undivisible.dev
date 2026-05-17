@@ -48,6 +48,24 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "desc": "fast homebrew-compatible package manager in rust. uses homebrew's ecosystem (formulae, bottles, casks) without the ruby/git overhead — compiled, async, parallel installs, lockfiles, and experimental winget/scoop/nix-like support."
   },
   {
+    "key": "soliloquy",
+    "name": "soliloquy",
+    "href": "https://github.com/tschk/soliloquy",
+    "desc": "an experimental operating system model for the web — immutable, browser-native, built on a modified alpine base. ### rv8 it uses rv8, a custom browser engine built with servo and v8."
+  },
+  {
+    "key": "experiences",
+    "name": "experiences",
+    "href": "#",
+    "desc": "a project exploring a more accessible spatial web, built on unity wasm."
+  },
+  {
+    "key": "atmosphere",
+    "name": "atmosphere",
+    "href": "#",
+    "desc": "a native sync and ecosystem layer for every device, with local-first and homelab support."
+  },
+  {
     "key": "tile",
     "name": "tile (wip)",
     "href": "https://github.com/semitechnological/tile",
@@ -64,7 +82,140 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "name": "rover (wip)",
     "href": "#",
     "desc": "utilities and plugin system for mac, based on raycast + ghostty."
+  },
+  {
+    "key": "rs_ai",
+    "name": "rs_ai",
+    "href": "https://github.com/undivisible/rs_ai",
+    "desc": "rust ai sdk for building across cloud and local providers with one async-first api with on-device runtimes through `rs_ai_local` — including gemini nano on android and google chrome (browser prompt api), foundationmodels on macos, and phi silica on windows and microsoft edge (browser prompt api)."
+  },
+  {
+    "key": "rs_imessage",
+    "name": "rs_imessage",
+    "href": "https://github.com/undivisible/rs_imessage",
+    "desc": "rust imessage crate and cli"
+  },
+  {
+    "key": "rs_facetime",
+    "name": "rs_facetime",
+    "href": "https://github.com/undivisible/rs_facetime",
+    "desc": "rust facetime crate and cli"
+  },
+  {
+    "key": "stalwart-lite",
+    "name": "stalwart lite",
+    "href": "https://github.com/arkiecompany/stalwart-lite",
+    "desc": "stalwart fork that runs in-process as a rust crate. imap, smtp, management api — no web admin, no overhead. built for embedding and local-first setups."
+  },
+  {
+    "key": "crosspost-rs",
+    "name": "crosspost-rs",
+    "href": "https://github.com/arkiecompany/crosspost-rs",
+    "desc": "a rust crossposting library for multiple social media platforms"
+  },
+  {
+    "key": "ark-protocol",
+    "name": "ark-protocol",
+    "href": "https://github.com/tschk/ark-protocol",
+    "desc": "open protocol and reference implementation for exposing many local VPS services behind one standardized HTTPS/WebSocket ingress. defines a manifest-based routing layer, adapter APIs, and Cloudflare-compatible edge integration for multiplexing internal ports through a single public endpoint."
+  },
+  {
+    "key": "monoprotocol",
+    "name": "monoprotocol",
+    "href": "https://github.com/atechnology-company/monoprotocol",
+    "desc": "Normative draft sync protocol: wire format, crypto (HKDF, AES-256-GCM), replicated object model, journals, capabilities; Rust reference crate on crates.io with golden conformance vectors (JSON/CBOR). *Built with: Rust, Markdown spec, conformance fixtures.*"
   }
 ];
 
-export const miniappsFromReadme: ReadmeProject[] = [];
+export const miniappsFromReadme: ReadmeProject[] = [
+  {
+    "key": "standpoint",
+    "name": "standpoint",
+    "href": "https://standpoint.undivisible.dev",
+    "desc": "the ultimate opinion based platform for sharing tierlists, voting on polls, and playing spectrum - a party game to guess on a spectrum based on a prompt."
+  },
+  {
+    "key": "unthinkmail",
+    "name": "unthinkmail",
+    "href": "https://unthinkmail.undivisible.dev/",
+    "desc": "mcp for imap-supported email."
+  },
+  {
+    "key": "notes",
+    "name": "notes",
+    "href": "https://notes.undivisible.dev/",
+    "desc": "minimal note taker with full google font support, code highlighting and editing and notion-style markdown editing."
+  },
+  {
+    "key": "bublik",
+    "name": "bublik",
+    "href": "https://bublik.undivisible.dev/",
+    "desc": "canvas tool for generating custom frequency soundscapes."
+  },
+  {
+    "key": "alphabets",
+    "name": "alphabets",
+    "href": "https://alphabets.undivisible.dev",
+    "desc": "learn any unicode-supported alphabet through cards, quizzes, and completion tables."
+  },
+  {
+    "key": "infrastruct",
+    "name": "infrastruct",
+    "href": "https://infrastruct.undivisible.dev",
+    "desc": "belief agnostic jurisprudence local ai search engine platform with searx & ddg, transformers.js and browser prompt api."
+  },
+  {
+    "key": "akh-archived",
+    "name": "akh (archived)",
+    "href": "https://akh.undivisible.dev",
+    "desc": "islamic uniplatform for when i was previously interested in islam."
+  },
+  {
+    "key": "drift",
+    "name": "drift",
+    "href": "https://github.com/undivisible/drift-wallpaper",
+    "desc": "macos drift screensaver as a live wallpaper on linux, macos, windows. spotify and apple music now playing support."
+  },
+  {
+    "key": "vro",
+    "name": "vro",
+    "href": "https://github.com/undivisible/vro",
+    "desc": "minimal micro inspired text editor written in v."
+  },
+  {
+    "key": "unthinkclaw",
+    "name": "unthinkclaw",
+    "href": "https://github.com/undivisible/unthinkclaw",
+    "desc": "openclaw but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms."
+  },
+  {
+    "key": "poke-around",
+    "name": "poke around",
+    "href": "https://github.com/undivisible/poke-around",
+    "desc": "lets poke interact with your computer across major oses."
+  },
+  {
+    "key": "ycyestim",
+    "name": "ycyestim",
+    "href": "https://github.com/undivisible/YCYEStim",
+    "desc": "ios controller for ycy yokonex gen 1 and 2 electrostimulation hardware over btle (optional user-owned http/websocket bridge); dual-channel waveforms, presets and programs, safety limits, healthkit and watchos heart-rate adaptive output."
+  },
+  {
+    "key": "bluetooth-terminal",
+    "name": "bluetooth terminal",
+    "href": "https://github.com/undivisible/bluetooth-terminal",
+    "desc": "random bluetooth terminal i made"
+  },
+  {
+    "key": "unelaborate",
+    "name": "unelaborate (wip)",
+    "href": "https://github.com/undivisible/unelaborate",
+    "desc": "minecraft client in native swiftui with modrinth modpack, shader, and resource pack loading."
+  },
+  {
+    "key": "anywhere",
+    "name": "anywhere (wip)",
+    "href": "https://github.com/undivisible/anywhere",
+    "desc": "browser extension that turns ai chat responses into interactive interfaces. renders widgets, panels, forms, charts inside chat via custom response tags."
+  }
+];
