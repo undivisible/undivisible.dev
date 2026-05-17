@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { PrintRoot } from "@/components/brief/print/PrintRoot";
 import { ServicesSection } from "@/components/brief/desktop/sections/ServicesSection";
 import { Info } from "@/components/Info";
 import Ascii from "@/components/Ascii";
@@ -8,7 +9,13 @@ import { Light } from "@/components/Light";
 import { SiteNav } from "@/components/SiteNav";
 import { PortfolioCaseStudies } from "@/components/site/PortfolioCaseStudies";
 import { PortfolioPillars } from "@/components/site/PortfolioPillars";
+import { HomePrintRoot } from "@/components/home/print/HomePrintRoot";
 import { formatNowMarkdown } from "@/lib/format-now-markdown";
+import {
+  clearSitePrintTarget,
+  printSitePdf,
+  type SitePrintTarget,
+} from "@/lib/site-print";
 import type { ReadmeBundle } from "@/lib/profile-readme";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { useLastFmVisualData } from "@/lib/useLastFmVisualData";
@@ -25,6 +32,27 @@ export default function Home({
   const { track, colors, ready, lastFmUsername } = useLastFmVisualData();
   const dayTheme = useHongKongDayTheme();
   const [nowMode, setNowMode] = useState(false);
+
+  const runPrint = useCallback(async (target: SitePrintTarget) => {
+    await printSitePdf(target);
+  }, []);
+
+  useEffect(() => {
+    const onAfterPrint = () => clearSitePrintTarget();
+    window.addEventListener("afterprint", onAfterPrint);
+    return () => window.removeEventListener("afterprint", onAfterPrint);
+  }, []);
+
+  const printLayers = (
+    <>
+      <div className="print-only print-layer-resume" aria-hidden>
+        <HomePrintRoot />
+      </div>
+      <div className="print-only print-layer-brief" aria-hidden>
+        <PrintRoot />
+      </div>
+    </>
+  );
 
   useLayoutEffect(() => {
     document.documentElement.classList.add("snap-home");
@@ -79,13 +107,17 @@ export default function Home({
             {formatNowMarkdown(nowMarkdown)}
           </article>
         </div>
+        {printLayers}
       </>
     );
   }
 
   return (
     <>
-      <SiteNav />
+      <SiteNav
+        onPrintResume={() => runPrint("resume")}
+        onPrintBrief={() => runPrint("brief")}
+      />
       <div
         className="screen-only site-shell relative min-h-dvh sm:min-h-dvh"
         style={dayTheme.style}
@@ -136,6 +168,7 @@ export default function Home({
           </div>
         </div>
       </div>
+      {printLayers}
     </>
   );
 }
