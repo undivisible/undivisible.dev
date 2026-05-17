@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useState } from "react";
-import { PrintRoot } from "@/components/brief/print/PrintRoot";
 import { ServicesSection } from "@/components/brief/desktop/sections/ServicesSection";
 import { Info } from "@/components/Info";
 import Ascii from "@/components/Ascii";
@@ -9,7 +8,6 @@ import { Light } from "@/components/Light";
 import { SiteNav } from "@/components/SiteNav";
 import { PortfolioCaseStudies } from "@/components/site/PortfolioCaseStudies";
 import { PortfolioPillars } from "@/components/site/PortfolioPillars";
-import { HomePrintRoot } from "@/components/home/print/HomePrintRoot";
 import { formatNowMarkdown } from "@/lib/format-now-markdown";
 import type { ReadmeBundle } from "@/lib/profile-readme";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
@@ -19,12 +17,10 @@ export default function Home({
   readme,
   nowMarkdown,
   initialHash,
-  printLayout = "resume",
 }: {
   readme: ReadmeBundle;
   nowMarkdown: string | null;
   initialHash?: string | null;
-  printLayout?: "resume" | "brief";
 }) {
   const { track, colors, ready, lastFmUsername } = useLastFmVisualData();
   const dayTheme = useHongKongDayTheme();
@@ -83,7 +79,6 @@ export default function Home({
             {formatNowMarkdown(nowMarkdown)}
           </article>
         </div>
-        {printLayout === "resume" ? <HomePrintRoot /> : <PrintRoot />}
       </>
     );
   }
@@ -141,7 +136,6 @@ export default function Home({
           </div>
         </div>
       </div>
-      {printLayout === "resume" ? <HomePrintRoot /> : <PrintRoot />}
     </>
   );
 }
