@@ -132,7 +132,8 @@ Custom browser engine for Soliloquy combining Servo rendering with V8 JavaScript
 - **[Unthinkclaw](https://github.com/undivisible/unthinkclaw)** — OpenClaw-scale local agent runtime at a fraction of the size; agent swarms, multi-channel messaging. *Built with: Rust.*
 - **[Poke Around](https://github.com/undivisible/poke-around)** — Lets [Poke](https://poke.com) interact with your computer on major OSes. *Built with: Zig and Typescript.*
 - **[Unelaborate](https://github.com/undivisible/unelaborate)** — Minecraft client in native SwiftUI with Modrinth modpack, shader, and resource-pack loading. *Built with: Swift, SwiftUI.*
-- **[YCYEStim](https://github.com/undivisible/YCYEStim)** — iOS controller for YCY-YOKONEX Gen 1 and 2 electrostimulation hardware over Bluetooth LE (optional user-owned HTTP/WebSocket bridge); dual-channel waveforms, presets and programs, safety limits, HealthKit and watchOS heart-rate adaptive output. *Built with: Swift 6, SwiftUI, CoreBluetooth, HealthKit, watchOS.*
+- **[YCYEStim](https://github.com/undivisible/ycyestim)** — iOS controller for YCY-YOKONEX Gen 1 and 2 electrostimulation hardware over Bluetooth LE (optional user-owned HTTP/WebSocket bridge); dual-channel waveforms, presets and programs, safety limits, HealthKit and watchOS heart-rate adaptive output. *Built with: Swift 6, SwiftUI, CoreBluetooth, HealthKit, watchOS.*
+- **[Bluetooth Terminal](https://github.com/undivisible/bluetooth-terminal)** — macOS Bluetooth LE terminal for scanning, connecting, and exchanging raw payloads with nearby devices. *Built with: Swift, SwiftUI, CoreBluetooth.*
 - **[Anywhere](https://github.com/undivisible/anywhere)** — Browser extension that turns AI chat responses into interactive UIs (widgets, panels, forms, charts) via custom response tags. *Built with: Rust, Crepuscularity WebExt, MV3.*
 
 ## Libraries & infrastructure

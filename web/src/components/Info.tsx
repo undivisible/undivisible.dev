@@ -75,18 +75,25 @@ const transportColors: Record<string, string> = {
 export function Info({
   colors,
   dayTheme,
+  getTransportStyle: getTransportStyleProp,
   readme,
   nowMarkdown,
   onOpenNow,
   slice = "all",
 }: {
   colors: string[];
-  dayTheme: HongKongDayTheme;
+  dayTheme?: HongKongDayTheme;
+  getTransportStyle?: HongKongDayTheme["getTransportStyle"];
   readme: ReadmeBundle;
   nowMarkdown: string | null;
   onOpenNow: () => void;
   slice?: "all" | "intro" | "folio" | "bio";
 }) {
+  const getTransportStyle =
+    getTransportStyleProp ?? dayTheme?.getTransportStyle;
+  if (!getTransportStyle) {
+    throw new Error("Info requires dayTheme or getTransportStyle");
+  }
   const showIntro = slice === "all" || slice === "intro";
   const showFolio = slice === "all" || slice === "folio";
   const showBio = slice === "all" || slice === "bio";
@@ -126,7 +133,7 @@ export function Info({
 
   useEffect(() => {
     const clock = clockRef.current;
-    if (!clock) {
+    if (!clock || !dayTheme) {
       return;
     }
 
@@ -134,7 +141,7 @@ export function Info({
     return () => {
       clock.removeEventListener("wheel", dayTheme.onClockWheel);
     };
-  }, [dayTheme.onClockWheel]);
+  }, [dayTheme?.onClockWheel]);
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => setHydrated(true));
@@ -203,17 +210,17 @@ export function Info({
     [],
   );
 
-  const weatherText = hydrated ? dayTheme.weatherDisplay : "--°C --";
-  const hkgText = hydrated ? dayTheme.hkgTime : "--:--:--";
-  const melText = hydrated ? dayTheme.melTime : "--:--:--";
-  const localText = hydrated ? dayTheme.localTime : "--:--:--";
+  const weatherText = hydrated && dayTheme ? dayTheme.weatherDisplay : "--°C --";
+  const hkgText = hydrated && dayTheme ? dayTheme.hkgTime : "--:--:--";
+  const melText = hydrated && dayTheme ? dayTheme.melTime : "--:--:--";
+  const localText = hydrated && dayTheme ? dayTheme.localTime : "--:--:--";
 
   const extraProjects = useMemo(
     () => resumeProjectsNotInReadme(readme),
     [readme],
   );
 
-  const clockPanel = (
+  const clockPanel = dayTheme ? (
     <div
       ref={clockRef}
       data-time-scrubber="true"
@@ -222,7 +229,7 @@ export function Info({
       onMouseEnter={() => setClockHovered(true)}
       onMouseLeave={() => {
         setClockHovered(false);
-        dayTheme.resetScrub();
+        dayTheme?.resetScrub();
       }}
     >
       <div className="mb-2">
@@ -319,7 +326,7 @@ export function Info({
         </div>
       )}
     </div>
-  );
+  ) : null;
 
   const socialPills = (
     <div className="grid w-full grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
@@ -452,7 +459,7 @@ export function Info({
           alignItems: "center",
           gap: "4px",
           display: "inline-flex",
-          ...dayTheme.getTransportStyle(base),
+          ...getTransportStyle(base),
         }}
       >
         <div
@@ -568,10 +575,10 @@ export function Info({
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {extraProjects.map((p, i) => (
                   <MainProjectCard
-                    key={p.href}
+                    key={`${p.name}-${i}`}
                     title={p.name}
                     description={p.desc}
-                    href={p.href}
+                    href={p.href || undefined}
                     isMobile={isMobile}
                     revealIndex={i}
                   />
@@ -1001,27 +1008,25 @@ function MainProjectCard({
 }: {
   title: string;
   description: string;
-  href: string;
+  href?: string;
   isMobile?: boolean;
   revealIndex?: number;
 }) {
-  return (
-    <motion.a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{
-        duration: 0.55,
-        ease: REVEAL_EASE,
-        delay: revealIndex * 0.05,
-      }}
-      className={`group relative flex min-h-[11rem] w-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 text-[var(--page-text)] backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.12] hover:bg-white/[0.055] sm:min-h-[12rem] sm:p-5 ${
-        isMobile ? "max-w-full" : ""
-      }`}
-    >
+  const cardClass = `group relative flex min-h-[11rem] w-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 text-[var(--page-text)] backdrop-blur-sm sm:min-h-[12rem] sm:p-5 ${
+    isMobile ? "max-w-full" : ""
+  } ${href ? TILE_LINK_HOVER + " hover:border-white/[0.12] hover:bg-white/[0.055]" : ""}`;
+  const motionProps = {
+    initial: { opacity: 0, y: 16 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-40px" },
+    transition: {
+      duration: 0.55,
+      ease: REVEAL_EASE,
+      delay: revealIndex * 0.05,
+    },
+  } as const;
+  const inner = (
+    <>
       <div className="text-lg font-semibold leading-tight tracking-tight sm:text-xl">
         <AnimatedText text={title} className="inline-block" split="words" />
       </div>
@@ -1034,15 +1039,37 @@ function MainProjectCard({
       >
         {description}
       </div>
-      <div
-        className={`mt-3 text-[10px] uppercase tracking-[0.18em] font-mono transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-        }`}
-        style={{ color: "var(--page-text-soft)" }}
+      {href ? (
+        <motion.div
+          className={`mt-3 text-[10px] uppercase tracking-[0.18em] font-mono transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          }`}
+          style={{ color: "var(--page-text-soft)" }}
+        >
+          open →
+        </motion.div>
+      ) : null}
+    </>
+  );
+
+  if (href) {
+    return (
+      <motion.a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        {...motionProps}
+        className={cardClass}
       >
-        open →
-      </div>
-    </motion.a>
+        {inner}
+      </motion.a>
+    );
+  }
+
+  return (
+    <motion.div {...motionProps} className={cardClass}>
+      {inner}
+    </motion.div>
   );
 }
 

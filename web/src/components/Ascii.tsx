@@ -176,7 +176,9 @@ export default function Ascii({
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef<number>(0);
-  const webglRenderRef = useRef<((now: number) => void) | null>(null);
+  const webglRenderRef = useRef<
+    ((now: number, force?: boolean) => boolean) | null
+  >(null);
   const monoFontStackRef = useRef("monospace");
   const colorUniforms = useMemo(
     () =>
@@ -205,6 +207,8 @@ export default function Ascii({
       alpha: false,
       antialias: false,
       premultipliedAlpha: false,
+      // Safari clears the default back buffer after compositing; ASCII samples via drawImage.
+      preserveDrawingBuffer: true,
     });
     if (!gl) {
       console.error("[webgl] unavailable");
@@ -329,9 +333,9 @@ export default function Ascii({
 
     // Store render fn on a ref so the ASCII effect can call it each frame
     let lastWebgl = -Infinity;
-    const renderWebGL = (now: number) => {
-      if (document.hidden) return;
-      if (now - lastWebgl < webglThrottleMs) return;
+    const renderWebGL = (now: number, force = false) => {
+      if (document.hidden) return false;
+      if (!force && now - lastWebgl < webglThrottleMs) return false;
       lastWebgl = now;
 
       const cu = colorUniformsRef.current;
@@ -347,6 +351,7 @@ export default function Ascii({
       gl.uniform3fv(colorDLocation, cu[3]!);
       gl.uniform3fv(colorELocation, cu[4]!);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
+      return true;
     };
 
     gl.useProgram(program);
@@ -373,12 +378,14 @@ export default function Ascii({
     const asciiCanvas = asciiCanvasRef.current;
     if (!container || !bgCanvas || !asciiCanvas) return;
 
-    const ctx = asciiCanvas.getContext("2d");
+    const ctx = asciiCanvas.getContext("2d", { alpha: true });
+    const frameCanvas = document.createElement("canvas");
+    const frameCtx = frameCanvas.getContext("2d", { alpha: true });
     const sampleCanvas = document.createElement("canvas");
     const sampleCtx = sampleCanvas.getContext("2d", {
       willReadFrequently: true,
     });
-    if (!ctx || !sampleCtx) return;
+    if (!ctx || !frameCtx || !sampleCtx) return;
 
     const shapes: ShapeState[] = [
       {
@@ -433,11 +440,18 @@ export default function Ascii({
       shapes[2].y = height * 0.74;
       for (const shape of shapes) shape.size = size;
       // ASCII canvas at 1:1 — retina resolution is wasted on character art
-      asciiCanvas.width = Math.max(1, width);
-      asciiCanvas.height = Math.max(1, height);
+      const w = Math.max(1, width);
+      const h = Math.max(1, height);
+      asciiCanvas.width = w;
+      asciiCanvas.height = h;
       asciiCanvas.style.width = `${width}px`;
       asciiCanvas.style.height = `${height}px`;
+      if (frameCanvas.width !== w || frameCanvas.height !== h) {
+        frameCanvas.width = w;
+        frameCanvas.height = h;
+      }
       ctx.setTransform(1, 0, 0, 1, 0, 0);
+      frameCtx.setTransform(1, 0, 0, 1, 0, 0);
       monoFontStackRef.current =
         getComputedStyle(document.documentElement)
           .getPropertyValue("--font-jetbrains-mono")
@@ -448,11 +462,9 @@ export default function Ascii({
 
     const render = (now: number) => {
       if (document.hidden) {
-        frameRef.current = requestAnimationFrame(render);
         return;
       }
 
-      // Drive WebGL from this loop so both are in sync
       webglRenderRef.current?.(now);
 
       frameRef.current = requestAnimationFrame(render);
@@ -491,16 +503,19 @@ export default function Ascii({
         sampleCanvas.height = rows;
       }
 
+      webglRenderRef.current?.(now, true);
+
       sampleCtx.clearRect(0, 0, cols, rows);
       sampleCtx.drawImage(bgCanvas, 0, 0, cols, rows);
       const pixels = sampleCtx.getImageData(0, 0, cols, rows).data;
 
-      ctx.clearRect(0, 0, width, height);
-      ctx.textBaseline = "middle";
-      ctx.textAlign = "center";
+      frameCtx.clearRect(0, 0, width, height);
+      frameCtx.textBaseline = "middle";
+      frameCtx.textAlign = "center";
       const monoFont = monoFontStackRef.current;
-      ctx.font = `${Math.max(12, cell * 0.72)}px ${monoFont}, monospace`;
-      ctx.shadowColor = "transparent";
+      const font = `${Math.max(12, cell * 0.72)}px ${monoFont}, monospace`;
+      frameCtx.font = font;
+      frameCtx.shadowColor = "transparent";
 
       // Precompute cos/sin per shape — avoids 3× trig per cell per shape
       const shapeTrig = shapes.map((s) => ({
@@ -538,15 +553,16 @@ export default function Ascii({
             ),
           );
 
-          ctx.fillStyle = `rgb(${r},${g},${b})`;
-          ctx.globalAlpha = insideAnyShape
+          frameCtx.fillStyle = `rgb(${r},${g},${b})`;
+          frameCtx.globalAlpha = insideAnyShape
             ? clamp(0.86 + brightness * 0.1, 0.78, 0.94)
             : clamp(0.52 + brightness * 0.4, 0.52, 0.94);
-          ctx.fillText(charSet[charIndex], x, y);
+          frameCtx.fillText(charSet[charIndex], x, y);
         }
       }
 
-      ctx.globalAlpha = 1;
+      frameCtx.globalAlpha = 1;
+      ctx.drawImage(frameCanvas, 0, 0);
     };
 
     frameRef.current = requestAnimationFrame(render);
@@ -571,11 +587,12 @@ export default function Ascii({
     >
       <canvas
         ref={bgCanvasRef}
-        className="pointer-events-none absolute inset-0 h-full w-full opacity-0"
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full opacity-[0.004]"
       />
       <canvas
         ref={asciiCanvasRef}
-        className="pointer-events-none absolute inset-0 h-full w-full"
+        className="pointer-events-none absolute inset-0 z-[1] h-full w-full [transform:translateZ(0)]"
       />
 
       <div

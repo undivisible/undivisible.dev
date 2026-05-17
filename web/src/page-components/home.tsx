@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { PrintRoot } from "@/components/brief/print/PrintRoot";
+import dynamic from "next/dynamic";
 import { ServicesSection } from "@/components/brief/desktop/sections/ServicesSection";
 import { Info } from "@/components/Info";
 import Ascii from "@/components/Ascii";
@@ -9,8 +9,8 @@ import { Light } from "@/components/Light";
 import { SiteNav } from "@/components/SiteNav";
 import { PortfolioCaseStudies } from "@/components/site/PortfolioCaseStudies";
 import { PortfolioPillars } from "@/components/site/PortfolioPillars";
-import { HomePrintRoot } from "@/components/home/print/HomePrintRoot";
 import { formatNowMarkdown } from "@/lib/format-now-markdown";
+import { useSiteVisualEffects } from "@/hooks/use-site-visual-effects";
 import {
   clearSitePrintTarget,
   printSitePdf,
@@ -19,6 +19,16 @@ import {
 import type { ReadmeBundle } from "@/lib/profile-readme";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { useLastFmVisualData } from "@/lib/useLastFmVisualData";
+
+const HomePrintRoot = dynamic(
+  () =>
+    import("@/components/home/print/HomePrintRoot").then((m) => m.HomePrintRoot),
+  { ssr: false },
+);
+const PrintRoot = dynamic(
+  () => import("@/components/brief/print/PrintRoot").then((m) => m.PrintRoot),
+  { ssr: false },
+);
 
 export default function Home({
   readme,
@@ -31,9 +41,15 @@ export default function Home({
 }) {
   const { track, colors, ready, lastFmUsername } = useLastFmVisualData();
   const dayTheme = useHongKongDayTheme();
+  const visualEffects = useSiteVisualEffects();
   const [nowMode, setNowMode] = useState(false);
+  const [printMounted, setPrintMounted] = useState(false);
 
   const runPrint = useCallback(async (target: SitePrintTarget) => {
+    setPrintMounted(true);
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
     await printSitePdf(target);
   }, []);
 
@@ -43,7 +59,7 @@ export default function Home({
     return () => window.removeEventListener("afterprint", onAfterPrint);
   }, []);
 
-  const printLayers = (
+  const printLayers = printMounted ? (
     <>
       <div className="print-only print-layer-resume" aria-hidden>
         <HomePrintRoot />
@@ -52,7 +68,7 @@ export default function Home({
         <PrintRoot />
       </div>
     </>
-  );
+  ) : null;
 
   useLayoutEffect(() => {
     document.documentElement.classList.add("snap-home");
@@ -90,6 +106,7 @@ export default function Home({
         >
           <Light
             scene={dayTheme.shader}
+            animated={visualEffects}
             className="pointer-events-none fixed inset-0 z-0 h-full w-full"
           />
           <button
@@ -124,16 +141,24 @@ export default function Home({
       >
         <Light
           scene={dayTheme.shader}
+          animated={visualEffects}
           className="pointer-events-none fixed inset-0 z-0 h-full w-full"
         />
 
         <div className="pointer-events-none fixed inset-0 z-[1] overflow-hidden">
-          <Ascii
-            colors={colors}
-            track={track}
-            ready={ready}
-            lastFmUsername={lastFmUsername}
-          />
+          {visualEffects ? (
+            <Ascii
+              colors={colors}
+              track={track}
+              ready={ready}
+              lastFmUsername={lastFmUsername}
+            />
+          ) : (
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-b from-black/[0.58] via-black/[0.5] to-black/[0.62]"
+            />
+          )}
         </div>
 
         <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-24 pt-5 sm:px-8 sm:pt-8 lg:px-10 lg:pt-10">
@@ -151,7 +176,7 @@ export default function Home({
             <PortfolioPillars readme={readme} />
             <Info
               colors={colors}
-              dayTheme={dayTheme}
+              getTransportStyle={dayTheme.getTransportStyle}
               readme={readme}
               nowMarkdown={nowMarkdown}
               onOpenNow={() => setNowMode(true)}
@@ -159,7 +184,7 @@ export default function Home({
             />
             <Info
               colors={colors}
-              dayTheme={dayTheme}
+              getTransportStyle={dayTheme.getTransportStyle}
               readme={readme}
               nowMarkdown={nowMarkdown}
               onOpenNow={() => setNowMode(true)}

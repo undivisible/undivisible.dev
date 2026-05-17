@@ -84,14 +84,16 @@ export function Light({
   scene,
   className = "",
   opacity = 1,
+  animated = true,
 }: {
   scene: ShaderPalette;
   className?: string;
   opacity?: number;
+  /** When false, paints once (mobile / reduced-motion). */
+  animated?: boolean;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef(scene);
-  const frameRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
   const rainIntensityRef = useRef<number>(0);
   const gradientFillCacheRef = useRef<{
@@ -109,7 +111,7 @@ export function Light({
   const [rainDrops, setRainDrops] = useState<RainDrop[]>([]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!animated || typeof window === "undefined") return;
 
     const raf = requestAnimationFrame(() => {
       const narrow = window.innerWidth < 1024;
@@ -183,7 +185,7 @@ export function Light({
     });
 
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [animated]);
 
   useEffect(() => {
     sceneRef.current = scene;
@@ -194,6 +196,8 @@ export function Light({
     if (!canvas) return;
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
+
+    let animFrameId = 0;
 
     const resize = () => {
       const parent = canvas.parentElement;
@@ -222,7 +226,9 @@ export function Light({
 
     const render = (timeMs: number) => {
       if (document.hidden) {
-        frameRef.current = window.requestAnimationFrame(render);
+        if (animated) {
+          animFrameId = window.requestAnimationFrame(render);
+        }
         return;
       }
 
@@ -500,16 +506,22 @@ export function Light({
         }
       }
 
-      frameRef.current = window.requestAnimationFrame(render);
+      if (animated) {
+        animFrameId = window.requestAnimationFrame(render);
+      }
     };
 
-    frameRef.current = window.requestAnimationFrame(render);
+    resize();
+    render(performance.now());
+    if (animated) {
+      animFrameId = window.requestAnimationFrame(render);
+    }
 
     return () => {
       observer.disconnect();
-      window.cancelAnimationFrame(frameRef.current);
+      window.cancelAnimationFrame(animFrameId);
     };
-  }, [birdGroups, rainDrops]);
+  }, [animated, birdGroups, rainDrops, scene]);
 
   return <canvas ref={canvasRef} className={className} style={{ opacity }} />;
 }

@@ -1026,6 +1026,22 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     resetFrameRef.current = window.requestAnimationFrame(animate);
   };
 
+  const getTransportStyle = useCallback(
+    (baseHex: string) => {
+      const background = adjustPillColor(
+        baseHex,
+        palette.accent,
+        themeMinute,
+        phase,
+      );
+      return {
+        background,
+        color: palette.transportText,
+      };
+    },
+    [palette.accent, palette.transportText, phase, themeMinute],
+  );
+
   return {
     ready: true,
     phase,
@@ -1045,13 +1061,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     onScrubWheel,
     onClockWheel,
     resetScrub,
-    getTransportStyle: (baseHex: string) => {
-      const background = adjustPillColor(baseHex, palette.accent, themeMinute, phase);
-      return {
-        background,
-        color: palette.transportText,
-      };
-    },
+    getTransportStyle,
     attributionUrl: SUNRISE_API_ATTRIBUTION_URL,
   };
 }
