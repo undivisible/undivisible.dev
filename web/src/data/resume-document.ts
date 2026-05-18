@@ -1,6 +1,5 @@
 import type { ReadmeBundle } from "@/lib/profile-readme";
 import {
-  flattenPrintProjects,
   resumeItemBlurb,
   type ResumeContactRow,
   type ResumeDocument,
@@ -21,15 +20,6 @@ export const resumeExperience: ResumeExperience[] = resumeDoc.experience.map(
     points: job.bullets,
   }));
 
-export const resumePrintProjects: ResumeProject[] = flattenPrintProjects(
-  resumeDoc,
-).map((item) => ({
-  name: item.name,
-  href: item.href,
-  desc: resumeItemBlurb(item),
-  stack: item.stack,
-}));
-
 export const resumeSkillGroups: ResumeContactRow[] = resumeDoc.skills;
 
 export const resumeEducation: string[] = [...resumeDoc.education];
@@ -46,9 +36,10 @@ function normHref(h: string) {
   return h.replace(/\/$/, "").toLowerCase();
 }
 
-export function resumeProjectsNotInReadme(
+function isInReadme(
+  p: { name: string; href: string },
   readme: ReadmeBundle,
-): ResumeProject[] {
+): boolean {
   const hrefs = new Set(
     [...readme.mainProjects, ...readme.utilities, ...readme.miniapps].map((p) =>
       normHref(p.href),
@@ -59,12 +50,55 @@ export function resumeProjectsNotInReadme(
       p.name.toLowerCase(),
     ),
   );
-  return resumePrintProjects.filter((p) => {
-    const href = p.href.trim();
-    if (!href) {
-      return !names.has(p.name.toLowerCase());
+  if (p.href.trim() && hrefs.has(normHref(p.href))) return true;
+  return names.has(p.name.toLowerCase());
+}
+
+export function resumeSectionsNotInReadme(
+  readme: ReadmeBundle,
+): Array<{ section: string; projects: ResumeProject[] }> {
+  const seen = new Set<string>();
+  const out: Array<{ section: string; projects: ResumeProject[] }> = [];
+
+  for (const section of resumeDoc.projectSections) {
+    const filtered: ResumeProject[] = [];
+    for (const item of section.items) {
+      const key = `${item.name}:${item.href}`.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      if (isInReadme(item, readme)) continue;
+      filtered.push({
+        name: item.name,
+        href: item.href,
+        desc: resumeItemBlurb(item),
+        stack: item.stack,
+      });
     }
-    const norm = normHref(href);
-    return !hrefs.has(norm) && !names.has(p.name.toLowerCase());
-  });
+    if (filtered.length > 0) {
+      out.push({ section: section.title, projects: filtered });
+    }
+  }
+
+  for (const job of resumeDoc.experience) {
+    for (const sub of job.subsections) {
+      const filtered: ResumeProject[] = [];
+      for (const item of sub.items) {
+        const key = `${item.name}:${item.href}`.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        if (isInReadme(item, readme)) continue;
+        filtered.push({
+          name: item.name,
+          href: item.href,
+          desc: resumeItemBlurb(item),
+          stack: item.stack,
+        });
+      }
+      if (filtered.length > 0) {
+        out.push({ section: sub.title, projects: filtered });
+      }
+    }
+  }
+
+  return out;
 }

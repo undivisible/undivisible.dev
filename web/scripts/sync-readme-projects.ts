@@ -22,6 +22,7 @@ function emitTs(
   name: string;
   href: string;
   desc: string;
+  category?: string;
 };
 
 export const mainHeroQuoteFromReadme: string = ${JSON.stringify(mainHeroQuote)};

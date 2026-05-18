@@ -3,6 +3,7 @@ export type ReadmeProject = {
   name: string;
   href: string;
   desc: string;
+  category?: string;
 };
 
 export const mainHeroQuoteFromReadme: string = "a framework for building cross-platform applications from a single web-based codebase — solely by writing react + tailwindcss and a js/ts or rust backend.";
@@ -132,90 +133,112 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "key": "standpoint",
     "name": "standpoint",
     "href": "https://standpoint.undivisible.dev",
-    "desc": "the ultimate opinion based platform for sharing tierlists, voting on polls, and playing spectrum - a party game to guess on a spectrum based on a prompt."
-  },
-  {
-    "key": "unthinkmail",
-    "name": "unthinkmail",
-    "href": "https://unthinkmail.undivisible.dev/",
-    "desc": "mcp for imap-supported email."
+    "desc": "the ultimate opinion based platform for sharing tierlists, voting on polls, and playing spectrum - a party game to guess on a spectrum based on a prompt.",
+    "category": "web apps"
   },
   {
     "key": "notes",
     "name": "notes",
     "href": "https://notes.undivisible.dev/",
-    "desc": "minimal note taker with full google font support, code highlighting and editing and notion-style markdown editing."
+    "desc": "minimal note taker with full google font support, code highlighting and editing and notion-style markdown editing.",
+    "category": "web apps"
   },
   {
     "key": "bublik",
     "name": "bublik",
     "href": "https://bublik.undivisible.dev/",
-    "desc": "canvas tool for generating custom frequency soundscapes."
+    "desc": "canvas tool for generating custom frequency soundscapes.",
+    "category": "web apps"
   },
   {
     "key": "alphabets",
     "name": "alphabets",
     "href": "https://alphabets.undivisible.dev",
-    "desc": "learn any unicode-supported alphabet through cards, quizzes, and completion tables."
+    "desc": "learn any unicode-supported alphabet through cards, quizzes, and completion tables.",
+    "category": "web apps"
   },
   {
     "key": "infrastruct",
     "name": "infrastruct",
     "href": "https://infrastruct.undivisible.dev",
-    "desc": "belief agnostic jurisprudence local ai search engine platform with searx & ddg, transformers.js and browser prompt api."
+    "desc": "belief agnostic jurisprudence local ai search engine platform with searx & ddg, transformers.js and browser prompt api.",
+    "category": "web apps"
   },
   {
     "key": "akh-archived",
     "name": "akh (archived)",
     "href": "https://akh.undivisible.dev",
-    "desc": "islamic uniplatform for when i was previously interested in islam."
+    "desc": "islamic uniplatform for when i was previously interested in islam.",
+    "category": "web apps"
   },
   {
-    "key": "drift",
-    "name": "drift",
-    "href": "https://github.com/undivisible/drift-wallpaper",
-    "desc": "macos drift screensaver as a live wallpaper on linux, macos, windows. spotify and apple music now playing support."
-  },
-  {
-    "key": "vro",
-    "name": "vro",
-    "href": "https://github.com/undivisible/vro",
-    "desc": "minimal micro inspired text editor written in v."
+    "key": "unthinkmail",
+    "name": "unthinkmail",
+    "href": "https://unthinkmail.undivisible.dev/",
+    "desc": "mcp for imap-supported email.",
+    "category": "developer tools"
   },
   {
     "key": "unthinkclaw",
     "name": "unthinkclaw",
     "href": "https://github.com/undivisible/unthinkclaw",
-    "desc": "openclaw but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms."
+    "desc": "openclaw but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms.",
+    "category": "developer tools"
   },
   {
     "key": "poke-around",
     "name": "poke around",
     "href": "https://github.com/undivisible/poke-around",
-    "desc": "lets poke interact with your computer across major oses."
-  },
-  {
-    "key": "ycyestim",
-    "name": "ycyestim",
-    "href": "https://github.com/undivisible/YCYEStim",
-    "desc": "ios controller for ycy yokonex gen 1 and 2 electrostimulation hardware over btle (optional user-owned http/websocket bridge); dual-channel waveforms, presets and programs, safety limits, healthkit and watchos heart-rate adaptive output."
+    "desc": "lets poke interact with your computer across major oses.",
+    "category": "developer tools"
   },
   {
     "key": "bluetooth-terminal",
     "name": "bluetooth terminal",
     "href": "https://github.com/undivisible/bluetooth-terminal",
-    "desc": "random bluetooth terminal i made"
+    "desc": "random bluetooth terminal i made",
+    "category": "developer tools"
   },
   {
-    "key": "unelaborate",
-    "name": "unelaborate (wip)",
-    "href": "https://github.com/undivisible/unelaborate",
-    "desc": "minecraft client in native swiftui with modrinth modpack, shader, and resource pack loading."
+    "key": "rs_vimium",
+    "name": "rs_vimium",
+    "href": "https://github.com/undivisible/rs_vimium",
+    "desc": "a rust rewrite of the vimium browser extension built with crepuscularity webextension framework.",
+    "category": "browser extensions"
   },
   {
     "key": "anywhere",
     "name": "anywhere (wip)",
     "href": "https://github.com/undivisible/anywhere",
-    "desc": "browser extension that turns ai chat responses into interactive interfaces. renders widgets, panels, forms, charts inside chat via custom response tags."
+    "desc": "browser extension that turns ai chat responses into interactive interfaces. renders widgets, panels, forms, charts inside chat via custom response tags.",
+    "category": "browser extensions"
+  },
+  {
+    "key": "drift",
+    "name": "drift",
+    "href": "https://github.com/undivisible/drift-wallpaper",
+    "desc": "macos drift screensaver as a live wallpaper on linux, macos, windows. spotify and apple music now playing support.",
+    "category": "mobile & desktop"
+  },
+  {
+    "key": "vro",
+    "name": "vro",
+    "href": "https://github.com/undivisible/vro",
+    "desc": "minimal micro inspired text editor written in v.",
+    "category": "mobile & desktop"
+  },
+  {
+    "key": "ycyestim",
+    "name": "ycyestim",
+    "href": "https://github.com/undivisible/YCYEStim",
+    "desc": "ios controller for ycy yokonex gen 1 and 2 electrostimulation hardware over btle (optional user-owned http/websocket bridge); dual-channel waveforms, presets and programs, safety limits, healthkit and watchos heart-rate adaptive output.",
+    "category": "mobile & desktop"
+  },
+  {
+    "key": "unelaborate",
+    "name": "unelaborate (wip)",
+    "href": "https://github.com/undivisible/unelaborate",
+    "desc": "minecraft client in native swiftui with modrinth modpack, shader, and resource pack loading.",
+    "category": "mobile & desktop"
   }
 ];

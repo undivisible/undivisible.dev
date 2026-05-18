@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { tidbitExtras } from "@/data/project-descriptions";
 import {
@@ -9,7 +9,7 @@ import {
   resumeEducation,
   resumeExperience,
   resumeInterests,
-  resumeProjectsNotInReadme,
+  resumeSectionsNotInReadme,
   resumeSkillGroups,
 } from "@/data/resume-document";
 import { projectKey, type ReadmeBundle } from "@/lib/profile-readme";
@@ -103,6 +103,7 @@ export function Info({
     href: string;
     desc: string;
     opacity?: 50;
+    category?: string;
   }> => {
     const seen = new Set<string>();
     const out: Array<{
@@ -111,12 +112,14 @@ export function Info({
       href: string;
       desc: string;
       opacity?: 50;
+      category?: string;
     }> = [];
     for (const p of [
       ...readme.miniapps.map((m) => ({
         name: m.name,
         href: m.href,
         desc: m.desc,
+        category: m.category,
       })),
       ...tidbitExtras,
     ]) {
@@ -128,6 +131,21 @@ export function Info({
     return out;
   }, [readme]);
 
+  const groupedTidbits = useMemo(() => {
+    const groups = new Map<string, typeof tidbits>();
+    const order = ["web apps", "developer tools", "browser extensions", "mobile & desktop", "experiments & archive"];
+    for (const t of tidbits) {
+      const cat = t.category || "other";
+      if (!groups.has(cat)) groups.set(cat, []);
+      groups.get(cat)!.push(t);
+    }
+    return [...groups.entries()].sort((a, b) => {
+      const ia = order.indexOf(a[0]);
+      const ib = order.indexOf(b[0]);
+      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    });
+  }, [tidbits]);
+
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const clockRef = useRef<HTMLDivElement | null>(null);
   const [hoveredPill, setHoveredPill] = useState<string | null>(null);
@@ -138,6 +156,17 @@ export function Info({
   const [isMobile, setIsMobile] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [clockHovered, setClockHovered] = useState(false);
+  const [openCategories, setOpenCategories] = useState<Set<string>>(
+    () => new Set(["web apps"]),
+  );
+  const toggleCategory = useCallback((cat: string) => {
+    setOpenCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(cat)) next.delete(cat);
+      else next.add(cat);
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
@@ -230,9 +259,13 @@ export function Info({
   const melText = hydrated && dayTheme ? dayTheme.melTime : "--:--:--";
   const localText = hydrated && dayTheme ? dayTheme.localTime : "--:--:--";
 
-  const extraProjects = useMemo(
-    () => resumeProjectsNotInReadme(readme),
+  const extraProjectSections = useMemo(
+    () => resumeSectionsNotInReadme(readme),
     [readme],
+  );
+  const allExtraCount = useMemo(
+    () => extraProjectSections.reduce((n, s) => n + s.projects.length, 0),
+    [extraProjectSections],
   );
 
   const clockPanel = dayTheme ? (
@@ -536,66 +569,84 @@ export function Info({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.55, ease: REVEAL_EASE }}
-              className="mb-6"
+              className="mb-2"
             >
               <h3 className="text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
                 miniapps & experiments
               </h3>
             </motion.div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {tidbits.map((tidbit, i) => (
-                <motion.a
-                  key={tidbit.key}
-                  href={tidbit.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-40px" }}
-                  transition={{
-                    duration: 0.55,
-                    ease: REVEAL_EASE,
-                    delay: i * 0.05,
-                  }}
-                  className={`rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] ${
-                    tidbit.opacity === 50 ? "opacity-50" : ""
-                  }`}
-                >
-                  <div className="text-sm font-medium leading-snug">
-                    {tidbit.name}
-                  </div>
-                  <p
-                    className="mt-2 line-clamp-4 text-[11px] leading-relaxed sm:text-xs"
-                    style={{ color: "var(--page-text-muted)" }}
+            {(groupedTidbits.length === 1 && groupedTidbits[0][0] === "other") ? (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {tidbits.map((tidbit, i) => (
+                  <motion.a
+                    key={tidbit.key}
+                    href={tidbit.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{
+                      duration: 0.55,
+                      ease: REVEAL_EASE,
+                      delay: i * 0.05,
+                    }}
+                    className={`rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] ${
+                      tidbit.opacity === 50 ? "opacity-50" : ""
+                    }`}
                   >
-                    {tidbit.desc}
-                  </p>
-                </motion.a>
-              ))}
-            </div>
+                    <div className="text-sm font-medium leading-snug">
+                      {tidbit.name}
+                    </div>
+                    <p
+                      className="mt-2 line-clamp-4 text-[11px] leading-relaxed sm:text-xs"
+                      style={{ color: "var(--page-text-muted)" }}
+                    >
+                      {tidbit.desc}
+                    </p>
+                  </motion.a>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {groupedTidbits.map(([category, items]) => (
+                  <TidbitCategory
+                    key={category}
+                    category={category}
+                    items={items}
+                    isOpen={openCategories.has(category)}
+                    onToggle={toggleCategory}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-          {extraProjects.length > 0 ? (
+          {allExtraCount > 0 ? (
             <div className="mt-16 sm:mt-24">
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.55, ease: REVEAL_EASE }}
-                className="mb-6"
+                className="mb-2"
               >
                 <h3 className="text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
                   more selected work
                 </h3>
               </motion.div>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {extraProjects.map((p, i) => (
-                  <MainProjectCard
-                    key={`${p.name}-${i}`}
-                    title={p.name}
-                    description={p.desc}
-                    href={p.href || undefined}
-                    isMobile={isMobile}
-                    revealIndex={i}
+              <div className="space-y-1">
+                {extraProjectSections.map(({ section, projects }) => (
+                  <TidbitCategory
+                    key={section}
+                    category={section}
+                    items={projects.map((p) => ({
+                      key: p.name.toLowerCase().replace(/\s+/g, "-"),
+                      name: p.name,
+                      href: p.href || "#",
+                      desc: p.desc,
+                    }))}
+                    isOpen={openCategories.has(section)}
+                    onToggle={toggleCategory}
                   />
                 ))}
               </div>
@@ -1014,77 +1065,75 @@ function UtilitiesBlock({
   );
 }
 
-function MainProjectCard({
-  title,
-  description,
-  href,
-  isMobile = false,
-  revealIndex = 0,
+function TidbitCategory({
+  category,
+  items,
+  isOpen,
+  onToggle,
 }: {
-  title: string;
-  description: string;
-  href?: string;
-  isMobile?: boolean;
-  revealIndex?: number;
+  category: string;
+  items: Array<{ key: string; name: string; href: string; desc: string; opacity?: number }>;
+  isOpen: boolean;
+  onToggle: (cat: string) => void;
 }) {
-  const cardClass = `group relative flex min-h-[11rem] w-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 text-[var(--page-text)] backdrop-blur-sm sm:min-h-[12rem] sm:p-5 ${
-    isMobile ? "max-w-full" : ""
-  } ${href ? TILE_LINK_HOVER + " hover:border-white/[0.12] hover:bg-white/[0.055]" : ""}`;
-  const motionProps = {
-    initial: { opacity: 0, y: 16 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, margin: "-40px" },
-    transition: {
-      duration: 0.55,
-      ease: REVEAL_EASE,
-      delay: revealIndex * 0.05,
-    },
-  } as const;
-  const inner = (
-    <>
-      <div className="text-lg font-semibold leading-tight tracking-tight sm:text-xl">
-        <AnimatedText text={title} className="inline-block" split="words" />
-      </div>
-      <div
-        className="mt-3 flex-1 overflow-y-auto text-xs leading-relaxed sm:text-sm"
-        style={{
-          color: "var(--page-text-muted)",
-          maxHeight: "7.75rem",
-        }}
-      >
-        {description}
-      </div>
-      {href ? (
-        <motion.div
-          className={`mt-3 text-[10px] uppercase tracking-[0.18em] font-mono transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-          }`}
-          style={{ color: "var(--page-text-soft)" }}
-        >
-          open →
-        </motion.div>
-      ) : null}
-    </>
-  );
-
-  if (href) {
-    return (
-      <motion.a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        {...motionProps}
-        className={cardClass}
-      >
-        {inner}
-      </motion.a>
-    );
-  }
-
   return (
-    <motion.div {...motionProps} className={cardClass}>
-      {inner}
-    </motion.div>
+    <div className="border-b border-white/[0.04] pb-1 pt-1">
+      <button
+        type="button"
+        onClick={() => onToggle(category)}
+        className="flex w-full cursor-pointer items-center gap-2 border-none bg-transparent px-1 py-2 text-left text-[11px] uppercase tracking-[0.2em] font-mono text-white/40 transition-colors hover:text-white/60"
+      >
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          className={`shrink-0 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
+          style={{ color: "currentColor" }}
+        >
+          <path d="M3 1L7 5L3 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        {category}
+        <span className="ml-auto text-[9px] text-white/25">{items.length}</span>
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            <div className="grid grid-cols-1 gap-2 px-1 pb-3 pt-2 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((tidbit, i) => (
+                <motion.a
+                  key={tidbit.key}
+                  href={tidbit.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25, delay: i * 0.03, ease: "easeOut" }}
+                  className={`rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] ${
+                    tidbit.opacity === 50 ? "opacity-50" : ""
+                  }`}
+                >
+                  <div className="text-sm font-medium leading-snug">
+                    {tidbit.name}
+                  </div>
+                  <p
+                    className="mt-1.5 line-clamp-3 text-[11px] leading-relaxed sm:text-xs"
+                    style={{ color: "var(--page-text-muted)" }}
+                  >
+                    {tidbit.desc}
+                  </p>
+                </motion.a>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 

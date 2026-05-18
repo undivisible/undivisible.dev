@@ -3,6 +3,7 @@ export type ReadmeProject = {
   name: string;
   href: string;
   desc: string;
+  category?: string;
 };
 
 export type ReadmeBundle = {
@@ -147,6 +148,7 @@ export function parseReadme(md: string): ReadmeBundle {
     | "semitech"
     | "miniapps"
     | "libraries" = "idle";
+  let currentCategory = "";
 
   const frameworkBodyLines: string[] = [];
   const soliloquyBodyLines: string[] = [];
@@ -207,12 +209,23 @@ export function parseReadme(md: string): ReadmeBundle {
     }
 
     if (mode === "miniapps") {
-      if (trimmed.startsWith("## libraries")) {
+      if (trimmed === "## libraries") {
         mode = "libraries";
         continue;
       }
+      if (trimmed.startsWith("## ")) {
+        mode = "idle";
+        continue;
+      }
+      if (trimmed.startsWith("### ")) {
+        currentCategory = trimmed.replace("### ", "").trim();
+        continue;
+      }
       const linked = parseLinkedLine(line);
-      if (linked) pushUnique(miniapps, linked);
+      if (linked) {
+        if (currentCategory) linked.category = currentCategory;
+        pushUnique(miniapps, linked);
+      }
       continue;
     }
 
