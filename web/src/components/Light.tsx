@@ -479,14 +479,13 @@ export function Light({
           if (drop.y > 1) drop.y -= 1;
           const fall = drop.y;
           const motionSlope =
-            drop.slope +
-            wind * (drop.layer === 0 ? 0.45 : drop.layer === 1 ? 0.72 : 1);
+            drop.slope * 0.4 +
+            wind * (drop.layer === 0 ? 0.08 : drop.layer === 1 ? 0.12 : 0.16);
           const xWobble =
             Math.sin((t * 0.65 + drop.phase) * Math.PI * 2) *
             width *
-            (0.002 + drop.layer * 0.0012);
-          const x =
-            drop.x * width + fall * height * motionSlope * 0.26 + xWobble;
+            (0.001 + drop.layer * 0.0007);
+          const x = drop.x * width + xWobble;
           const y = fall * (height + drop.length * 2) - drop.length;
           const length =
             drop.length *
@@ -500,7 +499,7 @@ export function Light({
               : `rgba(172, 206, 241, ${dropAlpha})`;
           ctx.beginPath();
           ctx.moveTo(x, y);
-          ctx.lineTo(x + length * motionSlope, y + length);
+          ctx.lineTo(x + length * motionSlope * 0.35, y + length);
           ctx.stroke();
         }
 
