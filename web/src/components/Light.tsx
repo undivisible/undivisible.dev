@@ -205,8 +205,9 @@ export function Light({
     const resize = () => {
       const parent = canvas.parentElement;
       if (!parent) return;
-      const width = parent.clientWidth;
-      const height = parent.clientHeight;
+      const fixed = getComputedStyle(canvas).position === "fixed";
+      const width = fixed ? window.innerWidth : parent.clientWidth;
+      const height = fixed ? window.innerHeight : parent.clientHeight;
       const rawDpr = window.devicePixelRatio || 1;
       const dpr =
         width < 640
@@ -225,6 +226,7 @@ export function Light({
     if (canvas.parentElement) {
       observer.observe(canvas.parentElement);
     }
+    window.addEventListener("resize", resize);
     resize();
 
     const render = (timeMs: number) => {
@@ -456,7 +458,7 @@ export function Light({
         const intensity = rainIntensityRef.current;
 
         const rainStrength = current.weatherKind === "storm" ? 1 : 0.76;
-        const wind = Math.sin(t * 0.6) * 0.28 + Math.sin(t * 0.11 + 1.9) * 0.18;
+        const wind = Math.sin(t * 0.6) * 0.12 + Math.sin(t * 0.11 + 1.9) * 0.08;
         const gust =
           0.5 +
           Math.sin(t * 0.21 + 2.3) * 0.22 +
@@ -484,7 +486,7 @@ export function Light({
             width *
             (0.002 + drop.layer * 0.0012);
           const x =
-            drop.x * width + fall * height * motionSlope * 0.62 + xWobble;
+            drop.x * width + fall * height * motionSlope * 0.26 + xWobble;
           const y = fall * (height + drop.length * 2) - drop.length;
           const length =
             drop.length *
@@ -525,6 +527,7 @@ export function Light({
 
     return () => {
       observer.disconnect();
+      window.removeEventListener("resize", resize);
       window.cancelAnimationFrame(animFrameId);
     };
   }, [animated, birdGroups, rainDrops]);

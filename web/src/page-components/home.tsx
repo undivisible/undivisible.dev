@@ -42,6 +42,10 @@ export default function Home({
   const { track, colors, ready, lastFmUsername } = useLastFmVisualData();
   const dayTheme = useHongKongDayTheme();
   const visualEffects = useSiteVisualEffects();
+  const animateWeather =
+    visualEffects ||
+    dayTheme.shader.weatherKind === "rain" ||
+    dayTheme.shader.weatherKind === "storm";
   const [nowMode, setNowMode] = useState(false);
   const [printMounted, setPrintMounted] = useState(false);
 
@@ -109,7 +113,7 @@ export default function Home({
         >
           <Light
             scene={dayTheme.shader}
-            animated={visualEffects}
+            animated={animateWeather}
             className="pointer-events-none fixed inset-0 z-0 h-full w-full"
           />
           <button
@@ -144,7 +148,7 @@ export default function Home({
       >
         <Light
           scene={dayTheme.shader}
-          animated={visualEffects}
+          animated={animateWeather}
           className="pointer-events-none fixed inset-0 z-0 h-full w-full"
         />
 
