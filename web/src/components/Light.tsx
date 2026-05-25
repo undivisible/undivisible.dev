@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { ShaderPalette } from "@/lib/useHongKongDayTheme";
 
 type BirdGroup = {
@@ -109,84 +109,80 @@ export function Light({
     coolFog: CanvasGradient | null;
   } | null>(null);
 
-  const [birdGroups, setBirdGroups] = useState<BirdGroup[]>([]);
-  const [rainDrops, setRainDrops] = useState<RainDrop[]>([]);
+  const birdGroupsRef = useRef<BirdGroup[]>([]);
+  const rainDropsRef = useRef<RainDrop[]>([]);
 
   useEffect(() => {
     if (!animated || typeof window === "undefined") return;
 
-    const raf = requestAnimationFrame(() => {
-      const narrow = window.innerWidth < 1024;
-      const groupCount = narrow
-        ? 1 + Math.floor(Math.random() * 2)
-        : 2 + Math.floor(Math.random() * 3);
-      const groups: BirdGroup[] = [];
-      for (let index = 0; index < groupCount; index += 1) {
-        groups.push({
-          y: 0.14 + Math.random() * 0.34,
-          size: 10 + Math.random() * 16,
-          duration: 14 + Math.random() * 18,
-          direction: Math.random() > 0.5 ? 1 : -1,
-          offset: Math.random() * 50,
-          count: narrow
-            ? 3 + Math.floor(Math.random() * 3)
-            : 4 + Math.floor(Math.random() * 5),
-          spreadX: 24 + Math.random() * 52,
-          spreadY: 8 + Math.random() * 26,
-          depth: 0.7 + Math.random() * 0.6,
-          flapSpeed: 3 + Math.random() * 4,
-        });
-      }
-      setBirdGroups(groups);
+    const narrow = window.innerWidth < 1024;
+    const groupCount = narrow
+      ? 1 + Math.floor(Math.random() * 2)
+      : 2 + Math.floor(Math.random() * 3);
+    const groups: BirdGroup[] = [];
+    for (let index = 0; index < groupCount; index += 1) {
+      groups.push({
+        y: 0.14 + Math.random() * 0.34,
+        size: 10 + Math.random() * 16,
+        duration: 14 + Math.random() * 18,
+        direction: Math.random() > 0.5 ? 1 : -1,
+        offset: Math.random() * 50,
+        count: narrow
+          ? 3 + Math.floor(Math.random() * 3)
+          : 4 + Math.floor(Math.random() * 5),
+        spreadX: 24 + Math.random() * 52,
+        spreadY: 8 + Math.random() * 26,
+        depth: 0.7 + Math.random() * 0.6,
+        flapSpeed: 3 + Math.random() * 4,
+      });
+    }
+    birdGroupsRef.current = groups;
 
-      const drops: RainDrop[] = [];
-      const dropCount = narrow ? 88 : 220;
+    const drops: RainDrop[] = [];
+    const dropCount = narrow ? 88 : 220;
 
-      for (let index = 0; index < dropCount; index += 1) {
-        const layer = Math.random();
-        const depth = layer < 0.33 ? 0 : layer < 0.72 ? 1 : 2;
-        drops.push({
-          x: Math.random(),
-          y: Math.random(),
-          length:
-            depth === 0
-              ? 8 + layer * 12
-              : depth === 1
-                ? 14 + layer * 18
-                : 20 + layer * 24,
-          speed:
-            depth === 0
-              ? 0.12 + layer * 0.08
-              : depth === 1
-                ? 0.18 + layer * 0.12
-                : 0.26 + layer * 0.18,
-          slope:
-            depth === 0
-              ? -0.08 + Math.random() * 0.16
-              : depth === 1
-                ? -0.18 + Math.random() * 0.36
-                : -0.28 + Math.random() * 0.56,
-          alpha:
-            depth === 0
-              ? 0.08 + layer * 0.12
-              : depth === 1
-                ? 0.14 + layer * 0.16
-                : 0.22 + layer * 0.22,
-          width:
-            depth === 0
-              ? 0.7 + layer * 0.45
-              : depth === 1
-                ? 0.9 + layer * 0.55
-                : 1.2 + layer * 0.75,
-          layer: depth,
-          phase: Math.random() * Math.PI * 2,
-        });
-      }
+    for (let index = 0; index < dropCount; index += 1) {
+      const layer = Math.random();
+      const depth = layer < 0.33 ? 0 : layer < 0.72 ? 1 : 2;
+      drops.push({
+        x: Math.random(),
+        y: Math.random(),
+        length:
+          depth === 0
+            ? 8 + layer * 12
+            : depth === 1
+              ? 14 + layer * 18
+              : 20 + layer * 24,
+        speed:
+          depth === 0
+            ? 0.12 + layer * 0.08
+            : depth === 1
+              ? 0.18 + layer * 0.12
+              : 0.26 + layer * 0.18,
+        slope:
+          depth === 0
+            ? -0.08 + Math.random() * 0.16
+            : depth === 1
+              ? -0.18 + Math.random() * 0.36
+              : -0.28 + Math.random() * 0.56,
+        alpha:
+          depth === 0
+            ? 0.08 + layer * 0.12
+            : depth === 1
+              ? 0.14 + layer * 0.16
+              : 0.22 + layer * 0.22,
+        width:
+          depth === 0
+            ? 0.7 + layer * 0.45
+            : depth === 1
+              ? 0.9 + layer * 0.55
+              : 1.2 + layer * 0.75,
+        layer: depth,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
 
-      setRainDrops(drops);
-    });
-
-    return () => cancelAnimationFrame(raf);
+    rainDropsRef.current = drops;
   }, [animated]);
 
   useEffect(() => {
@@ -421,6 +417,7 @@ export function Light({
         ctx.fillRect(0, 0, width, height);
       }
 
+      const birdGroups = birdGroupsRef.current;
       if (dayFlat > 0.12) {
         for (const group of birdGroups) {
           const phase = ((t + group.offset) % group.duration) / group.duration;
@@ -465,6 +462,7 @@ export function Light({
           Math.sin(t * 0.07 + 0.7) * 0.12;
         const stormBoost = current.weatherKind === "storm" ? 1.12 : 1;
 
+        const rainDrops = rainDropsRef.current;
         const visibleCount = Math.floor(
           rainDrops.length * (0.15 + intensity * 0.85),
         );
@@ -485,7 +483,7 @@ export function Light({
             Math.sin((t * 0.65 + drop.phase) * Math.PI * 2) *
             width *
             (0.001 + drop.layer * 0.0007);
-          const x = drop.x * width + xWobble;
+          const x = drop.x * width + fall * height * motionSlope * 0.62 + xWobble;
           const y = fall * (height + drop.length * 2) - drop.length;
           const length =
             drop.length *
@@ -499,7 +497,7 @@ export function Light({
               : `rgba(172, 206, 241, ${dropAlpha})`;
           ctx.beginPath();
           ctx.moveTo(x, y);
-          ctx.lineTo(x + length * motionSlope * 0.35, y + length);
+          ctx.lineTo(x + length * motionSlope, y + length);
           ctx.stroke();
         }
 
@@ -520,16 +518,13 @@ export function Light({
 
     resize();
     render(performance.now());
-    if (animated) {
-      animFrameId = window.requestAnimationFrame(render);
-    }
 
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", resize);
       window.cancelAnimationFrame(animFrameId);
     };
-  }, [animated, birdGroups, rainDrops]);
+  }, [animated]);
 
   return <canvas ref={canvasRef} className={className} style={{ opacity }} />;
 }
