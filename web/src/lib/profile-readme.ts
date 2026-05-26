@@ -1,8 +1,11 @@
+import { resumeFromMarkdown } from "@/data/resume-from-markdown.generated";
+
 export type ReadmeProject = {
   key: string;
   name: string;
   href: string;
   desc: string;
+  stack?: string;
   category?: string;
 };
 
@@ -38,6 +41,57 @@ function collapseWs(text: string): string {
 
 function pushUnique(list: ReadmeProject[], p: ReadmeProject) {
   if (!list.some((x) => x.href === p.href && x.key === p.key)) list.push(p);
+}
+
+function normHref(href: string) {
+  return href.replace(/\/$/, "").toLowerCase();
+}
+
+function stackLookup() {
+  const byHref = new Map<string, string>();
+  const byKey = new Map<string, string>();
+
+  function add(item: { name: string; href: string; stack?: string }) {
+    const stack = item.stack?.trim();
+    if (!stack) return;
+    if (item.href) byHref.set(normHref(item.href), stack);
+    byKey.set(projectKey(item.name), stack);
+  }
+
+  for (const section of resumeFromMarkdown.projectSections) {
+    for (const item of section.items) add(item);
+  }
+  for (const job of resumeFromMarkdown.experience) {
+    for (const subsection of job.subsections) {
+      for (const item of subsection.items) add(item);
+    }
+  }
+
+  byKey.set(
+    "crepuscularity",
+    "React, Tailwind CSS, Rust, TypeScript, GPUI, SwiftUI, Jetpack Compose, Ratatui, browser extensions.",
+  );
+  byKey.set(
+    "aurorality",
+    "SwiftUI, Rust, TypeScript, JavaScript, Crepuscularity Lite, aurorality-js.",
+  );
+  byKey.set("soliloquy", "Alpine Linux, Servo, V8, Rust.");
+  byKey.set("otto", "SwiftUI, Rust, Eqswift.");
+  byKey.set("rover", "Crepuscularity, SwiftUI, Rust.");
+  byKey.set("rs_vimium", "Rust, Crepuscularity WebExt, WebExtensions MV3.");
+
+  return { byHref, byKey };
+}
+
+function applyStacks(projects: ReadmeProject[]): ReadmeProject[] {
+  const stacks = stackLookup();
+  return projects.map((project) => ({
+    ...project,
+    stack:
+      stacks.byHref.get(normHref(project.href)) ||
+      stacks.byKey.get(project.key) ||
+      project.stack,
+  }));
 }
 
 const LINKED_WITH_DESC =
@@ -394,7 +448,13 @@ export function appendEqswiftToUtilities(bundle: ReadmeBundle): ReadmeBundle {
 }
 
 export function normalizeReadmeBundle(bundle: ReadmeBundle): ReadmeBundle {
-  return appendEqswiftToUtilities(promoteAuroralityToUtilities(bundle));
+  const normalized = appendEqswiftToUtilities(promoteAuroralityToUtilities(bundle));
+  return {
+    ...normalized,
+    mainProjects: applyStacks(normalized.mainProjects),
+    utilities: applyStacks(normalized.utilities),
+    miniapps: applyStacks(normalized.miniapps),
+  };
 }
 
 export async function getProfileReadmeProjects(): Promise<ReadmeBundle> {

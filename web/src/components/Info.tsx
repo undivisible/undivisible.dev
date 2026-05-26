@@ -102,6 +102,7 @@ export function Info({
     name: string;
     href: string;
     desc: string;
+    stack?: string;
     opacity?: 50;
     category?: string;
   }> => {
@@ -111,6 +112,7 @@ export function Info({
       name: string;
       href: string;
       desc: string;
+      stack?: string;
       opacity?: 50;
       category?: string;
     }> = [];
@@ -119,6 +121,7 @@ export function Info({
         name: m.name,
         href: m.href,
         desc: m.desc,
+        stack: m.stack,
         category: m.category,
       })),
       ...tidbitExtras,
@@ -604,6 +607,11 @@ export function Info({
                     >
                       {tidbit.desc}
                     </p>
+                    {tidbit.stack ? (
+                      <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.14em] text-white/30">
+                        Built with {tidbit.stack}
+                      </p>
+                    ) : null}
                   </motion.a>
                 ))}
               </div>
@@ -644,6 +652,7 @@ export function Info({
                       name: p.name,
                       href: p.href || "#",
                       desc: p.desc,
+                      stack: p.stack,
                     }))}
                     isOpen={openCategories.has(section)}
                     onToggle={toggleCategory}
@@ -1058,6 +1067,11 @@ function UtilitiesBlock({
             >
               {product.desc}
             </p>
+            {product.stack ? (
+              <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.14em] text-white/30">
+                Built with {product.stack}
+              </p>
+            ) : null}
           </motion.a>
         ))}
       </div>
@@ -1072,7 +1086,7 @@ function TidbitCategory({
   onToggle,
 }: {
   category: string;
-  items: Array<{ key: string; name: string; href: string; desc: string; opacity?: number }>;
+  items: Array<{ key: string; name: string; href: string; desc: string; stack?: string; opacity?: number }>;
   isOpen: boolean;
   onToggle: (cat: string) => void;
 }) {
@@ -1127,6 +1141,11 @@ function TidbitCategory({
                   >
                     {tidbit.desc}
                   </p>
+                  {tidbit.stack ? (
+                    <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.14em] text-white/30">
+                      Built with {tidbit.stack}
+                    </p>
+                  ) : null}
                 </motion.a>
               ))}
             </div>

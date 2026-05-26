@@ -22,6 +22,7 @@ function emitTs(
   name: string;
   href: string;
   desc: string;
+  stack?: string;
   category?: string;
 };
 

@@ -2,18 +2,41 @@ import type { ReactNode } from "react";
 import { C, mono, sans, serif } from "@/components/brief/ui/constants";
 import { Ft } from "@/components/brief/ui/Ft";
 import { Tb } from "@/components/brief/ui/Tb";
+import {
+  mainHeroQuoteFromReadme,
+  mainProjectsFromReadme,
+  miniappsFromReadme,
+  type ReadmeProject,
+  utilitiesFromReadme,
+} from "@/data/readme-projects.generated";
 import { resumeDoc } from "@/data/resume-document";
 import {
   parseInlineMdSegments,
   resumeItemBlurb,
   resumeItemKey,
   type ResumeListItem,
-  type ResumeProjectSection,
   type ResumeSubsection,
 } from "@/lib/parse-resume-markdown";
 
 const PAGE_W = "210mm";
 const PAGE_H = "297mm";
+
+type PrintProject = ReadmeProject | ResumeListItem;
+
+type PrintProjectSection = {
+  title: string;
+  intro?: string;
+  items: PrintProject[];
+};
+
+function contactHref(label: string, value: string) {
+  if (label === "Email") return `mailto:${value}`;
+  if (label === "Phone") return `tel:${value.replace(/[^\d+]/g, "")}`;
+  if (label === "Instagram") return "https://instagram.com/undivisible.dev";
+  if (label === "Twitter") return "https://x.com/makethings4ppl";
+  if (label === "GitHub") return `https://${value}`;
+  return null;
+}
 
 function InlineMdText({
   text,
@@ -108,42 +131,44 @@ function Tag({ children, onDark = false }: { children: string; onDark?: boolean 
   );
 }
 
-function ProjectCard({ item }: { item: ResumeListItem }) {
-  const blurb = resumeItemBlurb(item);
-  return (
+function ProjectCard({
+  item,
+}: {
+  item: PrintProject;
+}) {
+  const isResumeItem = "meta" in item;
+  const baseBlurb = isResumeItem ? resumeItemBlurb(item) : item.desc;
+  const stack = !isResumeItem ? item.stack?.trim() : undefined;
+  const blurb = stack ? `${baseBlurb} Built with ${stack}` : baseBlurb;
+  const label = "meta" in item && item.meta ? item.meta : item.name;
+  const content = (
     <div
       style={{
         background: C.cream,
         border: `1px solid ${C.rule}`,
-        borderRadius: 7,
-        padding: "7px 8px 6px",
+        borderRadius: 5,
+        padding: "6px 8px",
         breakInside: "avoid",
       }}
     >
       <div
         style={{
-          fontSize: 8,
+          fontSize: 8.8,
           fontWeight: 700,
           color: C.black,
           lineHeight: 1.15,
           fontFamily: sans,
         }}
       >
-        {item.href ? (
-          <a href={item.href} style={{ color: C.black, textDecoration: "none" }}>
-            {item.name}
-          </a>
-        ) : (
-          item.name
-        )}
+        {label}
       </div>
       {blurb ? (
         <div
           style={{
-            marginTop: 3,
+            marginTop: 2,
             fontSize: 6.8,
             color: C.mid,
-            lineHeight: 1.32,
+            lineHeight: 1.3,
           }}
         >
           {blurb}
@@ -151,12 +176,85 @@ function ProjectCard({ item }: { item: ResumeListItem }) {
       ) : null}
     </div>
   );
+
+  return item.href ? (
+    <a href={item.href} style={{ color: "inherit", textDecoration: "none" }}>
+      {content}
+    </a>
+  ) : (
+    content
+  );
+}
+
+function ProjectHeroCard({ item }: { item: ReadmeProject }) {
+  const stack = item.stack ? ` Built with ${item.stack}` : "";
+  const body = `${mainHeroQuoteFromReadme} ${item.desc}${stack}`;
+
+  return (
+    <a
+      href={item.href}
+      style={{
+        display: "block",
+        color: "inherit",
+        textDecoration: "none",
+        background: C.cream,
+        border: `1px solid ${C.rule}`,
+        borderRadius: 6,
+        padding: "12px 14px",
+      }}
+    >
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "0.38fr 1fr",
+          gap: 15,
+          alignItems: "start",
+        }}
+      >
+        <div>
+          <div
+            style={{
+              fontFamily: mono,
+              fontSize: 6.7,
+              letterSpacing: "-0.04em",
+              textTransform: "uppercase",
+              color: C.orange,
+              marginBottom: 4,
+            }}
+          >
+            Headline platform
+          </div>
+          <div
+            style={{
+              color: C.black,
+              fontFamily: serif,
+              fontSize: 28,
+              lineHeight: 0.95,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            {item.name}
+          </div>
+        </div>
+        <div
+          style={{
+            fontSize: 9.2,
+            color: C.mid,
+            lineHeight: 1.42,
+            paddingTop: 2,
+          }}
+        >
+          {body}
+        </div>
+      </div>
+    </a>
+  );
 }
 
 function ExpProductLine({ item }: { item: ResumeListItem }) {
   const blurb = resumeItemBlurb(item);
   return (
-    <div style={{ fontSize: 7, color: C.mid, lineHeight: 1.32 }}>
+    <div style={{ fontSize: 8.8, color: C.mid, lineHeight: 1.45 }}>
       <span style={{ fontWeight: 700, color: C.black }}>{item.name}</span>
       {blurb ? ` — ${blurb}` : null}
     </div>
@@ -165,20 +263,20 @@ function ExpProductLine({ item }: { item: ResumeListItem }) {
 
 function SubsectionBlock({ sub }: { sub: ResumeSubsection }) {
   return (
-    <div style={{ marginTop: 5 }}>
+    <div style={{ marginTop: 9 }}>
       <div
         style={{
           fontFamily: mono,
-          fontSize: 6,
+          fontSize: 7.1,
           letterSpacing: "-0.04em",
           textTransform: "uppercase",
           color: C.mid,
-          marginBottom: 2,
+          marginBottom: 4,
         }}
       >
         {sub.title}
       </div>
-      <div style={{ display: "grid", gap: 1 }}>
+      <div style={{ display: "grid", gap: 3 }}>
         {sub.items.map((item, i) => (
           <ExpProductLine key={resumeItemKey(item, i)} item={item} />
         ))}
@@ -238,7 +336,9 @@ function ResumeHeader() {
         </div>
       </div>
       <div style={{ display: "grid", gap: 3 }}>
-        {doc.contact.map(([label, value]) => (
+        {doc.contact.map(([label, value]) => {
+          const href = contactHref(label, value);
+          return (
           <div
             key={label}
             style={{
@@ -266,10 +366,17 @@ function ResumeHeader() {
                 whiteSpace: "nowrap",
               }}
             >
-              {value}
+              {href ? (
+                <a href={href} style={{ color: "inherit", textDecoration: "none" }}>
+                  {value}
+                </a>
+              ) : (
+                value
+              )}
             </span>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -282,19 +389,19 @@ function ProfileSidebar() {
       style={{
         background: C.black,
         color: C.cream,
-        padding: "16px 22px 16px 14px",
+        padding: "11px 26px 12px",
         display: "flex",
-        flexDirection: "column",
-        gap: 10,
-        height: "100%",
-        minHeight: "100%",
+        flexDirection: "row",
+        gap: 16,
+        height: "auto",
+        minHeight: 0,
         alignSelf: "stretch",
         boxSizing: "border-box",
       }}
     >
-      <section>
+      <section style={{ flex: "1.75 1 0" }}>
         <SectionTitle onDark>Technical stack</SectionTitle>
-        <div style={{ display: "grid", gap: 2 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3px 10px" }}>
           {doc.skills.map(([label, value]) => (
             <div key={label}>
               <div
@@ -322,7 +429,7 @@ function ProfileSidebar() {
         </div>
       </section>
 
-      <section>
+      <section style={{ flex: "1.05 1 0" }}>
         <SectionTitle onDark>Education</SectionTitle>
         <div style={{ display: "grid", gap: 2 }}>
           {doc.education.map((item) => (
@@ -341,7 +448,7 @@ function ProfileSidebar() {
       </section>
 
       {doc.humanLanguages.length > 0 ? (
-        <section>
+        <section style={{ flex: "0.72 1 0" }}>
           <SectionTitle onDark>Languages</SectionTitle>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
             {doc.humanLanguages.map((item) => (
@@ -353,7 +460,7 @@ function ProfileSidebar() {
         </section>
       ) : null}
 
-      <section>
+      <section style={{ flex: "0.98 1 0" }}>
         <SectionTitle onDark>Community / CTF</SectionTitle>
         <div style={{ display: "grid", gap: 2 }}>
           {doc.community.map((item) => (
@@ -365,7 +472,7 @@ function ProfileSidebar() {
       </section>
 
       {doc.interests.length > 0 ? (
-        <section>
+        <section style={{ flex: "0.82 1 0" }}>
           <SectionTitle onDark>Interests</SectionTitle>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
             {doc.interests.map((item) => (
@@ -427,20 +534,29 @@ function ProjectsPageHeader({ projectCount }: { projectCount: number }) {
   );
 }
 
-function ProjectSectionBlock({ section }: { section: ResumeProjectSection }) {
+function ProjectSectionBlock({ section }: { section: PrintProjectSection }) {
   return (
     <section>
-      <SectionTitle>
+      <div
+        style={{
+          fontFamily: mono,
+          fontSize: 7.5,
+          letterSpacing: "-0.04em",
+          textTransform: "uppercase",
+          color: C.orange,
+          marginBottom: 5,
+        }}
+      >
         <InlineMdText text={section.title} />
-      </SectionTitle>
+      </div>
       {section.intro ? (
         <div
           style={{
-            marginTop: -4,
-            marginBottom: 5,
-            fontSize: 6.5,
+            marginTop: -2,
+            marginBottom: 3,
+            fontSize: 6,
             color: C.mid,
-            lineHeight: 1.3,
+            lineHeight: 1.22,
           }}
         >
           {section.intro}
@@ -450,19 +566,27 @@ function ProjectSectionBlock({ section }: { section: ResumeProjectSection }) {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 7,
+          gap: 6,
         }}
       >
         {section.items.map((item, i) => (
-          <ProjectCard key={resumeItemKey(item, i)} item={item} />
+          <ProjectCard key={`${item.name}:${item.href}:${i}`} item={item} />
         ))}
       </div>
     </section>
   );
 }
 
-function ProjectsPage({ sections }: { sections: ResumeProjectSection[] }) {
+function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
   const projectCount = sections.reduce((n, s) => n + s.items.length, 0);
+  const heroProject = mainProjectsFromReadme[0];
+  const visibleSections = sections
+    .map((section) =>
+      section.title === "Main project"
+        ? { ...section, items: section.items.slice(1) }
+        : section,
+    )
+    .filter((section) => section.items.length > 0);
 
   return (
     <div
@@ -479,18 +603,45 @@ function ProjectsPage({ sections }: { sections: ResumeProjectSection[] }) {
         style={{
           flex: 1,
           minHeight: 0,
-          padding: "10px 26px 8px",
+          padding: "9px 22px 7px",
           display: "flex",
           flexDirection: "column",
-          gap: 8,
+          gap: 6,
         }}
       >
-        {sections.map((section) => (
+        {heroProject ? <ProjectHeroCard item={heroProject} /> : null}
+        {visibleSections.map((section) => (
           <ProjectSectionBlock key={section.title} section={section} />
         ))}
       </div>
     </div>
   );
+}
+
+function websiteProjectSections(): PrintProjectSection[] {
+  const miniappsByCategory = new Map<string, ReadmeProject[]>();
+  for (const project of miniappsFromReadme) {
+    const category = project.category || "other";
+    miniappsByCategory.set(category, [
+      ...(miniappsByCategory.get(category) || []),
+      project,
+    ]);
+  }
+
+  return [
+    {
+      title: "Main project",
+      items: mainProjectsFromReadme,
+    },
+    {
+      title: "Libraries & tools",
+      items: utilitiesFromReadme,
+    },
+    ...Array.from(miniappsByCategory, ([title, items]) => ({
+      title,
+      items,
+    })),
+  ];
 }
 
 function PrintPage({
@@ -537,6 +688,7 @@ function PrintPage({
 
 export function HomePrintRoot() {
   const doc = resumeDoc;
+  const projectSections = websiteProjectSections();
   const totalPages = 2;
 
   return (
@@ -570,7 +722,14 @@ export function HomePrintRoot() {
       `}</style>
 
       <PrintPage page={1} total={totalPages}>
-        <Tb left="Resume" right="undivisible.dev" />
+        <Tb
+          left="RESUME BUILT WITH REACT"
+          right={
+            <a href="https://undivisible.dev" style={{ color: "inherit", textDecoration: "none" }}>
+              undivisible.dev
+            </a>
+          }
+        />
         <div
           style={{
             flex: 1,
@@ -585,71 +744,80 @@ export function HomePrintRoot() {
             style={{
               flex: 1,
               minHeight: 0,
-              display: "grid",
-              gridTemplateColumns: "1.12fr 0.88fr",
-              alignItems: "stretch",
+              display: "flex",
+              flexDirection: "column",
               alignSelf: "stretch",
             }}
           >
             <div
               style={{
                 background: C.cream,
-                height: "100%",
-                minHeight: "100%",
-                alignSelf: "stretch",
-                padding: "18px 20px 18px 26px",
+                flex: 1,
+                minHeight: 0,
+                padding: "16px 26px 14px",
                 boxSizing: "border-box",
+                display: "flex",
+                flexDirection: "column",
               }}
             >
               <SectionTitle>Experience</SectionTitle>
-              {doc.experience.map((job) => (
-                <div
-                  key={`${job.org}-${job.role}`}
-                  style={{ borderTop: `1px solid ${C.rule}`, padding: "6px 0" }}
-                >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  flex: 1,
+                  minHeight: 0,
+                }}
+              >
+                {doc.experience.map((job) => (
                   <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr auto",
-                      gap: 6,
-                      alignItems: "baseline",
-                    }}
+                    key={`${job.org}-${job.role}`}
+                    style={{ borderTop: `1px solid ${C.rule}`, padding: "10px 0" }}
                   >
                     <div
                       style={{
-                        fontSize: 10,
-                        fontWeight: 700,
-                        color: C.black,
-                        lineHeight: 1.12,
+                        display: "grid",
+                        gridTemplateColumns: "1fr auto",
+                        gap: 8,
+                        alignItems: "baseline",
                       }}
                     >
-                      {job.role}
-                      {job.org ? ` · ${job.org}` : ""}
-                    </div>
-                    {job.time ? (
                       <div
                         style={{
-                          fontFamily: mono,
-                          fontSize: 6.2,
-                          textTransform: "uppercase",
-                          color: C.mid,
-                          whiteSpace: "nowrap",
+                          fontSize: 12.2,
+                          fontWeight: 700,
+                          color: C.black,
+                          lineHeight: 1.12,
                         }}
                       >
-                        {job.time}
+                        {job.role}
+                        {job.org ? ` · ${job.org}` : ""}
                       </div>
-                    ) : null}
-                  </div>
-                  <div style={{ marginTop: 3, display: "grid", gap: 2 }}>
-                    {job.bullets.map((point) => (
-                      <Bullet key={point}>{point}</Bullet>
+                      {job.time ? (
+                        <div
+                          style={{
+                            fontFamily: mono,
+                            fontSize: 7.2,
+                            textTransform: "uppercase",
+                            color: C.mid,
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {job.time}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div style={{ marginTop: 5, display: "grid", gap: 3 }}>
+                      {job.bullets.map((point) => (
+                        <Bullet key={point}>{point}</Bullet>
+                      ))}
+                    </div>
+                    {job.subsections.map((sub) => (
+                      <SubsectionBlock key={sub.title} sub={sub} />
                     ))}
                   </div>
-                  {job.subsections.map((sub) => (
-                    <SubsectionBlock key={sub.title} sub={sub} />
-                  ))}
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
             <ProfileSidebar />
           </div>
@@ -657,7 +825,19 @@ export function HomePrintRoot() {
       </PrintPage>
 
       <PrintPage page={2} total={totalPages} surface="alt">
-        <ProjectsPage sections={doc.projectSections} />
+        <Tb
+          left={
+            <a href="https://undivisible.dev/#projects" style={{ color: "inherit", textDecoration: "none" }}>
+              Selected projects
+            </a>
+          }
+          right={
+            <a href="https://undivisible.dev" style={{ color: "inherit", textDecoration: "none" }}>
+              Project names and top tabs are clickable
+            </a>
+          }
+        />
+        <ProjectsPage sections={projectSections} />
       </PrintPage>
     </div>
   );
