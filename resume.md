@@ -17,7 +17,7 @@ I make things for people. Part-time language learner, part-time philosopher, ful
 
 ## Experience
 
-### Technical Cofounder — The Arkie Company
+### Technical Cofounder — The Arkie Company, Graft AI
 
 *2024–present*
 
@@ -40,7 +40,7 @@ I make things for people. Part-time language learner, part-time philosopher, ful
 
 - **[AJ Stafford Property Advocates](https://www.ajstafford.com.au)** — Chrome MV3 extension for realestate.com.au: finds comparable listings (bedrooms, ±15% price), on-page results widget, tab groups, CSV/TXT export; Buyer Ready Report print mockups and buyer-ready campaign assets. *Built with: JavaScript, Chrome Extensions MV3, Leaflet, Alpine.js, UnoCSS.*
 
-### Founder, Artificer — The Software Company of Hong Kong, atechnology company
+### Founder, Artificer — The Software Company of Hong Kong
 
 *2023–present*
 
@@ -120,7 +120,7 @@ Custom browser engine for Soliloquy combining Servo rendering with V8 JavaScript
 - **[Standpoint](https://standpoint.undivisible.dev)** · [GitHub](https://github.com/undivisible/standpoint) — Opinion platform for tier lists, polls, and Spectrum (party game on a prompt-based spectrum). *Built with: SvelteKit, TypeScript, Tailwind CSS, Cloudflare Workers/Durable Objects, Vite, Bun.*
 - **[Unthinkmail](https://unthinkmail.undivisible.dev)** · [GitHub](https://github.com/undivisible/unthinkmail) — MCP server for IMAP-supported email. *Built with: Cloudflare Workers, Hono, Wrangler, MCP, Bun.*
 - **[Notes](https://notes.undivisible.dev)** · [GitHub](https://github.com/undivisible/notes) — Minimal note taker with Google Fonts, code highlighting, and Notion-style markdown editing. *Built with: Svelte 5, Vite, Tailwind CSS, CodeMirror, Bun.*
-- **[Bublik](https://bublik.undivisible.dev)** · [GitHub](https://github.com/undivisible/bublik) — Canvas tool for custom frequency soundscapes. *Built with: Rust, Leptos (CSR/WASM), Web Audio API.*
+- **[Bublik](https://bublik.undivisible.dev)** · [GitHub](https://github.com/undivisible/bublik) — Canvas tool for custom frequency soundscapes. *Built with: Rust, Web Audio API.*
 - **[Alphabets](https://alphabets.undivisible.dev)** · [GitHub](https://github.com/undivisible/alphabets) — Learn any Unicode-supported alphabet via cards, quizzes, and completion tables. *Built with: React, TypeScript, Vite, Tailwind CSS, Capacitor (iOS/Android), Bun.*
 - **[Infrastruct](https://infrastruct.undivisible.dev)** · [GitHub](https://github.com/undivisible/infrastruct) — Belief-agnostic jurisprudence local AI search (SearXNG, DuckDuckGo, Transformers.js, Browser Prompt API). *Built with: Next.js 15, React 19, TypeScript, Tailwind CSS, Transformers.js, Bun.*
 - **[AKH (archived)](https://akh.undivisible.dev)** · [GitHub](https://github.com/undivisible/akh) — Islamic uniplatform (archived). *Built with: Svelte, TypeScript.*
@@ -151,7 +151,7 @@ Custom browser engine for Soliloquy combining Servo rendering with V8 JavaScript
 | Area | |
 |---|---|
 | Languages | Rust, Swift, TypeScript/JavaScript, Python, Go, V, Zig, C / C# |
-| Frontend | React, Next.js, SvelteKit, Solid, Tailwind, Leptos, Imba, Astro WebGL, SwiftUI, Crepuscularity |
+| Frontend | React, Next.js, SvelteKit, Solid, Tailwind, Astro WebGL, SwiftUI, Crepuscularity |
 | Systems | GPUI, Ratatui, MV3 extensions, FFI, UniFFI, Servo, V8, WASM, Linux |
 | AI / Data | OpenAI, MCP, RAG, Transformers.js, local models, Hugging Face, Supabase, PostgreSQL, SurrealDB |
 | Infra | Cloudflare Workers, Docker, GitHub Actions, CI/CD, SQLite |
@@ -163,7 +163,7 @@ Custom browser engine for Soliloquy combining Servo rendering with V8 JavaScript
 
 ## Languages
 
-Cantonese · English · Russian · Mandarin · Indonesian · Learning Japanese and German
+Cantonese · English · Russian · Mandarin · Indonesian · Learning Japanese
 
 ## Community
 

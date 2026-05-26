@@ -30,8 +30,8 @@ export function Page2() {
     },
     {
       n: "04",
-      tag: "Graft · Studio of Optimisations · SvelteKit · AI Automation",
-      title: "Graft Website — Conversational Automation Funnel",
+      tag: "Graft AI · The Arkie Company · SvelteKit · AI Automation",
+      title: "Graft AI Website — Conversational Automation Funnel",
       body: "Built the Studio of Optimisations site as a live automation intake surface: rotating problem prompts, voice entry, booking handoff, MCP-backed tool streaming, and onboarding paths that carry context forward instead of restarting the user. Includes a custom voice agent reachable by telephone.",
       badges: [
         {

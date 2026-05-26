@@ -34,7 +34,7 @@ export const resumeFromMarkdown = {
   "experience": [
     {
       "role": "Technical Cofounder",
-      "org": "The Arkie Company",
+      "org": "The Arkie Company, Graft AI",
       "time": "2024–present",
       "bullets": [
         "Engineering leadership, product direction, and hands-on delivery across web surfaces, automation, and internal systems.",
@@ -111,7 +111,7 @@ export const resumeFromMarkdown = {
     },
     {
       "role": "Founder, Artificer",
-      "org": "The Software Company of Hong Kong, atechnology company",
+      "org": "The Software Company of Hong Kong",
       "time": "2023–present",
       "bullets": [
         "Freelance developer since 2024.",
@@ -290,7 +290,7 @@ export const resumeFromMarkdown = {
           "href": "https://bublik.undivisible.dev",
           "meta": "Bublik · GitHub",
           "desc": "Canvas tool for custom frequency soundscapes.",
-          "stack": "Rust, Leptos (CSR/WASM), Web Audio API."
+          "stack": "Rust, Web Audio API."
         },
         {
           "name": "Alphabets",
@@ -440,7 +440,7 @@ export const resumeFromMarkdown = {
     ],
     [
       "Frontend",
-      "React, Next.js, SvelteKit, Solid, Tailwind, Leptos, Imba, Astro WebGL, SwiftUI, Crepuscularity"
+      "React, Next.js, SvelteKit, Solid, Tailwind, Astro WebGL, SwiftUI, Crepuscularity"
     ],
     [
       "Systems",
@@ -465,7 +465,7 @@ export const resumeFromMarkdown = {
     "Russian",
     "Mandarin",
     "Indonesian",
-    "Learning Japanese and German"
+    "Learning Japanese"
   ],
   "community": [
     "Volunteer English teacher for Russian speakers online, 2022–present.",

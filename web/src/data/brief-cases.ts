@@ -39,7 +39,7 @@ export const briefCases: BriefCase[] = [
   },
   {
     n: "04",
-    tag: "Graft · Studio of Optimisations · SvelteKit",
+    tag: "Graft AI · The Arkie Company · SvelteKit",
     title: "Conversational automation funnel",
     metric: "live",
     body: "Built optimisations.studio with voice entry, booking, MCP-backed tool streaming, status updates, and onboarding handoffs that keep context across sessions. It includes a custom voice agent you can call from a telephone number.",

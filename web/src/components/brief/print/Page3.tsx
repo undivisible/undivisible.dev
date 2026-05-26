@@ -32,7 +32,7 @@ export function Page3() {
       dark: false,
     },
     {
-      org: "atechnology company",
+      org: "semitechnological",
       name: "Soliloquy + rv8",
       tech: "Rust · V · C · Servo · V8 · Alpine · Svelte · Axum",
       desc: "Experimental OS built on Alpine with kernel-level modifications — Rust shell, Servo rendering, V8 runtime. rv8 handles IPC, rendering, parsing, and JS execution with a live snapshot bridge syncing a narrow DOM surface. Prototype target: much faster browser-like runtime with sharply lower memory use.",
@@ -160,7 +160,7 @@ export function Page3() {
           <br />
           semitechnological
           <br />
-          atechnology company
+          Graft AI
         </div>
       </div>
 
@@ -349,9 +349,7 @@ export function Page3() {
             <div style={{ height: 1, background: C.rule, margin: "4px 0" }} />
             <div style={{ fontSize: 8.5, color: C.mid, lineHeight: 1.6 }}>
               Currently learning:{" "}
-              <strong style={{ color: C.black }}>Japanese</strong> ·{" "}
-              <strong style={{ color: C.black }}>German</strong> ·{" "}
-              <strong style={{ color: C.black }}>Chechen</strong>
+              <strong style={{ color: C.black }}>Japanese</strong>
             </div>
           </div>
           <div style={{ background: C.bgAlt, padding: "9px 13px" }}>

@@ -74,7 +74,7 @@ const cases = [
   },
   {
     metric: "live",
-    tag: "Graft · Studio of Optimisations",
+    tag: "Graft AI · The Arkie Company",
     title: "Conversational automation funnel",
     body: "Voice entry, booking, MCP-backed tool streaming, status updates, and onboarding handoffs at optimisations.studio. Includes a custom voice agent you can call from a telephone number.",
     badge: "optimisations.studio",
@@ -147,7 +147,7 @@ const projs = [
     tag: "Interop / FFI",
   },
   {
-    org: "atechnology company",
+    org: "semitechnological",
     name: "Soliloquy + rv8",
     tech: ["Rust", "Servo", "V8", "Alpine"],
     desc: "Experimental OS on Alpine with kernel-level modifications — Rust shell, Servo rendering, V8 runtime. Prototype target: much faster browser-like runtime with sharply lower memory use.",

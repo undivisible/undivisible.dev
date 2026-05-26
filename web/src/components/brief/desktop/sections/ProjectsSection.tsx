@@ -38,7 +38,7 @@ const projs = [
     href: "https://github.com/semitechnological",
   },
   {
-    org: "atechnology company",
+    org: "semitechnological",
     name: "Soliloquy + rv8",
     tech: ["Rust", "Servo", "V8", "Alpine"],
     desc: "Experimental OS on Alpine with kernel-level modifications — Rust shell, Servo rendering, V8 runtime. Prototype target: much faster browser-like runtime with sharply lower memory use.",
