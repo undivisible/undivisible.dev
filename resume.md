@@ -48,10 +48,10 @@ I make things for people. Part-time language learner, part-time philosopher, ful
 - Maintain 32+ public GitHub repositories across systems, runtimes, interfaces, developer tools, AI SDKs, and miniapps.
 - Primary open-source work includes Crepuscularity, Aurorality, Wax, Equilibrium, and Soliloquy.
 
-**Platforms built**
+**Platforms being built**
 
-- **Ark** — Ultra-simple hosted app platform (Vercel-style ergonomics, Railway-style flexibility): Rust control-plane API, V language CLI (`deploy`, `logs`, `rollback`), Svelte dashboard, YAML app manifests, `ark-protocol` edge ingress. *Built with: Rust (Axum), V, Svelte 5, SurrealDB, Docker Compose, Bun.*
-- **[Mono](https://github.com/atechnology-company/mono)** — Post-web computing infrastructure: object-centric, identity-addressed encrypted replication; mesh gossip, gateway relay, using `unthinkclaw` agent runtime, mono-browser shell (Crepuscularity/GPUI). *Built with: Rust (`mono-protocol`, `mono-mesh`, `mono-gateway`, `mono-agent`, `mono-browser`).*
+- **Ark** — Ultra-simple hosted app platform (Vercel-style ergonomics, Railway-style flexibility): Rust control-plane API, V language CLI (`deploy`, `logs`, `rollback`), Svelte dashboard, YAML app manifests, open-source `ark-protocol` edge ingress spec. *Built with: Rust (Axum), V, Svelte 5, SurrealDB, Docker Compose, Bun.*
+- **[Mono](https://github.com/atechnology-company/mono)** — Post-web computing infrastructure with an open-source `mono-protocol` spec: object-centric, identity-addressed encrypted replication; mesh gossip, gateway relay, using `unthinkclaw` agent runtime, mono-browser shell (Crepuscularity/GPUI). *Built with: Rust (`mono-protocol`, `mono-mesh`, `mono-gateway`, `mono-agent`, `mono-browser`).*
 
 ### Systems and Product Architect — Gizzmo Electronics
 

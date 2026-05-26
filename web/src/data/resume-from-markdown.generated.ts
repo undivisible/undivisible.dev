@@ -120,20 +120,20 @@ export const resumeFromMarkdown = {
       ],
       "subsections": [
         {
-          "title": "Platforms built",
+          "title": "Platforms being built",
           "items": [
             {
               "name": "Ark",
               "href": "",
               "meta": "Ark",
-              "desc": "Ultra-simple hosted app platform (Vercel-style ergonomics, Railway-style flexibility): Rust control-plane API, V language CLI (`deploy`, `logs`, `rollback`), Svelte dashboard, YAML app manifests, `ark-protocol` edge ingress.",
+              "desc": "Ultra-simple hosted app platform (Vercel-style ergonomics, Railway-style flexibility): Rust control-plane API, V language CLI (`deploy`, `logs`, `rollback`), Svelte dashboard, YAML app manifests, open-source `ark-protocol` edge ingress spec.",
               "stack": "Rust (Axum), V, Svelte 5, SurrealDB, Docker Compose, Bun."
             },
             {
               "name": "Mono",
               "href": "https://github.com/atechnology-company/mono",
               "meta": "Mono",
-              "desc": "Post-web computing infrastructure: object-centric, identity-addressed encrypted replication; mesh gossip, gateway relay, using `unthinkclaw` agent runtime, mono-browser shell (Crepuscularity/GPUI).",
+              "desc": "Post-web computing infrastructure with an open-source `mono-protocol` spec: object-centric, identity-addressed encrypted replication; mesh gossip, gateway relay, using `unthinkclaw` agent runtime, mono-browser shell (Crepuscularity/GPUI).",
               "stack": "Rust (`mono-protocol`, `mono-mesh`, `mono-gateway`, `mono-agent`, `mono-browser`)."
             }
           ]
