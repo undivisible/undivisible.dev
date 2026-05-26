@@ -594,7 +594,7 @@ export function Info({
                       ease: REVEAL_EASE,
                       delay: i * 0.05,
                     }}
-                    className={`rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] ${
+                    className={`h-full rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] ${
                       tidbit.opacity === 50 ? "opacity-50" : ""
                     }`}
                   >
@@ -1058,7 +1058,7 @@ function UtilitiesBlock({
               ease: REVEAL_EASE,
               delay: i * 0.05,
             }}
-            className={`rounded-2xl border border-white/[0.06] bg-white/[0.03] p-3 text-left text-[var(--page-text)] backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] sm:p-4`}
+            className={`h-full rounded-2xl border border-white/[0.06] bg-white/[0.03] p-3 text-left text-[var(--page-text)] backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] sm:p-4`}
           >
             <div className="text-sm font-medium leading-tight">{product.name}</div>
             <p
@@ -1128,7 +1128,7 @@ function TidbitCategory({
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.25, delay: i * 0.03, ease: "easeOut" }}
-                  className={`rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] ${
+                  className={`h-full rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] ${
                     tidbit.opacity === 50 ? "opacity-50" : ""
                   }`}
                 >

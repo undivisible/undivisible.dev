@@ -148,6 +148,8 @@ function ProjectCard({
         border: `1px solid ${C.rule}`,
         borderRadius: 5,
         padding: "6px 8px",
+        height: "100%",
+        boxSizing: "border-box",
         breakInside: "avoid",
       }}
     >
@@ -178,7 +180,15 @@ function ProjectCard({
   );
 
   return item.href ? (
-    <a href={item.href} style={{ color: "inherit", textDecoration: "none" }}>
+    <a
+      href={item.href}
+      style={{
+        color: "inherit",
+        textDecoration: "none",
+        display: "block",
+        height: "100%",
+      }}
+    >
       {content}
     </a>
   ) : (
