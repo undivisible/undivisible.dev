@@ -440,7 +440,7 @@ export const resumeFromMarkdown = {
     ],
     [
       "Frontend",
-      "React, Next.js, SvelteKit, Solid, Tailwind, Astro WebGL, SwiftUI, Crepuscularity"
+      "React, Next.js, SvelteKit, Solid, Tailwind, Astro, WebGL, SwiftUI, Crepuscularity"
     ],
     [
       "Systems",
