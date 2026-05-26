@@ -1,5 +1,3 @@
-import { resumeFromMarkdown } from "@/data/resume-from-markdown.generated";
-
 export type ReadmeProject = {
   key: string;
   name: string;
@@ -43,54 +41,48 @@ function pushUnique(list: ReadmeProject[], p: ReadmeProject) {
   if (!list.some((x) => x.href === p.href && x.key === p.key)) list.push(p);
 }
 
-function normHref(href: string) {
-  return href.replace(/\/$/, "").toLowerCase();
-}
-
-function stackLookup() {
-  const byHref = new Map<string, string>();
-  const byKey = new Map<string, string>();
-
-  function add(item: { name: string; href: string; stack?: string }) {
-    const stack = item.stack?.trim();
-    if (!stack) return;
-    if (item.href) byHref.set(normHref(item.href), stack);
-    byKey.set(projectKey(item.name), stack);
-  }
-
-  for (const section of resumeFromMarkdown.projectSections) {
-    for (const item of section.items) add(item);
-  }
-  for (const job of resumeFromMarkdown.experience) {
-    for (const subsection of job.subsections) {
-      for (const item of subsection.items) add(item);
-    }
-  }
-
-  byKey.set(
-    "crepuscularity",
-    "React, Tailwind CSS, Rust, TypeScript, GPUI, SwiftUI, Jetpack Compose, Ratatui, browser extensions.",
-  );
-  byKey.set(
-    "aurorality",
-    "SwiftUI, Rust, TypeScript, JavaScript, Crepuscularity Lite, aurorality-js.",
-  );
-  byKey.set("soliloquy", "Alpine Linux, Servo, V8, Rust.");
-  byKey.set("otto", "SwiftUI, Rust, Eqswift.");
-  byKey.set("rover", "Crepuscularity, SwiftUI, Rust.");
-  byKey.set("rs_vimium", "Rust, Crepuscularity WebExt, WebExtensions MV3.");
-
-  return { byHref, byKey };
-}
+const PROJECT_LANGUAGE_STACKS: Record<string, string> = {
+  crepuscularity: "Rust, JavaScript, Swift, Kotlin, TypeScript.",
+  aurorality: "Swift, Rust.",
+  inauguration: "Rust, Swift, V, TypeScript, Zig.",
+  equilibrium: "Rust, C, D, Nim, Zig.",
+  eqswift: "Rust, Swift, C.",
+  wax: "Rust.",
+  soliloquy: "Rust, Svelte, TypeScript, C, V.",
+  tile: "Rust.",
+  rs_ai: "Rust, Swift, C#, Kotlin.",
+  rs_imessage: "Rust.",
+  rs_facetime: "Rust, Objective-C.",
+  "stalwart-lite": "Rust, Python, Sieve.",
+  "crosspost-rs": "Rust.",
+  "ark-protocol": "JavaScript, Rust.",
+  monoprotocol: "Rust.",
+  standpoint: "Svelte, TypeScript, CSS, JavaScript, HTML.",
+  notes: "Svelte, CSS, JavaScript, HTML.",
+  bublik: "Rust, HTML, CSS.",
+  alphabets: "TypeScript, CSS, HTML.",
+  infrastruct: "TypeScript, JavaScript, CSS.",
+  "akh-archived": "Svelte, TypeScript, JavaScript, HTML.",
+  unthinkmail: "JavaScript.",
+  unthinkclaw: "Rust, JavaScript, V.",
+  "poke-around": "Zig, TypeScript, Python.",
+  "bluetooth-terminal": "Swift.",
+  rs_vimium: "Rust.",
+  anywhere: "Rust.",
+  drift: "Rust, WGSL.",
+  vro: "V.",
+  ycyestim: "Swift.",
+  unelaborate: "Swift.",
+  experiences: "TypeScript, C#, Swift, Kotlin.",
+  atmosphere: "Swift, JavaScript, Rust, Kotlin.",
+  otto: "Swift, Rust.",
+  rover: "Swift, Rust.",
+};
 
 function applyStacks(projects: ReadmeProject[]): ReadmeProject[] {
-  const stacks = stackLookup();
   return projects.map((project) => ({
     ...project,
-    stack:
-      stacks.byHref.get(normHref(project.href)) ||
-      stacks.byKey.get(project.key) ||
-      project.stack,
+    stack: PROJECT_LANGUAGE_STACKS[project.key],
   }));
 }
 
