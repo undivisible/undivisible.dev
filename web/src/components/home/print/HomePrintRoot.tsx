@@ -843,7 +843,7 @@ export function HomePrintRoot() {
           }
           right={
             <a href="https://undivisible.dev" style={{ color: "inherit", textDecoration: "none" }}>
-              Project names and top tabs are clickable
+              Descriptions pulled from GitHub README · project names and top tabs clickable
             </a>
           }
         />
