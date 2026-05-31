@@ -426,16 +426,22 @@ function ProfileSidebar() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "4px 12px",
+            gridTemplateColumns: "repeat(9, 1fr)",
+            gap: 3,
           }}
         >
           {lifeTimeline.map((item) => (
-            <div key={`${item.age}-${item.title}`}>
+            <div
+              key={`${item.age}-${item.title}`}
+              style={{
+                border: "1px solid rgba(255,248,230,0.12)",
+                padding: "3px 4px",
+              }}
+            >
               <div
                 style={{
                   fontFamily: mono,
-                  fontSize: 5.9,
+                  fontSize: 5.5,
                   textTransform: "uppercase",
                   color: C.orange,
                   lineHeight: 1.2,
@@ -445,23 +451,14 @@ function ProfileSidebar() {
               </div>
               <div
                 style={{
-                  fontSize: 7,
+                  marginTop: 1,
+                  fontSize: 6.2,
                   fontWeight: 700,
                   color: C.cream,
-                  lineHeight: 1.15,
+                  lineHeight: 1.12,
                 }}
               >
                 {item.title}
-              </div>
-              <div
-                style={{
-                  marginTop: 1,
-                  fontSize: 6.2,
-                  color: "rgba(255,248,230,0.62)",
-                  lineHeight: 1.22,
-                }}
-              >
-                {item.body}
               </div>
             </div>
           ))}
