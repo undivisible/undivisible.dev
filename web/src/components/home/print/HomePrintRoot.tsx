@@ -422,7 +422,6 @@ function ProfileSidebar() {
       }}
     >
       <section>
-        <SectionTitle onDark>Early timeline</SectionTitle>
         <div
           style={{
             display: "grid",
