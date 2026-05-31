@@ -675,7 +675,7 @@ export function Info({
       {showBio ? (
         <section
           id="world"
-          className="scroll-mt-24 snap-start snap-normal py-16 sm:py-20"
+          className="scroll-mt-24 snap-start snap-always py-16 sm:py-20"
         >
           <div className="mx-auto w-full max-w-3xl px-5 sm:px-8 lg:max-w-none lg:px-0">
             <motion.div
@@ -717,24 +717,26 @@ export function Info({
                 <h3 className="mb-5 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
                   early timeline
                 </h3>
-                <div className="grid overflow-hidden rounded-2xl border border-white/[0.07] sm:grid-cols-3">
+                <div className="grid gap-3 sm:grid-cols-2">
                   {lifeTimeline.map((item) => (
                     <div
                       key={`${item.age}-${item.title}`}
-                      className="border-b border-white/[0.07] p-4 last:border-b-0 sm:border-r sm:last:border-b sm:[&:nth-child(3n)]:border-r-0 sm:[&:nth-last-child(-n+3)]:border-b-0"
+                      className="grid grid-cols-[3.5rem_1fr] gap-4 border-t border-white/[0.07] pt-4"
                     >
-                      <div className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/35">
+                      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/35">
                         age {item.age}
                       </div>
-                      <div className="mt-2 text-sm font-medium leading-snug text-white/80">
-                        {item.title}
+                      <div>
+                        <div className="text-sm font-medium leading-snug text-white/80">
+                          {item.title}
+                        </div>
+                        <p
+                          className="mt-1 text-xs leading-relaxed"
+                          style={{ color: "var(--page-text-muted)" }}
+                        >
+                          {item.body}
+                        </p>
                       </div>
-                      <p
-                        className="mt-1 line-clamp-2 text-[11px] leading-relaxed"
-                        style={{ color: "var(--page-text-muted)" }}
-                      >
-                        {item.body}
-                      </p>
                     </div>
                   ))}
                 </div>
