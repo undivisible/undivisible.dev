@@ -9,7 +9,10 @@ const PROFILE_URLS = process.env.PROFILE_README_URL
   ? [process.env.PROFILE_README_URL]
   : [DEFAULT_PROFILE_MARKDOWN_URL, LEGACY_PROFILE_MARKDOWN_URL];
 
-const OUT_FILE = new URL("../src/data/readme-projects.generated.ts", import.meta.url);
+const OUT_FILE = new URL(
+  "../src/data/readme-projects.generated.ts",
+  import.meta.url,
+);
 
 function emitTs(
   mainHeroQuote: string,
@@ -51,7 +54,12 @@ const md = await res.text();
 const bundle = normalizeReadmeBundle(parseReadme(md));
 await Bun.write(
   OUT_FILE,
-  emitTs(bundle.mainHeroQuote, bundle.mainProjects, bundle.utilities, bundle.miniapps),
+  emitTs(
+    bundle.mainHeroQuote,
+    bundle.mainProjects,
+    bundle.utilities,
+    bundle.miniapps,
+  ),
 );
 console.log(
   `wrote ${OUT_FILE.pathname} (${bundle.mainProjects.length} main, ${bundle.utilities.length} utilities, ${bundle.miniapps.length} miniapps)`,

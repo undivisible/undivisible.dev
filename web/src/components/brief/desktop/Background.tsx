@@ -105,18 +105,18 @@ export function Background({
   const layerStyle = useMemo(
     () =>
       embedded
-        ? ({
+        ? {
             position: "absolute" as const,
             inset: 0,
             zIndex: 0,
             pointerEvents: "none" as const,
-          })
-        : ({
+          }
+        : {
             position: "fixed" as const,
             inset: 0,
             zIndex: 0,
             pointerEvents: "none" as const,
-          }),
+          },
     [embedded],
   );
 
@@ -285,11 +285,7 @@ export function Background({
 
   return (
     <>
-      <canvas
-        ref={canvasRef}
-        className="screen-only"
-        style={layerStyle}
-      />
+      <canvas ref={canvasRef} className="screen-only" style={layerStyle} />
       {/* Dark veil — lifts text contrast while preserving the amber glow */}
       <div
         className="screen-only"

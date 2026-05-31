@@ -22,7 +22,9 @@ import { useLastFmVisualData } from "@/lib/useLastFmVisualData";
 
 const HomePrintRoot = dynamic(
   () =>
-    import("@/components/home/print/HomePrintRoot").then((m) => m.HomePrintRoot),
+    import("@/components/home/print/HomePrintRoot").then(
+      (m) => m.HomePrintRoot,
+    ),
   { ssr: false },
 );
 const PrintRoot = dynamic(
@@ -55,10 +57,13 @@ export default function Home({
     setPrintMounted(true);
   }, []);
 
-  const runPrint = useCallback(async (target: SitePrintTarget) => {
-    if (!printMounted) setPrintMounted(true);
-    await printSitePdf(target);
-  }, [printMounted]);
+  const runPrint = useCallback(
+    async (target: SitePrintTarget) => {
+      if (!printMounted) setPrintMounted(true);
+      await printSitePdf(target);
+    },
+    [printMounted],
+  );
 
   useEffect(() => {
     const onAfterPrint = () => clearSitePrintTarget();

@@ -16,13 +16,13 @@ Production site for undivisible.dev. Built with Next.js 16 (App Router), React 1
 
 ## Commands
 
-| Command | Purpose |
-| --- | --- |
-| `bun run dev` | Next dev server |
-| `bun run build` | Sync readme + optional Last.fm snapshot, then `next build` |
-| `bun run sync:readme` | Regenerate `src/data/readme-projects.generated.ts` |
+| Command               | Purpose                                                     |
+| --------------------- | ----------------------------------------------------------- |
+| `bun run dev`         | Next dev server                                             |
+| `bun run build`       | Sync readme + optional Last.fm snapshot, then `next build`  |
+| `bun run sync:readme` | Regenerate `src/data/readme-projects.generated.ts`          |
 | `bun run sync:lastfm` | Write `public/lastfm-recent.json` (skipped without API key) |
-| `bun run typecheck` | `tsc --noEmit` |
+| `bun run typecheck`   | `tsc --noEmit`                                              |
 
 ## Env (public)
 

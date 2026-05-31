@@ -28,13 +28,6 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "stack": "Swift, Rust."
   },
   {
-    "key": "inauguration",
-    "name": "inauguration",
-    "href": "https://github.com/tschk/inauguration",
-    "desc": "an experimental multi-frontend compiler/runtime platform targeting Core IR, SIL analysis, hot reload, and ultrafast incremental workflows.",
-    "stack": "Rust, Swift, V, TypeScript, Zig."
-  },
-  {
     "key": "equilibrium",
     "name": "equilibrium",
     "href": "https://github.com/tschk/equilibrium",
@@ -59,15 +52,14 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "key": "soliloquy",
     "name": "soliloquy",
     "href": "https://github.com/tschk/soliloquy",
-    "desc": "an experimental operating system model for the web — immutable, browser-native, built on a modified alpine base. ### rv8 it uses rv8, a custom browser engine built with servo and v8.",
+    "desc": "an experimental operating system model for the web — immutable, browser-native, built on a modified alpine base. ### rv8 it uses rv8, a custom browser engine built with servo and v8. ### space is a work in progress ground-up nanokernel built on top of inauguration.",
     "stack": "Rust, Svelte, TypeScript, C, V."
   },
   {
-    "key": "experiences",
-    "name": "experiences",
+    "key": "experiences-shelved",
+    "name": "experiences (shelved)",
     "href": "#",
-    "desc": "a project exploring a more accessible spatial web, built on unity wasm.",
-    "stack": "TypeScript, C#, Swift, Kotlin."
+    "desc": "a project exploring a more accessible spatial web, built on unity wasm."
   },
   {
     "key": "atmosphere",
@@ -77,25 +69,22 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "stack": "Swift, JavaScript, Rust, Kotlin."
   },
   {
-    "key": "tile",
-    "name": "tile (wip)",
+    "key": "tile-shelved",
+    "name": "tile (shelved)",
     "href": "https://github.com/semitechnological/tile",
-    "desc": "mosaic-style tiling window manager + canvas + multiplexer for macos.",
-    "stack": "Rust."
+    "desc": "mosaic-style tiling window manager + canvas + multiplexer for macos."
   },
   {
-    "key": "otto",
-    "name": "otto (wip)",
-    "href": "#",
-    "desc": "ai-powered ottocomplete anywhere on your mac.",
-    "stack": "Swift, Rust."
+    "key": "tabyrus",
+    "name": "tabyrus (wip)",
+    "href": "https://github.com/semitechnological/tabyrus",
+    "desc": "ai-powered autocomplete anywhere on your mac. uses cotabby as a reference but uses a rust backend + mlx."
   },
   {
-    "key": "rover",
-    "name": "rover (wip)",
+    "key": "rover-shelved",
+    "name": "rover (shelved)",
     "href": "#",
-    "desc": "utilities and plugin system for mac, based on raycast + ghostty.",
-    "stack": "Swift, Rust."
+    "desc": "utilities and plugin system for mac, based on raycast + ghostty."
   },
   {
     "key": "rs_ai",
@@ -239,7 +228,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
   },
   {
     "key": "anywhere",
-    "name": "anywhere (wip)",
+    "name": "anywhere",
     "href": "https://github.com/undivisible/anywhere",
     "desc": "browser extension that turns ai chat responses into interactive interfaces. renders widgets, panels, forms, charts inside chat via custom response tags, also built with the crepuscularity webextension framework.",
     "category": "browser extensions",
@@ -270,11 +259,10 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "stack": "Swift."
   },
   {
-    "key": "unelaborate",
-    "name": "unelaborate (wip)",
+    "key": "unelaborate-shelved",
+    "name": "unelaborate (shelved)",
     "href": "https://github.com/undivisible/unelaborate",
     "desc": "minecraft client in native swiftui with modrinth modpack, shader, and resource pack loading.",
-    "category": "mobile & desktop",
-    "stack": "Swift."
+    "category": "mobile & desktop"
   }
 ];

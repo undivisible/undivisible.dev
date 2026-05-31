@@ -174,7 +174,9 @@ function assignFrameworkDescriptions(
   }
   const leftBody = collapseWs(`${m[1]!.trim()}${m[2]!.trim()}`);
   const rightBody = collapseWs(m[3]!.trim());
-  mainProjects[0]!.desc = heroQuote ? leftBody : collapseWs(`${heroQuote} ${leftBody}`);
+  mainProjects[0]!.desc = heroQuote
+    ? leftBody
+    : collapseWs(`${heroQuote} ${leftBody}`);
   mainProjects[1]!.desc = rightBody;
   return heroQuote;
 }
@@ -403,15 +405,15 @@ export const DEFAULT_PROFILE_MARKDOWN_URL =
 export const LEGACY_PROFILE_MARKDOWN_URL =
   "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md";
 
-export function promoteAuroralityToUtilities(bundle: ReadmeBundle): ReadmeBundle {
+export function promoteAuroralityToUtilities(
+  bundle: ReadmeBundle,
+): ReadmeBundle {
   const aurIndex = bundle.mainProjects.findIndex((p) => p.key === "aurorality");
   if (aurIndex === -1) return bundle;
   const aur = bundle.mainProjects[aurIndex]!;
   const mainProjects = bundle.mainProjects.filter((_, i) => i !== aurIndex);
   const hasInUtils = bundle.utilities.some((u) => u.key === "aurorality");
-  const utilities = hasInUtils
-    ? bundle.utilities
-    : [aur, ...bundle.utilities];
+  const utilities = hasInUtils ? bundle.utilities : [aur, ...bundle.utilities];
   return { ...bundle, mainProjects, utilities };
 }
 
@@ -440,7 +442,9 @@ export function appendEqswiftToUtilities(bundle: ReadmeBundle): ReadmeBundle {
 }
 
 export function normalizeReadmeBundle(bundle: ReadmeBundle): ReadmeBundle {
-  const normalized = appendEqswiftToUtilities(promoteAuroralityToUtilities(bundle));
+  const normalized = appendEqswiftToUtilities(
+    promoteAuroralityToUtilities(bundle),
+  );
   return {
     ...normalized,
     mainProjects: applyStacks(normalized.mainProjects),

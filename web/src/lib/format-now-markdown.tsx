@@ -8,7 +8,11 @@ function splitBold(segment: string, keyBase: string): ReactNode[] {
     if (m) {
       return <strong key={`${keyBase}-b-${i}`}>{m[1]}</strong>;
     }
-    return <Fragment key={`${keyBase}-t-${i}`}>{splitLinks(chunk, `${keyBase}-l-${i}`)}</Fragment>;
+    return (
+      <Fragment key={`${keyBase}-t-${i}`}>
+        {splitLinks(chunk, `${keyBase}-l-${i}`)}
+      </Fragment>
+    );
   });
 }
 

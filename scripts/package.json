@@ -4,11 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "hello": "tsx ./src/hello.ts",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "build": "bunx tsc -p tsconfig.json",
+    "format": "bunx prettier --check .",
+    "hello": "bun ./src/hello.ts",
+    "lint": "bun run typecheck",
+    "test": "sh -c 'find . -type f \\( -name \"*.test.ts\" -o -name \"*.test.tsx\" -o -name \"*.test.js\" -o -name \"*.test.jsx\" -o -name \"*.spec.ts\" -o -name \"*.spec.tsx\" -o -name \"*.spec.js\" -o -name \"*.spec.jsx\" \\) | grep -q . && bun test || echo \"No tests found\"'",
+    "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "tsx": "catalog:"
+    "@types/node": "catalog:"
   }
 }

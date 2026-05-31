@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { Background } from "@/components/brief/desktop/Background";
 import { NavDots } from "@/components/brief/desktop/NavDots";
@@ -26,9 +25,9 @@ export function DesktopRoot({ embed = false }: { embed?: boolean } = {}) {
           }
         }
       },
-      { root: container, threshold: 0.55 }
+      { root: container, threshold: 0.55 },
     );
-    SECTION_IDS.forEach(id => {
+    SECTION_IDS.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
@@ -52,11 +51,7 @@ export function DesktopRoot({ embed = false }: { embed?: boolean } = {}) {
           : {}),
       }}
     >
-      {embed ? (
-        <Background containerRef={containerRef} />
-      ) : (
-        <Background />
-      )}
+      {embed ? <Background containerRef={containerRef} /> : <Background />}
       <NavDots
         active={activeSection}
         onDotClick={scrollToSection}

@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 
-import {
-  fetchLastFmRecent,
-  type LastFmTrackNormalized,
-} from "./lastfmClient";
+import { fetchLastFmRecent, type LastFmTrackNormalized } from "./lastfmClient";
 
 export type TrackInfo = LastFmTrackNormalized;
 
@@ -28,7 +25,13 @@ function extractColorsFromCanvasImage(
       const g = pixels[i + 1];
       const b = pixels[i + 2];
       const brightness = ((r ?? 0) + (g ?? 0) + (b ?? 0)) / 3;
-      if (brightness > 22 && brightness < 232 && r != null && g != null && b != null) {
+      if (
+        brightness > 22 &&
+        brightness < 232 &&
+        r != null &&
+        g != null &&
+        b != null
+      ) {
         bucket.push([r, g, b]);
       }
     }

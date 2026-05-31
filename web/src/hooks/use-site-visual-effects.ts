@@ -27,9 +27,7 @@ export function useSiteVisualEffects() {
     const narrow = window.matchMedia(`(max-width: ${NARROW_MAX_WIDTH - 1}px)`);
 
     const sync = () => {
-      setEnabled(
-        !motion.matches && !narrow.matches && !prefersSaveData(),
-      );
+      setEnabled(!motion.matches && !narrow.matches && !prefersSaveData());
     };
 
     sync();

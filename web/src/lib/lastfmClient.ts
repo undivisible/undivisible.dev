@@ -1,5 +1,4 @@
-const USERNAME =
-  process.env.NEXT_PUBLIC_LASTFM_USERNAME ?? "undivisible";
+const USERNAME = process.env.NEXT_PUBLIC_LASTFM_USERNAME ?? "undivisible";
 
 export type LastFmTrackNormalized = {
   artist: string;
@@ -29,10 +28,15 @@ function formatPlayedAtLabel(utsSeconds: number) {
   if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
   if (hrs < 48) return `${hrs}h ago`;
-  return played.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  return played.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
 }
 
-export function normalizeLastFmTrack(track: unknown): LastFmTrackNormalized | null {
+export function normalizeLastFmTrack(
+  track: unknown,
+): LastFmTrackNormalized | null {
   if (!track || typeof track !== "object") {
     return null;
   }
@@ -42,17 +46,16 @@ export function normalizeLastFmTrack(track: unknown): LastFmTrackNormalized | nu
   const images = t.image;
 
   let albumArt = "";
-  const imageList =
-    Array.isArray(images)
-      ? images
-      : images != null && typeof images === "object"
-        ? [images]
-        : [];
+  const imageList = Array.isArray(images)
+    ? images
+    : images != null && typeof images === "object"
+      ? [images]
+      : [];
   if (imageList.length > 0) {
-    const last =
-      imageList[imageList.length - 1] as Record<string, string> | undefined;
-    albumArt =
-      typeof last?.["#text"] === "string" ? last["#text"].trim() : "";
+    const last = imageList[imageList.length - 1] as
+      | Record<string, string>
+      | undefined;
+    albumArt = typeof last?.["#text"] === "string" ? last["#text"].trim() : "";
   }
 
   const name = typeof t.name === "string" ? t.name : "Unknown Track";

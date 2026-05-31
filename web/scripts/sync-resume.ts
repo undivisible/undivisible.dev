@@ -1,7 +1,10 @@
 import { parseResumeMarkdown } from "../src/lib/parse-resume-markdown.ts";
 
 const RESUME_PATH = new URL("../../resume.md", import.meta.url);
-const OUT_FILE = new URL("../src/data/resume-from-markdown.generated.ts", import.meta.url);
+const OUT_FILE = new URL(
+  "../src/data/resume-from-markdown.generated.ts",
+  import.meta.url,
+);
 
 const md = await Bun.file(RESUME_PATH).text();
 const doc = parseResumeMarkdown(md);

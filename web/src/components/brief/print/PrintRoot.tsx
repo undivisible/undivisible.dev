@@ -4,7 +4,10 @@ import { Page3 } from "./Page3";
 
 export function PrintRoot() {
   return (
-    <div className="print-only" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <div
+      className="print-only"
+      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
       <style>{`
         * {
           box-sizing: border-box;

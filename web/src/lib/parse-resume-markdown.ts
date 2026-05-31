@@ -68,9 +68,16 @@ export function parseInlineMdSegments(text: string): InlineMdSegment[] {
   let match: RegExpExecArray | null;
   while ((match = re.exec(text)) !== null) {
     if (match.index > lastIndex) {
-      segments.push({ type: "text", value: text.slice(lastIndex, match.index) });
+      segments.push({
+        type: "text",
+        value: text.slice(lastIndex, match.index),
+      });
     }
-    segments.push({ type: "link", label: match[1]!.trim(), href: match[2]!.trim() });
+    segments.push({
+      type: "link",
+      label: match[1]!.trim(),
+      href: match[2]!.trim(),
+    });
     lastIndex = match.index + match[0].length;
   }
   if (lastIndex < text.length) {
@@ -115,7 +122,10 @@ function parseListItem(line: string): ResumeListItem | null {
   if (!trimmed.startsWith("- ")) return null;
 
   const stack = parseStack(trimmed);
-  let body = trimmed.slice(2).replace(/\*Built with:[^*]+\*/i, "").trim();
+  let body = trimmed
+    .slice(2)
+    .replace(/\*Built with:[^*]+\*/i, "")
+    .trim();
 
   const dash = body.match(/\s[—–]\s/);
   let meta = "";
@@ -185,7 +195,10 @@ function parseBullets(lines: string[]): string[] {
     .map((l) => stripInlineMd(l.trim().slice(2)));
 }
 
-function parseDotLineSection(lines: string[], start: number): { items: string[]; next: number } {
+function parseDotLineSection(
+  lines: string[],
+  start: number,
+): { items: string[]; next: number } {
   let i = start;
   while (i < lines.length && !lines[i]!.trim()) i++;
   const parts: string[] = [];
@@ -257,7 +270,11 @@ export function parseResumeMarkdown(md: string): ResumeDocument {
             i++;
           }
           const block: string[] = [];
-          while (i < lines.length && !lines[i]!.startsWith("### ") && !lines[i]!.startsWith("## ")) {
+          while (
+            i < lines.length &&
+            !lines[i]!.startsWith("### ") &&
+            !lines[i]!.startsWith("## ")
+          ) {
             block.push(lines[i]!);
             i++;
           }

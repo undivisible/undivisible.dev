@@ -190,11 +190,7 @@ export function MobileRoot({ embed = false }: { embed?: boolean } = {}) {
         position: "relative",
       }}
     >
-      {embed ? (
-        <Background containerRef={containerRef} />
-      ) : (
-        <Background />
-      )}
+      {embed ? <Background containerRef={containerRef} /> : <Background />}
 
       <div style={{ position: "relative", zIndex: 1 }}>
         {/* ── HERO ── */}
@@ -426,121 +422,123 @@ export function MobileRoot({ embed = false }: { embed?: boolean } = {}) {
           >
             Proven outcomes
           </div>
-          {cases.map(({ metric, tag, title, body, badge, solid, badgeHref }) => (
-            <div key={metric + tag} style={{ marginBottom: 28 }}>
-              <div
-                style={{
-                  fontFamily: serif,
-                  fontSize: "clamp(36px,9vw,52px)",
-                  fontStyle: "italic",
-                  lineHeight: 1,
-                  marginBottom: 6,
-                  background: GRADIENT,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                {metric}
-              </div>
-              <div
-                style={{
-                  fontFamily: mono,
-                  fontSize: 10,
-                  color: "rgba(255,255,255,0.3)",
-                  textTransform: "uppercase",
-                  letterSpacing: "-0.02em",
-                  marginBottom: 4,
-                }}
-              >
-                {tag}
-              </div>
-              <div
-                style={{
-                  fontFamily: serif,
-                  fontSize: 17,
-                  color: "#ffffff",
-                  letterSpacing: "-0.02em",
-                  marginBottom: 6,
-                  lineHeight: 1.2,
-                }}
-              >
-                {title}
-              </div>
-              <div
-                style={{
-                  fontSize: 12,
-                  color: "rgba(255,255,255,0.35)",
-                  lineHeight: 1.6,
-                  marginBottom: 10,
-                }}
-              >
-                {body}
-              </div>
-              {badgeHref ? (
-                <a
-                  href={badgeHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={
-                    solid
-                      ? `${TILE_LINK_HOVER} hover:brightness-105`
-                      : `${TILE_LINK_HOVER} bg-transparent hover:bg-white/[0.12]`
-                  }
+          {cases.map(
+            ({ metric, tag, title, body, badge, solid, badgeHref }) => (
+              <div key={metric + tag} style={{ marginBottom: 28 }}>
+                <div
                   style={{
-                    fontFamily: mono,
-                    fontSize: 8,
-                    letterSpacing: "-0.02em",
-                    textTransform: "uppercase",
-                    padding: "4px 10px",
-                    borderRadius: 75,
-                    textDecoration: "none",
-                    display: "inline-block",
-                    ...(solid
-                      ? {
-                          background: "#ffffff",
-                          color: "#000000",
-                          fontWeight: 600,
-                        }
-                      : {
-                          border: "1px solid rgba(255,255,255,0.25)",
-                          color: "rgba(255,255,255,0.55)",
-                        }),
+                    fontFamily: serif,
+                    fontSize: "clamp(36px,9vw,52px)",
+                    fontStyle: "italic",
+                    lineHeight: 1,
+                    marginBottom: 6,
+                    background: GRADIENT,
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
                   }}
                 >
-                  {badge}
-                </a>
-              ) : (
-                <span
+                  {metric}
+                </div>
+                <div
                   style={{
                     fontFamily: mono,
-                    fontSize: 8,
-                    letterSpacing: "-0.02em",
+                    fontSize: 10,
+                    color: "rgba(255,255,255,0.3)",
                     textTransform: "uppercase",
-                    padding: "4px 10px",
-                    borderRadius: 75,
-                    ...(solid
-                      ? {
-                          background: "#ffffff",
-                          color: "#000000",
-                          fontWeight: 600,
-                        }
-                      : {
-                          border: "1px solid rgba(255,255,255,0.25)",
-                          color: "rgba(255,255,255,0.55)",
-                        }),
+                    letterSpacing: "-0.02em",
+                    marginBottom: 4,
                   }}
-                  className={
-                    solid
-                      ? `cursor-default ${TILE_LINK_HOVER} hover:brightness-105`
-                      : `cursor-default bg-white/[0.04] ${TILE_LINK_HOVER} hover:bg-white/[0.12]`
-                  }
                 >
-                  {badge}
-                </span>
-              )}
-            </div>
-          ))}
+                  {tag}
+                </div>
+                <div
+                  style={{
+                    fontFamily: serif,
+                    fontSize: 17,
+                    color: "#ffffff",
+                    letterSpacing: "-0.02em",
+                    marginBottom: 6,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {title}
+                </div>
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: "rgba(255,255,255,0.35)",
+                    lineHeight: 1.6,
+                    marginBottom: 10,
+                  }}
+                >
+                  {body}
+                </div>
+                {badgeHref ? (
+                  <a
+                    href={badgeHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={
+                      solid
+                        ? `${TILE_LINK_HOVER} hover:brightness-105`
+                        : `${TILE_LINK_HOVER} bg-transparent hover:bg-white/[0.12]`
+                    }
+                    style={{
+                      fontFamily: mono,
+                      fontSize: 8,
+                      letterSpacing: "-0.02em",
+                      textTransform: "uppercase",
+                      padding: "4px 10px",
+                      borderRadius: 75,
+                      textDecoration: "none",
+                      display: "inline-block",
+                      ...(solid
+                        ? {
+                            background: "#ffffff",
+                            color: "#000000",
+                            fontWeight: 600,
+                          }
+                        : {
+                            border: "1px solid rgba(255,255,255,0.25)",
+                            color: "rgba(255,255,255,0.55)",
+                          }),
+                    }}
+                  >
+                    {badge}
+                  </a>
+                ) : (
+                  <span
+                    style={{
+                      fontFamily: mono,
+                      fontSize: 8,
+                      letterSpacing: "-0.02em",
+                      textTransform: "uppercase",
+                      padding: "4px 10px",
+                      borderRadius: 75,
+                      ...(solid
+                        ? {
+                            background: "#ffffff",
+                            color: "#000000",
+                            fontWeight: 600,
+                          }
+                        : {
+                            border: "1px solid rgba(255,255,255,0.25)",
+                            color: "rgba(255,255,255,0.55)",
+                          }),
+                    }}
+                    className={
+                      solid
+                        ? `cursor-default ${TILE_LINK_HOVER} hover:brightness-105`
+                        : `cursor-default bg-white/[0.04] ${TILE_LINK_HOVER} hover:bg-white/[0.12]`
+                    }
+                  >
+                    {badge}
+                  </span>
+                )}
+              </div>
+            ),
+          )}
         </motion.div>
 
         {/* ── TECH GRID ── */}

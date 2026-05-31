@@ -138,7 +138,11 @@ export function PortfolioPillars({ readme }: { readme: ReadmeBundle }) {
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.55, ease: EASE, delay: 0.12 + i * 0.06 }}
+              transition={{
+                duration: 0.55,
+                ease: EASE,
+                delay: 0.12 + i * 0.06,
+              }}
               className={`group flex flex-col rounded-2xl border border-white/[0.06] bg-white/[0.025] p-6 backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] sm:p-7`}
             >
               <span

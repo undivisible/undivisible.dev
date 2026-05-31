@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from "react";
 import type { ShaderPalette } from "@/lib/useHongKongDayTheme";
 
@@ -483,7 +482,8 @@ export function Light({
             Math.sin((t * 0.65 + drop.phase) * Math.PI * 2) *
             width *
             (0.001 + drop.layer * 0.0007);
-          const x = drop.x * width + fall * height * motionSlope * 0.62 + xWobble;
+          const x =
+            drop.x * width + fall * height * motionSlope * 0.62 + xWobble;
           const y = fall * (height + drop.length * 2) - drop.length;
           const length =
             drop.length *
@@ -513,7 +513,6 @@ export function Light({
           }
         }
       }
-
     };
 
     resize();

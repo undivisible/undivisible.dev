@@ -25,8 +25,7 @@ export const metadata: Metadata = {
   title: "undivisible.dev",
   description: "Max Carter — software systems builder.",
   icons: {
-    icon:
-      "data:image/svg+xml,%3Csvg%20xmlns%3D%22http://www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%2210%22%20fill%3D%22%23FFFFFF%22/%3E%3C/svg%3E",
+    icon: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http://www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%2210%22%20fill%3D%22%23FFFFFF%22/%3E%3C/svg%3E",
   },
 };
 

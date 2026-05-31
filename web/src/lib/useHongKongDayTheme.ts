@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, WheelEvent as ReactWheelEvent } from "react";
 
@@ -233,7 +232,11 @@ function getTimeZoneParts(date: Date, timeZone: string) {
   });
 
   const parts = formatter.formatToParts(date);
-  const values = Object.fromEntries(parts.filter((part) => part.type !== "literal").map((part) => [part.type, part.value]));
+  const values = Object.fromEntries(
+    parts
+      .filter((part) => part.type !== "literal")
+      .map((part) => [part.type, part.value]),
+  );
 
   return {
     year: Number(values.year),
@@ -275,7 +278,9 @@ function readCachedSolarTimes(dateKey: string) {
     return null;
   }
 
-  const cached = window.localStorage.getItem(`${SOLAR_STORAGE_PREFIX}${dateKey}`);
+  const cached = window.localStorage.getItem(
+    `${SOLAR_STORAGE_PREFIX}${dateKey}`,
+  );
   if (!cached) {
     return null;
   }
@@ -288,7 +293,10 @@ function readCachedSolarTimes(dateKey: string) {
   }
 }
 
-function parseSolarTimes(dateKey: string, payload: SolarResponse): SolarTimes | null {
+function parseSolarTimes(
+  dateKey: string,
+  payload: SolarResponse,
+): SolarTimes | null {
   if (payload.status !== "OK") {
     logSolar("api returned non-OK status, using fallback", payload.status);
     return null;
@@ -301,18 +309,28 @@ function parseSolarTimes(dateKey: string, payload: SolarResponse): SolarTimes | 
     solarNoon: minutesFromIso(payload.results.solar_noon),
     civilTwilightBegin: minutesFromIso(payload.results.civil_twilight_begin),
     civilTwilightEnd: minutesFromIso(payload.results.civil_twilight_end),
-    nauticalTwilightBegin: minutesFromIso(payload.results.nautical_twilight_begin),
+    nauticalTwilightBegin: minutesFromIso(
+      payload.results.nautical_twilight_begin,
+    ),
     nauticalTwilightEnd: minutesFromIso(payload.results.nautical_twilight_end),
-    astronomicalTwilightBegin: minutesFromIso(payload.results.astronomical_twilight_begin),
-    astronomicalTwilightEnd: minutesFromIso(payload.results.astronomical_twilight_end),
+    astronomicalTwilightBegin: minutesFromIso(
+      payload.results.astronomical_twilight_begin,
+    ),
+    astronomicalTwilightEnd: minutesFromIso(
+      payload.results.astronomical_twilight_end,
+    ),
   };
 }
 
 function hexToRgb(hex: string) {
   const normalized = hex.replace("#", "");
-  const value = normalized.length === 3
-    ? normalized.split("").map((part) => part + part).join("")
-    : normalized;
+  const value =
+    normalized.length === 3
+      ? normalized
+          .split("")
+          .map((part) => part + part)
+          .join("")
+      : normalized;
 
   return {
     r: parseInt(value.slice(0, 2), 16),
@@ -322,7 +340,13 @@ function hexToRgb(hex: string) {
 }
 
 function rgbToHex(r: number, g: number, b: number) {
-  return `#${[r, g, b].map((value) => Math.round(clamp(value, 0, 255)).toString(16).padStart(2, "0")).join("")}`;
+  return `#${[r, g, b]
+    .map((value) =>
+      Math.round(clamp(value, 0, 255))
+        .toString(16)
+        .padStart(2, "0"),
+    )
+    .join("")}`;
 }
 
 function mixColors(colorA: string, colorB: string, amount: number) {
@@ -368,7 +392,7 @@ function rgbToHsl(color: string) {
   }
 
   return {
-    h: ((h * 60) + 360) % 360,
+    h: (h * 60 + 360) % 360,
     s,
     l,
   };
@@ -406,7 +430,10 @@ function hslToHex(h: number, s: number, l: number) {
 }
 
 function getPhase(minute: number, solarTimes: SolarTimes): ThemePhase {
-  if (minute < solarTimes.civilTwilightBegin || minute >= solarTimes.nauticalTwilightEnd) {
+  if (
+    minute < solarTimes.civilTwilightBegin ||
+    minute >= solarTimes.nauticalTwilightEnd
+  ) {
     return "night";
   }
   if (minute < solarTimes.sunrise) {
@@ -422,7 +449,10 @@ function getPhase(minute: number, solarTimes: SolarTimes): ThemePhase {
 }
 
 function buildThemeStops(solarTimes: SolarTimes): ThemeStop[] {
-  const lateAfternoon = Math.max(solarTimes.solarNoon + 30, solarTimes.sunset - 90);
+  const lateAfternoon = Math.max(
+    solarTimes.solarNoon + 30,
+    solarTimes.sunset - 90,
+  );
   return [
     {
       minute: 0,
@@ -605,14 +635,20 @@ function buildThemeStops(solarTimes: SolarTimes): ThemeStop[] {
 
 function interpolatePalette(stops: ThemeStop[], minute: number) {
   const extendedStops = [
-    { minute: stops[stops.length - 1].minute - MINUTES_IN_DAY, palette: stops[stops.length - 1].palette },
+    {
+      minute: stops[stops.length - 1].minute - MINUTES_IN_DAY,
+      palette: stops[stops.length - 1].palette,
+    },
     ...stops,
     { minute: stops[0].minute + MINUTES_IN_DAY, palette: stops[0].palette },
   ];
 
   let currentIndex = 0;
   for (let index = 0; index < extendedStops.length - 1; index += 1) {
-    if (minute >= extendedStops[index].minute && minute <= extendedStops[index + 1].minute) {
+    if (
+      minute >= extendedStops[index].minute &&
+      minute <= extendedStops[index + 1].minute
+    ) {
       currentIndex = index;
       break;
     }
@@ -620,27 +656,55 @@ function interpolatePalette(stops: ThemeStop[], minute: number) {
 
   const start = extendedStops[currentIndex];
   const end = extendedStops[currentIndex + 1];
-  const amount = clamp((minute - start.minute) / Math.max(1, end.minute - start.minute), 0, 1);
+  const amount = clamp(
+    (minute - start.minute) / Math.max(1, end.minute - start.minute),
+    0,
+    1,
+  );
 
   return {
-    background: mixColors(start.palette.background, end.palette.background, amount),
+    background: mixColors(
+      start.palette.background,
+      end.palette.background,
+      amount,
+    ),
     text: mixColors(start.palette.text, end.palette.text, amount),
     muted: mixColors(start.palette.muted, end.palette.muted, amount),
     soft: mixColors(start.palette.soft, end.palette.soft, amount),
     surface: mixColors(start.palette.surface, end.palette.surface, amount),
-    surfaceHover: mixColors(start.palette.surfaceHover, end.palette.surfaceHover, amount),
+    surfaceHover: mixColors(
+      start.palette.surfaceHover,
+      end.palette.surfaceHover,
+      amount,
+    ),
     beam: mixColors(start.palette.beam, end.palette.beam, amount),
-    beamSecondary: mixColors(start.palette.beamSecondary, end.palette.beamSecondary, amount),
+    beamSecondary: mixColors(
+      start.palette.beamSecondary,
+      end.palette.beamSecondary,
+      amount,
+    ),
     shadow: mixColors(start.palette.shadow, end.palette.shadow, amount),
     accent: mixColors(start.palette.accent, end.palette.accent, amount),
-    transportText: mixColors(start.palette.transportText, end.palette.transportText, amount),
+    transportText: mixColors(
+      start.palette.transportText,
+      end.palette.transportText,
+      amount,
+    ),
   };
 }
 
 function buildLocationLabel(city: string) {
-  const words = city.replace(/[^a-zA-Z\s]/g, " ").trim().split(/\s+/).filter(Boolean);
+  const words = city
+    .replace(/[^a-zA-Z\s]/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
   if (words.length >= 3) {
-    return words.slice(0, 3).map((word) => word[0]).join("").toUpperCase();
+    return words
+      .slice(0, 3)
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase();
   }
   if (words.length === 2) {
     return `${words[0].slice(0, 2)}${words[1].slice(0, 1)}`.toUpperCase();
@@ -694,13 +758,34 @@ function readCachedLocationInfo() {
   }
 }
 
-function adjustPillColor(baseHex: string, accentHex: string, minute: number, phase: ThemePhase) {
+function adjustPillColor(
+  baseHex: string,
+  accentHex: string,
+  minute: number,
+  phase: ThemePhase,
+) {
   const base = rgbToHsl(baseHex);
   const accent = rgbToHsl(accentHex);
-  const pulse = 0.5 + Math.sin((minute / MINUTES_IN_DAY) * Math.PI * 2 - Math.PI / 2) * 0.5;
-  const hue = (base.h * 0.76 + accent.h * 0.24 + (phase === "night" ? 10 : phase === "sunset" ? -6 : 0) + 360) % 360;
-  const saturation = clamp(base.s + (phase === "night" ? 0.26 : phase === "day" ? 0.08 : 0.18) + pulse * 0.06, 0.32, 0.96);
-  const lightness = clamp(base.l + (phase === "day" ? 0.12 : phase === "night" ? -0.11 : 0.01), 0.18, 0.7);
+  const pulse =
+    0.5 + Math.sin((minute / MINUTES_IN_DAY) * Math.PI * 2 - Math.PI / 2) * 0.5;
+  const hue =
+    (base.h * 0.76 +
+      accent.h * 0.24 +
+      (phase === "night" ? 10 : phase === "sunset" ? -6 : 0) +
+      360) %
+    360;
+  const saturation = clamp(
+    base.s +
+      (phase === "night" ? 0.26 : phase === "day" ? 0.08 : 0.18) +
+      pulse * 0.06,
+    0.32,
+    0.96,
+  );
+  const lightness = clamp(
+    base.l + (phase === "day" ? 0.12 : phase === "night" ? -0.11 : 0.01),
+    0.18,
+    0.7,
+  );
   return hslToHex(hue, saturation, lightness);
 }
 
@@ -710,14 +795,27 @@ function minuteInZone(date: Date, timeZone: string) {
 }
 
 export function useHongKongDayTheme(): HongKongDayTheme {
-  const initialDateKey = getDateKey(getTimeZoneParts(new Date(), HONG_KONG_TIME_ZONE));
+  const initialDateKey = getDateKey(
+    getTimeZoneParts(new Date(), HONG_KONG_TIME_ZONE),
+  );
   const initialCachedSolar = readCachedSolarTimes(initialDateKey);
   const initialCachedLocation = readCachedLocationInfo();
   const [clockMs, setClockMs] = useState(() => Date.now());
-  const [solarTimes, setSolarTimes] = useState<SolarTimes>(() => initialCachedSolar ?? buildFallbackSolarTimes(initialDateKey));
-  const [location, setLocation] = useState<LocationInfo>(() => initialCachedLocation ?? getFallbackLocationInfo());
-  const [weather, setWeather] = useState<WeatherInfo>({ temperatureC: 24, status: "CLEAR", kind: "clear", rainIntensity: 0 });
-  const [displayedMinute, setDisplayedMinute] = useState(() => minuteInZone(new Date(), HONG_KONG_TIME_ZONE));
+  const [solarTimes, setSolarTimes] = useState<SolarTimes>(
+    () => initialCachedSolar ?? buildFallbackSolarTimes(initialDateKey),
+  );
+  const [location, setLocation] = useState<LocationInfo>(
+    () => initialCachedLocation ?? getFallbackLocationInfo(),
+  );
+  const [weather, setWeather] = useState<WeatherInfo>({
+    temperatureC: 24,
+    status: "CLEAR",
+    kind: "clear",
+    rainIntensity: 0,
+  });
+  const [displayedMinute, setDisplayedMinute] = useState(() =>
+    minuteInZone(new Date(), HONG_KONG_TIME_ZONE),
+  );
   const [isScrubbing, setIsScrubbing] = useState(false);
   const resetFrameRef = useRef<number | null>(null);
 
@@ -768,7 +866,11 @@ export function useHongKongDayTheme(): HongKongDayTheme {
           kind: parsed.kind,
           rainIntensity: rain,
         });
-        logWeather("api success, weather updated", { temperature, code, parsed });
+        logWeather("api success, weather updated", {
+          temperature,
+          code,
+          parsed,
+        });
       })
       .catch((error: unknown) => {
         logWeather("api request failed, keeping fallback", error);
@@ -797,7 +899,9 @@ export function useHongKongDayTheme(): HongKongDayTheme {
       return;
     }
 
-    logSolar(`cache miss for ${hktDateKey}, fetching without immediate fallback`);
+    logSolar(
+      `cache miss for ${hktDateKey}, fetching without immediate fallback`,
+    );
 
     const url = new URL(SUNRISE_API_URL);
     url.searchParams.set("lat", String(HONG_KONG_COORDS.lat));
@@ -826,7 +930,10 @@ export function useHongKongDayTheme(): HongKongDayTheme {
       })
       .catch((error: unknown) => {
         setSolarTimes(buildFallbackSolarTimes(hktDateKey));
-        logSolar(`api request failed for ${hktDateKey}, fallback retained`, error);
+        logSolar(
+          `api request failed for ${hktDateKey}, fallback retained`,
+          error,
+        );
       });
 
     return () => {
@@ -848,7 +955,10 @@ export function useHongKongDayTheme(): HongKongDayTheme {
       .then((response) => response.json() as Promise<LocationResponse>)
       .then((payload) => {
         if (disposed || !payload.city || !payload.timezone) {
-          logLocation("api response missing city/timezone, keeping fallback", payload);
+          logLocation(
+            "api response missing city/timezone, keeping fallback",
+            payload,
+          );
           return;
         }
         const nextLocation = {
@@ -858,7 +968,10 @@ export function useHongKongDayTheme(): HongKongDayTheme {
           cachedAt: Date.now(),
         };
         setLocation(nextLocation);
-        window.localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(nextLocation));
+        window.localStorage.setItem(
+          LOCATION_STORAGE_KEY,
+          JSON.stringify(nextLocation),
+        );
         logLocation("api success, cached location", nextLocation);
       })
       .catch((error: unknown) => {
@@ -873,7 +986,10 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   const stops = useMemo(() => buildThemeStops(solarTimes), [solarTimes]);
   const effectiveDisplayedMinute = isScrubbing ? displayedMinute : liveMinute;
   const themeMinute = isScrubbing ? displayedMinute : liveMinuteDiscrete;
-  const palette = useMemo(() => interpolatePalette(stops, themeMinute), [themeMinute, stops]);
+  const palette = useMemo(
+    () => interpolatePalette(stops, themeMinute),
+    [themeMinute, stops],
+  );
   const phase = getPhase(themeMinute, solarTimes);
   const displayedDate = useMemo(() => {
     const delta = shortestWrappedDelta(liveMinute, effectiveDisplayedMinute);
@@ -887,13 +1003,15 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     const solarNoon = (solarTimes.sunrise + solarTimes.sunset) * 0.5;
     if (themeMinute <= solarNoon) {
       return clamp(
-        (themeMinute - solarTimes.sunrise) / Math.max(1, solarNoon - solarTimes.sunrise),
+        (themeMinute - solarTimes.sunrise) /
+          Math.max(1, solarNoon - solarTimes.sunrise),
         0,
         1,
       );
     }
     return clamp(
-      1 - (themeMinute - solarNoon) / Math.max(1, solarTimes.sunset - solarNoon),
+      1 -
+        (themeMinute - solarNoon) / Math.max(1, solarTimes.sunset - solarNoon),
       0,
       1,
     );
@@ -908,7 +1026,11 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     solarTimes.sunset,
     solarTimes.nauticalTwilightEnd,
   );
-  const twilightStrength = clamp(Math.max(morningTwilight, eveningTwilight), 0, 1);
+  const twilightStrength = clamp(
+    Math.max(morningTwilight, eveningTwilight),
+    0,
+    1,
+  );
   const midnightCenter = 0;
   const midnightDistance = Math.min(
     Math.abs(themeMinute - midnightCenter),
@@ -923,9 +1045,10 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     ? 1
     : 0;
   const fullSpan = solarTimes.civilTwilightEnd - solarTimes.civilTwilightBegin;
-  const sunProgress = fullSpan > 0
-    ? clamp((themeMinute - solarTimes.civilTwilightBegin) / fullSpan, 0, 1)
-    : 0;
+  const sunProgress =
+    fullSpan > 0
+      ? clamp((themeMinute - solarTimes.civilTwilightBegin) / fullSpan, 0, 1)
+      : 0;
 
   const shader = useMemo<ShaderPalette>(
     () => ({
@@ -965,7 +1088,10 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     const root = document.documentElement;
     root.style.setProperty("--page-background", palette.background);
     const { r, g, b } = hexToRgb(palette.background);
-    root.style.setProperty("--page-background-transparent", `rgba(${r}, ${g}, ${b}, 0)`);
+    root.style.setProperty(
+      "--page-background-transparent",
+      `rgba(${r}, ${g}, ${b}, 0)`,
+    );
     root.style.setProperty("--page-text", "#ffffff");
     root.style.setProperty("--page-text-muted", "rgba(255, 255, 255, 0.76)");
     root.style.setProperty("--page-text-soft", "rgba(255, 255, 255, 0.54)");
@@ -980,16 +1106,19 @@ export function useHongKongDayTheme(): HongKongDayTheme {
 
   const style = useMemo<CSSProperties>(() => ({}), []);
 
-  const bumpMinuteFromWheel = useCallback((deltaY: number, shiftKey: boolean) => {
-    if (resetFrameRef.current !== null) {
-      window.cancelAnimationFrame(resetFrameRef.current);
-      resetFrameRef.current = null;
-    }
-    const step = shiftKey ? 12 : 3;
-    const direction = deltaY > 0 ? step : -step;
-    setIsScrubbing(true);
-    setDisplayedMinute((current) => wrapMinutes(current + direction));
-  }, []);
+  const bumpMinuteFromWheel = useCallback(
+    (deltaY: number, shiftKey: boolean) => {
+      if (resetFrameRef.current !== null) {
+        window.cancelAnimationFrame(resetFrameRef.current);
+        resetFrameRef.current = null;
+      }
+      const step = shiftKey ? 12 : 3;
+      const direction = deltaY > 0 ? step : -step;
+      setIsScrubbing(true);
+      setDisplayedMinute((current) => wrapMinutes(current + direction));
+    },
+    [],
+  );
 
   const onScrubWheel = (event: ReactWheelEvent<HTMLElement>) => {
     event.preventDefault();
@@ -1064,7 +1193,9 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     melTime: formatTimeForZone(displayedDate, MELBOURNE_TIME_ZONE),
     localTime: formatTimeForZone(displayedDate, location.timeZone),
     localLabel: location.label,
-    showLocalTime: location.timeZone !== HONG_KONG_TIME_ZONE && location.timeZone !== MELBOURNE_TIME_ZONE,
+    showLocalTime:
+      location.timeZone !== HONG_KONG_TIME_ZONE &&
+      location.timeZone !== MELBOURNE_TIME_ZONE,
     weatherDisplay: formatWeatherDisplay(weather),
     weatherHref: `https://open-meteo.com/en/forecast?latitude=${HONG_KONG_COORDS.lat}&longitude=${HONG_KONG_COORDS.lng}&current=temperature_2m,weather_code`,
     hkgClockHref: "https://www.timeanddate.com/worldclock/hong-kong/hong-kong",

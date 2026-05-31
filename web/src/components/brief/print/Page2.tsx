@@ -1,4 +1,10 @@
-import { C, mono, sans, serif, TILE_LINK_HOVER } from "@/components/brief/ui/constants";
+import {
+  C,
+  mono,
+  sans,
+  serif,
+  TILE_LINK_HOVER,
+} from "@/components/brief/ui/constants";
 import { Tb } from "@/components/brief/ui/Tb";
 import { Ft } from "@/components/brief/ui/Ft";
 

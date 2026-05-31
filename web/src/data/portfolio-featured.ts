@@ -58,7 +58,9 @@ const templates: Record<PillarKey, PillarTemplate> = {
 };
 
 function findInReadme(readme: ReadmeBundle, key: string) {
-  return [...readme.mainProjects, ...readme.utilities].find((p) => p.key === key);
+  return [...readme.mainProjects, ...readme.utilities].find(
+    (p) => p.key === key,
+  );
 }
 
 export type PillarResolved = {
@@ -81,7 +83,9 @@ export function resolvePillars(readme: ReadmeBundle): PillarResolved[] {
       key,
       href,
       eyebrow: t.eyebrow,
-      displayName: row?.name ? row.name.replace(/\s*\(wip\)\s*/i, "") : t.displayName,
+      displayName: row?.name
+        ? row.name.replace(/\s*\(wip\)\s*/i, "")
+        : t.displayName,
       tagline: t.tagline,
       narrative,
       stat: t.stat,

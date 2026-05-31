@@ -30,11 +30,7 @@ export function ServicesSection({ embedded = false }: { embedded?: boolean }) {
   return (
     <section
       id="services"
-      className={
-        embedded
-          ? "snap-start snap-always scroll-mt-24"
-          : undefined
-      }
+      className={embedded ? "snap-start snap-always scroll-mt-24" : undefined}
       style={{
         height: embedded ? "auto" : "100vh",
         scrollSnapAlign: "start",

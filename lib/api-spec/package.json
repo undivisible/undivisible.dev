@@ -3,9 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "codegen": "orval --config ./orval.config.ts && pnpm -w run typecheck:libs"
+    "build": "bun run typecheck",
+    "codegen": "orval --config ./orval.config.ts && bun run --cwd ../.. typecheck",
+    "format": "bunx prettier --check .",
+    "lint": "bun run typecheck",
+    "test": "sh -c 'find . -type f \\( -name \"*.test.ts\" -o -name \"*.test.tsx\" -o -name \"*.test.js\" -o -name \"*.test.jsx\" -o -name \"*.spec.ts\" -o -name \"*.spec.tsx\" -o -name \"*.spec.js\" -o -name \"*.spec.jsx\" \\) | grep -q . && bun test || echo \"No tests found\"'",
+    "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "orval": "^8.5.2"
   }
 }

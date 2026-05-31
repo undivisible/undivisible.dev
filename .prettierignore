@@ -1,0 +1,6 @@
+old/
+web/.next/
+web/dist/
+web/out/
+web/src/data/readme-projects.generated.ts
+web/src/data/resume-from-markdown.generated.ts

@@ -18,7 +18,8 @@ export const resumeExperience: ResumeExperience[] = resumeDoc.experience.map(
   (job) => ({
     ...job,
     points: job.bullets,
-  }));
+  }),
+);
 
 export const resumeSkillGroups: ResumeContactRow[] = resumeDoc.skills;
 

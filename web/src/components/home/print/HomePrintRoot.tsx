@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { C, mono, sans, serif } from "@/components/brief/ui/constants";
 import { Ft } from "@/components/brief/ui/Ft";
 import { Tb } from "@/components/brief/ui/Tb";
+import { lifeTimeline } from "@/data/life-timeline";
 import {
   mainHeroQuoteFromReadme,
   mainProjectsFromReadme,
@@ -93,7 +94,13 @@ function SectionTitle({
   );
 }
 
-function Bullet({ children, onDark = false }: { children: string; onDark?: boolean }) {
+function Bullet({
+  children,
+  onDark = false,
+}: {
+  children: string;
+  onDark?: boolean;
+}) {
   return (
     <div
       style={{
@@ -111,7 +118,13 @@ function Bullet({ children, onDark = false }: { children: string; onDark?: boole
   );
 }
 
-function Tag({ children, onDark = false }: { children: string; onDark?: boolean }) {
+function Tag({
+  children,
+  onDark = false,
+}: {
+  children: string;
+  onDark?: boolean;
+}) {
   return (
     <span
       style={{
@@ -131,11 +144,7 @@ function Tag({ children, onDark = false }: { children: string; onDark?: boolean 
   );
 }
 
-function ProjectCard({
-  item,
-}: {
-  item: PrintProject;
-}) {
+function ProjectCard({ item }: { item: PrintProject }) {
   const isResumeItem = "meta" in item;
   const baseBlurb = isResumeItem ? resumeItemBlurb(item) : item.desc;
   const stack = !isResumeItem ? item.stack?.trim() : undefined;
@@ -349,42 +358,45 @@ function ResumeHeader() {
         {doc.contact.map(([label, value]) => {
           const href = contactHref(label, value);
           return (
-          <div
-            key={label}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "44px 1fr",
-              gap: 5,
-              fontSize: 7.3,
-              lineHeight: 1.34,
-            }}
-          >
-            <span
+            <div
+              key={label}
               style={{
-                fontFamily: mono,
-                textTransform: "uppercase",
-                color: "rgba(255,248,230,0.3)",
+                display: "grid",
+                gridTemplateColumns: "44px 1fr",
+                gap: 5,
+                fontSize: 7.3,
+                lineHeight: 1.34,
               }}
             >
-              {label}
-            </span>
-            <span
-              style={{
-                color: label === "Email" ? C.orange : C.cream,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {href ? (
-                <a href={href} style={{ color: "inherit", textDecoration: "none" }}>
-                  {value}
-                </a>
-              ) : (
-                value
-              )}
-            </span>
-          </div>
+              <span
+                style={{
+                  fontFamily: mono,
+                  textTransform: "uppercase",
+                  color: "rgba(255,248,230,0.3)",
+                }}
+              >
+                {label}
+              </span>
+              <span
+                style={{
+                  color: label === "Email" ? C.orange : C.cream,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {href ? (
+                  <a
+                    href={href}
+                    style={{ color: "inherit", textDecoration: "none" }}
+                  >
+                    {value}
+                  </a>
+                ) : (
+                  value
+                )}
+              </span>
+            </div>
           );
         })}
       </div>
@@ -401,98 +413,153 @@ function ProfileSidebar() {
         color: C.cream,
         padding: "11px 26px 12px",
         display: "flex",
-        flexDirection: "row",
-        gap: 16,
+        flexDirection: "column",
+        gap: 9,
         height: "auto",
         minHeight: 0,
         alignSelf: "stretch",
         boxSizing: "border-box",
       }}
     >
-      <section style={{ flex: "1.75 1 0" }}>
-        <SectionTitle onDark>Technical stack</SectionTitle>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3px 10px" }}>
-          {doc.skills.map(([label, value]) => (
-            <div key={label}>
+      <section>
+        <SectionTitle onDark>Early timeline</SectionTitle>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "4px 12px",
+          }}
+        >
+          {lifeTimeline.map((item) => (
+            <div key={`${item.age}-${item.title}`}>
               <div
                 style={{
                   fontFamily: mono,
-                  fontSize: 6,
+                  fontSize: 5.9,
                   textTransform: "uppercase",
-                  color: "rgba(255,248,230,0.35)",
-                  marginBottom: 1,
+                  color: C.orange,
+                  lineHeight: 1.2,
                 }}
               >
-                {label}
+                Age {item.age}
               </div>
               <div
+                style={{
+                  fontSize: 7,
+                  fontWeight: 700,
+                  color: C.cream,
+                  lineHeight: 1.15,
+                }}
+              >
+                {item.title}
+              </div>
+              <div
+                style={{
+                  marginTop: 1,
+                  fontSize: 6.2,
+                  color: "rgba(255,248,230,0.62)",
+                  lineHeight: 1.22,
+                }}
+              >
+                {item.body}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div style={{ display: "flex", flexDirection: "row", gap: 16 }}>
+        <section style={{ flex: "1.75 1 0" }}>
+          <SectionTitle onDark>Technical stack</SectionTitle>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "3px 10px",
+            }}
+          >
+            {doc.skills.map(([label, value]) => (
+              <div key={label}>
+                <div
+                  style={{
+                    fontFamily: mono,
+                    fontSize: 6,
+                    textTransform: "uppercase",
+                    color: "rgba(255,248,230,0.35)",
+                    marginBottom: 1,
+                  }}
+                >
+                  {label}
+                </div>
+                <div
+                  style={{
+                    fontSize: 7.1,
+                    color: "rgba(255,248,230,0.62)",
+                    lineHeight: 1.32,
+                  }}
+                >
+                  {value}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section style={{ flex: "1.05 1 0" }}>
+          <SectionTitle onDark>Education</SectionTitle>
+          <div style={{ display: "grid", gap: 2 }}>
+            {doc.education.map((item) => (
+              <div
+                key={item}
                 style={{
                   fontSize: 7.1,
                   color: "rgba(255,248,230,0.62)",
                   lineHeight: 1.32,
                 }}
               >
-                {value}
+                {item}
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section style={{ flex: "1.05 1 0" }}>
-        <SectionTitle onDark>Education</SectionTitle>
-        <div style={{ display: "grid", gap: 2 }}>
-          {doc.education.map((item) => (
-            <div
-              key={item}
-              style={{
-                fontSize: 7.1,
-                color: "rgba(255,248,230,0.62)",
-                lineHeight: 1.32,
-              }}
-            >
-              {item}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {doc.humanLanguages.length > 0 ? (
-        <section style={{ flex: "0.72 1 0" }}>
-          <SectionTitle onDark>Languages</SectionTitle>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-            {doc.humanLanguages.map((item) => (
-              <Tag key={item} onDark>
-                {item}
-              </Tag>
             ))}
           </div>
         </section>
-      ) : null}
 
-      <section style={{ flex: "0.98 1 0" }}>
-        <SectionTitle onDark>Community / CTF</SectionTitle>
-        <div style={{ display: "grid", gap: 2 }}>
-          {doc.community.map((item) => (
-            <Bullet key={item} onDark>
-              {item}
-            </Bullet>
-          ))}
-        </div>
-      </section>
+        {doc.humanLanguages.length > 0 ? (
+          <section style={{ flex: "0.72 1 0" }}>
+            <SectionTitle onDark>Languages</SectionTitle>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+              {doc.humanLanguages.map((item) => (
+                <Tag key={item} onDark>
+                  {item}
+                </Tag>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
-      {doc.interests.length > 0 ? (
-        <section style={{ flex: "0.82 1 0" }}>
-          <SectionTitle onDark>Interests</SectionTitle>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-            {doc.interests.map((item) => (
-              <Tag key={item} onDark>
+        <section style={{ flex: "0.98 1 0" }}>
+          <SectionTitle onDark>Community / CTF</SectionTitle>
+          <div style={{ display: "grid", gap: 2 }}>
+            {doc.community.map((item) => (
+              <Bullet key={item} onDark>
                 {item}
-              </Tag>
+              </Bullet>
             ))}
           </div>
         </section>
-      ) : null}
+
+        {doc.interests.length > 0 ? (
+          <section style={{ flex: "0.82 1 0" }}>
+            <SectionTitle onDark>Interests</SectionTitle>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+              {doc.interests.map((item) => (
+                <Tag key={item} onDark>
+                  {item}
+                </Tag>
+              ))}
+            </div>
+          </section>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -525,7 +592,8 @@ function ProjectsPageHeader({ projectCount }: { projectCount: number }) {
             color: C.cream,
           }}
         >
-          Work & <em style={{ fontStyle: "italic", color: C.orange }}>projects</em>.
+          Work &{" "}
+          <em style={{ fontStyle: "italic", color: C.orange }}>projects</em>.
         </div>
         <div
           style={{
@@ -690,7 +758,10 @@ function PrintPage({
         }}
       >
         {children}
-        <Ft left="Max Carter — Resume" right={`undivisible.dev · ${page}/${total}`} />
+        <Ft
+          left="Max Carter — Resume"
+          right={`undivisible.dev · ${page}/${total}`}
+        />
       </div>
     </div>
   );
@@ -735,7 +806,10 @@ export function HomePrintRoot() {
         <Tb
           left="RESUME BUILT WITH REACT"
           right={
-            <a href="https://undivisible.dev" style={{ color: "inherit", textDecoration: "none" }}>
+            <a
+              href="https://undivisible.dev"
+              style={{ color: "inherit", textDecoration: "none" }}
+            >
               undivisible.dev
             </a>
           }
@@ -782,7 +856,10 @@ export function HomePrintRoot() {
                 {doc.experience.map((job) => (
                   <div
                     key={`${job.org}-${job.role}`}
-                    style={{ borderTop: `1px solid ${C.rule}`, padding: "10px 0" }}
+                    style={{
+                      borderTop: `1px solid ${C.rule}`,
+                      padding: "10px 0",
+                    }}
                   >
                     <div
                       style={{
@@ -837,13 +914,20 @@ export function HomePrintRoot() {
       <PrintPage page={2} total={totalPages} surface="alt">
         <Tb
           left={
-            <a href="https://undivisible.dev/#projects" style={{ color: "inherit", textDecoration: "none" }}>
+            <a
+              href="https://undivisible.dev/#projects"
+              style={{ color: "inherit", textDecoration: "none" }}
+            >
               Selected projects
             </a>
           }
           right={
-            <a href="https://undivisible.dev" style={{ color: "inherit", textDecoration: "none" }}>
-              Descriptions pulled from GitHub README · project names and top tabs clickable
+            <a
+              href="https://undivisible.dev"
+              style={{ color: "inherit", textDecoration: "none" }}
+            >
+              Descriptions pulled from GitHub README · project names and top
+              tabs clickable
             </a>
           }
         />

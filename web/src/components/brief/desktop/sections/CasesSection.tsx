@@ -143,152 +143,154 @@ export function CasesSection() {
             minHeight: 0,
           }}
         >
-          {briefCases.map(({ n, tag, title, metric, body, badge, solid, badgeHref }, i) => (
-            <motion.div
-              key={n}
-              initial={{ opacity: 0, x: -28 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.55, ease: EASE, delay: i * 0.08 }}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "34px 92px 1fr auto",
-                gap: "0 18px",
-                alignItems: "center",
-                padding: "7px 0",
-                borderTop: `1px solid rgba(255,255,255,${i === 0 ? "0.1" : "0.06"})`,
-              }}
-            >
-              {/* Ghost number */}
-              <div
-                style={{
-                  fontFamily: serif,
-                  fontSize: 20,
-                  color: "rgba(255,255,255,0.08)",
-                  letterSpacing: "-0.04em",
-                  lineHeight: 1,
-                  userSelect: "none",
-                }}
-              >
-                {n}
-              </div>
-
-              {/* Metric */}
+          {briefCases.map(
+            ({ n, tag, title, metric, body, badge, solid, badgeHref }, i) => (
               <motion.div
-                initial={{ opacity: 0, scale: 0.75 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                key={n}
+                initial={{ opacity: 0, x: -28 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{
-                  duration: 0.45,
-                  ease: EASE,
-                  delay: i * 0.08 + 0.18,
-                }}
+                transition={{ duration: 0.55, ease: EASE, delay: i * 0.08 }}
                 style={{
-                  fontFamily: serif,
-                  fontSize: 36,
-                  letterSpacing: "-0.04em",
-                  lineHeight: 1,
-                  fontStyle: "italic",
-                  background: GRADIENT,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                  display: "grid",
+                  gridTemplateColumns: "34px 92px 1fr auto",
+                  gap: "0 18px",
+                  alignItems: "center",
+                  padding: "7px 0",
+                  borderTop: `1px solid rgba(255,255,255,${i === 0 ? "0.1" : "0.06"})`,
                 }}
               >
-                {metric}
-              </motion.div>
-
-              {/* Text */}
-              <div>
-                <div
-                  style={{
-                    fontFamily: mono,
-                    fontSize: 10.5,
-                    letterSpacing: "-0.03em",
-                    textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.3)",
-                    marginBottom: 3,
-                  }}
-                >
-                  {tag}
-                </div>
+                {/* Ghost number */}
                 <div
                   style={{
                     fontFamily: serif,
-                    fontSize: "clamp(17px, 1.7vw, 24px)",
-                    color: "#ffffff",
-                    letterSpacing: "-0.02em",
-                    lineHeight: 1.2,
-                    marginBottom: 5,
+                    fontSize: 20,
+                    color: "rgba(255,255,255,0.08)",
+                    letterSpacing: "-0.04em",
+                    lineHeight: 1,
+                    userSelect: "none",
                   }}
                 >
-                  {title}
+                  {n}
                 </div>
-                <div
-                  style={{
-                    fontSize: 12,
-                    color: "rgba(255,255,255,0.35)",
-                    lineHeight: 1.48,
-                    maxWidth: 620,
-                  }}
-                >
-                  {body}
-                </div>
-              </div>
 
-              {/* Badge */}
-              {(() => {
-                const badgeStyle = {
-                  fontFamily: mono,
-                  fontSize: 8.5,
-                  letterSpacing: "-0.03em",
-                  textTransform: "uppercase",
-                  padding: "4px 10px",
-                  whiteSpace: "nowrap",
-                  alignSelf: "flex-start",
-                  marginTop: 16,
-                  borderRadius: 75,
-                  textDecoration: "none",
-                  ...(solid
-                    ? {
-                        background: "#ffffff",
-                        color: "#000000",
-                        fontWeight: 600,
-                      }
-                    : {
-                        border: "1px solid rgba(255,255,255,0.25)",
-                        color: "rgba(255,255,255,0.55)",
-                      }),
-                };
-                return badgeHref ? (
-                  <a
-                    href={badgeHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={badgeStyle}
-                    className={
-                      solid
-                        ? `${TILE_LINK_HOVER} hover:brightness-105`
-                        : `${TILE_LINK_HOVER} bg-transparent hover:bg-white/[0.12]`
-                    }
-                  >
-                    {badge}
-                  </a>
-                ) : (
+                {/* Metric */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.75 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    duration: 0.45,
+                    ease: EASE,
+                    delay: i * 0.08 + 0.18,
+                  }}
+                  style={{
+                    fontFamily: serif,
+                    fontSize: 36,
+                    letterSpacing: "-0.04em",
+                    lineHeight: 1,
+                    fontStyle: "italic",
+                    background: GRADIENT,
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
+                  {metric}
+                </motion.div>
+
+                {/* Text */}
+                <div>
                   <div
-                    style={badgeStyle}
-                    className={
-                      solid
-                        ? `cursor-default ${TILE_LINK_HOVER} hover:brightness-105`
-                        : `cursor-default bg-white/[0.04] ${TILE_LINK_HOVER} hover:bg-white/[0.12]`
-                    }
+                    style={{
+                      fontFamily: mono,
+                      fontSize: 10.5,
+                      letterSpacing: "-0.03em",
+                      textTransform: "uppercase",
+                      color: "rgba(255,255,255,0.3)",
+                      marginBottom: 3,
+                    }}
                   >
-                    {badge}
+                    {tag}
                   </div>
-                );
-              })()}
-            </motion.div>
-          ))}
+                  <div
+                    style={{
+                      fontFamily: serif,
+                      fontSize: "clamp(17px, 1.7vw, 24px)",
+                      color: "#ffffff",
+                      letterSpacing: "-0.02em",
+                      lineHeight: 1.2,
+                      marginBottom: 5,
+                    }}
+                  >
+                    {title}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: "rgba(255,255,255,0.35)",
+                      lineHeight: 1.48,
+                      maxWidth: 620,
+                    }}
+                  >
+                    {body}
+                  </div>
+                </div>
+
+                {/* Badge */}
+                {(() => {
+                  const badgeStyle = {
+                    fontFamily: mono,
+                    fontSize: 8.5,
+                    letterSpacing: "-0.03em",
+                    textTransform: "uppercase",
+                    padding: "4px 10px",
+                    whiteSpace: "nowrap",
+                    alignSelf: "flex-start",
+                    marginTop: 16,
+                    borderRadius: 75,
+                    textDecoration: "none",
+                    ...(solid
+                      ? {
+                          background: "#ffffff",
+                          color: "#000000",
+                          fontWeight: 600,
+                        }
+                      : {
+                          border: "1px solid rgba(255,255,255,0.25)",
+                          color: "rgba(255,255,255,0.55)",
+                        }),
+                  };
+                  return badgeHref ? (
+                    <a
+                      href={badgeHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={badgeStyle}
+                      className={
+                        solid
+                          ? `${TILE_LINK_HOVER} hover:brightness-105`
+                          : `${TILE_LINK_HOVER} bg-transparent hover:bg-white/[0.12]`
+                      }
+                    >
+                      {badge}
+                    </a>
+                  ) : (
+                    <div
+                      style={badgeStyle}
+                      className={
+                        solid
+                          ? `cursor-default ${TILE_LINK_HOVER} hover:brightness-105`
+                          : `cursor-default bg-white/[0.04] ${TILE_LINK_HOVER} hover:bg-white/[0.12]`
+                      }
+                    >
+                      {badge}
+                    </div>
+                  );
+                })()}
+              </motion.div>
+            ),
+          )}
           <div style={{ height: 1, background: "rgba(255,255,255,0.06)" }} />
         </div>
 

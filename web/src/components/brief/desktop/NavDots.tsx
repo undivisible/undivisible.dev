@@ -1,11 +1,10 @@
-
 import { motion, AnimatePresence } from "motion/react";
 import { mono } from "@/components/brief/ui/constants";
 
 const SECTIONS = [
-  { id: "hero",     label: "Intro" },
+  { id: "hero", label: "Intro" },
   { id: "services", label: "Services" },
-  { id: "cases",    label: "Results" },
+  { id: "cases", label: "Results" },
   { id: "projects", label: "Open Source" },
 ];
 
@@ -35,18 +34,28 @@ export function NavDots({
           zIndex: 50,
         };
   return (
-    <div style={{
-      ...positionStyle,
-      display: "flex",
-      flexDirection: "column",
-      gap: 14,
-      alignItems: "flex-end",
-    }}>
+    <div
+      style={{
+        ...positionStyle,
+        display: "flex",
+        flexDirection: "column",
+        gap: 14,
+        alignItems: "flex-end",
+      }}
+    >
       {SECTIONS.map((s, i) => (
         <button
           key={s.id}
           onClick={() => onDotClick(s.id)}
-          style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", gap: 8 }}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
         >
           <AnimatePresence>
             {active === i && (
@@ -69,9 +78,10 @@ export function NavDots({
           </AnimatePresence>
           <motion.div
             animate={{
-              width:           active === i ? 22 : 5,
-              height:          active === i ? 5 : 5,
-              backgroundColor: active === i ? "#ffffff" : "rgba(255,255,255,0.2)",
+              width: active === i ? 22 : 5,
+              height: active === i ? 5 : 5,
+              backgroundColor:
+                active === i ? "#ffffff" : "rgba(255,255,255,0.2)",
             }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
             style={{ borderRadius: 3, flexShrink: 0 }}

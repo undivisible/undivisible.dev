@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
+import { lifeTimeline } from "@/data/life-timeline";
 import { tidbitExtras } from "@/data/project-descriptions";
 import {
   resumeCommunity,
@@ -136,7 +137,13 @@ export function Info({
 
   const groupedTidbits = useMemo(() => {
     const groups = new Map<string, typeof tidbits>();
-    const order = ["web apps", "developer tools", "browser extensions", "mobile & desktop", "experiments & archive"];
+    const order = [
+      "web apps",
+      "developer tools",
+      "browser extensions",
+      "mobile & desktop",
+      "experiments & archive",
+    ];
     for (const t of tidbits) {
       const cat = t.category || "other";
       if (!groups.has(cat)) groups.set(cat, []);
@@ -257,7 +264,8 @@ export function Info({
     [],
   );
 
-  const weatherText = hydrated && dayTheme ? dayTheme.weatherDisplay : "--°C --";
+  const weatherText =
+    hydrated && dayTheme ? dayTheme.weatherDisplay : "--°C --";
   const hkgText = hydrated && dayTheme ? dayTheme.hkgTime : "--:--:--";
   const melText = hydrated && dayTheme ? dayTheme.melTime : "--:--:--";
   const localText = hydrated && dayTheme ? dayTheme.localTime : "--:--:--";
@@ -389,9 +397,7 @@ export function Info({
             href={social.href}
             target={social.href.startsWith("http") ? "_blank" : undefined}
             rel={
-              social.href.startsWith("http")
-                ? "noopener noreferrer"
-                : undefined
+              social.href.startsWith("http") ? "noopener noreferrer" : undefined
             }
             className="relative block h-11 min-h-11 min-w-0 w-full overflow-hidden rounded-full px-2.5 sm:h-12 sm:min-h-12 sm:px-3.5"
             onMouseEnter={() => setHoveredPill(social.name)}
@@ -528,108 +534,44 @@ export function Info({
   return (
     <div className="relative w-full" style={{ color: "var(--page-text)" }}>
       {showIntro ? (
-      <section
-        id="start"
-        className="scroll-mt-20 relative flex min-h-[calc(100svh-9.5rem)] snap-start snap-always flex-col sm:min-h-[calc(100svh-10rem)]"
-      >
-        <div className="relative z-[80] flex min-h-0 w-full max-w-4xl flex-1 flex-col pr-2 pb-6 sm:pb-8 sm:pr-36 lg:pr-44">
-          <div className="w-fit shrink-0">{clockPanel}</div>
-          <div className="min-h-0 flex-1" aria-hidden />
-          <motion.div
-            className="w-full shrink-0"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-48px" }}
-            transition={{ duration: 0.65, ease: REVEAL_EASE }}
-          >
-            {heroBlock}
-          </motion.div>
-        </div>
-      </section>
+        <section
+          id="start"
+          className="scroll-mt-20 relative flex min-h-[calc(100svh-9.5rem)] snap-start snap-always flex-col sm:min-h-[calc(100svh-10rem)]"
+        >
+          <div className="relative z-[80] flex min-h-0 w-full max-w-4xl flex-1 flex-col pr-2 pb-6 sm:pb-8 sm:pr-36 lg:pr-44">
+            <div className="w-fit shrink-0">{clockPanel}</div>
+            <div className="min-h-0 flex-1" aria-hidden />
+            <motion.div
+              className="w-full shrink-0"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-48px" }}
+              transition={{ duration: 0.65, ease: REVEAL_EASE }}
+            >
+              {heroBlock}
+            </motion.div>
+          </div>
+        </section>
       ) : null}
 
       {showFolio ? (
-      <section
-        id="work"
-        className="scroll-mt-24 snap-start snap-normal py-16 sm:py-20"
-      >
-        <div className="mx-auto w-full max-w-3xl px-5 sm:px-8 lg:max-w-none lg:px-0">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.7, ease: REVEAL_EASE }}
-            className="mb-12"
-          >
-            <h2 className="font-serif text-[clamp(1.75rem,5vw,2.75rem)] font-normal leading-[1.05] tracking-[-0.03em]">
-              work
-            </h2>
-          </motion.div>
-          <UtilitiesBlock readme={readme} excludeKeys={pillarKeys} />
-          <div className="mt-16 sm:mt-24">
+        <section
+          id="work"
+          className="scroll-mt-24 snap-start snap-normal py-16 sm:py-20"
+        >
+          <div className="mx-auto w-full max-w-3xl px-5 sm:px-8 lg:max-w-none lg:px-0">
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.55, ease: REVEAL_EASE }}
-              className="mb-2"
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.7, ease: REVEAL_EASE }}
+              className="mb-12"
             >
-              <h3 className="text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
-                miniapps & experiments
-              </h3>
+              <h2 className="font-serif text-[clamp(1.75rem,5vw,2.75rem)] font-normal leading-[1.05] tracking-[-0.03em]">
+                work
+              </h2>
             </motion.div>
-            {(groupedTidbits.length === 1 && groupedTidbits[0][0] === "other") ? (
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {tidbits.map((tidbit, i) => (
-                  <motion.a
-                    key={tidbit.key}
-                    href={tidbit.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-40px" }}
-                    transition={{
-                      duration: 0.55,
-                      ease: REVEAL_EASE,
-                      delay: i * 0.05,
-                    }}
-                    className={`h-full rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] ${
-                      tidbit.opacity === 50 ? "opacity-50" : ""
-                    }`}
-                  >
-                    <div className="text-sm font-medium leading-snug">
-                      {tidbit.name}
-                    </div>
-                    <p
-                      className="mt-2 line-clamp-4 text-[11px] leading-relaxed sm:text-xs"
-                      style={{ color: "var(--page-text-muted)" }}
-                    >
-                      {tidbit.desc}
-                    </p>
-                    {tidbit.stack ? (
-                      <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.14em] text-white/30">
-                        Built with {tidbit.stack}
-                      </p>
-                    ) : null}
-                  </motion.a>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-1">
-                {groupedTidbits.map(([category, items]) => (
-                  <TidbitCategory
-                    key={category}
-                    category={category}
-                    items={items}
-                    isOpen={openCategories.has(category)}
-                    onToggle={toggleCategory}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-          {allExtraCount > 0 ? (
+            <UtilitiesBlock readme={readme} excludeKeys={pillarKeys} />
             <div className="mt-16 sm:mt-24">
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
@@ -639,274 +581,375 @@ export function Info({
                 className="mb-2"
               >
                 <h3 className="text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
-                  more selected work
+                  miniapps & experiments
                 </h3>
               </motion.div>
-              <div className="space-y-1">
-                {extraProjectSections.map(({ section, projects }) => (
-                  <TidbitCategory
-                    key={section}
-                    category={section}
-                    items={projects.map((p) => ({
-                      key: p.name.toLowerCase().replace(/\s+/g, "-"),
-                      name: p.name,
-                      href: p.href || "#",
-                      desc: p.desc,
-                      stack: p.stack,
-                    }))}
-                    isOpen={openCategories.has(section)}
-                    onToggle={toggleCategory}
-                  />
-                ))}
-              </div>
+              {groupedTidbits.length === 1 &&
+              groupedTidbits[0][0] === "other" ? (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {tidbits.map((tidbit, i) => (
+                    <motion.a
+                      key={tidbit.key}
+                      href={tidbit.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-40px" }}
+                      transition={{
+                        duration: 0.55,
+                        ease: REVEAL_EASE,
+                        delay: i * 0.05,
+                      }}
+                      className={`h-full rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] ${
+                        tidbit.opacity === 50 ? "opacity-50" : ""
+                      }`}
+                    >
+                      <div className="text-sm font-medium leading-snug">
+                        {tidbit.name}
+                      </div>
+                      <p
+                        className="mt-2 line-clamp-4 text-[11px] leading-relaxed sm:text-xs"
+                        style={{ color: "var(--page-text-muted)" }}
+                      >
+                        {tidbit.desc}
+                      </p>
+                      {tidbit.stack ? (
+                        <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.14em] text-white/30">
+                          Built with {tidbit.stack}
+                        </p>
+                      ) : null}
+                    </motion.a>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {groupedTidbits.map(([category, items]) => (
+                    <TidbitCategory
+                      key={category}
+                      category={category}
+                      items={items}
+                      isOpen={openCategories.has(category)}
+                      onToggle={toggleCategory}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-          ) : null}
-        </div>
-      </section>
+            {allExtraCount > 0 ? (
+              <div className="mt-16 sm:mt-24">
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.55, ease: REVEAL_EASE }}
+                  className="mb-2"
+                >
+                  <h3 className="text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
+                    more selected work
+                  </h3>
+                </motion.div>
+                <div className="space-y-1">
+                  {extraProjectSections.map(({ section, projects }) => (
+                    <TidbitCategory
+                      key={section}
+                      category={section}
+                      items={projects.map((p) => ({
+                        key: p.name.toLowerCase().replace(/\s+/g, "-"),
+                        name: p.name,
+                        href: p.href || "#",
+                        desc: p.desc,
+                        stack: p.stack,
+                      }))}
+                      isOpen={openCategories.has(section)}
+                      onToggle={toggleCategory}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </section>
       ) : null}
 
       {showBio ? (
-      <section
-        id="world"
-        className="scroll-mt-24 snap-start snap-always py-16 sm:py-20"
-      >
-        <div className="mx-auto w-full max-w-3xl px-5 sm:px-8 lg:max-w-none lg:px-0">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.7, ease: REVEAL_EASE }}
-            className="mb-12"
-          >
-            <h2 className="font-serif text-[clamp(1.75rem,5vw,2.75rem)] font-normal leading-[1.05] tracking-[-0.03em]">
-              world
-            </h2>
-          </motion.div>
-
-          <div className="space-y-16 sm:space-y-20">
+        <section
+          id="world"
+          className="scroll-mt-24 snap-start snap-always py-16 sm:py-20"
+        >
+          <div className="mx-auto w-full max-w-3xl px-5 sm:px-8 lg:max-w-none lg:px-0">
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.55, ease: REVEAL_EASE }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.7, ease: REVEAL_EASE }}
+              className="mb-12"
             >
-              <h3 className="mb-4 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
-                story
-              </h3>
-              <RandomizedText
-                split="words"
-                className="text-sm leading-relaxed sm:text-base"
-              >
-                {introText}
-              </RandomizedText>
+              <h2 className="font-serif text-[clamp(1.75rem,5vw,2.75rem)] font-normal leading-[1.05] tracking-[-0.03em]">
+                world
+              </h2>
             </motion.div>
 
-            <div>
+            <div className="space-y-16 sm:space-y-20">
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.55, ease: REVEAL_EASE }}
-                className="mb-6"
               >
-                <h3 className="text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
-                  experience
+                <h3 className="mb-4 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
+                  story
                 </h3>
+                <RandomizedText
+                  split="words"
+                  className="text-sm leading-relaxed sm:text-base"
+                >
+                  {introText}
+                </RandomizedText>
               </motion.div>
-              <div className="space-y-10">
-                {resumeExperience.map((job, i) => (
-                  <motion.div
-                    key={`${job.org}-${job.role}`}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-40px" }}
-                    transition={{
-                      duration: 0.55,
-                      ease: REVEAL_EASE,
-                      delay: i * 0.05,
-                    }}
-                  >
-                    <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-white/[0.06] pb-2">
-                      <div className="text-base font-medium sm:text-lg">
-                        {job.role} · {job.org}
+
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.55, ease: REVEAL_EASE }}
+              >
+                <h3 className="mb-5 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
+                  early timeline
+                </h3>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {lifeTimeline.map((item) => (
+                    <div
+                      key={`${item.age}-${item.title}`}
+                      className="grid grid-cols-[3.5rem_1fr] gap-4 border-t border-white/[0.07] pt-4"
+                    >
+                      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/35">
+                        age {item.age}
                       </div>
-                      <div className="text-[9px] uppercase tracking-[0.14em] text-white/35 font-mono">
-                        {job.time}
+                      <div>
+                        <div className="text-sm font-medium leading-snug text-white/80">
+                          {item.title}
+                        </div>
+                        <p
+                          className="mt-1 text-xs leading-relaxed"
+                          style={{ color: "var(--page-text-muted)" }}
+                        >
+                          {item.body}
+                        </p>
                       </div>
                     </div>
-                    <ul
-                      className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed"
-                      style={{ color: "var(--page-text-muted)" }}
+                  ))}
+                </div>
+              </motion.div>
+
+              <div>
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.55, ease: REVEAL_EASE }}
+                  className="mb-6"
+                >
+                  <h3 className="text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
+                    experience
+                  </h3>
+                </motion.div>
+                <div className="space-y-10">
+                  {resumeExperience.map((job, i) => (
+                    <motion.div
+                      key={`${job.org}-${job.role}`}
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-40px" }}
+                      transition={{
+                        duration: 0.55,
+                        ease: REVEAL_EASE,
+                        delay: i * 0.05,
+                      }}
                     >
-                      {job.points.map((p) => (
-                        <li key={p}>{p}</li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.55, ease: REVEAL_EASE }}
-              className="grid gap-12 lg:grid-cols-2 lg:gap-16"
-            >
-              <div>
-                <h3 className="mb-4 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
-                  education
-                </h3>
-                <ul
-                  className="space-y-3 text-sm leading-relaxed"
-                  style={{ color: "var(--page-text-muted)" }}
-                >
-                  {resumeEducation.map((line) => (
-                    <li key={line}>{line}</li>
+                      <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-white/[0.06] pb-2">
+                        <div className="text-base font-medium sm:text-lg">
+                          {job.role} · {job.org}
+                        </div>
+                        <div className="text-[9px] uppercase tracking-[0.14em] text-white/35 font-mono">
+                          {job.time}
+                        </div>
+                      </div>
+                      <ul
+                        className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed"
+                        style={{ color: "var(--page-text-muted)" }}
+                      >
+                        {job.points.map((p) => (
+                          <li key={p}>{p}</li>
+                        ))}
+                      </ul>
+                    </motion.div>
                   ))}
-                </ul>
+                </div>
               </div>
-              <div>
-                <h3 className="mb-4 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
-                  community
-                </h3>
-                <ul
-                  className="list-disc space-y-2 pl-5 text-sm leading-relaxed"
-                  style={{ color: "var(--page-text-muted)" }}
-                >
-                  {resumeCommunity.map((line) => (
-                    <li key={line}>{line}</li>
-                  ))}
-                </ul>
-              </div>
-            </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.55, ease: REVEAL_EASE }}
-            >
-              <h3 className="mb-4 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
-                interests
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {resumeInterests.map((item) => (
-                  <span
-                    key={item}
-                    className="cursor-default rounded-full border border-white/[0.07] bg-white/[0.03] px-3 py-1.5 text-[12px] text-white/55 transition-colors duration-200 ease-out hover:bg-white/[0.1] hover:text-white/75"
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.55, ease: REVEAL_EASE }}
+                className="grid gap-12 lg:grid-cols-2 lg:gap-16"
+              >
+                <div>
+                  <h3 className="mb-4 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
+                    education
+                  </h3>
+                  <ul
+                    className="space-y-3 text-sm leading-relaxed"
+                    style={{ color: "var(--page-text-muted)" }}
                   >
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.55, ease: REVEAL_EASE }}
-            >
-              <h3 className="mb-6 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
-                capabilities
-              </h3>
-              <div className="space-y-5">
-                {resumeSkillGroups.map(([label, value]) => (
-                  <div key={label}>
-                    <div className="text-[9px] uppercase tracking-[0.14em] text-white/30 font-mono">
-                      {label}
-                    </div>
-                    <p
-                      className="mt-1 text-sm leading-relaxed"
-                      style={{ color: "var(--page-text-muted)" }}
-                    >
-                      {value}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-8">
-                <div className="mb-3 text-[9px] uppercase tracking-[0.14em] text-white/30 font-mono">
-                  languages & runtimes
+                    {resumeEducation.map((line) => (
+                      <li key={line}>{line}</li>
+                    ))}
+                  </ul>
                 </div>
+                <div>
+                  <h3 className="mb-4 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
+                    community
+                  </h3>
+                  <ul
+                    className="list-disc space-y-2 pl-5 text-sm leading-relaxed"
+                    style={{ color: "var(--page-text-muted)" }}
+                  >
+                    {resumeCommunity.map((line) => (
+                      <li key={line}>{line}</li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.55, ease: REVEAL_EASE }}
+              >
+                <h3 className="mb-4 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
+                  interests
+                </h3>
                 <div className="flex flex-wrap gap-2">
-                  {languages.map((item) => (
-                    <Badge key={item} label={item} />
+                  {resumeInterests.map((item) => (
+                    <span
+                      key={item}
+                      className="cursor-default rounded-full border border-white/[0.07] bg-white/[0.03] px-3 py-1.5 text-[12px] text-white/55 transition-colors duration-200 ease-out hover:bg-white/[0.1] hover:text-white/75"
+                    >
+                      {item}
+                    </span>
                   ))}
                 </div>
-              </div>
-              <div className="mt-10">
-                <div className="mb-3 text-[9px] uppercase tracking-[0.14em] text-white/30 font-mono">
-                  day-to-day languages
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {transport.map((item) => transportPill(item))}
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
 
-            <motion.div
-              id="contact"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.55, ease: REVEAL_EASE }}
-              className="scroll-mt-20 snap-start snap-always rounded-2xl border border-white/[0.06] bg-white/[0.04] p-6 backdrop-blur-md sm:p-8"
-            >
-              <h3 className="mb-6 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
-                contact
-              </h3>
-              <dl className="grid gap-4 text-sm sm:grid-cols-2">
-                {resumeContact
-                  .filter(([label]) => label !== "LinkedIn")
-                  .map(([label, value]) => {
-                  const href =
-                    label === "Email"
-                      ? `mailto:${value}`
-                      : label === "Phone"
-                        ? `tel:${value.replace(/\s/g, "")}`
-                        : label === "Instagram"
-                          ? "https://instagram.com/undivisible.dev"
-                          : label === "Twitter"
-                            ? "https://twitter.com/makethings4ppl"
-                            : label === "GitHub"
-                              ? "https://github.com/undivisible"
-                              : undefined;
-                  return (
-                    <div key={label} className="flex flex-col gap-0.5">
-                      <dt className="text-[9px] uppercase tracking-[0.12em] text-white/30 font-mono">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.55, ease: REVEAL_EASE }}
+              >
+                <h3 className="mb-6 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
+                  capabilities
+                </h3>
+                <div className="space-y-5">
+                  {resumeSkillGroups.map(([label, value]) => (
+                    <div key={label}>
+                      <div className="text-[9px] uppercase tracking-[0.14em] text-white/30 font-mono">
                         {label}
-                      </dt>
-                      <dd>
-                        {href ? (
-                          <a
-                            href={href}
-                            className="text-white/85 underline-offset-4 hover:underline"
-                            target={href.startsWith("http") ? "_blank" : undefined}
-                            rel={
-                              href.startsWith("http")
-                                ? "noopener noreferrer"
-                                : undefined
-                            }
-                          >
-                            {value}
-                          </a>
-                        ) : (
-                          <span style={{ color: "var(--page-text-muted)" }}>
-                            {value}
-                          </span>
-                        )}
-                      </dd>
+                      </div>
+                      <p
+                        className="mt-1 text-sm leading-relaxed"
+                        style={{ color: "var(--page-text-muted)" }}
+                      >
+                        {value}
+                      </p>
                     </div>
-                  );
-                })}
-              </dl>
-            </motion.div>
+                  ))}
+                </div>
+                <div className="mt-8">
+                  <div className="mb-3 text-[9px] uppercase tracking-[0.14em] text-white/30 font-mono">
+                    languages & runtimes
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {languages.map((item) => (
+                      <Badge key={item} label={item} />
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-10">
+                  <div className="mb-3 text-[9px] uppercase tracking-[0.14em] text-white/30 font-mono">
+                    day-to-day languages
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {transport.map((item) => transportPill(item))}
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                id="contact"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.55, ease: REVEAL_EASE }}
+                className="scroll-mt-20 snap-start snap-always rounded-2xl border border-white/[0.06] bg-white/[0.04] p-6 backdrop-blur-md sm:p-8"
+              >
+                <h3 className="mb-6 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
+                  contact
+                </h3>
+                <dl className="grid gap-4 text-sm sm:grid-cols-2">
+                  {resumeContact
+                    .filter(([label]) => label !== "LinkedIn")
+                    .map(([label, value]) => {
+                      const href =
+                        label === "Email"
+                          ? `mailto:${value}`
+                          : label === "Phone"
+                            ? `tel:${value.replace(/\s/g, "")}`
+                            : label === "Instagram"
+                              ? "https://instagram.com/undivisible.dev"
+                              : label === "Twitter"
+                                ? "https://twitter.com/makethings4ppl"
+                                : label === "GitHub"
+                                  ? "https://github.com/undivisible"
+                                  : undefined;
+                      return (
+                        <div key={label} className="flex flex-col gap-0.5">
+                          <dt className="text-[9px] uppercase tracking-[0.12em] text-white/30 font-mono">
+                            {label}
+                          </dt>
+                          <dd>
+                            {href ? (
+                              <a
+                                href={href}
+                                className="text-white/85 underline-offset-4 hover:underline"
+                                target={
+                                  href.startsWith("http") ? "_blank" : undefined
+                                }
+                                rel={
+                                  href.startsWith("http")
+                                    ? "noopener noreferrer"
+                                    : undefined
+                                }
+                              >
+                                {value}
+                              </a>
+                            ) : (
+                              <span style={{ color: "var(--page-text-muted)" }}>
+                                {value}
+                              </span>
+                            )}
+                          </dd>
+                        </div>
+                      );
+                    })}
+                </dl>
+              </motion.div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
       ) : null}
     </div>
   );
@@ -1060,7 +1103,9 @@ function UtilitiesBlock({
             }}
             className={`h-full rounded-2xl border border-white/[0.06] bg-white/[0.03] p-3 text-left text-[var(--page-text)] backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] sm:p-4`}
           >
-            <div className="text-sm font-medium leading-tight">{product.name}</div>
+            <div className="text-sm font-medium leading-tight">
+              {product.name}
+            </div>
             <p
               className="mt-1 line-clamp-3 text-[11px] leading-relaxed sm:text-xs"
               style={{ color: "var(--page-text-muted)" }}
@@ -1086,7 +1131,14 @@ function TidbitCategory({
   onToggle,
 }: {
   category: string;
-  items: Array<{ key: string; name: string; href: string; desc: string; stack?: string; opacity?: number }>;
+  items: Array<{
+    key: string;
+    name: string;
+    href: string;
+    desc: string;
+    stack?: string;
+    opacity?: number;
+  }>;
   isOpen: boolean;
   onToggle: (cat: string) => void;
 }) {
@@ -1105,7 +1157,13 @@ function TidbitCategory({
           className={`shrink-0 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
           style={{ color: "currentColor" }}
         >
-          <path d="M3 1L7 5L3 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M3 1L7 5L3 9"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
         {category}
         <span className="ml-auto text-[9px] text-white/25">{items.length}</span>
@@ -1127,7 +1185,11 @@ function TidbitCategory({
                   rel="noopener noreferrer"
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25, delay: i * 0.03, ease: "easeOut" }}
+                  transition={{
+                    duration: 0.25,
+                    delay: i * 0.03,
+                    ease: "easeOut",
+                  }}
                   className={`h-full rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 backdrop-blur-sm ${TILE_LINK_HOVER} hover:border-white/[0.1] hover:bg-white/[0.045] ${
                     tidbit.opacity === 50 ? "opacity-50" : ""
                   }`}

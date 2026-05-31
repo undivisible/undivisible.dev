@@ -47,11 +47,7 @@ try {
 }
 
 mkdirSync(publicDir, { recursive: true });
-writeFileSync(
-  outFile,
-  `${JSON.stringify({ track }, null, 2)}\n`,
-  "utf8",
-);
+writeFileSync(outFile, `${JSON.stringify({ track }, null, 2)}\n`, "utf8");
 console.info(
   `[lastfm-snapshot] wrote ${path.relative(process.cwd(), outFile)} track=${track ? `${track.artist} — ${track.track}` : "null"}`,
 );
