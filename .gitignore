@@ -51,7 +51,7 @@ testem.log
 Thumbs.db
 
 # historical site snapshots
-!old/**/*.png
+ !old/**/*.{png,jpg,svg,jpeg,gif}
 
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md

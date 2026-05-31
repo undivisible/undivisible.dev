@@ -19,7 +19,7 @@ I make things for people. Part-time language learner, part-time philosopher, ful
 
 ### Technical Cofounder — The Arkie Company, Graft AI
 
-*2024–present*
+*2026–present*
 
 - Engineering leadership, product direction, and hands-on delivery across web surfaces, automation, and internal systems.
 - Build custom AI automation systems, product prototypes, client-facing web surfaces, and internal tooling.
