@@ -56,10 +56,11 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "stack": "Rust, Svelte, TypeScript, C, V."
   },
   {
-    "key": "experiences-shelved",
+    "key": "experiences",
     "name": "experiences (shelved)",
     "href": "#",
-    "desc": "a project exploring a more accessible spatial web, built on unity wasm."
+    "desc": "a project exploring a more accessible spatial web, built on unity wasm.",
+    "stack": "TypeScript, C#, Swift, Kotlin."
   },
   {
     "key": "atmosphere",
@@ -69,22 +70,25 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "stack": "Swift, JavaScript, Rust, Kotlin."
   },
   {
-    "key": "tile-shelved",
+    "key": "tile",
     "name": "tile (shelved)",
     "href": "https://github.com/semitechnological/tile",
-    "desc": "mosaic-style tiling window manager + canvas + multiplexer for macos."
+    "desc": "mosaic-style tiling window manager + canvas + multiplexer for macos.",
+    "stack": "Rust."
   },
   {
     "key": "tabyrus",
     "name": "tabyrus (wip)",
     "href": "https://github.com/semitechnological/tabyrus",
-    "desc": "ai-powered autocomplete anywhere on your mac. uses cotabby as a reference but uses a rust backend + mlx."
+    "desc": "ai-powered autocomplete anywhere on your mac. uses cotabby as a reference but uses a rust backend + mlx.",
+    "stack": "Rust, Swift."
   },
   {
-    "key": "rover-shelved",
+    "key": "rover",
     "name": "rover (shelved)",
     "href": "#",
-    "desc": "utilities and plugin system for mac, based on raycast + ghostty."
+    "desc": "utilities and plugin system for mac, based on raycast + ghostty.",
+    "stack": "Swift, Rust."
   },
   {
     "key": "rs_ai",
@@ -179,7 +183,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "stack": "TypeScript, JavaScript, CSS."
   },
   {
-    "key": "akh-archived",
+    "key": "akh",
     "name": "akh (archived)",
     "href": "https://akh.undivisible.dev",
     "desc": "islamic uniplatform for when i was previously interested in islam.",
@@ -195,12 +199,11 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "stack": "JavaScript."
   },
   {
-    "key": "unthinkclaw",
-    "name": "unthinkclaw",
-    "href": "https://github.com/undivisible/unthinkclaw",
-    "desc": "openclaw but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms.",
-    "category": "developer tools",
-    "stack": "Rust, JavaScript, V."
+    "key": "folk-around",
+    "name": "folk around",
+    "href": "https://github.com/undivisible/folk-around",
+    "desc": "lets folk or any hermes agent or openclaw interact with your computer p2p on macos.",
+    "category": "developer tools"
   },
   {
     "key": "poke-around",
@@ -209,6 +212,14 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "desc": "lets poke interact with your computer across major oses.",
     "category": "developer tools",
     "stack": "Zig, TypeScript, Python."
+  },
+  {
+    "key": "unthinkclaw",
+    "name": "unthinkclaw",
+    "href": "https://github.com/undivisible/unthinkclaw",
+    "desc": "openclaw but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms.",
+    "category": "developer tools",
+    "stack": "Rust, JavaScript, V."
   },
   {
     "key": "bluetooth-terminal",
@@ -259,10 +270,11 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "stack": "Swift."
   },
   {
-    "key": "unelaborate-shelved",
+    "key": "unelaborate",
     "name": "unelaborate (shelved)",
     "href": "https://github.com/undivisible/unelaborate",
     "desc": "minecraft client in native swiftui with modrinth modpack, shader, and resource pack loading.",
-    "category": "mobile & desktop"
+    "category": "mobile & desktop",
+    "stack": "Swift."
   }
 ];

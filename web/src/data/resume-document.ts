@@ -1,4 +1,4 @@
-import type { ReadmeBundle } from "@/lib/profile-readme";
+import { projectKey, type ReadmeBundle } from "@/lib/profile-readme";
 import {
   resumeItemBlurb,
   type ResumeContactRow,
@@ -37,6 +37,10 @@ function normHref(h: string) {
   return h.replace(/\/$/, "").toLowerCase();
 }
 
+function stripMdLinks(text: string): string {
+  return text.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+}
+
 function isInReadme(
   p: { name: string; href: string },
   readme: ReadmeBundle,
@@ -48,11 +52,13 @@ function isInReadme(
   );
   const names = new Set(
     [...readme.mainProjects, ...readme.utilities, ...readme.miniapps].map((p) =>
-      p.name.toLowerCase(),
+      projectKey(p.name),
     ),
   );
-  if (p.href.trim() && hrefs.has(normHref(p.href))) return true;
-  return names.has(p.name.toLowerCase());
+  if (p.href.trim() && p.href !== "#" && hrefs.has(normHref(p.href))) {
+    return true;
+  }
+  return names.has(projectKey(p.name));
 }
 
 export function resumeSectionsNotInReadme(
@@ -76,7 +82,7 @@ export function resumeSectionsNotInReadme(
       });
     }
     if (filtered.length > 0) {
-      out.push({ section: section.title, projects: filtered });
+      out.push({ section: stripMdLinks(section.title), projects: filtered });
     }
   }
 
@@ -96,7 +102,7 @@ export function resumeSectionsNotInReadme(
         });
       }
       if (filtered.length > 0) {
-        out.push({ section: sub.title, projects: filtered });
+        out.push({ section: stripMdLinks(sub.title), projects: filtered });
       }
     }
   }

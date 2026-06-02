@@ -16,7 +16,7 @@ export type ReadmeBundle = {
 
 export function projectKey(name: string): string {
   return name
-    .replace(/\s*\(wip\)\s*/gi, "")
+    .replace(/\s*\((wip|shelved|archived)\)\s*/gi, "")
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "-")
@@ -62,7 +62,7 @@ const PROJECT_LANGUAGE_STACKS: Record<string, string> = {
   bublik: "Rust, HTML, CSS.",
   alphabets: "TypeScript, CSS, HTML.",
   infrastruct: "TypeScript, JavaScript, CSS.",
-  "akh-archived": "Svelte, TypeScript, JavaScript, HTML.",
+  akh: "Svelte, TypeScript, JavaScript, HTML.",
   unthinkmail: "JavaScript.",
   unthinkclaw: "Rust, JavaScript, V.",
   "poke-around": "Zig, TypeScript, Python.",
@@ -75,6 +75,7 @@ const PROJECT_LANGUAGE_STACKS: Record<string, string> = {
   unelaborate: "Swift.",
   experiences: "TypeScript, C#, Swift, Kotlin.",
   atmosphere: "Swift, JavaScript, Rust, Kotlin.",
+  tabyrus: "Rust, Swift.",
   otto: "Swift, Rust.",
   rover: "Swift, Rust.",
 };
