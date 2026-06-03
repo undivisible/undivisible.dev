@@ -5,6 +5,7 @@ export type ResumeListItem = {
   href: string;
   meta: string;
   desc: string;
+  descSegments: InlineMdSegment[];
   stack: string;
 };
 
@@ -89,6 +90,25 @@ export function parseInlineMdSegments(text: string): InlineMdSegment[] {
   return segments;
 }
 
+function cleanInlineText(text: string): string {
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/(^|[\s(])_([^_\n]+?)_(?=[\s).,;:!?]|$)/g, "$1$2");
+}
+
+function parseDescSegments(text: string): InlineMdSegment[] {
+  return parseInlineMdSegments(text)
+    .map((segment) =>
+      segment.type === "text"
+        ? { ...segment, value: cleanInlineText(segment.value) }
+        : segment,
+    )
+    .filter((segment) =>
+      segment.type === "text" ? segment.value.length > 0 : true,
+    );
+}
+
 function stripInlineMd(text: string): string {
   return collapseWs(
     text
@@ -130,10 +150,12 @@ function parseListItem(line: string): ResumeListItem | null {
   const dash = body.match(/\s[—–]\s/);
   let meta = "";
   let desc = body;
+  let descSource = body;
   if (dash) {
     const idx = body.search(/\s[—–]\s/);
     meta = stripInlineMd(body.slice(0, idx));
-    desc = stripInlineMd(body.slice(idx).replace(/^\s*[—–]\s/, ""));
+    descSource = body.slice(idx).replace(/^\s*[—–]\s/, "");
+    desc = stripInlineMd(descSource);
   } else {
     desc = stripInlineMd(body);
   }
@@ -144,6 +166,9 @@ function parseListItem(line: string): ResumeListItem | null {
     href: primary.href,
     meta,
     desc,
+    descSegments: descSource.includes("](")
+      ? parseDescSegments(descSource)
+      : [],
     stack,
   };
 }
@@ -265,8 +290,9 @@ export function parseResumeMarkdown(md: string): ResumeDocument {
           i++;
           while (i < lines.length && !lines[i]!.trim()) i++;
           let time = "";
-          if (lines[i]?.trim().startsWith("*")) {
-            time = lines[i]!.trim().replace(/^\*|\*$/g, "");
+          const timeMatch = lines[i]?.trim().match(/^([*_])(.+)\1$/);
+          if (timeMatch) {
+            time = timeMatch[2]!.trim();
             i++;
           }
           const block: string[] = [];

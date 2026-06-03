@@ -271,11 +271,55 @@ function ProjectHeroCard({ item }: { item: ReadmeProject }) {
 }
 
 function ExpProductLine({ item }: { item: ResumeListItem }) {
-  const blurb = resumeItemBlurb(item);
+  const meta = item.meta.trim();
+  const name = item.name.trim();
+  const hasSecondaryLink = item.descSegments.some(
+    (segment) => segment.type === "link" && segment.href !== item.href,
+  );
+  const descSegments = hasSecondaryLink
+    ? item.descSegments
+    : parseInlineMdSegments(item.desc);
+  const parts: ReactNode[] = [];
+  if (meta && meta.toLowerCase() !== name.toLowerCase()) {
+    parts.push(meta);
+  }
+  if (item.desc.trim()) {
+    if (parts.length) parts.push(" — ");
+    parts.push(
+      ...descSegments.map((segment, i) =>
+        segment.type === "link" ? (
+          <a
+            key={`${segment.href}-${i}`}
+            href={segment.href}
+            style={{
+              color: C.black,
+              textDecoration: "none",
+              borderBottom: `1px solid ${C.rule}`,
+            }}
+          >
+            {segment.label}
+          </a>
+        ) : (
+          <span key={`${segment.value}-${i}`}>{segment.value}</span>
+        ),
+      ),
+    );
+  }
+  if (item.stack.trim()) {
+    if (parts.length) parts.push(" — ");
+    parts.push(item.stack.trim());
+  }
+  const label = item.href ? (
+    <a href={item.href} style={{ color: C.black, textDecoration: "none" }}>
+      {item.name}
+    </a>
+  ) : (
+    item.name
+  );
   return (
     <div style={{ fontSize: 8.8, color: C.mid, lineHeight: 1.45 }}>
-      <span style={{ fontWeight: 700, color: C.black }}>{item.name}</span>
-      {blurb ? ` — ${blurb}` : null}
+      <span style={{ fontWeight: 700, color: C.black }}>{label}</span>
+      {parts.length ? <> — {parts}</> : null}
     </div>
   );
 }

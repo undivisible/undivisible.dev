@@ -66,7 +66,7 @@ _late 2024_
 
 **Product packaging** _(unreleased hardware)_
 
-- **B1** — Boost controller (precision boost control, 2D mapping, real-time display, engine protection); retail box packaging and brand-aligned print artwork for pre-launch SKU.
+- **[B1](https://gizzmoelectronics.com/b1)** — Boost controller (precision boost control, 2D mapping, real-time display, engine protection); retail box packaging and brand-aligned print artwork for pre-launch SKU, recreated as an online version with [instructions](https://gizzmoelectronics.com/b1/instructions).
 - **F1** — Unreleased product; full retail packaging design to match Gizzmo brand system (not yet public).
 
 ## Platforms & frameworks
