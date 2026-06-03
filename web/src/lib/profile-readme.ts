@@ -41,53 +41,6 @@ function pushUnique(list: ReadmeProject[], p: ReadmeProject) {
   if (!list.some((x) => x.href === p.href && x.key === p.key)) list.push(p);
 }
 
-const PROJECT_LANGUAGE_STACKS: Record<string, string> = {
-  crepuscularity: "Rust, JavaScript, Swift, Kotlin, TypeScript.",
-  aurorality: "Swift, Rust.",
-  inauguration: "Rust, Swift, V, TypeScript, Zig.",
-  equilibrium: "Rust, C, D, Nim, Zig.",
-  eqswift: "Rust, Swift, C.",
-  wax: "Rust.",
-  soliloquy: "Rust, Svelte, TypeScript, C, V.",
-  tile: "Rust.",
-  rs_ai: "Rust, Swift, C#, Kotlin.",
-  rs_imessage: "Rust.",
-  rs_facetime: "Rust, Objective-C.",
-  "stalwart-lite": "Rust, Python, Sieve.",
-  "crosspost-rs": "Rust.",
-  "ark-protocol": "JavaScript, Rust.",
-  monoprotocol: "Rust.",
-  standpoint: "Svelte, TypeScript, CSS, JavaScript, HTML.",
-  notes: "Svelte, CSS, JavaScript, HTML.",
-  bublik: "Rust, HTML, CSS.",
-  alphabets: "TypeScript, CSS, HTML.",
-  infrastruct: "TypeScript, JavaScript, CSS.",
-  akh: "Svelte, TypeScript, JavaScript, HTML.",
-  unthinkmail: "JavaScript.",
-  "folk-around": "Zig, TypeScript.",
-  unthinkclaw: "Rust, JavaScript, V.",
-  "poke-around": "Zig, TypeScript, Python.",
-  "bluetooth-terminal": "Swift.",
-  rs_vimium: "Rust.",
-  anywhere: "Rust.",
-  drift: "Rust, WGSL.",
-  vro: "V.",
-  ycyestim: "Swift.",
-  unelaborate: "Swift.",
-  experiences: "TypeScript, C#, Swift, Kotlin.",
-  atmosphere: "Swift, JavaScript, Rust, Kotlin.",
-  tabyrus: "Rust, Swift.",
-  otto: "Swift, Rust.",
-  rover: "Swift, Rust.",
-};
-
-function applyStacks(projects: ReadmeProject[]): ReadmeProject[] {
-  return projects.map((project) => ({
-    ...project,
-    stack: PROJECT_LANGUAGE_STACKS[project.key],
-  }));
-}
-
 const LINKED_WITH_DESC =
   /^-\s+\*\*\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)\*\*\s*[–—\-]\s*(.+?)\s*$/;
 const LINKED_NO_URL = /^-\s+\*\*\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)\*\*\s*$/;
@@ -444,14 +397,73 @@ export function appendEqswiftToUtilities(bundle: ReadmeBundle): ReadmeBundle {
 }
 
 export function normalizeReadmeBundle(bundle: ReadmeBundle): ReadmeBundle {
-  const normalized = appendEqswiftToUtilities(
-    promoteAuroralityToUtilities(bundle),
+  return appendEqswiftToUtilities(promoteAuroralityToUtilities(bundle));
+}
+
+export function githubRepoPathFromHref(href: string): string | undefined {
+  let url: URL;
+  try {
+    url = new URL(href);
+  } catch {
+    return undefined;
+  }
+  if (url.hostname !== "github.com") return undefined;
+  const [owner, repo] = url.pathname.split("/").filter(Boolean);
+  if (!owner || !repo) return undefined;
+  return `${owner}/${repo.replace(/\.git$/i, "")}`;
+}
+
+export function formatLinguistLanguages(
+  languages: Record<string, number>,
+): string | undefined {
+  const names = Object.entries(languages)
+    .filter(([, bytes]) => bytes > 0)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name]) => name);
+  if (names.length === 0) return undefined;
+  return `${names.join(", ")}.`;
+}
+
+async function fetchGithubLinguistStack(
+  repoPath: string,
+): Promise<string | undefined> {
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${repoPath}/languages`,
+    );
+    if (!res.ok) return undefined;
+    const data = await res.json();
+    if (!data || typeof data !== "object" || Array.isArray(data)) {
+      return undefined;
+    }
+    return formatLinguistLanguages(data as Record<string, number>);
+  } catch {
+    return undefined;
+  }
+}
+
+async function applyGithubLinguistStacks(
+  projects: ReadmeProject[],
+): Promise<ReadmeProject[]> {
+  return Promise.all(
+    projects.map(async (project) => {
+      const repoPath = githubRepoPathFromHref(project.href);
+      if (!repoPath) return project;
+      const stack = await fetchGithubLinguistStack(repoPath);
+      return stack ? { ...project, stack } : project;
+    }),
   );
+}
+
+export async function normalizeReadmeBundleWithGithubLinguist(
+  bundle: ReadmeBundle,
+): Promise<ReadmeBundle> {
+  const normalized = normalizeReadmeBundle(bundle);
   return {
     ...normalized,
-    mainProjects: applyStacks(normalized.mainProjects),
-    utilities: applyStacks(normalized.utilities),
-    miniapps: applyStacks(normalized.miniapps),
+    mainProjects: await applyGithubLinguistStacks(normalized.mainProjects),
+    utilities: await applyGithubLinguistStacks(normalized.utilities),
+    miniapps: await applyGithubLinguistStacks(normalized.miniapps),
   };
 }
 
@@ -463,7 +475,9 @@ export async function getProfileReadmeProjects(): Promise<ReadmeBundle> {
     for (const url of urls) {
       const res = await fetch(url, { next: { revalidate: 300 } });
       if (!res.ok) continue;
-      return normalizeReadmeBundle(parseReadme(await res.text()));
+      return normalizeReadmeBundleWithGithubLinguist(
+        parseReadme(await res.text()),
+      );
     }
     throw new Error("profile markdown fetch failed");
   } catch {

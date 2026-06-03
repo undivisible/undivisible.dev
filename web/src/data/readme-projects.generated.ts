@@ -14,8 +14,7 @@ export const mainProjectsFromReadme: ReadmeProject[] = [
     "key": "crepuscularity",
     "name": "crepuscularity",
     "href": "https://crepuscularity.undivisible.dev",
-    "desc": "crepuscularity builds for: desktop apps (gpui), swiftui & jetpack compose mobile, tuis on ratatui, websites, embedded with a custom framebuffer or lvgl and browser extensions.",
-    "stack": "Rust, JavaScript, Swift, Kotlin, TypeScript."
+    "desc": "crepuscularity builds for: desktop apps (gpui), swiftui & jetpack compose mobile, tuis on ratatui, websites, embedded with a custom framebuffer or lvgl and browser extensions."
   }
 ];
 
@@ -25,14 +24,21 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "name": "aurorality",
     "href": "https://github.com/tschk/aurorality",
     "desc": "aurorality turns web frontends into native swiftui for macos and ios, accepting swift, js/ts, or rust as your backend. with crepuscularity lite and aurorality-js, you can drop into existing sites to connect native frontends to js backends.",
-    "stack": "Swift, Rust."
+    "stack": "Rust, Swift, JavaScript, Shell."
+  },
+  {
+    "key": "inauguration",
+    "name": "inauguration (wip)",
+    "href": "https://github.com/tschk/inauguration",
+    "desc": "an ultra-fast, general-purpose compiler pipeline for multiple languages designed around explicit capability management and deterministic execution graphs. it features a native language (inlang) that supports two synchronized syntaxes—a strict, explicit form ideal for tooling, agents, and deterministic builds, and a lightweight, human-friendly form optimized for readability.",
+    "stack": "Rust, Swift, V, Java, C, TypeScript, C#, Go, PHP, C++, Kotlin, Perl, Python, Dart, JavaScript, Lua, Julia, Scala, F#, Elixir, Erlang, R, Groovy, Odin, Hare, Zig, Nim, OCaml, Ruby."
   },
   {
     "key": "equilibrium",
     "name": "equilibrium",
     "href": "https://github.com/tschk/equilibrium",
     "desc": "load c-compatible code into rust with one call. auto-detects sources, compiles, exposes as rust modules. `load()` is the primary path. for rust → swift, see eqswift.",
-    "stack": "Rust, C, D, Nim, Zig."
+    "stack": "Rust, D, Nim, Zig."
   },
   {
     "key": "eqswift",
@@ -44,7 +50,7 @@ export const utilitiesFromReadme: ReadmeProject[] = [
   {
     "key": "wax",
     "name": "wax",
-    "href": "https://github.com/semitechnological/wax",
+    "href": "https://github.com/tschk/wax",
     "desc": "fast homebrew-compatible package manager in rust. uses homebrew's ecosystem (formulae, bottles, casks) without the ruby/git overhead — compiled, async, parallel installs, lockfiles, and experimental winget/scoop/nix-like support.",
     "stack": "Rust."
   },
@@ -53,21 +59,19 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "name": "soliloquy",
     "href": "https://github.com/tschk/soliloquy",
     "desc": "an experimental operating system model for the web — immutable, browser-native, built on a modified alpine base. ### rv8 it uses rv8, a custom browser engine built with servo and v8. ### space is a work in progress ground-up nanokernel built on top of inauguration.",
-    "stack": "Rust, Svelte, TypeScript, C, V."
+    "stack": "Rust, HTML, Svelte, TypeScript, Shell, C, WGSL, CSS, Dockerfile, JavaScript, V, Makefile, AMPL."
   },
   {
     "key": "experiences",
     "name": "experiences (shelved)",
     "href": "#",
-    "desc": "a project exploring a more accessible spatial web, built on unity wasm.",
-    "stack": "TypeScript, C#, Swift, Kotlin."
+    "desc": "a project exploring a more accessible spatial web, built on unity wasm."
   },
   {
     "key": "atmosphere",
     "name": "atmosphere",
     "href": "#",
-    "desc": "a native sync and ecosystem layer for every device, with local-first and homelab support.",
-    "stack": "Swift, JavaScript, Rust, Kotlin."
+    "desc": "a native sync and ecosystem layer for every device, with local-first and homelab support."
   },
   {
     "key": "tile",
@@ -81,14 +85,13 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "name": "tabyrus (wip)",
     "href": "https://github.com/semitechnological/tabyrus",
     "desc": "ai-powered autocomplete anywhere on your mac. uses cotabby as a reference but uses a rust backend + mlx.",
-    "stack": "Rust, Swift."
+    "stack": "Swift, Rust, C."
   },
   {
     "key": "rover",
     "name": "rover (shelved)",
     "href": "#",
-    "desc": "utilities and plugin system for mac, based on raycast + ghostty.",
-    "stack": "Swift, Rust."
+    "desc": "utilities and plugin system for mac, based on raycast + ghostty."
   },
   {
     "key": "rs_ai",
@@ -102,28 +105,28 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "name": "rs_imessage",
     "href": "https://github.com/undivisible/rs_imessage",
     "desc": "rust imessage crate and cli",
-    "stack": "Rust."
+    "stack": "Rust, Makefile, Shell."
   },
   {
     "key": "rs_facetime",
     "name": "rs_facetime",
     "href": "https://github.com/undivisible/rs_facetime",
     "desc": "rust facetime crate and cli",
-    "stack": "Rust, Objective-C."
+    "stack": "Rust, Objective-C, Makefile, Shell."
   },
   {
     "key": "stalwart-lite",
     "name": "stalwart lite",
     "href": "https://github.com/arkiecompany/stalwart-lite",
     "desc": "stalwart fork that runs in-process as a rust crate. imap, smtp, management api — no web admin, no overhead. built for embedding and local-first setups.",
-    "stack": "Rust, Python, Sieve."
+    "stack": "Rust, Shell, HTML, Python, Sieve, Dockerfile, HCL."
   },
   {
     "key": "crosspost-rs",
     "name": "crosspost-rs",
     "href": "https://github.com/arkiecompany/crosspost-rs",
     "desc": "a rust crossposting library for multiple social media platforms",
-    "stack": "Rust."
+    "stack": "Rust, Dockerfile."
   },
   {
     "key": "ark-protocol",
@@ -138,6 +141,13 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "href": "https://github.com/atechnology-company/monoprotocol",
     "desc": "normative draft sync protocol: wire format, crypto (hkdf, aes256gcm), replicated object model, journals, capabilities; rust reference crate on crates.io with golden conformance vectors (json/cbor).",
     "stack": "Rust."
+  },
+  {
+    "key": "svelte-streamdown",
+    "name": "svelte-streamdown",
+    "href": "https://github.com/undivisible/svelte-streamdown",
+    "desc": "a svelte version of vercel's streamdown for streamable markdown rendering with interactive codeblocks and math rendering.",
+    "stack": "TypeScript, MDX, HTML, CSS, JavaScript, Svelte."
   }
 ];
 
@@ -147,56 +157,49 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "name": "standpoint",
     "href": "https://standpoint.undivisible.dev",
     "desc": "the ultimate opinion based platform for sharing tierlists, voting on polls, and playing spectrum - a party game to guess on a spectrum based on a prompt.",
-    "category": "web apps",
-    "stack": "Svelte, TypeScript, CSS, JavaScript, HTML."
+    "category": "web apps"
   },
   {
     "key": "notes",
     "name": "notes",
     "href": "https://notes.undivisible.dev/",
     "desc": "minimal note taker with full google font support, code highlighting and editing and notion-style markdown editing.",
-    "category": "web apps",
-    "stack": "Svelte, CSS, JavaScript, HTML."
+    "category": "web apps"
   },
   {
     "key": "bublik",
     "name": "bublik",
     "href": "https://bublik.undivisible.dev/",
     "desc": "canvas tool for generating custom frequency soundscapes.",
-    "category": "web apps",
-    "stack": "Rust, HTML, CSS."
+    "category": "web apps"
   },
   {
     "key": "alphabets",
     "name": "alphabets",
     "href": "https://alphabets.undivisible.dev",
     "desc": "learn any unicode-supported alphabet through cards, quizzes, and completion tables.",
-    "category": "web apps",
-    "stack": "TypeScript, CSS, HTML."
+    "category": "web apps"
   },
   {
     "key": "infrastruct",
     "name": "infrastruct",
     "href": "https://infrastruct.undivisible.dev",
     "desc": "belief agnostic jurisprudence local ai search engine platform with searx & ddg, transformers.js and browser prompt api.",
-    "category": "web apps",
-    "stack": "TypeScript, JavaScript, CSS."
+    "category": "web apps"
   },
   {
     "key": "akh",
     "name": "akh (archived)",
     "href": "https://akh.undivisible.dev",
     "desc": "islamic uniplatform for when i was previously interested in islam.",
-    "category": "web apps",
-    "stack": "Svelte, TypeScript, JavaScript, HTML."
+    "category": "web apps"
   },
   {
     "key": "unthinkmail",
     "name": "unthinkmail",
     "href": "https://unthinkmail.undivisible.dev/",
     "desc": "mcp for imap-supported email.",
-    "category": "developer tools",
-    "stack": "JavaScript."
+    "category": "developer tools"
   },
   {
     "key": "folk-around",
@@ -212,7 +215,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "href": "https://github.com/undivisible/poke-around",
     "desc": "lets poke interact with your computer across major oses.",
     "category": "developer tools",
-    "stack": "Zig, TypeScript, Python."
+    "stack": "Zig, TypeScript, Python, Dockerfile."
   },
   {
     "key": "unthinkclaw",
@@ -220,7 +223,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "href": "https://github.com/undivisible/unthinkclaw",
     "desc": "openclaw but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms.",
     "category": "developer tools",
-    "stack": "Rust, JavaScript, V."
+    "stack": "Rust, JavaScript, Shell, V, Dockerfile."
   },
   {
     "key": "bluetooth-terminal",
@@ -252,7 +255,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "href": "https://github.com/undivisible/drift-wallpaper",
     "desc": "macos drift screensaver as a live wallpaper on linux, macos, windows. spotify and apple music now playing support.",
     "category": "mobile & desktop",
-    "stack": "Rust, WGSL."
+    "stack": "Rust, WGSL, PowerShell, Shell."
   },
   {
     "key": "vro",
@@ -276,6 +279,6 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "href": "https://github.com/undivisible/unelaborate",
     "desc": "minecraft client in native swiftui with modrinth modpack, shader, and resource pack loading.",
     "category": "mobile & desktop",
-    "stack": "Swift."
+    "stack": "Swift, Shell."
   }
 ];

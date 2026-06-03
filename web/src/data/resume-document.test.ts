@@ -1,6 +1,11 @@
 import { expect, test } from "bun:test";
 import { resumeDoc, resumeSectionsNotInReadme } from "./resume-document";
-import { normalizeReadmeBundle, type ReadmeBundle } from "@/lib/profile-readme";
+import {
+  formatLinguistLanguages,
+  githubRepoPathFromHref,
+  normalizeReadmeBundle,
+  type ReadmeBundle,
+} from "@/lib/profile-readme";
 
 function bundleWithUtilities(names: string[]): ReadmeBundle {
   return normalizeReadmeBundle({
@@ -90,4 +95,20 @@ test("resume linked description segments strip emphasis markers", () => {
       (segment) => segment.type === "text" && segment.value.includes("**"),
     ),
   ).toBe(false);
+});
+
+test("readme project stacks use GitHub Linguist language order", () => {
+  expect(
+    githubRepoPathFromHref("https://github.com/undivisible/svelte-streamdown"),
+  ).toBe("undivisible/svelte-streamdown");
+  expect(
+    formatLinguistLanguages({
+      TypeScript: 1526090,
+      MDX: 175302,
+      HTML: 19505,
+      CSS: 11732,
+      JavaScript: 4073,
+      Svelte: 3060,
+    }),
+  ).toBe("TypeScript, MDX, HTML, CSS, JavaScript, Svelte.");
 });

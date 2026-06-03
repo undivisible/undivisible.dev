@@ -1,6 +1,6 @@
 import {
   parseReadme,
-  normalizeReadmeBundle,
+  normalizeReadmeBundleWithGithubLinguist,
   DEFAULT_PROFILE_MARKDOWN_URL,
   LEGACY_PROFILE_MARKDOWN_URL,
 } from "../src/lib/profile-readme.ts";
@@ -51,7 +51,7 @@ if (!res?.ok) {
   process.exit(1);
 }
 const md = await res.text();
-const bundle = normalizeReadmeBundle(parseReadme(md));
+const bundle = await normalizeReadmeBundleWithGithubLinguist(parseReadme(md));
 await Bun.write(
   OUT_FILE,
   emitTs(
