@@ -173,4 +173,4 @@ Cantonese · English · Russian · Mandarin · Indonesian · Learning Japanese
 
 ## Interests
 
-Learning · Travel · Cooking · Photography · Phenomenology · Existentialism · Consciousness hacking · Language learning · Computer systems · Science-based lifting · UFC & Wrestling
+Learning · Travel · Cooking · Photography · Phenomenology · Existentialism · Language learning · Science-based lifting · UFC & Wrestling

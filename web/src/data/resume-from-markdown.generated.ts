@@ -607,9 +607,7 @@ export const resumeFromMarkdown = {
     "Photography",
     "Phenomenology",
     "Existentialism",
-    "Consciousness hacking",
     "Language learning",
-    "Computer systems",
     "Science-based lifting",
     "UFC & Wrestling"
   ]
