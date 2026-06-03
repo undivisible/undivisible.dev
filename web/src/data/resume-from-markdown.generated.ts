@@ -48,20 +48,16 @@ export const resumeFromMarkdown = {
               "name": "Studio of Optimisations",
               "href": "https://optimisations.studio",
               "meta": "Studio of Optimisations · Graft AI · Production · +61 3 8828 9225",
-              "desc": "Dual-brand sales funnels (same codebase): Arkie-backed chat, live voice, calendar booking, lead capture, Notion connect portal. _Built with: SvelteKit 5, TypeScript, Tailwind CSS v4, Cloudflare Workers, Arkie API proxy, Bun._",
+              "desc": "Dual-brand sales funnels (same codebase): Arkie-backed chat, live voice, calendar booking, lead capture, Notion connect portal.",
               "descSegments": [],
-              "stack": ""
+              "stack": "SvelteKit 5, TypeScript, Tailwind CSS v4, Cloudflare Workers, Arkie API proxy, Bun."
             },
             {
               "name": "Arkie",
               "href": "https://arkie.company",
               "meta": "",
-              "desc": "Arkie · Production · Centralized MCP/AI backend for all Arkie apps: per-app system prompts, tool sets, chat/stream, calendar booking, Stripe/Calendly/Notion webhooks, Gemini Live voice, embeddings, admin console, OAuth for Claude MCP. _Built with: Rust, Axum, Tokio, Google Gemini, Supabase (PostgREST, Auth, pgvector), Cloudflare Workers/Containers, DigitalOcean SIP edge._",
+              "desc": "Arkie · Production · Centralized MCP/AI backend for all Arkie apps: per-app system prompts, tool sets, chat/stream, calendar booking, Stripe/Calendly/Notion webhooks, Gemini Live voice, embeddings, admin console, OAuth for Claude MCP.",
               "descSegments": [
-                {
-                  "type": "text",
-                  "value": "**"
-                },
                 {
                   "type": "link",
                   "label": "Arkie",
@@ -69,21 +65,17 @@ export const resumeFromMarkdown = {
                 },
                 {
                   "type": "text",
-                  "value": " · Production** · Centralized MCP/AI backend for all Arkie apps: per-app system prompts, tool sets, chat/stream, calendar booking, Stripe/Calendly/Notion webhooks, Gemini Live voice, embeddings, admin console, OAuth for Claude MCP. Built with: Rust, Axum, Tokio, Google Gemini, Supabase (PostgREST, Auth, pgvector), Cloudflare Workers/Containers, DigitalOcean SIP edge."
+                  "value": " · Production · Centralized MCP/AI backend for all Arkie apps: per-app system prompts, tool sets, chat/stream, calendar booking, Stripe/Calendly/Notion webhooks, Gemini Live voice, embeddings, admin console, OAuth for Claude MCP."
                 }
               ],
-              "stack": ""
+              "stack": "Rust, Axum, Tokio, Google Gemini, Supabase (PostgREST, Auth, pgvector), Cloudflare Workers/Containers, DigitalOcean SIP edge."
             },
             {
               "name": "Pava",
               "href": "https://pava.studio",
               "meta": "",
-              "desc": "Pava · Closed beta (approaching release) · AI content strategist and crossposting: brand chat, idea generation, AI-negotiated Stripe pricing, competitor analysis, video review, enterprise/agency workspaces, 13+ platforms via Late API. _Built with: Next.js 16, TypeScript, Supabase, Stripe, Google Gemini, Late API, Tailwind CSS v4, Capacitor, Bun._",
+              "desc": "Pava · Closed beta (approaching release) · AI content strategist and crossposting: brand chat, idea generation, AI-negotiated Stripe pricing, competitor analysis, video review, enterprise/agency workspaces, 13+ platforms via Late API.",
               "descSegments": [
-                {
-                  "type": "text",
-                  "value": "**"
-                },
                 {
                   "type": "link",
                   "label": "Pava",
@@ -91,21 +83,17 @@ export const resumeFromMarkdown = {
                 },
                 {
                   "type": "text",
-                  "value": " · Closed beta** (approaching release) · AI content strategist and crossposting: brand chat, idea generation, AI-negotiated Stripe pricing, competitor analysis, video review, enterprise/agency workspaces, 13+ platforms via Late API. Built with: Next.js 16, TypeScript, Supabase, Stripe, Google Gemini, Late API, Tailwind CSS v4, Capacitor, Bun."
+                  "value": " · Closed beta (approaching release) · AI content strategist and crossposting: brand chat, idea generation, AI-negotiated Stripe pricing, competitor analysis, video review, enterprise/agency workspaces, 13+ platforms via Late API."
                 }
               ],
-              "stack": ""
+              "stack": "Next.js 16, TypeScript, Supabase, Stripe, Google Gemini, Late API, Tailwind CSS v4, Capacitor, Bun."
             },
             {
               "name": "Unthought",
               "href": "https://unthought.arkie.company",
               "meta": "",
-              "desc": "Unthought · Alphas · Business platforming: custom domain, AI-generated site, professional email, Cloudflare edge deploy, Stripe checkout, Stalwart mail provisioning, Tangent integration hooks. _Built with: Next.js 16, TypeScript, Supabase, Cloudflare (OpenNext, D1, R2, Queues), Arkie, Stripe, Porkbun, Bun._",
+              "desc": "Unthought · Alphas · Business platforming: custom domain, AI-generated site, professional email, Cloudflare edge deploy, Stripe checkout, Stalwart mail provisioning, Tangent integration hooks.",
               "descSegments": [
-                {
-                  "type": "text",
-                  "value": "**"
-                },
                 {
                   "type": "link",
                   "label": "Unthought",
@@ -113,21 +101,17 @@ export const resumeFromMarkdown = {
                 },
                 {
                   "type": "text",
-                  "value": " · Alphas** · Business platforming: custom domain, AI-generated site, professional email, Cloudflare edge deploy, Stripe checkout, Stalwart mail provisioning, Tangent integration hooks. Built with: Next.js 16, TypeScript, Supabase, Cloudflare (OpenNext, D1, R2, Queues), Arkie, Stripe, Porkbun, Bun."
+                  "value": " · Alphas · Business platforming: custom domain, AI-generated site, professional email, Cloudflare edge deploy, Stripe checkout, Stalwart mail provisioning, Tangent integration hooks."
                 }
               ],
-              "stack": ""
+              "stack": "Next.js 16, TypeScript, Supabase, Cloudflare (OpenNext, D1, R2, Queues), Arkie, Stripe, Porkbun, Bun."
             },
             {
               "name": "Tangent",
               "href": "https://tangent.undivisible.dev",
               "meta": "",
-              "desc": "Tangent · Alpha · Discord automation for digital product sellers: Stripe payment webhooks, order fulfillment (keys, roles, content), ticketing, purchase-linked profiles, Gemini RAG support and image verification, event-driven workflows, admin dashboard, MCP tools for store ops. _Built with: Go (discordgo), SQLite/Postgres, Google Gemini, Astro 4, Alpine.js, htmx, UnoCSS, Cloudflare Workers (MCP, D1, Durable Objects)._",
+              "desc": "Tangent · Alpha · Discord automation for digital product sellers: Stripe payment webhooks, order fulfillment (keys, roles, content), ticketing, purchase-linked profiles, Gemini RAG support and image verification, event-driven workflows, admin dashboard, MCP tools for store ops.",
               "descSegments": [
-                {
-                  "type": "text",
-                  "value": "**"
-                },
                 {
                   "type": "link",
                   "label": "Tangent",
@@ -135,26 +119,26 @@ export const resumeFromMarkdown = {
                 },
                 {
                   "type": "text",
-                  "value": " · Alpha** · Discord automation for digital product sellers: Stripe payment webhooks, order fulfillment (keys, roles, content), ticketing, purchase-linked profiles, Gemini RAG support and image verification, event-driven workflows, admin dashboard, MCP tools for store ops. Built with: Go (discordgo), SQLite/Postgres, Google Gemini, Astro 4, Alpine.js, htmx, UnoCSS, Cloudflare Workers (MCP, D1, Durable Objects)."
+                  "value": " · Alpha · Discord automation for digital product sellers: Stripe payment webhooks, order fulfillment (keys, roles, content), ticketing, purchase-linked profiles, Gemini RAG support and image verification, event-driven workflows, admin dashboard, MCP tools for store ops."
                 }
               ],
-              "stack": ""
+              "stack": "Go (discordgo), SQLite/Postgres, Google Gemini, Astro 4, Alpine.js, htmx, UnoCSS, Cloudflare Workers (MCP, D1, Durable Objects)."
             },
             {
               "name": "Currant",
               "href": "",
               "meta": "",
-              "desc": "Currant · Work in progress · Multi-tenant AI sales agents and job management for trades businesses; autonomous agents across WhatsApp, Telegram, SMS, Instagram, Slack, email, and native SIP/RTP phone; leads → quotes → jobs → invoices. _Built with: Go, Python (FastAPI), Elixir (Phoenix), Rust (telephony), Vlang (filter), SvelteKit, React Native (Expo), Tauri, SurrealDB, Redis, Gemini, Stripe, Square._",
+              "desc": "Currant · Work in progress · Multi-tenant AI sales agents and job management for trades businesses; autonomous agents across WhatsApp, Telegram, SMS, Instagram, Slack, email, and native SIP/RTP phone; leads → quotes → jobs → invoices.",
               "descSegments": [],
-              "stack": ""
+              "stack": "Go, Python (FastAPI), Elixir (Phoenix), Rust (telephony), Vlang (filter), SvelteKit, React Native (Expo), Tauri, SurrealDB, Redis, Gemini, Stripe, Square."
             },
             {
               "name": "Waarom",
               "href": "",
               "meta": "",
-              "desc": "Waarom · Work in progress · AI step-by-step in-product guidance: GPUI desktop companion, `@waarom/embed` SDK, Crepuscularity static portal and knowledge base. _Built with: Rust, GPUI, Crepuscularity, Gemini, TypeScript (embed SDK), MV3 web extension runtime._",
+              "desc": "Waarom · Work in progress · AI step-by-step in-product guidance: GPUI desktop companion, `@waarom/embed` SDK, Crepuscularity static portal and knowledge base.",
               "descSegments": [],
-              "stack": ""
+              "stack": "Rust, GPUI, Crepuscularity, Gemini, TypeScript (embed SDK), MV3 web extension runtime."
             }
           ]
         },
@@ -165,9 +149,9 @@ export const resumeFromMarkdown = {
               "name": "AJ Stafford Property Advocates",
               "href": "https://www.ajstafford.com.au",
               "meta": "AJ Stafford Property Advocates",
-              "desc": "Chrome MV3 extension for realestate.com.au: finds comparable listings (bedrooms, ±15% price), on-page results widget, tab groups, CSV/TXT export; Buyer Ready Report print mockups and buyer-ready campaign assets. _Built with: JavaScript, Chrome Extensions MV3, Leaflet, Alpine.js, UnoCSS._",
+              "desc": "Chrome MV3 extension for realestate.com.au: finds comparable listings (bedrooms, ±15% price), on-page results widget, tab groups, CSV/TXT export; Buyer Ready Report print mockups and buyer-ready campaign assets.",
               "descSegments": [],
-              "stack": ""
+              "stack": "JavaScript, Chrome Extensions MV3, Leaflet, Alpine.js, UnoCSS."
             }
           ]
         }
@@ -190,17 +174,17 @@ export const resumeFromMarkdown = {
               "name": "Ark",
               "href": "",
               "meta": "Ark",
-              "desc": "Ultra-simple hosted app platform (Vercel-style ergonomics, Railway-style flexibility): Rust control-plane API, V language CLI (`deploy`, `logs`, `rollback`), Svelte dashboard, YAML app manifests, open-source `ark-protocol` edge ingress spec. _Built with: Rust (Axum), V, Svelte 5, SurrealDB, Docker Compose, Bun._",
+              "desc": "Ultra-simple hosted app platform (Vercel-style ergonomics, Railway-style flexibility): Rust control-plane API, V language CLI (`deploy`, `logs`, `rollback`), Svelte dashboard, YAML app manifests, open-source `ark-protocol` edge ingress spec.",
               "descSegments": [],
-              "stack": ""
+              "stack": "Rust (Axum), V, Svelte 5, SurrealDB, Docker Compose, Bun."
             },
             {
               "name": "Mono",
               "href": "https://github.com/atechnology-company/mono",
               "meta": "Mono",
-              "desc": "Post-web computing infrastructure with an open-source `mono-protocol` spec: object-centric, identity-addressed encrypted replication; mesh gossip, gateway relay, using `unthinkclaw` agent runtime, mono-browser shell (Crepuscularity/GPUI). _Built with: Rust (`mono-protocol`, `mono-mesh`, `mono-gateway`, `mono-agent`, `mono-browser`)._",
+              "desc": "Post-web computing infrastructure with an open-source `mono-protocol` spec: object-centric, identity-addressed encrypted replication; mesh gossip, gateway relay, using `unthinkclaw` agent runtime, mono-browser shell (Crepuscularity/GPUI).",
               "descSegments": [],
-              "stack": ""
+              "stack": "Rust (`mono-protocol`, `mono-mesh`, `mono-gateway`, `mono-agent`, `mono-browser`)."
             }
           ]
         }
@@ -222,9 +206,9 @@ export const resumeFromMarkdown = {
               "name": "Gizzmo Electronics",
               "href": "https://gizzmoelectronics.com",
               "meta": "Gizzmo Electronics",
-              "desc": "Product marketing site with Stripe pre-order checkout, brand redesign, and hardware/product narrative across the full customer journey; online product demo and manuals in progress. _Built with: SvelteKit 5, TypeScript, Vite, Tailwind CSS, Stripe, Netlify._",
+              "desc": "Product marketing site with Stripe pre-order checkout, brand redesign, and hardware/product narrative across the full customer journey; online product demo and manuals in progress.",
               "descSegments": [],
-              "stack": ""
+              "stack": "SvelteKit 5, TypeScript, Vite, Tailwind CSS, Stripe, Netlify."
             },
             {
               "name": "B1",
@@ -270,33 +254,33 @@ export const resumeFromMarkdown = {
           "name": "Inauguration (WIP)",
           "href": "https://github.com/tschk/inauguration",
           "meta": "Inauguration (WIP)",
-          "desc": "Experimental multi-frontend compiler/runtime targeting Core IR, SIL analysis, hot reload, and ultrafast incremental workflows. _Built with: Rust._",
+          "desc": "Experimental multi-frontend compiler/runtime targeting Core IR, SIL analysis, hot reload, and ultrafast incremental workflows.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust."
         },
         {
           "name": "Equilibrium",
           "href": "https://github.com/tschk/equilibrium",
           "meta": "Equilibrium",
-          "desc": "Load C-compatible code into Rust with one call; auto-detects sources, compiles, exposes as Rust modules. _Built with: Rust, C FFI._",
+          "desc": "Load C-compatible code into Rust with one call; auto-detects sources, compiles, exposes as Rust modules.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust, C FFI."
         },
         {
           "name": "Eqswift",
           "href": "https://github.com/tschk/eqswift",
           "meta": "Eqswift",
-          "desc": "Rust → Swift FFI with minimal boilerplate (companion to Equilibrium). _Built with: Rust, Swift._",
+          "desc": "Rust → Swift FFI with minimal boilerplate (companion to Equilibrium).",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust, Swift."
         },
         {
           "name": "Wax",
           "href": "https://github.com/tschk/wax",
           "meta": "Wax",
-          "desc": "Fast Homebrew-compatible package manager; formulae, bottles, casks, lockfiles, async parallel installs; experimental WinGet/Scoop/Nix-like support. _Built with: Rust._",
+          "desc": "Fast Homebrew-compatible package manager; formulae, bottles, casks, lockfiles, async parallel installs; experimental WinGet/Scoop/Nix-like support.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust."
         }
       ]
     },
@@ -308,17 +292,17 @@ export const resumeFromMarkdown = {
           "name": "Experiences",
           "href": "",
           "meta": "Experiences",
-          "desc": "Spatial web exploration on Unity WASM. _Built with: Unity, WebAssembly, TypeScript, Kotlin, Swift and Rust._",
+          "desc": "Spatial web exploration on Unity WASM.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Unity, WebAssembly, TypeScript, Kotlin, Swift and Rust."
         },
         {
           "name": "Atmosphere",
           "href": "",
           "meta": "Atmosphere",
-          "desc": "Native sync and ecosystem layer for every device; local-first and homelab support. _Built with: Rust (in development; no public repo yet)._",
+          "desc": "Native sync and ecosystem layer for every device; local-first and homelab support.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust (in development; no public repo yet)."
         }
       ]
     },
@@ -330,25 +314,25 @@ export const resumeFromMarkdown = {
           "name": "Tile (WIP)",
           "href": "https://github.com/semitechnological/tile",
           "meta": "Tile (WIP)",
-          "desc": "Mosaic-style tiling window manager, canvas, and multiplexer for macOS. _Built with: Rust, macOS APIs._",
+          "desc": "Mosaic-style tiling window manager, canvas, and multiplexer for macOS.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust, macOS APIs."
         },
         {
           "name": "Otto (WIP)",
           "href": "",
           "meta": "Otto (WIP)",
-          "desc": "AI-powered ottocomplete anywhere on your Mac. _Built with SwiftUI and Rust + Eqswift._",
+          "desc": "AI-powered ottocomplete anywhere on your Mac.",
           "descSegments": [],
-          "stack": ""
+          "stack": "SwiftUI and Rust + Eqswift."
         },
         {
           "name": "Rover (WIP)",
           "href": "",
           "meta": "Rover (WIP)",
-          "desc": "Utilities and plugin system for Mac, inspired by Raycast + Ghostty. _Built with Crepuscularity, SwiftUI and Rust._",
+          "desc": "Utilities and plugin system for Mac, inspired by Raycast + Ghostty.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Crepuscularity, SwiftUI and Rust."
         }
       ]
     },
@@ -360,57 +344,57 @@ export const resumeFromMarkdown = {
           "name": "Standpoint",
           "href": "https://standpoint.undivisible.dev",
           "meta": "Standpoint · GitHub",
-          "desc": "Opinion platform for tier lists, polls, and Spectrum (party game on a prompt-based spectrum). _Built with: SvelteKit, TypeScript, Tailwind CSS, Cloudflare Workers/Durable Objects, Vite, Bun._",
+          "desc": "Opinion platform for tier lists, polls, and Spectrum (party game on a prompt-based spectrum).",
           "descSegments": [],
-          "stack": ""
+          "stack": "SvelteKit, TypeScript, Tailwind CSS, Cloudflare Workers/Durable Objects, Vite, Bun."
         },
         {
           "name": "Unthinkmail",
           "href": "https://unthinkmail.undivisible.dev",
           "meta": "Unthinkmail · GitHub",
-          "desc": "MCP server for IMAP-supported email. _Built with: Cloudflare Workers, Hono, Wrangler, MCP, Bun._",
+          "desc": "MCP server for IMAP-supported email.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Cloudflare Workers, Hono, Wrangler, MCP, Bun."
         },
         {
           "name": "Notes",
           "href": "https://notes.undivisible.dev",
           "meta": "Notes · GitHub",
-          "desc": "Minimal note taker with Google Fonts, code highlighting, and Notion-style markdown editing. _Built with: Svelte 5, Vite, Tailwind CSS, CodeMirror, Bun._",
+          "desc": "Minimal note taker with Google Fonts, code highlighting, and Notion-style markdown editing.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Svelte 5, Vite, Tailwind CSS, CodeMirror, Bun."
         },
         {
           "name": "Bublik",
           "href": "https://bublik.undivisible.dev",
           "meta": "Bublik · GitHub",
-          "desc": "Canvas tool for custom frequency soundscapes. _Built with: Rust, Web Audio API._",
+          "desc": "Canvas tool for custom frequency soundscapes.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust, Web Audio API."
         },
         {
           "name": "Alphabets",
           "href": "https://alphabets.undivisible.dev",
           "meta": "Alphabets · GitHub",
-          "desc": "Learn any Unicode-supported alphabet via cards, quizzes, and completion tables. _Built with: React, TypeScript, Vite, Tailwind CSS, Capacitor (iOS/Android), Bun._",
+          "desc": "Learn any Unicode-supported alphabet via cards, quizzes, and completion tables.",
           "descSegments": [],
-          "stack": ""
+          "stack": "React, TypeScript, Vite, Tailwind CSS, Capacitor (iOS/Android), Bun."
         },
         {
           "name": "Infrastruct",
           "href": "https://infrastruct.undivisible.dev",
           "meta": "Infrastruct · GitHub",
-          "desc": "Belief-agnostic jurisprudence local AI search (SearXNG, DuckDuckGo, Transformers.js, Browser Prompt API). _Built with: Next.js 15, React 19, TypeScript, Tailwind CSS, Transformers.js, Bun._",
+          "desc": "Belief-agnostic jurisprudence local AI search (SearXNG, DuckDuckGo, Transformers.js, Browser Prompt API).",
           "descSegments": [],
-          "stack": ""
+          "stack": "Next.js 15, React 19, TypeScript, Tailwind CSS, Transformers.js, Bun."
         },
         {
           "name": "AKH (archived)",
           "href": "https://akh.undivisible.dev",
           "meta": "AKH (archived) · GitHub",
-          "desc": "Islamic uniplatform (archived). _Built with: Svelte, TypeScript._",
+          "desc": "Islamic uniplatform (archived).",
           "descSegments": [],
-          "stack": ""
+          "stack": "Svelte, TypeScript."
         }
       ]
     },
@@ -422,31 +406,31 @@ export const resumeFromMarkdown = {
           "name": "Drift",
           "href": "https://github.com/undivisible/drift-wallpaper",
           "meta": "Drift",
-          "desc": "macOS Drift screensaver as live wallpaper on Linux, macOS, and Windows; Spotify and Apple Music now playing. _Built with: Rust._",
+          "desc": "macOS Drift screensaver as live wallpaper on Linux, macOS, and Windows; Spotify and Apple Music now playing.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust."
         },
         {
           "name": "Vro",
           "href": "https://github.com/undivisible/vro",
           "meta": "Vro",
-          "desc": "Ultraminimal micro-inspired text editor. _Built with: V._",
+          "desc": "Ultraminimal micro-inspired text editor.",
           "descSegments": [],
-          "stack": ""
+          "stack": "V."
         },
         {
           "name": "Unthinkclaw",
           "href": "https://github.com/undivisible/unthinkclaw",
           "meta": "Unthinkclaw",
-          "desc": "OpenClaw-scale local agent runtime at a fraction of the size; agent swarms, multi-channel messaging. _Built with: Rust._",
+          "desc": "OpenClaw-scale local agent runtime at a fraction of the size; agent swarms, multi-channel messaging.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust."
         },
         {
           "name": "Poke Around",
           "href": "https://github.com/undivisible/poke-around",
           "meta": "Poke Around",
-          "desc": "Lets Poke interact with your computer on major OSes. _Built with: Zig and Typescript._",
+          "desc": "Lets Poke interact with your computer on major OSes.",
           "descSegments": [
             {
               "type": "text",
@@ -459,42 +443,42 @@ export const resumeFromMarkdown = {
             },
             {
               "type": "text",
-              "value": " interact with your computer on major OSes. Built with: Zig and Typescript."
+              "value": " interact with your computer on major OSes."
             }
           ],
-          "stack": ""
+          "stack": "Zig and Typescript."
         },
         {
           "name": "Unelaborate",
           "href": "https://github.com/undivisible/unelaborate",
           "meta": "Unelaborate",
-          "desc": "Minecraft client in native SwiftUI with Modrinth modpack, shader, and resource-pack loading. _Built with: Swift, SwiftUI._",
+          "desc": "Minecraft client in native SwiftUI with Modrinth modpack, shader, and resource-pack loading.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Swift, SwiftUI."
         },
         {
           "name": "YCYEStim",
           "href": "https://github.com/undivisible/ycyestim",
           "meta": "YCYEStim",
-          "desc": "iOS controller for YCY-YOKONEX Gen 1 and 2 electrostimulation hardware over Bluetooth LE (optional user-owned HTTP/WebSocket bridge); dual-channel waveforms, presets and programs, safety limits, HealthKit and watchOS heart-rate adaptive output. _Built with: Swift 6, SwiftUI, CoreBluetooth, HealthKit, watchOS._",
+          "desc": "iOS controller for YCY-YOKONEX Gen 1 and 2 electrostimulation hardware over Bluetooth LE (optional user-owned HTTP/WebSocket bridge); dual-channel waveforms, presets and programs, safety limits, HealthKit and watchOS heart-rate adaptive output.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Swift 6, SwiftUI, CoreBluetooth, HealthKit, watchOS."
         },
         {
           "name": "Bluetooth Terminal",
           "href": "https://github.com/undivisible/bluetooth-terminal",
           "meta": "Bluetooth Terminal",
-          "desc": "macOS Bluetooth LE terminal for scanning, connecting, and exchanging raw payloads with nearby devices. _Built with: Swift, SwiftUI, CoreBluetooth._",
+          "desc": "macOS Bluetooth LE terminal for scanning, connecting, and exchanging raw payloads with nearby devices.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Swift, SwiftUI, CoreBluetooth."
         },
         {
           "name": "Anywhere",
           "href": "https://github.com/undivisible/anywhere",
           "meta": "Anywhere",
-          "desc": "Browser extension that turns AI chat responses into interactive UIs (widgets, panels, forms, charts) via custom response tags. _Built with: Rust, Crepuscularity WebExt, MV3._",
+          "desc": "Browser extension that turns AI chat responses into interactive UIs (widgets, panels, forms, charts) via custom response tags.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust, Crepuscularity WebExt, MV3."
         }
       ]
     },
@@ -506,57 +490,57 @@ export const resumeFromMarkdown = {
           "name": "rs_ai",
           "href": "https://github.com/undivisible/rs_ai",
           "meta": "rs_ai",
-          "desc": "Async-first Rust AI SDK for cloud and on-device providers (`rs_ai_local`: Gemini Nano, Foundation Models, Phi Silica, Browser Prompt API). _Built with: Rust._",
+          "desc": "Async-first Rust AI SDK for cloud and on-device providers (`rs_ai_local`: Gemini Nano, Foundation Models, Phi Silica, Browser Prompt API).",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust."
         },
         {
           "name": "rs_imessage",
           "href": "https://github.com/undivisible/rs_imessage",
           "meta": "rs_imessage",
-          "desc": "Rust iMessage library and CLI for macOS. _Built with: Rust._",
+          "desc": "Rust iMessage library and CLI for macOS.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust."
         },
         {
           "name": "rs_facetime",
           "href": "https://github.com/undivisible/rs_facetime",
           "meta": "rs_facetime",
-          "desc": "Rust FaceTime library and CLI for macOS. _Built with: Rust._",
+          "desc": "Rust FaceTime library and CLI for macOS.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust."
         },
         {
           "name": "Stalwart Lite",
           "href": "https://github.com/arkiecompany/stalwart-lite",
           "meta": "Stalwart Lite",
-          "desc": "Stalwart mail server as an in-process Rust crate; IMAP, SMTP, management API; embedding and local-first. _Built with: Rust._",
+          "desc": "Stalwart mail server as an in-process Rust crate; IMAP, SMTP, management API; embedding and local-first.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust."
         },
         {
           "name": "crosspost-rs",
           "href": "https://github.com/arkiecompany/crosspost-rs",
           "meta": "crosspost-rs",
-          "desc": "Crossposting library for multiple social platforms. _Built with: Rust._",
+          "desc": "Crossposting library for multiple social platforms.",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust."
         },
         {
           "name": "ark-protocol",
           "href": "https://github.com/arkiecompany/ark-protocol",
           "meta": "ark-protocol",
-          "desc": "Open protocol and reference implementation for exposing many local VPS services behind one HTTPS/WebSocket ingress; manifest routing, adapter APIs, Cloudflare-compatible edge multiplexing. _Built with: JavaScript/TypeScript, Cloudflare._",
+          "desc": "Open protocol and reference implementation for exposing many local VPS services behind one HTTPS/WebSocket ingress; manifest routing, adapter APIs, Cloudflare-compatible edge multiplexing.",
           "descSegments": [],
-          "stack": ""
+          "stack": "JavaScript/TypeScript, Cloudflare."
         },
         {
           "name": "monoprotocol",
           "href": "https://github.com/atechnology-company/monoprotocol",
           "meta": "monoprotocol",
-          "desc": "Normative draft sync protocol: wire format, crypto (HKDF, AES-256-GCM), replicated object model, journals, capabilities; Rust reference crate on crates.io with golden conformance vectors (JSON/CBOR). _Built with: Rust, Markdown spec, conformance fixtures._",
+          "desc": "Normative draft sync protocol: wire format, crypto (HKDF, AES-256-GCM), replicated object model, journals, capabilities; Rust reference crate on crates.io with golden conformance vectors (JSON/CBOR).",
           "descSegments": [],
-          "stack": ""
+          "stack": "Rust, Markdown spec, conformance fixtures."
         }
       ]
     }

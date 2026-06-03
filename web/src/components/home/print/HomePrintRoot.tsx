@@ -307,7 +307,11 @@ function ExpProductLine({ item }: { item: ResumeListItem }) {
   }
   if (item.stack.trim()) {
     if (parts.length) parts.push(" — ");
-    parts.push(item.stack.trim());
+    parts.push(
+      <span key="stack" style={{ color: C.orange }}>
+        {item.stack.trim()}
+      </span>,
+    );
   }
   const label = item.href ? (
     <a href={item.href} style={{ color: C.black, textDecoration: "none" }}>
