@@ -64,6 +64,7 @@ const PROJECT_LANGUAGE_STACKS: Record<string, string> = {
   infrastruct: "TypeScript, JavaScript, CSS.",
   akh: "Svelte, TypeScript, JavaScript, HTML.",
   unthinkmail: "JavaScript.",
+  "folk-around": "Zig, TypeScript.",
   unthinkclaw: "Rust, JavaScript, V.",
   "poke-around": "Zig, TypeScript, Python.",
   "bluetooth-terminal": "Swift.",

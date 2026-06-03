@@ -203,7 +203,8 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "name": "folk around",
     "href": "https://github.com/undivisible/folk-around",
     "desc": "lets folk or any hermes agent or openclaw interact with your computer p2p on macos.",
-    "category": "developer tools"
+    "category": "developer tools",
+    "stack": "Zig, TypeScript."
   },
   {
     "key": "poke-around",
