@@ -101,6 +101,13 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "stack": "Rust, Swift, C#, Kotlin."
   },
   {
+    "key": "rs_peekaboo",
+    "name": "rs_peekaboo",
+    "href": "https://github.com/undivisible/rs_peekaboo",
+    "desc": "peter steinberger's peekaboo rewritten in rust with a shell tool and usable as a crate library for embedding into applications.",
+    "stack": "Rust."
+  },
+  {
     "key": "rs_imessage",
     "name": "rs_imessage",
     "href": "https://github.com/undivisible/rs_imessage",
@@ -147,7 +154,7 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "name": "svelte-streamdown",
     "href": "https://github.com/undivisible/svelte-streamdown",
     "desc": "a svelte version of vercel's streamdown for streamable markdown rendering with interactive codeblocks and math rendering.",
-    "stack": "TypeScript, MDX, HTML, CSS, JavaScript, Svelte."
+    "stack": "TypeScript, Svelte, CSS, JavaScript."
   }
 ];
 

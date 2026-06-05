@@ -23,6 +23,10 @@ function staggerDelay(delay: number, seed: string, index: number) {
   return delay + t * 0.22 + (index % 7) * 0.009;
 }
 
+export function randomizedTextInitialState(motionReady: boolean) {
+  return motionReady ? false : "hidden";
+}
+
 export function RandomizedText({
   children,
   className = "",
@@ -77,7 +81,7 @@ export function RandomizedText({
       className={className}
       aria-label={children}
       style={{ display: "inline-block", wordBreak: "break-word" }}
-      initial="hidden"
+      initial={randomizedTextInitialState(motionReady)}
       whileInView={inView ? "visible" : undefined}
       animate={inView ? undefined : "visible"}
       viewport={{ once }}

@@ -1,8 +1,10 @@
 import {
   parseReadme,
+  applyReadmeStackFallbacks,
   normalizeReadmeBundleWithGithubLinguist,
   DEFAULT_PROFILE_MARKDOWN_URL,
   LEGACY_PROFILE_MARKDOWN_URL,
+  type ReadmeBundle,
 } from "../src/lib/profile-readme.ts";
 
 const PROFILE_URLS = process.env.PROFILE_README_URL
@@ -13,6 +15,29 @@ const OUT_FILE = new URL(
   "../src/data/readme-projects.generated.ts",
   import.meta.url,
 );
+
+async function previousBundle(): Promise<ReadmeBundle | undefined> {
+  try {
+    const mod = await import(`${OUT_FILE.href}?t=${Date.now()}`);
+    return {
+      mainHeroQuote:
+        typeof mod.mainHeroQuoteFromReadme === "string"
+          ? mod.mainHeroQuoteFromReadme
+          : "",
+      mainProjects: Array.isArray(mod.mainProjectsFromReadme)
+        ? mod.mainProjectsFromReadme
+        : [],
+      utilities: Array.isArray(mod.utilitiesFromReadme)
+        ? mod.utilitiesFromReadme
+        : [],
+      miniapps: Array.isArray(mod.miniappsFromReadme)
+        ? mod.miniappsFromReadme
+        : [],
+    };
+  } catch {
+    return undefined;
+  }
+}
 
 function emitTs(
   mainHeroQuote: string,
@@ -51,7 +76,13 @@ if (!res?.ok) {
   process.exit(1);
 }
 const md = await res.text();
-const bundle = await normalizeReadmeBundleWithGithubLinguist(parseReadme(md));
+const freshBundle = await normalizeReadmeBundleWithGithubLinguist(
+  parseReadme(md),
+);
+const previous = await previousBundle();
+const bundle = previous
+  ? applyReadmeStackFallbacks(freshBundle, previous)
+  : freshBundle;
 await Bun.write(
   OUT_FILE,
   emitTs(

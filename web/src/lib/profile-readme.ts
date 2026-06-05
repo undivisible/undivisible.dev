@@ -467,6 +467,44 @@ export async function normalizeReadmeBundleWithGithubLinguist(
   };
 }
 
+function projectIdentity(project: ReadmeProject): string {
+  return `${project.key}:${project.href.replace(/\/$/, "").toLowerCase()}`;
+}
+
+function applyStackFallbacks(
+  fresh: ReadmeProject[],
+  previous: ReadmeProject[],
+): ReadmeProject[] {
+  const stacks = new Map(
+    previous
+      .filter((project) => project.stack)
+      .map((project) => [projectIdentity(project), project.stack!]),
+  );
+  return fresh.map((project) =>
+    project.stack
+      ? project
+      : {
+          ...project,
+          stack: stacks.get(projectIdentity(project)),
+        },
+  );
+}
+
+export function applyReadmeStackFallbacks(
+  fresh: ReadmeBundle,
+  previous: ReadmeBundle,
+): ReadmeBundle {
+  return {
+    ...fresh,
+    mainProjects: applyStackFallbacks(
+      fresh.mainProjects,
+      previous.mainProjects,
+    ),
+    utilities: applyStackFallbacks(fresh.utilities, previous.utilities),
+    miniapps: applyStackFallbacks(fresh.miniapps, previous.miniapps),
+  };
+}
+
 export async function getProfileReadmeProjects(): Promise<ReadmeBundle> {
   const urls = process.env.PROFILE_README_URL
     ? [process.env.PROFILE_README_URL]

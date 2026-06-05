@@ -10,7 +10,6 @@ import {
   resumeEducation,
   resumeExperience,
   resumeInterests,
-  resumeSectionsNotInReadme,
   resumeSkillGroups,
 } from "@/data/resume-document";
 import { projectKey, type ReadmeBundle } from "@/lib/profile-readme";
@@ -269,15 +268,6 @@ export function Info({
   const hkgText = hydrated && dayTheme ? dayTheme.hkgTime : "--:--:--";
   const melText = hydrated && dayTheme ? dayTheme.melTime : "--:--:--";
   const localText = hydrated && dayTheme ? dayTheme.localTime : "--:--:--";
-
-  const extraProjectSections = useMemo(
-    () => resumeSectionsNotInReadme(readme),
-    [readme],
-  );
-  const allExtraCount = useMemo(
-    () => extraProjectSections.reduce((n, s) => n + s.projects.length, 0),
-    [extraProjectSections],
-  );
 
   const clockPanel = dayTheme ? (
     <div
@@ -636,38 +626,6 @@ export function Info({
                 </div>
               )}
             </div>
-            {allExtraCount > 0 ? (
-              <div className="mt-16 sm:mt-24">
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-40px" }}
-                  transition={{ duration: 0.55, ease: REVEAL_EASE }}
-                  className="mb-2"
-                >
-                  <h3 className="text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
-                    more selected work
-                  </h3>
-                </motion.div>
-                <div className="space-y-1">
-                  {extraProjectSections.map(({ section, projects }) => (
-                    <TidbitCategory
-                      key={section}
-                      category={section}
-                      items={projects.map((p) => ({
-                        key: p.name.toLowerCase().replace(/\s+/g, "-"),
-                        name: p.name,
-                        href: p.href || "#",
-                        desc: p.desc,
-                        stack: p.stack,
-                      }))}
-                      isOpen={openCategories.has(section)}
-                      onToggle={toggleCategory}
-                    />
-                  ))}
-                </div>
-              </div>
-            ) : null}
           </div>
         </section>
       ) : null}
