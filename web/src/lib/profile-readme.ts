@@ -426,10 +426,12 @@ export function formatLinguistLanguages(
 
 async function fetchGithubLinguistStack(
   repoPath: string,
+  signal?: AbortSignal,
 ): Promise<string | undefined> {
   try {
     const res = await fetch(
       `https://api.github.com/repos/${repoPath}/languages`,
+      signal ? { signal } : undefined,
     );
     if (!res.ok) return undefined;
     const data = await res.json();
@@ -444,12 +446,13 @@ async function fetchGithubLinguistStack(
 
 async function applyGithubLinguistStacks(
   projects: ReadmeProject[],
+  signal?: AbortSignal,
 ): Promise<ReadmeProject[]> {
   return Promise.all(
     projects.map(async (project) => {
       const repoPath = githubRepoPathFromHref(project.href);
       if (!repoPath) return project;
-      const stack = await fetchGithubLinguistStack(repoPath);
+      const stack = await fetchGithubLinguistStack(repoPath, signal);
       return stack ? { ...project, stack } : project;
     }),
   );
@@ -457,13 +460,17 @@ async function applyGithubLinguistStacks(
 
 export async function normalizeReadmeBundleWithGithubLinguist(
   bundle: ReadmeBundle,
+  signal?: AbortSignal,
 ): Promise<ReadmeBundle> {
   const normalized = normalizeReadmeBundle(bundle);
   return {
     ...normalized,
-    mainProjects: await applyGithubLinguistStacks(normalized.mainProjects),
-    utilities: await applyGithubLinguistStacks(normalized.utilities),
-    miniapps: await applyGithubLinguistStacks(normalized.miniapps),
+    mainProjects: await applyGithubLinguistStacks(
+      normalized.mainProjects,
+      signal,
+    ),
+    utilities: await applyGithubLinguistStacks(normalized.utilities, signal),
+    miniapps: await applyGithubLinguistStacks(normalized.miniapps, signal),
   };
 }
 
@@ -505,19 +512,33 @@ export function applyReadmeStackFallbacks(
   };
 }
 
+export async function fetchProfileReadmeProjects(options?: {
+  includeGithubLinguistStacks?: boolean;
+  signal?: AbortSignal;
+  urls?: string[];
+}): Promise<ReadmeBundle> {
+  const urls = options?.urls ?? [
+    DEFAULT_PROFILE_MARKDOWN_URL,
+    LEGACY_PROFILE_MARKDOWN_URL,
+  ];
+  for (const url of urls) {
+    const res = await fetch(url, { signal: options?.signal });
+    if (!res.ok) continue;
+    const parsed = parseReadme(await res.text());
+    if (options?.includeGithubLinguistStacks === false) {
+      return normalizeReadmeBundle(parsed);
+    }
+    return normalizeReadmeBundleWithGithubLinguist(parsed, options?.signal);
+  }
+  throw new Error("profile markdown fetch failed");
+}
+
 export async function getProfileReadmeProjects(): Promise<ReadmeBundle> {
   const urls = process.env.PROFILE_README_URL
     ? [process.env.PROFILE_README_URL]
     : [DEFAULT_PROFILE_MARKDOWN_URL, LEGACY_PROFILE_MARKDOWN_URL];
   try {
-    for (const url of urls) {
-      const res = await fetch(url, { next: { revalidate: 300 } });
-      if (!res.ok) continue;
-      return normalizeReadmeBundleWithGithubLinguist(
-        parseReadme(await res.text()),
-      );
-    }
-    throw new Error("profile markdown fetch failed");
+    return fetchProfileReadmeProjects({ urls });
   } catch {
     const mod = await import("@/data/readme-projects.generated");
     const hero =

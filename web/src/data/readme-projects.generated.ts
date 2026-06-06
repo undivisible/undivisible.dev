@@ -222,7 +222,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "href": "https://github.com/undivisible/poke-around",
     "desc": "lets poke interact with your computer across major oses.",
     "category": "developer tools",
-    "stack": "Zig, TypeScript, Python, Dockerfile."
+    "stack": "Rust, TypeScript, Shell, Dockerfile."
   },
   {
     "key": "unthinkclaw",
