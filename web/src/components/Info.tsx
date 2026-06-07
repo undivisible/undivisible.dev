@@ -53,7 +53,6 @@ const thingWords = ["things", "software", "systems", "products", "tools"];
 
 const introText = `my favorite thing is chasing new experiences and sharing them with others. i do that through software, which i've been building since i was 8. i'm drawn to the frontier, i started making money online and playing with crypto at 11, and i was one of the first to try gpt-3 in 2021. since then, i dropped out of high school and founded tsc.hk, where i make the frontier. outside of that, i adore philosophy, cooking, photography, and gym.`;
 
-const languages = ["rust", "typescript", "swift", "python", "go", "v", "zig"];
 const transport = [
   "cantonese",
   "english",
@@ -825,16 +824,6 @@ export function Info({
                       </p>
                     </div>
                   ))}
-                </div>
-                <div className="mt-8">
-                  <div className="mb-3 text-[9px] uppercase tracking-[0.14em] text-white/30 font-mono">
-                    languages & runtimes
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {languages.map((item) => (
-                      <Badge key={item} label={item} />
-                    ))}
-                  </div>
                 </div>
                 <div className="mt-10">
                   <div className="mb-3 text-[9px] uppercase tracking-[0.14em] text-white/30 font-mono">
