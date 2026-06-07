@@ -248,10 +248,6 @@ export const resumeFromMarkdown = {
   "projectSections": [],
   "skills": [
     [
-      "Languages",
-      "Rust, Swift, TypeScript/JavaScript, Python, Go, V, Zig, C / C#"
-    ],
-    [
       "Frontend",
       "React, Next.js, SvelteKit, Solid, Tailwind, Astro, WebGL, SwiftUI, Crepuscularity"
     ],
