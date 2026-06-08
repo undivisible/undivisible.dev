@@ -1,25 +1,24 @@
 import {
   parseReadme,
   applyReadmeStackFallbacks,
-  normalizeReadmeBundleWithGithubLinguist,
-  DEFAULT_PROFILE_MARKDOWN_URL,
-  LEGACY_PROFILE_MARKDOWN_URL,
+  fillReadmeBundleMissingStacks,
+  fetchProfileMarkdown,
+  normalizeReadmeBundle,
+  profileMarkdownUrls,
   type ReadmeBundle,
 } from "../src/lib/profile-readme.ts";
-
-const PROFILE_URLS = process.env.PROFILE_README_URL
-  ? [process.env.PROFILE_README_URL]
-  : [DEFAULT_PROFILE_MARKDOWN_URL, LEGACY_PROFILE_MARKDOWN_URL];
 
 const OUT_FILE = new URL(
   "../src/data/readme-projects.generated.ts",
   import.meta.url,
 );
 
-async function previousBundle(): Promise<ReadmeBundle | undefined> {
+function previousBundle(): Promise<ReadmeBundle | undefined> {
   try {
-    const mod = await import(`${OUT_FILE.href}?t=${Date.now()}`);
-    return {
+    // eslint-disable-next-line unicorn/no-require-postinstall
+    // @ts-expect-error - dynamic require
+    const mod = require(OUT_FILE.pathname);
+    return Promise.resolve({
       mainHeroQuote:
         typeof mod.mainHeroQuoteFromReadme === "string"
           ? mod.mainHeroQuoteFromReadme
@@ -33,18 +32,16 @@ async function previousBundle(): Promise<ReadmeBundle | undefined> {
       miniapps: Array.isArray(mod.miniappsFromReadme)
         ? mod.miniappsFromReadme
         : [],
-    };
+      libraries: Array.isArray(mod.librariesFromReadme)
+        ? mod.librariesFromReadme
+        : [],
+    });
   } catch {
-    return undefined;
+    return Promise.resolve(undefined);
   }
 }
 
-function emitTs(
-  mainHeroQuote: string,
-  mainProjects: ReturnType<typeof parseReadme>["mainProjects"],
-  utilities: ReturnType<typeof parseReadme>["utilities"],
-  miniapps: ReturnType<typeof parseReadme>["miniapps"],
-): string {
+function emitTs(bundle: ReadmeBundle): string {
   return `export type ReadmeProject = {
   key: string;
   name: string;
@@ -54,44 +51,34 @@ function emitTs(
   category?: string;
 };
 
-export const mainHeroQuoteFromReadme: string = ${JSON.stringify(mainHeroQuote)};
+export const mainHeroQuoteFromReadme: string = ${JSON.stringify(bundle.mainHeroQuote)};
 
-export const mainProjectsFromReadme: ReadmeProject[] = ${JSON.stringify(mainProjects, null, 2)};
+export const mainProjectsFromReadme: ReadmeProject[] = ${JSON.stringify(bundle.mainProjects, null, 2)};
 
-export const utilitiesFromReadme: ReadmeProject[] = ${JSON.stringify(utilities, null, 2)};
+export const utilitiesFromReadme: ReadmeProject[] = ${JSON.stringify(bundle.utilities, null, 2)};
 
-export const miniappsFromReadme: ReadmeProject[] = ${JSON.stringify(miniapps, null, 2)};
+export const miniappsFromReadme: ReadmeProject[] = ${JSON.stringify(bundle.miniapps, null, 2)};
+
+export const librariesFromReadme: ReadmeProject[] = ${JSON.stringify(bundle.libraries, null, 2)};
 `;
 }
 
-let res: Response | undefined;
-for (const url of PROFILE_URLS) {
-  res = await fetch(url);
-  if (res.ok) break;
-}
-if (!res?.ok) {
-  console.error(
-    `fetch failed (${res?.status ?? "?"}): ${PROFILE_URLS.join(" -> ")}`,
-  );
+let md: string;
+try {
+  md = await fetchProfileMarkdown({ urls: profileMarkdownUrls() });
+} catch (error) {
+  console.error(error);
   process.exit(1);
 }
-const md = await res.text();
-const freshBundle = await normalizeReadmeBundleWithGithubLinguist(
-  parseReadme(md),
-);
+
+const freshBundle = normalizeReadmeBundle(parseReadme(md));
 const previous = await previousBundle();
-const bundle = previous
+const withFallbacks = previous
   ? applyReadmeStackFallbacks(freshBundle, previous)
   : freshBundle;
-await Bun.write(
-  OUT_FILE,
-  emitTs(
-    bundle.mainHeroQuote,
-    bundle.mainProjects,
-    bundle.utilities,
-    bundle.miniapps,
-  ),
-);
+const bundle = await fillReadmeBundleMissingStacks(withFallbacks);
+
+await Bun.write(OUT_FILE, emitTs(bundle));
 console.log(
-  `wrote ${OUT_FILE.pathname} (${bundle.mainProjects.length} main, ${bundle.utilities.length} utilities, ${bundle.miniapps.length} miniapps)`,
+  `wrote ${OUT_FILE.pathname} (${bundle.mainProjects.length} main, ${bundle.utilities.length} utilities, ${bundle.miniapps.length} miniapps, ${bundle.libraries.length} libraries)`,
 );

@@ -3,7 +3,6 @@ import type { CSSProperties } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { lifeTimeline } from "@/data/life-timeline";
-import { tidbitExtras } from "@/data/project-descriptions";
 import {
   resumeCommunity,
   resumeContact,
@@ -115,16 +114,13 @@ export function Info({
       opacity?: 50;
       category?: string;
     }> = [];
-    for (const p of [
-      ...readme.miniapps.map((m) => ({
-        name: m.name,
-        href: m.href,
-        desc: m.desc,
-        stack: m.stack,
-        category: m.category,
-      })),
-      ...tidbitExtras,
-    ]) {
+    for (const p of readme.miniapps.map((m) => ({
+      name: m.name,
+      href: m.href,
+      desc: m.desc,
+      stack: m.stack,
+      category: m.category,
+    }))) {
       const key = projectKey(p.name);
       if (seen.has(key)) continue;
       seen.add(key);
@@ -1020,7 +1016,10 @@ function UtilitiesBlock({
   excludeKeys?: readonly string[];
 }) {
   const exclude = useMemo(() => new Set(excludeKeys), [excludeKeys]);
-  const utilitiesFiltered = readme.utilities.filter((p) => !exclude.has(p.key));
+  const utilitiesFiltered = [
+    ...readme.utilities.filter((p) => !exclude.has(p.key)),
+    ...readme.libraries,
+  ];
 
   return (
     <div className="space-y-4">

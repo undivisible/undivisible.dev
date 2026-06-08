@@ -2,10 +2,8 @@ import Home from "@/page-components/home";
 import { getNowMarkdown } from "@/lib/now-markdown";
 import { getProfileReadmeProjects } from "@/lib/profile-readme";
 
-export const revalidate = 300;
-
-export default async function Page() {
-  const readme = await getProfileReadmeProjects();
+export default function Page() {
+  const readme = getProfileReadmeProjects();
   const nowMarkdown = getNowMarkdown();
   return <Home readme={readme} nowMarkdown={nowMarkdown} />;
 }

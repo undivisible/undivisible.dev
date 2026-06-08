@@ -3,13 +3,8 @@ import { C, mono, sans, serif } from "@/components/brief/ui/constants";
 import { Ft } from "@/components/brief/ui/Ft";
 import { Tb } from "@/components/brief/ui/Tb";
 import { lifeTimeline } from "@/data/life-timeline";
-import {
-  mainHeroQuoteFromReadme,
-  mainProjectsFromReadme,
-  miniappsFromReadme,
-  type ReadmeProject,
-  utilitiesFromReadme,
-} from "@/data/readme-projects.generated";
+import type { ReadmeProject } from "@/lib/profile-readme";
+import { getReadmeBundleFromGenerated } from "@/lib/profile-readme";
 import { resumeDoc } from "@/data/resume-document";
 import {
   parseInlineMdSegments,
@@ -207,7 +202,7 @@ function ProjectCard({ item }: { item: PrintProject }) {
 
 function ProjectHeroCard({ item }: { item: ReadmeProject }) {
   const stack = item.stack ? ` Built with ${item.stack}` : "";
-  const body = `${mainHeroQuoteFromReadme} ${item.desc}${stack}`;
+  const body = `${readmeBundle.mainHeroQuote} ${item.desc}${stack}`;
 
   return (
     <a
@@ -701,7 +696,7 @@ function ProjectSectionBlock({ section }: { section: PrintProjectSection }) {
 
 function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
   const projectCount = sections.reduce((n, s) => n + s.items.length, 0);
-  const heroProject = mainProjectsFromReadme[0];
+  const heroProject = readmeBundle.mainProjects[0];
   const visibleSections = sections
     .map((section) =>
       section.title === "Main project"
@@ -740,9 +735,11 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
   );
 }
 
+const readmeBundle = getReadmeBundleFromGenerated();
+
 function websiteProjectSections(): PrintProjectSection[] {
   const miniappsByCategory = new Map<string, ReadmeProject[]>();
-  for (const project of miniappsFromReadme) {
+  for (const project of readmeBundle.miniapps) {
     const category = project.category || "other";
     miniappsByCategory.set(category, [
       ...(miniappsByCategory.get(category) || []),
@@ -753,12 +750,15 @@ function websiteProjectSections(): PrintProjectSection[] {
   return [
     {
       title: "Main project",
-      items: mainProjectsFromReadme,
+      items: readmeBundle.mainProjects,
     },
     {
       title: "Libraries & tools",
-      items: utilitiesFromReadme,
+      items: readmeBundle.utilities,
     },
+    ...(readmeBundle.libraries.length > 0
+      ? [{ title: "Libraries", items: readmeBundle.libraries }]
+      : []),
     ...Array.from(miniappsByCategory, ([title, items]) => ({
       title,
       items,

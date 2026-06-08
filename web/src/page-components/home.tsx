@@ -16,11 +16,7 @@ import {
   printSitePdf,
   type SitePrintTarget,
 } from "@/lib/site-print";
-import {
-  applyReadmeStackFallbacks,
-  fetchProfileReadmeProjects,
-  type ReadmeBundle,
-} from "@/lib/profile-readme";
+import type { ReadmeBundle } from "@/lib/profile-readme";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { useLastFmVisualData } from "@/lib/useLastFmVisualData";
 
@@ -54,29 +50,6 @@ export default function Home({
     dayTheme.shader.weatherKind === "storm";
   const [nowMode, setNowMode] = useState(false);
   const [printMounted, setPrintMounted] = useState(false);
-  const [clientReadme, setClientReadme] = useState(readme);
-
-  useEffect(() => {
-    setClientReadme(readme);
-  }, [readme]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    fetchProfileReadmeProjects({
-      includeGithubLinguistStacks: false,
-      signal: controller.signal,
-    })
-      .then((fresh) => {
-        setClientReadme((current) => applyReadmeStackFallbacks(fresh, current));
-      })
-      .catch((error: unknown) => {
-        if (error instanceof DOMException && error.name === "AbortError") {
-          return;
-        }
-      });
-    return () => controller.abort();
-  }, []);
-
   useEffect(() => {
     void import("@/components/home/print/HomePrintRoot");
     void import("@/components/brief/print/PrintRoot");
@@ -204,18 +177,18 @@ export default function Home({
             <Info
               colors={colors}
               dayTheme={dayTheme}
-              readme={clientReadme}
+              readme={readme}
               nowMarkdown={nowMarkdown}
               onOpenNow={() => setNowMode(true)}
               slice="intro"
             />
             <ServicesSection embedded />
             <PortfolioCaseStudies />
-            <PortfolioPillars readme={clientReadme} />
+            <PortfolioPillars readme={readme} />
             <Info
               colors={colors}
               getTransportStyle={dayTheme.getTransportStyle}
-              readme={clientReadme}
+              readme={readme}
               nowMarkdown={nowMarkdown}
               onOpenNow={() => setNowMode(true)}
               slice="folio"
@@ -223,7 +196,7 @@ export default function Home({
             <Info
               colors={colors}
               getTransportStyle={dayTheme.getTransportStyle}
-              readme={clientReadme}
+              readme={readme}
               nowMarkdown={nowMarkdown}
               onOpenNow={() => setNowMode(true)}
               slice="bio"

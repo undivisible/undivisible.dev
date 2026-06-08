@@ -1,64 +1,10 @@
 import { C, mono, sans, serif } from "@/components/brief/ui/constants";
 import { Tb } from "@/components/brief/ui/Tb";
 import { Ft } from "@/components/brief/ui/Ft";
+import { briefOpenSourceCards } from "@/lib/brief-open-source";
 
 export function Page3() {
-  const projs = [
-    {
-      org: "semitechnological",
-      name: "Crepuscularity + Aurorality",
-      tech: "Rust · Swift · GPUI · Ratatui · MV3 · SwiftUI · UniFFI",
-      desc: "Experimental GPUI component system with hot reload and a plug-and-play Rust browser extension framework. One .crepus template targets desktop (GPUI), TUI (Ratatui), browser extensions (MV3), HTML, and mobile. Aurorality compiles templates into native SwiftUI — Swift, Rust, or JS as backend.",
-      tag: "Framework",
-      accent: true,
-      dark: true,
-    },
-    {
-      org: "semitechnological",
-      name: "Wax",
-      tech: "Rust · Tokio · Async · Nix · Scoop",
-      desc: "System package manager in Rust with parity to Homebrew, Scoop, and Nix — handles system packages, casks, lockfile pinning, and custom taps. Replaces git tap syncing with direct JSON API access and parallel async: 16–20× faster search, 4× faster installs. Works standalone or alongside existing managers.",
-      tag: "Package Manager",
-      accent: false,
-      dark: false,
-    },
-    {
-      org: "semitechnological",
-      name: "Equilibrium + eqswift",
-      tech: "Rust · Bindgen · UniFFI · C / C# · Zig · Nim · V · Odin",
-      desc: "Load foreign code with one call. Auto-detects source, compiles to C IR, loads into a Rust module handle — C, C++, C#, D, V, Zig, Nim, Odin, Hare. The eq CLI builds polyglot projects in parallel. eqswift extends this to zero-config Rust-to-Swift FFI via UniFFI — no UDL files required.",
-      tag: "Interop / FFI",
-      accent: false,
-      dark: false,
-    },
-    {
-      org: "semitechnological",
-      name: "Soliloquy + rv8",
-      tech: "Rust · V · C · Servo · V8 · Alpine · Svelte · Axum",
-      desc: "Experimental OS built on Alpine with kernel-level modifications — Rust shell, Servo rendering, V8 runtime. rv8 handles IPC, rendering, parsing, and JS execution with a live snapshot bridge syncing a narrow DOM surface. Prototype target: much faster browser-like runtime with sharply lower memory use.",
-      tag: "OS / Runtime",
-      accent: true,
-      dark: true,
-    },
-    {
-      org: "undivisible",
-      name: "Atmosphere",
-      tech: "Swift · Rust · iOS · macOS · Windows · Android · Node",
-      desc: "Cross-device sync for Apple, Windows, Android, and browsers. Universal clipboard, continuity, file sharing, share extensions, keyboard extensions, and a P2P Node CLI. Hybrid local + web tunneling for ultra-fast networking across every device you own.",
-      tag: "Ecosystem",
-      accent: true,
-      dark: true,
-    },
-    {
-      org: "undivisible",
-      name: "unthinkclaw + unthinkmail",
-      tech: "Rust · SurrealDB · RocksDB · MCP · IMAP · Cloudflare Workers",
-      desc: "unthinkclaw: local-first Rust agent runtime — 1/100 the size of OpenClaw, runs entirely on your device with agent swarms for parallel speed. Supports Telegram, Discord, Slack, WhatsApp, Matrix, Signal, IRC, and more. unthinkmail adds native IMAP via MCP — no storage, no master key.",
-      tag: "AI Agent Runtime",
-      accent: false,
-      dark: false,
-    },
-  ];
+  const projs = briefOpenSourceCards();
 
   const langs = [
     { name: "English", pct: 100, level: "Native" },

@@ -1,3 +1,12 @@
+import {
+  librariesFromReadme,
+  mainHeroQuoteFromReadme,
+  mainProjectsFromReadme,
+  miniappsFromReadme,
+  utilitiesFromReadme,
+} from "@/data/readme-projects.generated";
+import { scrapeGithubRepoLanguages, sleep } from "@/lib/github-repo-languages";
+
 export type ReadmeProject = {
   key: string;
   name: string;
@@ -12,6 +21,7 @@ export type ReadmeBundle = {
   mainProjects: ReadmeProject[];
   utilities: ReadmeProject[];
   miniapps: ReadmeProject[];
+  libraries: ReadmeProject[];
 };
 
 export function projectKey(name: string): string {
@@ -29,8 +39,11 @@ function displayName(name: string): string {
 
 function stripMdLinks(text: string): string {
   return text
+    .replace(/##+ /g, "")
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/\*\*([^*]+)\*\*/g, "$1");
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/(^|[\s(])_([^_\n]+?)_(?=[\s).,;:!?]|$)/g, "$1$2");
 }
 
 function collapseWs(text: string): string {
@@ -42,13 +55,12 @@ function pushUnique(list: ReadmeProject[], p: ReadmeProject) {
 }
 
 const LINKED_WITH_DESC =
-  /^-\s+\*\*\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)\*\*\s*[–—\-]\s*(.+?)\s*$/;
+  /^-\s+\*\*\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)\*\*\s*(?:–|—|-)?\s*(.+?)\s*$/;
 const LINKED_NO_URL = /^-\s+\*\*\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)\*\*\s*$/;
-const OTHER_WITH_DESC = /^-\s+\*\*([^*]+)\*\*\s*[–—\-]\s*(.+?)\s*$/;
+const OTHER_WITH_DESC = /^-\s+\*\*([^*]+)\*\*\s*(?:–|—|-)?\s*(.+?)\s*$/;
 const OTHER_NO_DESC = /^-\s+\*\*([^*]+)\*\*\s*$/;
 const H3_LINK = /^###\s+\[([^\]]+)\]\((https?:\/\/[^)]+)\)\s*$/;
 const H2_LINK = /^##\s+\[([^\]]+)\]\((https?:\/\/[^)]+)\)\s*$/;
-const LIB_CONT = /^\s+-\s+(.+?)\s*$/;
 
 function parseLinkedLine(line: string): ReadmeProject | null {
   const withDesc = line.match(LINKED_WITH_DESC);
@@ -140,6 +152,7 @@ export function parseReadme(md: string): ReadmeBundle {
   const mainProjects: ReadmeProject[] = [];
   const utilities: ReadmeProject[] = [];
   const miniapps: ReadmeProject[] = [];
+  const libraries: ReadmeProject[] = [];
   let mainHeroQuote = "";
 
   let mode:
@@ -149,6 +162,7 @@ export function parseReadme(md: string): ReadmeBundle {
     | "soliloquy_body"
     | "other"
     | "semitech"
+    | "semiother"
     | "miniapps"
     | "libraries" = "idle";
   let currentCategory = "";
@@ -158,8 +172,10 @@ export function parseReadme(md: string): ReadmeBundle {
   let pendingSoliloquy: ReadmeProject | null = null;
 
   const lines = md.split(/\n/);
+  let i = 0;
 
-  for (const line of lines) {
+  while (i < lines.length) {
+    const line = lines[i]!;
     const trimmed = line.trim();
 
     if (mode === "framework_body") {
@@ -169,6 +185,7 @@ export function parseReadme(md: string): ReadmeBundle {
           frameworkBodyLines,
         );
         mode = "subprojects";
+        i++;
         continue;
       }
       if (trimmed.startsWith("## ")) {
@@ -176,11 +193,12 @@ export function parseReadme(md: string): ReadmeBundle {
         continue;
       }
       frameworkBodyLines.push(line);
+      i++;
       continue;
     }
 
     if (mode === "soliloquy_body") {
-      if (trimmed === "### other") {
+      if (trimmed.startsWith("### ")) {
         if (pendingSoliloquy) {
           pendingSoliloquy.desc = collapseWs(
             stripMdLinks(soliloquyBodyLines.join("\n")),
@@ -189,39 +207,60 @@ export function parseReadme(md: string): ReadmeBundle {
           pendingSoliloquy = null;
         }
         soliloquyBodyLines.length = 0;
-        mode = "other";
-        continue;
+
+        const h3Match = trimmed.match(H3_LINK);
+        if (h3Match && projectKey(h3Match[1]!) === "rv8") {
+          const nm = h3Match[1]!;
+          let j = i + 1;
+          const descLines: string[] = [];
+          while (j < lines.length && !lines[j]!.trim().startsWith("### ")) {
+            descLines.push(lines[j]!);
+            j++;
+          }
+          utilities.push({
+            key: projectKey(nm),
+            name: displayName(nm),
+            href: h3Match[2]!,
+            desc: collapseWs(stripMdLinks(descLines.join("\n"))),
+          });
+          i = j;
+          continue;
+        }
+        if (trimmed === "### space") {
+          let j = i + 1;
+          const descLines: string[] = [];
+          while (j < lines.length && !lines[j]!.trim().startsWith("### ")) {
+            descLines.push(lines[j]!);
+            j++;
+          }
+          utilities.push({
+            key: "space",
+            name: "space",
+            href: "#",
+            desc: collapseWs(stripMdLinks(descLines.join("\n"))),
+          });
+          i = j;
+          continue;
+        }
+        if (trimmed === "### other") {
+          mode = "other";
+          i++;
+          continue;
+        }
       }
       soliloquyBodyLines.push(line);
-      continue;
-    }
-
-    if (mode === "libraries") {
-      const linked = parseLinkedLine(line);
-      if (linked) {
-        pushUnique(utilities, linked);
-        continue;
-      }
-      const cont = line.match(LIB_CONT);
-      if (cont && utilities.length > 0) {
-        const last = utilities[utilities.length - 1]!;
-        const add = collapseWs(stripMdLinks(cont[1]!));
-        last.desc = last.desc ? `${last.desc} ${add}` : add;
-      }
+      i++;
       continue;
     }
 
     if (mode === "miniapps") {
-      if (trimmed === "## libraries") {
-        mode = "libraries";
-        continue;
-      }
       if (trimmed.startsWith("## ")) {
         mode = "idle";
         continue;
       }
       if (trimmed.startsWith("### ")) {
         currentCategory = trimmed.replace("### ", "").trim();
+        i++;
         continue;
       }
       const linked = parseLinkedLine(line);
@@ -229,41 +268,60 @@ export function parseReadme(md: string): ReadmeBundle {
         if (currentCategory) linked.category = currentCategory;
         pushUnique(miniapps, linked);
       }
+      i++;
+      continue;
+    }
+
+    if (mode === "libraries") {
+      if (trimmed.startsWith("## ")) {
+        mode = "idle";
+        continue;
+      }
+      const linked = parseLinkedLine(trimmed);
+      if (linked) pushUnique(libraries, linked);
+      i++;
       continue;
     }
 
     if (mode === "semitech") {
       if (trimmed === "***") {
         mode = "idle";
+        i++;
         continue;
       }
       const linked = parseLinkedLine(line);
       if (linked) {
         pushUnique(utilities, linked);
+        i++;
         continue;
       }
       const other = parseOtherLine(line);
       if (other) pushUnique(utilities, other);
+      i++;
       continue;
     }
 
     if (mode === "other") {
       if (trimmed === "***") {
         mode = "idle";
+        i++;
         continue;
       }
       const other = parseOtherLine(line);
       if (other) pushUnique(utilities, other);
+      i++;
       continue;
     }
 
     if (mode === "subprojects") {
       if (trimmed === "***" || trimmed.startsWith("## [atechnology")) {
         mode = "idle";
+        i++;
         continue;
       }
       const linked = parseLinkedLine(line);
       if (linked) pushUnique(utilities, linked);
+      i++;
       continue;
     }
 
@@ -292,11 +350,13 @@ export function parseReadme(md: string): ReadmeBundle {
       }
       mode = "framework_body";
       frameworkBodyLines.length = 0;
+      i++;
       continue;
     }
 
     if (trimmed === "### subprojects") {
       mode = "subprojects";
+      i++;
       continue;
     }
 
@@ -311,6 +371,7 @@ export function parseReadme(md: string): ReadmeBundle {
       };
       soliloquyBodyLines.length = 0;
       mode = "soliloquy_body";
+      i++;
       continue;
     }
 
@@ -325,23 +386,35 @@ export function parseReadme(md: string): ReadmeBundle {
       };
       soliloquyBodyLines.length = 0;
       mode = "soliloquy_body";
+      i++;
       continue;
     }
 
     if (trimmed === "### other") {
       mode = "other";
+      i++;
       continue;
     }
 
     if (trimmed.startsWith("## [semitechnological]")) {
       mode = "semitech";
+      i++;
       continue;
     }
 
     if (trimmed === "## miniapps") {
       mode = "miniapps";
+      i++;
       continue;
     }
+
+    if (trimmed.toLowerCase() === "## libraries") {
+      mode = "libraries";
+      i++;
+      continue;
+    }
+
+    i++;
   }
 
   if (pendingSoliloquy) {
@@ -351,7 +424,7 @@ export function parseReadme(md: string): ReadmeBundle {
     pushUnique(utilities, pendingSoliloquy);
   }
 
-  return { mainHeroQuote, mainProjects, utilities, miniapps };
+  return { mainHeroQuote, mainProjects, utilities, miniapps, libraries };
 }
 
 export const DEFAULT_PROFILE_MARKDOWN_URL =
@@ -359,6 +432,12 @@ export const DEFAULT_PROFILE_MARKDOWN_URL =
 
 export const LEGACY_PROFILE_MARKDOWN_URL =
   "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md";
+
+export function profileMarkdownUrls(): string[] {
+  return process.env.PROFILE_README_URL
+    ? [process.env.PROFILE_README_URL]
+    : [DEFAULT_PROFILE_MARKDOWN_URL, LEGACY_PROFILE_MARKDOWN_URL];
+}
 
 export function promoteAuroralityToUtilities(
   bundle: ReadmeBundle,
@@ -424,53 +503,43 @@ export function formatLinguistLanguages(
   return `${names.join(", ")}.`;
 }
 
-async function fetchGithubLinguistStack(
-  repoPath: string,
-  signal?: AbortSignal,
-): Promise<string | undefined> {
-  try {
-    const res = await fetch(
-      `https://api.github.com/repos/${repoPath}/languages`,
-      signal ? { signal } : undefined,
-    );
-    if (!res.ok) return undefined;
-    const data = await res.json();
-    if (!data || typeof data !== "object" || Array.isArray(data)) {
-      return undefined;
-    }
-    return formatLinguistLanguages(data as Record<string, number>);
-  } catch {
-    return undefined;
-  }
-}
+const STACK_SCRAPE_DELAY_MS = 250;
 
-async function applyGithubLinguistStacks(
+async function fillMissingRepoLanguageStacks(
   projects: ReadmeProject[],
   signal?: AbortSignal,
 ): Promise<ReadmeProject[]> {
-  return Promise.all(
-    projects.map(async (project) => {
-      const repoPath = githubRepoPathFromHref(project.href);
-      if (!repoPath) return project;
-      const stack = await fetchGithubLinguistStack(repoPath, signal);
-      return stack ? { ...project, stack } : project;
-    }),
-  );
+  const filled: ReadmeProject[] = [];
+  for (const project of projects) {
+    if (project.stack) {
+      filled.push(project);
+      continue;
+    }
+    const repoPath = githubRepoPathFromHref(project.href);
+    if (!repoPath) {
+      filled.push(project);
+      continue;
+    }
+    const stack = await scrapeGithubRepoLanguages(repoPath, signal);
+    filled.push(stack ? { ...project, stack } : project);
+    await sleep(STACK_SCRAPE_DELAY_MS);
+  }
+  return filled;
 }
 
-export async function normalizeReadmeBundleWithGithubLinguist(
+export async function fillReadmeBundleMissingStacks(
   bundle: ReadmeBundle,
   signal?: AbortSignal,
 ): Promise<ReadmeBundle> {
-  const normalized = normalizeReadmeBundle(bundle);
   return {
-    ...normalized,
-    mainProjects: await applyGithubLinguistStacks(
-      normalized.mainProjects,
+    ...bundle,
+    mainProjects: await fillMissingRepoLanguageStacks(
+      bundle.mainProjects,
       signal,
     ),
-    utilities: await applyGithubLinguistStacks(normalized.utilities, signal),
-    miniapps: await applyGithubLinguistStacks(normalized.miniapps, signal),
+    utilities: await fillMissingRepoLanguageStacks(bundle.utilities, signal),
+    miniapps: await fillMissingRepoLanguageStacks(bundle.miniapps, signal),
+    libraries: await fillMissingRepoLanguageStacks(bundle.libraries, signal),
   };
 }
 
@@ -509,49 +578,47 @@ export function applyReadmeStackFallbacks(
     ),
     utilities: applyStackFallbacks(fresh.utilities, previous.utilities),
     miniapps: applyStackFallbacks(fresh.miniapps, previous.miniapps),
+    libraries: applyStackFallbacks(fresh.libraries, previous.libraries),
   };
 }
 
-export async function fetchProfileReadmeProjects(options?: {
-  includeGithubLinguistStacks?: boolean;
+export async function fetchProfileMarkdown(options?: {
   signal?: AbortSignal;
   urls?: string[];
-}): Promise<ReadmeBundle> {
-  const urls = options?.urls ?? [
-    DEFAULT_PROFILE_MARKDOWN_URL,
-    LEGACY_PROFILE_MARKDOWN_URL,
-  ];
+}): Promise<string> {
+  const urls = options?.urls ?? profileMarkdownUrls();
   for (const url of urls) {
     const res = await fetch(url, { signal: options?.signal });
     if (!res.ok) continue;
-    const parsed = parseReadme(await res.text());
-    if (options?.includeGithubLinguistStacks === false) {
-      return normalizeReadmeBundle(parsed);
-    }
-    return normalizeReadmeBundleWithGithubLinguist(parsed, options?.signal);
+    return res.text();
   }
-  throw new Error("profile markdown fetch failed");
+  throw new Error(`profile markdown fetch failed: ${urls.join(" -> ")}`);
 }
 
-export async function getProfileReadmeProjects(): Promise<ReadmeBundle> {
-  const urls = process.env.PROFILE_README_URL
-    ? [process.env.PROFILE_README_URL]
-    : [DEFAULT_PROFILE_MARKDOWN_URL, LEGACY_PROFILE_MARKDOWN_URL];
-  try {
-    return fetchProfileReadmeProjects({ urls });
-  } catch {
-    const mod = await import("@/data/readme-projects.generated");
-    const hero =
-      "mainHeroQuoteFromReadme" in mod &&
-      typeof (mod as { mainHeroQuoteFromReadme: unknown })
-        .mainHeroQuoteFromReadme === "string"
-        ? (mod as { mainHeroQuoteFromReadme: string }).mainHeroQuoteFromReadme
-        : "";
-    return normalizeReadmeBundle({
-      mainHeroQuote: hero,
-      mainProjects: [...mod.mainProjectsFromReadme],
-      utilities: [...mod.utilitiesFromReadme],
-      miniapps: [...mod.miniappsFromReadme],
-    });
+export async function fetchProfileReadmeProjects(options?: {
+  includeRepoLanguageStacks?: boolean;
+  signal?: AbortSignal;
+  urls?: string[];
+}): Promise<ReadmeBundle> {
+  const normalized = normalizeReadmeBundle(
+    parseReadme(await fetchProfileMarkdown(options)),
+  );
+  if (options?.includeRepoLanguageStacks === false) {
+    return normalized;
   }
+  return fillReadmeBundleMissingStacks(normalized, options?.signal);
+}
+
+export function getReadmeBundleFromGenerated(): ReadmeBundle {
+  return {
+    mainHeroQuote: mainHeroQuoteFromReadme,
+    mainProjects: mainProjectsFromReadme,
+    utilities: utilitiesFromReadme,
+    miniapps: miniappsFromReadme,
+    libraries: librariesFromReadme,
+  };
+}
+
+export function getProfileReadmeProjects(): ReadmeBundle {
+  return getReadmeBundleFromGenerated();
 }

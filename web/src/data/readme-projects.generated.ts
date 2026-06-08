@@ -24,21 +24,21 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "name": "aurorality",
     "href": "https://github.com/tschk/aurorality",
     "desc": "aurorality turns web frontends into native swiftui for macos and ios, accepting swift, js/ts, or rust as your backend. with crepuscularity lite and aurorality-js, you can drop into existing sites to connect native frontends to js backends.",
-    "stack": "Rust, Swift, JavaScript, Shell."
+    "stack": "Rust, Swift, Other."
   },
   {
     "key": "inauguration",
     "name": "inauguration (wip)",
     "href": "https://github.com/tschk/inauguration",
     "desc": "an ultra-fast, general-purpose compiler pipeline for multiple languages designed around explicit capability management and deterministic execution graphs. it features a native language (inlang) that supports two synchronized syntaxes—a strict, explicit form ideal for tooling, agents, and deterministic builds, and a lightweight, human-friendly form optimized for readability.",
-    "stack": "Rust, Swift, V, Java, C, TypeScript, C#, Go, PHP, C++, Kotlin, Perl, Python, Dart, JavaScript, Lua, Julia, Scala, F#, Elixir, Erlang, R, Groovy, Odin, Hare, Zig, Nim, OCaml, Ruby."
+    "stack": "Rust, Swift, V, C, Java, TypeScript."
   },
   {
     "key": "equilibrium",
     "name": "equilibrium",
     "href": "https://github.com/tschk/equilibrium",
     "desc": "load c-compatible code into rust with one call. auto-detects sources, compiles, exposes as rust modules. `load()` is the primary path. for rust → swift, see eqswift.",
-    "stack": "Rust, D, Nim, Zig."
+    "stack": "Rust, Other."
   },
   {
     "key": "eqswift",
@@ -58,8 +58,21 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "key": "soliloquy",
     "name": "soliloquy",
     "href": "https://github.com/tschk/soliloquy",
-    "desc": "an experimental operating system model for the web — immutable, browser-native, built on a modified alpine base. ### rv8 it uses rv8, a custom browser engine built with servo and v8. ### space is a work in progress ground-up nanokernel built on top of inauguration.",
-    "stack": "Rust, HTML, Svelte, TypeScript, Shell, C, WGSL, CSS, Dockerfile, JavaScript, V, Makefile, AMPL."
+    "desc": "an experimental operating system model for the web — immutable, browser-native, built on a modified alpine base.",
+    "stack": "Rust, HTML, Svelte, TypeScript, Shell, C, Other."
+  },
+  {
+    "key": "rv8",
+    "name": "rv8",
+    "href": "https://github.com/tschk/rv8",
+    "desc": "it uses rv8, a custom browser engine built with servo and v8.",
+    "stack": "Rust."
+  },
+  {
+    "key": "space",
+    "name": "space",
+    "href": "#",
+    "desc": "is a work in progress ground-up nanokernel built on top of inauguration."
   },
   {
     "key": "experiences",
@@ -92,69 +105,6 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "name": "rover (shelved)",
     "href": "#",
     "desc": "utilities and plugin system for mac, based on raycast + ghostty."
-  },
-  {
-    "key": "rs_ai",
-    "name": "rs_ai",
-    "href": "https://github.com/undivisible/rs_ai",
-    "desc": "rust ai sdk for building across cloud and local providers with one async-first api with on-device runtimes through `rs_ai_local` — including gemini nano on android and google chrome (browser prompt api), foundationmodels on macos, and phi silica on windows and microsoft edge (browser prompt api).",
-    "stack": "Rust, Swift, C#, Kotlin."
-  },
-  {
-    "key": "rs_peekaboo",
-    "name": "rs_peekaboo",
-    "href": "https://github.com/undivisible/rs_peekaboo",
-    "desc": "peter steinberger's peekaboo rewritten in rust with a shell tool and usable as a crate library for embedding into applications.",
-    "stack": "Rust."
-  },
-  {
-    "key": "rs_imessage",
-    "name": "rs_imessage",
-    "href": "https://github.com/undivisible/rs_imessage",
-    "desc": "rust imessage crate and cli",
-    "stack": "Rust, Makefile, Shell."
-  },
-  {
-    "key": "rs_facetime",
-    "name": "rs_facetime",
-    "href": "https://github.com/undivisible/rs_facetime",
-    "desc": "rust facetime crate and cli",
-    "stack": "Rust, Objective-C, Makefile, Shell."
-  },
-  {
-    "key": "stalwart-lite",
-    "name": "stalwart lite",
-    "href": "https://github.com/arkiecompany/stalwart-lite",
-    "desc": "stalwart fork that runs in-process as a rust crate. imap, smtp, management api — no web admin, no overhead. built for embedding and local-first setups.",
-    "stack": "Rust, Shell, HTML, Python, Sieve, Dockerfile, HCL."
-  },
-  {
-    "key": "crosspost-rs",
-    "name": "crosspost-rs",
-    "href": "https://github.com/arkiecompany/crosspost-rs",
-    "desc": "a rust crossposting library for multiple social media platforms",
-    "stack": "Rust, Dockerfile."
-  },
-  {
-    "key": "ark-protocol",
-    "name": "ark-protocol",
-    "href": "https://github.com/tschk/ark-protocol",
-    "desc": "open protocol and reference implementation for exposing many local vps services behind one standardized https/websocket ingress. defines a manifest-based routing layer, adapter apis, and cloudflare-compatible edge integration for multiplexing internal ports through a single public endpoint.",
-    "stack": "JavaScript, Rust."
-  },
-  {
-    "key": "monoprotocol",
-    "name": "monoprotocol",
-    "href": "https://github.com/atechnology-company/monoprotocol",
-    "desc": "normative draft sync protocol: wire format, crypto (hkdf, aes256gcm), replicated object model, journals, capabilities; rust reference crate on crates.io with golden conformance vectors (json/cbor).",
-    "stack": "Rust."
-  },
-  {
-    "key": "svelte-streamdown",
-    "name": "svelte-streamdown",
-    "href": "https://github.com/undivisible/svelte-streamdown",
-    "desc": "a svelte version of vercel's streamdown for streamable markdown rendering with interactive codeblocks and math rendering.",
-    "stack": "TypeScript, Svelte, CSS, JavaScript."
   }
 ];
 
@@ -214,7 +164,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "href": "https://github.com/undivisible/folk-around",
     "desc": "lets folk or any hermes agent or openclaw interact with your computer p2p on macos.",
     "category": "developer tools",
-    "stack": "Zig, TypeScript."
+    "stack": "Rust, TypeScript, Astro, JavaScript."
   },
   {
     "key": "poke-around",
@@ -222,7 +172,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "href": "https://github.com/undivisible/poke-around",
     "desc": "lets poke interact with your computer across major oses.",
     "category": "developer tools",
-    "stack": "Rust, TypeScript, Shell, Dockerfile."
+    "stack": "Rust, TypeScript, Dockerfile."
   },
   {
     "key": "unthinkclaw",
@@ -230,7 +180,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "href": "https://github.com/undivisible/unthinkclaw",
     "desc": "openclaw but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms.",
     "category": "developer tools",
-    "stack": "Rust, JavaScript, Shell, V, Dockerfile."
+    "stack": "Rust, JavaScript, Other."
   },
   {
     "key": "bluetooth-terminal",
@@ -287,5 +237,78 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "desc": "minecraft client in native swiftui with modrinth modpack, shader, and resource pack loading.",
     "category": "mobile & desktop",
     "stack": "Swift, Shell."
+  }
+];
+
+export const librariesFromReadme: ReadmeProject[] = [
+  {
+    "key": "rs_ai",
+    "name": "rs_ai",
+    "href": "https://github.com/undivisible/rs_ai",
+    "desc": "rust ai sdk for building across cloud and local providers with one async-first api with on-device runtimes through `rs_ai_local` — including gemini nano on android and google chrome (browser prompt api), foundationmodels on macos, and phi silica on windows and microsoft edge (browser prompt api).",
+    "stack": "Rust, Swift, C#, Kotlin."
+  },
+  {
+    "key": "rs_poke",
+    "name": "rs_poke",
+    "href": "https://github.com/undivisible/rs_poke",
+    "desc": "poke by interaction's sdk in rust.",
+    "stack": "Rust."
+  },
+  {
+    "key": "rs_peekaboo",
+    "name": "rs_peekaboo",
+    "href": "https://github.com/undivisible/rs_peekaboo",
+    "desc": "peter steinberger's peekaboo rewritten in rust with a shell tool and usable as a crate library for embedding into applications.",
+    "stack": "Rust."
+  },
+  {
+    "key": "rs_imessage",
+    "name": "rs_imessage",
+    "href": "https://github.com/undivisible/rs_imessage",
+    "desc": "rust imessage crate and cli",
+    "stack": "Rust, Other."
+  },
+  {
+    "key": "rs_facetime",
+    "name": "rs_facetime",
+    "href": "https://github.com/undivisible/rs_facetime",
+    "desc": "rust facetime crate and cli",
+    "stack": "Rust, Objective-C, Makefile, Shell."
+  },
+  {
+    "key": "stalwart-lite",
+    "name": "stalwart lite",
+    "href": "https://github.com/arkiecompany/stalwart-lite",
+    "desc": "stalwart fork that runs in-process as a rust crate. imap, smtp, management api — no web admin, no overhead. built for embedding and local-first setups.",
+    "stack": "Rust, Shell, HTML, Python, Sieve, Dockerfile."
+  },
+  {
+    "key": "crosspost-rs",
+    "name": "crosspost-rs",
+    "href": "https://github.com/arkiecompany/crosspost-rs",
+    "desc": "a rust crossposting library for multiple social media platforms",
+    "stack": "Rust, Dockerfile."
+  },
+  {
+    "key": "ark-protocol",
+    "name": "ark-protocol",
+    "href": "https://github.com/tschk/ark-protocol",
+    "desc": "open protocol and reference implementation for exposing many local vps services behind one standardized https/websocket ingress. defines a manifest-based routing layer, adapter apis, and cloudflare-compatible edge integration for multiplexing internal ports through a single public endpoint.",
+    "stack": "JavaScript, Rust."
+  },
+  {
+    "key": "monoprotocol",
+    "name": "monoprotocol",
+    "href": "https://github.com/atechnology-company/monoprotocol",
+    "desc": "normative draft sync protocol: wire format, crypto (hkdf, aes256gcm), replicated object model, journals, capabilities; rust reference crate on crates.io with golden conformance vectors (json/cbor).",
+    "stack": "Rust."
+  },
+  {
+    "key": "svelte-streamdown",
+    "name": "svelte-streamdown",
+    "href": "https://github.com/undivisible/svelte-streamdown",
+    "desc": "a svelte version of vercel's streamdown for streamable markdown rendering with interactive codeblocks and math rendering.",
+    "stack": "TypeScript, Svelte, Other."
   }
 ];

@@ -2,6 +2,9 @@ import { expect, test } from "bun:test";
 import {
   applyReadmeStackFallbacks,
   fetchProfileReadmeProjects,
+  getProfileReadmeProjects,
+  getReadmeBundleFromGenerated,
+  parseReadme,
   type ReadmeBundle,
 } from "@/lib/profile-readme";
 
@@ -19,6 +22,7 @@ test("readme stack fallback keeps previous stacks when fresh sync has none", () 
       },
     ],
     miniapps: [],
+    libraries: [],
   };
   const fresh: ReadmeBundle = {
     mainHeroQuote: "",
@@ -32,6 +36,7 @@ test("readme stack fallback keeps previous stacks when fresh sync has none", () 
       },
     ],
     miniapps: [],
+    libraries: [],
   };
 
   expect(applyReadmeStackFallbacks(fresh, previous).utilities[0]?.stack).toBe(
@@ -63,7 +68,7 @@ test("client readme fetch falls back to the next markdown URL", async () => {
 
   try {
     const bundle = await fetchProfileReadmeProjects({
-      includeGithubLinguistStacks: false,
+      includeRepoLanguageStacks: false,
       urls: [
         "https://example.com/missing.md",
         "https://example.com/profile.md",
@@ -82,4 +87,30 @@ test("client readme fetch falls back to the next markdown URL", async () => {
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test("parseReadme captures libraries after miniapps", () => {
+  const bundle = parseReadme(
+    [
+      "## miniapps",
+      "### developer tools",
+      "- **[tool](https://github.com/undivisible/tool)** - handy",
+      "## libraries",
+      "- **[rs_ai](https://github.com/undivisible/rs_ai)** - rust ai sdk",
+      "- **[rs_poke](https://github.com/undivisible/rs_poke)** - poke sdk",
+    ].join("\n"),
+  );
+
+  expect(bundle.miniapps).toHaveLength(1);
+  expect(bundle.libraries).toHaveLength(2);
+  expect(bundle.libraries[0]?.key).toBe("rs_ai");
+});
+
+test("runtime readme bundle reads the generated snapshot", () => {
+  const generated = getReadmeBundleFromGenerated();
+  const runtime = getProfileReadmeProjects();
+  expect(runtime.mainProjects).toEqual(generated.mainProjects);
+  expect(runtime.utilities).toEqual(generated.utilities);
+  expect(runtime.miniapps).toEqual(generated.miniapps);
+  expect(runtime.libraries).toEqual(generated.libraries);
 });
