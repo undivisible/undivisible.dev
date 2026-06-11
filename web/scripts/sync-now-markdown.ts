@@ -1,7 +1,6 @@
 import { DEFAULT_PROFILE_MARKDOWN_URL } from "../src/lib/profile-readme.ts";
 
-const NOW_URL =
-  process.env.NOW_MARKDOWN_URL ?? DEFAULT_PROFILE_MARKDOWN_URL;
+const NOW_URL = process.env.NOW_MARKDOWN_URL ?? DEFAULT_PROFILE_MARKDOWN_URL;
 
 const OUT_FILE = new URL(
   "../src/data/now-markdown.generated.ts",

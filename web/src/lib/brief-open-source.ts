@@ -1,4 +1,7 @@
-import { getReadmeBundleFromGenerated, type ReadmeProject } from "@/lib/profile-readme";
+import {
+  getReadmeBundleFromGenerated,
+  type ReadmeProject,
+} from "@/lib/profile-readme";
 
 export type BriefOpenSourceCard = {
   org: string;
@@ -62,7 +65,10 @@ function groupCard(
   if (rows.length === 0) return null;
 
   const name = rows.map((row) => row.name).join(" + ");
-  const desc = rows.map((row) => row.desc).filter(Boolean).join(" ");
+  const desc = rows
+    .map((row) => row.desc)
+    .filter(Boolean)
+    .join(" ");
   const tech =
     rows
       .map((row) => stackLabel(row.stack))

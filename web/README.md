@@ -6,11 +6,11 @@ Production site for undivisible.dev. Built with Next.js 16 (App Router), React 1
 
 - **Home** — Scroll-snap sections, full-viewport Ascii + WebGL backdrop, Last.fm “now playing / last listened” block with links, Hong Kong day/night **Light** shader tied to clock scrubber.
 - **Clock / weather** — Open‑Meteo weather link, HKG / MEL / local clock links (timeanddate), wheel scrub to shift displayed time, “scroll to change time” hint on desktop hover, **now** opens local `now.md` overlay (Escape / back to close); **now** is a visible control on small screens.
-- **Navigation** — `SiteNav` in-page anchors (`#start`, `#services`, `#outcomes`, `#work`, `#pillars`, `#world`, `#contact`), resume print, `/brief` link.
+- **Navigation** — `SiteNav` in-page anchors (`#start`, `#services`, `#outcomes`, `#work`, `#pillars`, `#world`, `#contact`), generated resume and brief PDF downloads.
 - **Services** — Embedded “What I do” + four service rows (motion on view).
 - **Portfolio** — Case studies (`#outcomes`) and flagship pillars (`#pillars`) from readme data.
 - **Info slices** — Hero (`#start`), work grid + readme utilities (`#work`), bio / resume / contact (`#world`, `#contact`).
-- **Print** — `HomePrintRoot` + brief `PrintRoot` for print layouts.
+- **PDF** — `@react-pdf/renderer` documents for resume and brief downloads.
 - **Profile data** — `getProfileReadmeProjects()` fetches `now.md` (fallback `README.md`), normalizes utilities (e.g. aurorality, eqswift). `PROFILE_README_URL` overrides fetch URL. `bun run sync:readme` writes `readme-projects.generated.ts`.
 - **Last.fm** — Client fetch + optional `public/lastfm-recent.json` from `bun run sync:lastfm` when `NEXT_PUBLIC_LASTFM_API_KEY` is set.
 
