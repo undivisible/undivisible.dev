@@ -209,7 +209,7 @@ export function parseReadme(md: string): ReadmeBundle {
         soliloquyBodyLines.length = 0;
 
         const h3Match = trimmed.match(H3_LINK);
-        if (h3Match && projectKey(h3Match[1]!) === "rv8") {
+        if (h3Match) {
           const nm = h3Match[1]!;
           let j = i + 1;
           const descLines: string[] = [];

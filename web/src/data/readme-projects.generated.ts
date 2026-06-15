@@ -55,6 +55,13 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "stack": "Rust."
   },
   {
+    "key": "oil",
+    "name": "oil",
+    "href": "https://github.com/semitechnological/oil",
+    "desc": "fast system package manager in rust for all major *nix systems based on wax with linuxbrew support and interop with existing package managers.",
+    "stack": "Rust."
+  },
+  {
     "key": "soliloquy",
     "name": "soliloquy",
     "href": "https://github.com/tschk/soliloquy",
@@ -67,6 +74,13 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "href": "https://github.com/tschk/rv8",
     "desc": "it uses rv8, a custom browser engine built with servo and v8.",
     "stack": "Rust."
+  },
+  {
+    "key": "alpenglow",
+    "name": "alpenglow",
+    "href": "https://github.com/tschk/alpenglow",
+    "desc": "also using my distro of linux based on chimera, void and oasis.",
+    "stack": "Rust, Shell, C, HTML, Other."
   },
   {
     "key": "space",
@@ -152,35 +166,19 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "category": "web apps"
   },
   {
-    "key": "unthinkmail",
-    "name": "unthinkmail",
-    "href": "https://unthinkmail.undivisible.dev/",
-    "desc": "mcp for imap-supported email.",
+    "key": "incisor",
+    "name": "incisor",
+    "href": "https://github.com/undivisible/incisor",
+    "desc": "a rust + crepuscularity rewrite of balenaetcher to flash os images to sd cards and usbs",
+    "category": "developer tools",
+    "stack": "Rust."
+  },
+  {
+    "key": "rs_opencodedesktop",
+    "name": "rs_opencodedesktop",
+    "href": "https://github.com/semitechnological/rs_opencodedesktop",
+    "desc": "a (wip) rust + crepuscularity rewrite of opencode desktop that actually runs at 120fps.",
     "category": "developer tools"
-  },
-  {
-    "key": "folk-around",
-    "name": "folk around",
-    "href": "https://github.com/undivisible/folk-around",
-    "desc": "lets folk or any hermes agent or openclaw interact with your computer p2p on macos.",
-    "category": "developer tools",
-    "stack": "Rust, TypeScript, Astro, JavaScript."
-  },
-  {
-    "key": "poke-around",
-    "name": "poke around",
-    "href": "https://github.com/undivisible/poke-around",
-    "desc": "lets poke interact with your computer across major oses.",
-    "category": "developer tools",
-    "stack": "Rust, TypeScript, Dockerfile."
-  },
-  {
-    "key": "unthinkclaw",
-    "name": "unthinkclaw",
-    "href": "https://github.com/undivisible/unthinkclaw",
-    "desc": "openclaw but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms.",
-    "category": "developer tools",
-    "stack": "Rust, JavaScript, Other."
   },
   {
     "key": "bluetooth-terminal",
@@ -205,6 +203,37 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "desc": "browser extension that turns ai chat responses into interactive interfaces. renders widgets, panels, forms, charts inside chat via custom response tags, also built with the crepuscularity webextension framework.",
     "category": "browser extensions",
     "stack": "Rust."
+  },
+  {
+    "key": "unthinkmail",
+    "name": "unthinkmail",
+    "href": "https://unthinkmail.undivisible.dev/",
+    "desc": "mcp for imap-supported email.",
+    "category": "mobile & desktop"
+  },
+  {
+    "key": "folk-around",
+    "name": "folk around",
+    "href": "https://github.com/undivisible/folk-around",
+    "desc": "lets folk or any hermes agent or openclaw interact with your computer p2p on macos.",
+    "category": "mobile & desktop",
+    "stack": "Rust, TypeScript, Astro, JavaScript."
+  },
+  {
+    "key": "poke-around",
+    "name": "poke around",
+    "href": "https://github.com/undivisible/poke-around",
+    "desc": "lets poke interact with your computer across major oses.",
+    "category": "mobile & desktop",
+    "stack": "Rust, TypeScript, Dockerfile."
+  },
+  {
+    "key": "unthinkclaw",
+    "name": "unthinkclaw",
+    "href": "https://github.com/undivisible/unthinkclaw",
+    "desc": "openclaw but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms.",
+    "category": "mobile & desktop",
+    "stack": "Rust, JavaScript, Other."
   },
   {
     "key": "drift",
