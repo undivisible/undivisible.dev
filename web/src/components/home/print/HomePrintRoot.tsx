@@ -749,7 +749,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                   <div
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "150px 1fr auto",
+                      gridTemplateColumns: "100px 1fr auto",
                       gap: "0 16px",
                       padding: "10px 14px",
                       flex: 1,
