@@ -745,7 +745,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
             >
               <InlineMdText text={featuredSection.title} />
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               {featuredSection.items.map((item, i) => {
                 const isResumeItem = "meta" in item;
                 const baseBlurb = isResumeItem ? resumeItemBlurb(item) : item.desc;
@@ -757,31 +757,31 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                   <div
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "140px 1fr auto",
-                      gap: "0 12px",
-                      padding: "6px 12px",
+                      gridTemplateColumns: "150px 1fr auto",
+                      gap: "0 16px",
+                      padding: "10px 14px",
+                      minHeight: 52,
                       background: C.cream,
                       border: `1px solid ${C.rule}`,
                       borderRadius: 4,
-                      alignItems: "start",
+                      alignItems: "center",
                     }}
                   >
                     <div
                       style={{
-                        fontSize: 9,
+                        fontSize: 10.5,
                         fontWeight: 700,
                         color: C.black,
-                        lineHeight: 1.15,
+                        lineHeight: 1.2,
                       }}
                     >
                       {label}
                     </div>
                     <div
                       style={{
-                        fontSize: 7,
+                        fontSize: 8.5,
                         color: C.mid,
-                        lineHeight: 1.4,
-                        paddingTop: 1,
+                        lineHeight: 1.45,
                       }}
                     >
                       {blurb}
@@ -790,11 +790,10 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                       <div
                         style={{
                           fontFamily: mono,
-                          fontSize: 6.5,
+                          fontSize: 7.5,
                           letterSpacing: "-0.04em",
                           color: C.orange,
                           whiteSpace: "nowrap",
-                          paddingTop: 1,
                         }}
                       >
                         {stack}
