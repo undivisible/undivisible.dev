@@ -378,7 +378,7 @@ export function Info({
   ) : null;
 
   const socialPills = (
-    <div className="grid w-full grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
+    <div className="grid w-full grid-cols-2 gap-2.5 sm:grid-cols-5 sm:gap-3">
       {socials.map((social) => {
         const active = hoveredPill === social.name;
         return (

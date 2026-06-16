@@ -697,13 +697,17 @@ function ProjectSectionBlock({ section }: { section: PrintProjectSection }) {
 function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
   const projectCount = sections.reduce((n, s) => n + s.items.length, 0);
   const heroProject = readmeBundle.mainProjects[0];
-  const visibleSections = sections
-    .map((section) =>
-      section.title === "Main project"
-        ? { ...section, items: section.items.slice(1) }
-        : section,
-    )
-    .filter((section) => section.items.length > 0);
+  const featuredSection = sections.find((s) => s.title === "Flagship projects");
+  const otherSection = sections.find((s) => s.title === "Other projects");
+
+  const otherCategories = [
+    { label: "macOS / Desktop", items: "rs_peekaboo, rs_imessage, rs_facetime, drift, tile, tabyrus, unelaborate, vro, rover" },
+    { label: "Browser Extensions", items: "rs_vimium (Rust rewrite), anywhere (AI chat widgets)" },
+    { label: "Developer Tools", items: "incisor (Etcher rewrite), rs_opencode, bluetooth-terminal" },
+    { label: "Web Apps", items: "standpoint, notes, bublik, alphabets, infrastruct, soliloquy" },
+    { label: "Libraries", items: "rs_ai, stalwart-lite, crosspost-rs, svelte-streamdown, ark-protocol, monoprotocol" },
+    { label: "AI & Automation", items: "folk-around, poke-around, unthinkmail" },
+  ];
 
   return (
     <div
@@ -727,9 +731,66 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
         }}
       >
         {heroProject ? <ProjectHeroCard item={heroProject} /> : null}
-        {visibleSections.map((section) => (
-          <ProjectSectionBlock key={section.title} section={section} />
-        ))}
+        {featuredSection ? (
+          <ProjectSectionBlock section={featuredSection} />
+        ) : null}
+        {otherSection ? (
+          <section>
+            <div
+              style={{
+                fontFamily: mono,
+                fontSize: 7.5,
+                letterSpacing: "-0.04em",
+                textTransform: "uppercase",
+                color: C.orange,
+                marginBottom: 5,
+              }}
+            >
+              + {otherSection.items.length} more projects across categories — full list on github.com/undivisible & undivisible.dev
+            </div>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr 1fr",
+                gap: 1,
+                background: C.rule,
+                border: `1px solid ${C.rule}`,
+              }}
+            >
+              {otherCategories.map(({ label, items }) => (
+                <div
+                  key={label}
+                  style={{
+                    background: C.cream,
+                    padding: "6px 9px",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontFamily: mono,
+                      fontSize: 6.8,
+                      letterSpacing: "-0.04em",
+                      textTransform: "uppercase",
+                      color: C.orange,
+                      marginBottom: 2,
+                    }}
+                  >
+                    {label}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 6.8,
+                      color: C.mid,
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    {items}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </div>
     </div>
   );
@@ -737,32 +798,34 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
 
 const readmeBundle = getReadmeBundleFromGenerated();
 
+const FEATURED_PROJECTS: string[] = [
+  "crepuscularity",
+  "inauguration",
+  "alpenglow",
+  "space",
+  "wax",
+  "rv8",
+  "unthinkclaw",
+];
+
+function isFeaturedProject(project: ReadmeProject): boolean {
+  return FEATURED_PROJECTS.includes(project.key);
+}
+
 function websiteProjectSections(): PrintProjectSection[] {
-  const miniappsByCategory = new Map<string, ReadmeProject[]>();
-  for (const project of readmeBundle.miniapps) {
-    const category = project.category || "other";
-    miniappsByCategory.set(category, [
-      ...(miniappsByCategory.get(category) || []),
-      project,
-    ]);
-  }
+  const allProjects = [
+    ...readmeBundle.mainProjects,
+    ...readmeBundle.utilities,
+    ...readmeBundle.libraries,
+    ...readmeBundle.miniapps,
+  ];
+
+  const featured = allProjects.filter(isFeaturedProject);
+  const rest = allProjects.filter((p) => !isFeaturedProject(p));
 
   return [
-    {
-      title: "Main project",
-      items: readmeBundle.mainProjects,
-    },
-    {
-      title: "Libraries & tools",
-      items: readmeBundle.utilities,
-    },
-    ...(readmeBundle.libraries.length > 0
-      ? [{ title: "Libraries", items: readmeBundle.libraries }]
-      : []),
-    ...Array.from(miniappsByCategory, ([title, items]) => ({
-      title,
-      items,
-    })),
+    { title: "Flagship projects", items: featured },
+    { title: "Other projects", items: rest },
   ];
 }
 

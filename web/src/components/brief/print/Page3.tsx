@@ -6,6 +6,37 @@ import { briefOpenSourceCards } from "@/lib/brief-open-source";
 export function Page3() {
   const projs = briefOpenSourceCards();
 
+  const otherCategories = [
+    {
+      label: "macOS / Desktop Apps",
+      items:
+        "rs_peekaboo (screen capture crate), rs_imessage, rs_facetime, drift (live wallpaper), tile (tiling WM), tabyrus (AI autocomplete), unelaborate (Minecraft client), vro (text editor)",
+    },
+    {
+      label: "Browser Extensions",
+      items: "rs_vimium (Rust rewrite), anywhere (AI chat → interactive widgets)",
+    },
+    {
+      label: "Developer Tools",
+      items:
+        "incisor (Etcher rewrite in Rust), rs_opencode (desktop), bluetooth-terminal, rover (Raycast-like)",
+    },
+    {
+      label: "Web Apps & Experiments",
+      items:
+        "standpoint (tierlists), notes, bublik (soundscape gen), alphabets, infrastruct (AI search), soliloquy (web OS model)",
+    },
+    {
+      label: "Libraries & Protocols",
+      items:
+        "rs_ai (cross-platform AI SDK), stalwart-lite (embeddable mail server), crosspost-rs, svelte-streamdown, ark-protocol, monoprotocol (sync protocol)",
+    },
+    {
+      label: "AI Agent Tooling",
+      items: "folk-around, poke-around (P2P computer interaction)",
+    },
+  ];
+
   const langs = [
     { name: "English", pct: 100, level: "Native" },
     { name: "Cantonese", pct: 100, level: "Native" },
@@ -120,9 +151,9 @@ export function Page3() {
           gap: 7,
         }}
       >
+        {/* Featured projects grid */}
         <div
           style={{
-            flex: 1,
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gridTemplateRows: "repeat(3, 1fr)",
@@ -218,6 +249,51 @@ export function Page3() {
           ))}
         </div>
 
+        {/* Other projects summary */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr",
+            gap: 1,
+            background: C.rule,
+            border: `1px solid ${C.rule}`,
+            flexShrink: 0,
+          }}
+        >
+          {otherCategories.map(({ label, items }) => (
+            <div
+              key={label}
+              style={{
+                background: C.cream,
+                padding: "7px 10px",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: mono,
+                  fontSize: 7,
+                  letterSpacing: "-0.05em",
+                  textTransform: "uppercase",
+                  color: C.orange,
+                  marginBottom: 3,
+                }}
+              >
+                {label}
+              </div>
+              <div
+                style={{
+                  fontSize: 7.5,
+                  color: C.mid,
+                  lineHeight: 1.5,
+                }}
+              >
+                {items}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Languages + Achievements */}
         <div
           style={{
             display: "grid",
