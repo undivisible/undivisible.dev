@@ -724,7 +724,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
         style={{
           flex: 1,
           minHeight: 0,
-          padding: "9px 22px 7px",
+          padding: "9px 22px 0",
           display: "flex",
           flexDirection: "column",
           gap: 6,
@@ -732,7 +732,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
       >
         {heroProject ? <ProjectHeroCard item={heroProject} /> : null}
         {featuredSection ? (
-          <section>
+          <section style={{ paddingBottom: 7 }}>
             <div
               style={{
                 fontFamily: mono,
@@ -820,64 +820,80 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
             </div>
           </section>
         ) : null}
-        {otherSection ? (
-          <section>
-            <div
-              style={{
-                fontFamily: mono,
-                fontSize: 7.5,
-                letterSpacing: "-0.04em",
-                textTransform: "uppercase",
-                color: C.orange,
-                marginBottom: 5,
-              }}
-            >
-              + {otherSection.items.length} more projects across categories — full list on github.com/undivisible & undivisible.dev
-            </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr 1fr",
-                gap: 1,
-                background: C.rule,
-                border: `1px solid ${C.rule}`,
-              }}
-            >
-              {otherCategories.map(({ label, items }) => (
+      </div>
+
+      {/* Bottom bar — anchored, black bg */}
+      {otherSection ? (
+        <div
+          style={{
+            background: C.black,
+            color: C.cream,
+            padding: "10px 22px 10px",
+            flexShrink: 0,
+          }}
+        >
+          <div
+            style={{
+              fontFamily: mono,
+              fontSize: 8.5,
+              letterSpacing: "-0.04em",
+              textTransform: "uppercase",
+              color: C.orange,
+              marginBottom: 6,
+            }}
+          >
+            + {otherSection.items.length} more projects across categories
+            <span style={{ color: "rgba(255,248,230,0.4)", marginLeft: 8 }}>
+              full list on github.com/undivisible & undivisible.dev
+            </span>
+          </div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gridAutoRows: "1fr",
+              gap: 1,
+              background: "rgba(255,248,230,0.12)",
+            }}
+          >
+            {otherCategories.map(({ label, items }) => (
+              <div
+                key={label}
+                style={{
+                  background: C.black,
+                  padding: "7px 10px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  border: "1px solid rgba(255,248,230,0.08)",
+                }}
+              >
                 <div
-                  key={label}
                   style={{
-                    background: C.cream,
-                    padding: "6px 9px",
+                    fontFamily: mono,
+                    fontSize: 7.2,
+                    letterSpacing: "-0.04em",
+                    textTransform: "uppercase",
+                    color: C.orange,
+                    marginBottom: 3,
                   }}
                 >
-                  <div
-                    style={{
-                      fontFamily: mono,
-                      fontSize: 6.8,
-                      letterSpacing: "-0.04em",
-                      textTransform: "uppercase",
-                      color: C.orange,
-                      marginBottom: 2,
-                    }}
-                  >
-                    {label}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 6.8,
-                      color: C.mid,
-                      lineHeight: 1.45,
-                    }}
-                  >
-                    {items}
-                  </div>
+                  {label}
                 </div>
-              ))}
-            </div>
-          </section>
-        ) : null}
-      </div>
+                <div
+                  style={{
+                    fontSize: 7.8,
+                    color: "rgba(255,248,230,0.6)",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {items}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
