@@ -389,12 +389,12 @@ export function Info({
             rel={
               social.href.startsWith("http") ? "noopener noreferrer" : undefined
             }
-            className="relative block h-11 min-h-11 min-w-0 w-full overflow-hidden rounded-full px-2.5 sm:h-12 sm:min-h-12 sm:px-3.5"
+            className="relative block h-11 min-h-11 min-w-0 w-full rounded-full px-2.5 sm:h-12 sm:min-h-12 sm:px-3.5"
             onMouseEnter={() => setHoveredPill(social.name)}
             onMouseLeave={() => setHoveredPill(null)}
           >
             <div
-              className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-full px-2 sm:px-2.5 ${TILE_LINK_HOVER} hover:brightness-105`}
+              className={`relative flex h-full w-full items-center justify-center rounded-full px-2 sm:px-2.5 ${TILE_LINK_HOVER} hover:brightness-105`}
               style={pillStyle}
             >
               <span
@@ -406,7 +406,7 @@ export function Info({
                 {social.name}
               </span>
               <span
-                className={`pointer-events-none absolute inset-x-2 bottom-1.5 truncate text-center font-mono text-[9px] leading-tight transition-all duration-300 sm:inset-x-2.5 sm:bottom-2 sm:text-[10px] ${
+                className={`pointer-events-none absolute inset-x-2 bottom-1.5 text-center font-mono text-[9px] leading-tight transition-all duration-300 sm:inset-x-2.5 sm:bottom-2 sm:text-[10px] ${
                   active ? "opacity-100" : "opacity-0"
                 }`}
                 style={{
@@ -528,7 +528,7 @@ export function Info({
           id="start"
           className="scroll-mt-20 relative flex min-h-[calc(100svh-9.5rem)] snap-start snap-always flex-col sm:min-h-[calc(100svh-10rem)]"
         >
-          <div className="relative z-[80] flex min-h-0 w-full max-w-4xl flex-1 flex-col pr-2 pb-6 sm:pb-8 sm:pr-36 lg:pr-44">
+          <div className="relative z-[80] flex min-h-0 w-full max-w-5xl flex-1 flex-col pr-2 pb-6 sm:pb-8 sm:pr-36 lg:pr-44">
             <div className="w-fit shrink-0">{clockPanel}</div>
             <div className="min-h-0 flex-1" aria-hidden />
             <motion.div
