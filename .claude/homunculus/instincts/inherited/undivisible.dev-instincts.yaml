@@ -1,0 +1,357 @@
+# Instincts generated from https://github.com/undivisible/undivisible.dev
+# Generated: 2026-05-11T14:06:16.044Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: undivisible.dev-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: fix
+
+## Evidence
+
+- 1 commits analyzed
+- Detected conventional commit pattern
+- Examples: fix(site): Last.fm snapshot fallback, hydration-safe motion, clock now view
+
+---
+id: undivisible.dev-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Commit Length
+
+## Action
+
+Write moderate-length commit messages (~75 characters)
+
+## Evidence
+
+- Average commit message length: 75 chars
+- Based on 1 commits
+
+---
+id: undivisible.dev-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: undivisible.dev-import-alias
+trigger: "when importing modules"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Import Alias
+
+## Action
+
+Use path aliases (@/, ~/) instead of relative imports
+
+## Evidence
+
+- Import analysis shows alias pattern
+- Example: import { x } from '@/lib/x'
+
+---
+id: undivisible.dev-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Export Style
+
+## Action
+
+Prefer mixed exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: mixed
+
+---
+id: undivisible.dev-arch-type-based
+trigger: "when adding new code"
+confidence: 0.8
+domain: architecture
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Arch Type Based
+
+## Action
+
+Place code in the appropriate type folder (components/, services/, utils/, etc.)
+
+## Evidence
+
+- Type-based module organization detected
+- Folders: 
+
+---
+id: undivisible.dev-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/undivisible/undivisible.dev
+---
+
+# Undivisible.dev Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: undivisible.dev-instinct-file-naming
+trigger: "When creating a new file"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct File Naming
+
+## Action
+
+Name the file using camelCase
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.files
+
+---
+id: undivisible.dev-instinct-function-naming
+trigger: "When defining a new function"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Function Naming
+
+## Action
+
+Name the function using camelCase
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.functions
+
+---
+id: undivisible.dev-instinct-class-naming
+trigger: "When defining a new class"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Class Naming
+
+## Action
+
+Name the class using PascalCase
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.classes
+
+---
+id: undivisible.dev-instinct-constant-naming
+trigger: "When declaring a constant"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Constant Naming
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.constants
+
+---
+id: undivisible.dev-instinct-import-style
+trigger: "When importing modules"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Import Style
+
+## Action
+
+Use alias import style
+
+## Evidence
+
+- Pattern in codeStyle.importStyle
+
+---
+id: undivisible.dev-instinct-export-style
+trigger: "When exporting modules or symbols"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Export Style
+
+## Action
+
+Use mixed export style (both named and default as appropriate)
+
+## Evidence
+
+- Pattern in codeStyle.exportStyle
+
+---
+id: undivisible.dev-instinct-commit-format
+trigger: "When writing a git commit message"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Commit Format
+
+## Action
+
+Use the conventional commit format with a 'fix' prefix and a scope in parentheses, followed by a concise summary
+
+## Evidence
+
+- Pattern in commits.prefixes
+- Seen in commit: fix(site): Last.fm snapshot fallback, hydration-safe motion, clock now view
+
+---
+id: undivisible.dev-instinct-commit-length
+trigger: "When writing a git commit message"
+confidence: 0.8
+domain: git
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Commit Length
+
+## Action
+
+Keep the commit message around 75 characters on average
+
+## Evidence
+
+- Pattern in commits.averageLength
+
+---
+id: undivisible.dev-instinct-error-handling
+trigger: "When handling errors in code"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Error Handling
+
+## Action
+
+Use try-catch blocks for error handling
+
+## Evidence
+
+- Pattern in errorHandling.style
+
+---
+id: undivisible.dev-instinct-test-location
+trigger: "When adding or updating tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Test Location
+
+## Action
+
+Place tests in a separate location from source code
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation
+
+---
+id: undivisible.dev-instinct-test-structure
+trigger: "When organizing tests"
+confidence: 0.7
+domain: testing
+source: repo-analysis
+source_repo: undivisible/undivisible.dev
+---
+
+# Undivisible.dev Instinct Test Structure
+
+## Action
+
+Organize tests by type, matching the type-based module organization
+
+## Evidence
+
+- Pattern in architecture.moduleOrganization
+
