@@ -201,8 +201,8 @@ function ProjectCard({ item }: { item: PrintProject }) {
 }
 
 function ProjectHeroCard({ item }: { item: ReadmeProject }) {
-  const stack = item.stack ? ` Built with ${item.stack}` : "";
-  const body = `${readmeBundle.mainHeroQuote} ${item.desc}${stack}`;
+  const stack = item.stack ? item.stack.trim() : "";
+  const body = `${readmeBundle.mainHeroQuote} ${item.desc}`;
 
   return (
     <a
@@ -214,52 +214,42 @@ function ProjectHeroCard({ item }: { item: ReadmeProject }) {
         background: C.cream,
         border: `1px solid ${C.rule}`,
         borderRadius: 6,
-        padding: "12px 14px",
+        padding: "12px 16px",
       }}
     >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "0.38fr 1fr",
-          gap: 15,
-          alignItems: "start",
-        }}
-      >
-        <div>
-          <div
-            style={{
-              fontFamily: mono,
-              fontSize: 6.7,
-              letterSpacing: "-0.04em",
-              textTransform: "uppercase",
-              color: C.orange,
-              marginBottom: 4,
-            }}
-          >
-            Headline platform
-          </div>
-          <div
-            style={{
-              color: C.black,
-              fontFamily: serif,
-              fontSize: 28,
-              lineHeight: 0.95,
-              letterSpacing: "-0.03em",
-            }}
-          >
-            {item.name}
-          </div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 5 }}>
+        <div
+          style={{
+            fontFamily: serif,
+            fontSize: 28,
+            lineHeight: 0.95,
+            letterSpacing: "-0.03em",
+            color: C.black,
+          }}
+        >
+          {item.name}
         </div>
         <div
           style={{
-            fontSize: 9.2,
-            color: C.mid,
-            lineHeight: 1.42,
-            paddingTop: 2,
+            fontFamily: mono,
+            fontSize: 7.5,
+            letterSpacing: "-0.04em",
+            textTransform: "uppercase",
+            color: C.orange,
+            whiteSpace: "nowrap",
           }}
         >
-          {body}
+          {stack}
         </div>
+      </div>
+      <div
+        style={{
+          fontSize: 9.2,
+          color: C.mid,
+          lineHeight: 1.45,
+        }}
+      >
+        {body}
       </div>
     </a>
   );
@@ -732,7 +722,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
       >
         {heroProject ? <ProjectHeroCard item={heroProject} /> : null}
         {featuredSection ? (
-          <section style={{ paddingBottom: 7 }}>
+          <section style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
             <div
               style={{
                 fontFamily: mono,
@@ -741,11 +731,12 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                 textTransform: "uppercase",
                 color: C.orange,
                 marginBottom: 5,
+                flexShrink: 0,
               }}
             >
               <InlineMdText text={featuredSection.title} />
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 5, flex: 1, minHeight: 0 }}>
               {featuredSection.items.map((item, i) => {
                 const isResumeItem = "meta" in item;
                 const baseBlurb = isResumeItem ? resumeItemBlurb(item) : item.desc;
@@ -760,7 +751,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                       gridTemplateColumns: "150px 1fr auto",
                       gap: "0 16px",
                       padding: "10px 14px",
-                      minHeight: 52,
+                      flex: 1,
                       background: C.cream,
                       border: `1px solid ${C.rule}`,
                       borderRadius: 4,
@@ -864,7 +855,6 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                   padding: "7px 10px",
                   display: "flex",
                   flexDirection: "column",
-                  justifyContent: "space-between",
                   border: "1px solid rgba(255,248,230,0.08)",
                 }}
               >
