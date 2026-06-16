@@ -749,7 +749,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                   <div
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "100px 1fr auto",
+                      gridTemplateColumns: "90px 1fr 170px",
                       gap: "0 16px",
                       padding: "10px 14px",
                       flex: 1,
@@ -787,6 +787,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                           letterSpacing: "-0.04em",
                           color: C.orange,
                           whiteSpace: "nowrap",
+                          textAlign: "right",
                         }}
                       >
                         {stack}
