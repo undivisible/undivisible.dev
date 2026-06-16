@@ -715,7 +715,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
         style={{
           flex: 1,
           minHeight: 0,
-          padding: "9px 22px 0",
+          padding: "22px 22px 22px",
           display: "flex",
           flexDirection: "column",
           gap: 6,
@@ -801,13 +801,14 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                     style={{
                       color: "inherit",
                       textDecoration: "none",
-                      display: "block",
+                      flex: 1,
+                      display: "flex",
                     }}
                   >
                     {row}
                   </a>
                 ) : (
-                  <div key={`${item.name}:${item.href}:${i}`}>{row}</div>
+                  <div key={`${item.name}:${item.href}:${i}`} style={{ flex: 1, display: "flex" }}>{row}</div>
                 );
               })}
             </div>
@@ -893,7 +894,6 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
 const readmeBundle = getReadmeBundleFromGenerated();
 
 const FEATURED_PROJECTS: string[] = [
-  "crepuscularity",
   "inauguration",
   "alpenglow",
   "space",
