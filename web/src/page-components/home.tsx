@@ -14,6 +14,28 @@ import type { ReadmeBundle } from "@/lib/profile-readme";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { useLastFmVisualData } from "@/lib/useLastFmVisualData";
 
+async function fetchFreshReadme(): Promise<ReadmeBundle | null> {
+  try {
+    const urls = [
+      "https://raw.githubusercontent.com/undivisible/undivisible/main/now.md",
+      "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md",
+    ];
+    let md = "";
+    for (const url of urls) {
+      const res = await fetch(url, { next: { revalidate: 3600 } });
+      if (res.ok) {
+        md = await res.text();
+        break;
+      }
+    }
+    if (!md) return null;
+    const mod = await import("@/lib/profile-readme");
+    return mod.normalizeReadmeBundle(mod.parseReadme(md));
+  } catch {
+    return null;
+  }
+}
+
 export default function Home({
   readme,
   nowMarkdown,
@@ -31,6 +53,14 @@ export default function Home({
     dayTheme.shader.weatherKind === "rain" ||
     dayTheme.shader.weatherKind === "storm";
   const [nowMode, setNowMode] = useState(false);
+  const [freshReadme, setFreshReadme] = useState<ReadmeBundle | null>(null);
+  const activeReadme = freshReadme ?? readme;
+
+  useEffect(() => {
+    fetchFreshReadme().then((r) => {
+      if (r) setFreshReadme(r);
+    });
+  }, []);
 
   useLayoutEffect(() => {
     document.documentElement.classList.add("snap-home");
@@ -124,18 +154,18 @@ export default function Home({
             <Info
               colors={colors}
               dayTheme={dayTheme}
-              readme={readme}
+              readme={activeReadme}
               nowMarkdown={nowMarkdown}
               onOpenNow={() => setNowMode(true)}
               slice="intro"
             />
             <ServicesSection embedded />
             <PortfolioCaseStudies />
-            <PortfolioPillars readme={readme} />
+            <PortfolioPillars readme={activeReadme} />
             <Info
               colors={colors}
               getTransportStyle={dayTheme.getTransportStyle}
-              readme={readme}
+              readme={activeReadme}
               nowMarkdown={nowMarkdown}
               onOpenNow={() => setNowMode(true)}
               slice="folio"
@@ -143,7 +173,7 @@ export default function Home({
             <Info
               colors={colors}
               getTransportStyle={dayTheme.getTransportStyle}
-              readme={readme}
+              readme={activeReadme}
               nowMarkdown={nowMarkdown}
               onOpenNow={() => setNowMode(true)}
               slice="bio"

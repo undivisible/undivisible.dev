@@ -18,8 +18,8 @@ import {
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-const featuredOrder: PillarKey[] = ["inauguration", "soliloquy"];
-const supportingOrder: PillarKey[] = ["crepuscularity", "equilibrium"];
+const featuredOrder: PillarKey[] = ["inauguration", "alpenglow"];
+const supportingOrder: PillarKey[] = ["crepuscularity", "space"];
 
 function byOrder(
   resolved: PillarResolved[],

@@ -2,9 +2,9 @@ import type { ReadmeBundle } from "@/lib/profile-readme";
 
 export const pillarKeys = [
   "crepuscularity",
-  "equilibrium",
   "inauguration",
-  "soliloquy",
+  "alpenglow",
+  "space",
 ] as const;
 
 export type PillarKey = (typeof pillarKeys)[number];
@@ -28,14 +28,14 @@ const templates: Record<PillarKey, PillarTemplate> = {
     stat: "Multi-surface",
     hrefFallback: "https://crepuscularity.undivisible.dev",
   },
-  equilibrium: {
-    eyebrow: "Systems & FFI",
-    displayName: "Equilibrium",
-    tagline: "Foreign code, one load call.",
+  space: {
+    eyebrow: "Operating system",
+    displayName: "Space",
+    tagline: "Component-based nanokernel. .in native language.",
     narrative:
-      "Load C-compatible libraries into Rust with automatic detection, compilation, and module handles — the pragmatic bridge between ecosystems when you need native performance without rewriting the world.",
-    stat: "FFI core",
-    hrefFallback: "https://github.com/semitechnological/equilibrium",
+      "A component-based operating system built on a five-layer architecture: .in native language, Inauguration compiler, SCI component image format, Space runtime, and nanokernel enforcement. No POSIX in the kernel — Linux, Darwin, and Windows are microservices.",
+    stat: "Boots",
+    hrefFallback: "https://github.com/tschk/space",
   },
   inauguration: {
     eyebrow: "Compiler platform",
@@ -46,14 +46,14 @@ const templates: Record<PillarKey, PillarTemplate> = {
     stat: "Research",
     hrefFallback: "https://github.com/semitechnological/inauguration",
   },
-  soliloquy: {
-    eyebrow: "Web-native OS",
-    displayName: "Soliloquy",
-    tagline: "Immutable plates. Servo + V8.",
+  alpenglow: {
+    eyebrow: "Linux appliance",
+    displayName: "Alpenglow",
+    tagline: "Diskless, hardened, immutable.",
     narrative:
-      "An operating system model for the browser: Alpine-based, Servo rendering, V8 runtime, and room for agentic assistants that feel native to the web without pretending the host machine does not exist.",
-    stat: "Experimental",
-    hrefFallback: "https://github.com/atechnology-company/soliloquy",
+      "Diskless, hardened, immutable Linux appliance. GlowFS root, dinit init, Oil packages. Boots to login in <1s on native virt. x86_64, aarch64, riscv64, Rockchip RK3566.",
+    stat: "<1s boot",
+    hrefFallback: "https://github.com/tschk/alpenglow",
   },
 };
 

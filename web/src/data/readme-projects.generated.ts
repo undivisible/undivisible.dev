@@ -23,12 +23,12 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "key": "aurorality",
     "name": "aurorality",
     "href": "https://github.com/tschk/aurorality",
-    "desc": "aurorality turns web frontends into native swiftui for macos and ios, accepting swift, js/ts, or rust as your backend. with crepuscularity lite and aurorality-js, you can drop into existing sites to connect native frontends to js backends.",
+    "desc": "aurorality turns web frontends into native swiftui for macos and ios, accepting swift, js/ts, or rust as your backend. with crepuscularity lite and aurorality-js, you can drop into existing sites or electron apps to connect native frontends to js backends.",
     "stack": "Rust, Swift, Other."
   },
   {
     "key": "inauguration",
-    "name": "inauguration (wip)",
+    "name": "inauguration",
     "href": "https://github.com/tschk/inauguration",
     "desc": "an ultra-fast, general-purpose compiler pipeline for multiple languages designed around explicit capability management and deterministic execution graphs. it features a native language (inlang) that supports two synchronized syntaxes—a strict, explicit form ideal for tooling, agents, and deterministic builds, and a lightweight, human-friendly form optimized for readability.",
     "stack": "Rust, Swift, V, C, Java, TypeScript."
@@ -65,28 +65,29 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "key": "soliloquy",
     "name": "soliloquy",
     "href": "https://github.com/tschk/soliloquy",
-    "desc": "an experimental operating system model for the web — immutable, browser-native, built on a modified alpine base.",
-    "stack": "Rust, HTML, Svelte, TypeScript, Shell, C, Other."
+    "desc": "an experimental operating system model for the web — immutable, browser-native, built on alpenglow + rv8.",
+    "stack": "Rust, Svelte, TypeScript, WGSL, CSS, HTML, Other."
   },
   {
     "key": "rv8",
     "name": "rv8",
     "href": "https://github.com/tschk/rv8",
-    "desc": "it uses rv8, a custom browser engine built with servo and v8.",
+    "desc": "a custom browser engine built with servo and v8 with in house optimisations.",
     "stack": "Rust."
   },
   {
     "key": "alpenglow",
     "name": "alpenglow",
     "href": "https://github.com/tschk/alpenglow",
-    "desc": "also using my distro of linux based on chimera, void and oasis.",
-    "stack": "Rust, Shell, C, HTML, Other."
+    "desc": "is my distro of linux based on chimera, void, alpine and oasis. the minimal build smaller than an image taken on a modern day phone, standard is smaller than a 50MP image. boots in under a second and runs completely in RAM. ships with my own custom package manager oil, which has been lightened for this operating system. there is a work in progress desktop environment – alpenglowed built on top of wayland to render the entire desktop environment in crepuscular gpui.",
+    "stack": "Rust, C, Zig, Other."
   },
   {
     "key": "space",
     "name": "space",
-    "href": "#",
-    "desc": "is a work in progress ground-up nanokernel built on top of inauguration."
+    "href": "https://github.com/tschk/space",
+    "desc": "is a work in progress (it boots!) ground-up operating system built on top of inauguration. it focuses on having seperate services as distributed components, with the compiler natively sandboxing based on authority scheduling capabilities permissions etc.",
+    "stack": "Assembly."
   },
   {
     "key": "experiences",
@@ -99,26 +100,6 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "name": "atmosphere",
     "href": "#",
     "desc": "a native sync and ecosystem layer for every device, with local-first and homelab support."
-  },
-  {
-    "key": "tile",
-    "name": "tile (shelved)",
-    "href": "https://github.com/semitechnological/tile",
-    "desc": "mosaic-style tiling window manager + canvas + multiplexer for macos.",
-    "stack": "Rust."
-  },
-  {
-    "key": "tabyrus",
-    "name": "tabyrus (wip)",
-    "href": "https://github.com/semitechnological/tabyrus",
-    "desc": "ai-powered autocomplete anywhere on your mac. uses cotabby as a reference but uses a rust backend + mlx.",
-    "stack": "Swift, Rust, C."
-  },
-  {
-    "key": "rover",
-    "name": "rover (shelved)",
-    "href": "#",
-    "desc": "utilities and plugin system for mac, based on raycast + ghostty."
   }
 ];
 
@@ -266,6 +247,29 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "desc": "minecraft client in native swiftui with modrinth modpack, shader, and resource pack loading.",
     "category": "mobile & desktop",
     "stack": "Swift, Shell."
+  },
+  {
+    "key": "tile",
+    "name": "tile (shelved)",
+    "href": "https://github.com/semitechnological/tile",
+    "desc": "mosaic-style tiling window manager + canvas + multiplexer for macos.",
+    "category": "mobile & desktop",
+    "stack": "Rust."
+  },
+  {
+    "key": "tabyrus",
+    "name": "tabyrus (wip)",
+    "href": "https://github.com/semitechnological/tabyrus",
+    "desc": "ai-powered autocomplete anywhere on your mac. uses cotabby as a reference but uses a rust backend + mlx.",
+    "category": "mobile & desktop",
+    "stack": "Swift, Rust, C."
+  },
+  {
+    "key": "rover",
+    "name": "rover (shelved)",
+    "href": "#",
+    "desc": "utilities and plugin system for mac, based on raycast + ghostty.",
+    "category": "mobile & desktop"
   }
 ];
 
@@ -320,6 +324,13 @@ export const librariesFromReadme: ReadmeProject[] = [
     "stack": "Rust, Dockerfile."
   },
   {
+    "key": "svelte-streamdown",
+    "name": "svelte-streamdown",
+    "href": "https://github.com/undivisible/svelte-streamdown",
+    "desc": "a svelte version of vercel's streamdown for streamable markdown rendering with interactive codeblocks and math rendering.",
+    "stack": "TypeScript, Svelte, Other."
+  },
+  {
     "key": "ark-protocol",
     "name": "ark-protocol",
     "href": "https://github.com/tschk/ark-protocol",
@@ -332,12 +343,5 @@ export const librariesFromReadme: ReadmeProject[] = [
     "href": "https://github.com/atechnology-company/monoprotocol",
     "desc": "normative draft sync protocol: wire format, crypto (hkdf, aes256gcm), replicated object model, journals, capabilities; rust reference crate on crates.io with golden conformance vectors (json/cbor).",
     "stack": "Rust."
-  },
-  {
-    "key": "svelte-streamdown",
-    "name": "svelte-streamdown",
-    "href": "https://github.com/undivisible/svelte-streamdown",
-    "desc": "a svelte version of vercel's streamdown for streamable markdown rendering with interactive codeblocks and math rendering.",
-    "stack": "TypeScript, Svelte, Other."
   }
 ];

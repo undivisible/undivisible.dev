@@ -159,7 +159,6 @@ export function parseReadme(md: string): ReadmeBundle {
     | "idle"
     | "framework_body"
     | "subprojects"
-    | "soliloquy_body"
     | "other"
     | "semitech"
     | "semiother"
@@ -168,8 +167,6 @@ export function parseReadme(md: string): ReadmeBundle {
   let currentCategory = "";
 
   const frameworkBodyLines: string[] = [];
-  const soliloquyBodyLines: string[] = [];
-  let pendingSoliloquy: ReadmeProject | null = null;
 
   const lines = md.split(/\n/);
   let i = 0;
@@ -197,62 +194,6 @@ export function parseReadme(md: string): ReadmeBundle {
       continue;
     }
 
-    if (mode === "soliloquy_body") {
-      if (trimmed.startsWith("### ")) {
-        if (pendingSoliloquy) {
-          pendingSoliloquy.desc = collapseWs(
-            stripMdLinks(soliloquyBodyLines.join("\n")),
-          );
-          pushUnique(utilities, pendingSoliloquy);
-          pendingSoliloquy = null;
-        }
-        soliloquyBodyLines.length = 0;
-
-        const h3Match = trimmed.match(H3_LINK);
-        if (h3Match) {
-          const nm = h3Match[1]!;
-          let j = i + 1;
-          const descLines: string[] = [];
-          while (j < lines.length && !lines[j]!.trim().startsWith("### ")) {
-            descLines.push(lines[j]!);
-            j++;
-          }
-          utilities.push({
-            key: projectKey(nm),
-            name: displayName(nm),
-            href: h3Match[2]!,
-            desc: collapseWs(stripMdLinks(descLines.join("\n"))),
-          });
-          i = j;
-          continue;
-        }
-        if (trimmed === "### space") {
-          let j = i + 1;
-          const descLines: string[] = [];
-          while (j < lines.length && !lines[j]!.trim().startsWith("### ")) {
-            descLines.push(lines[j]!);
-            j++;
-          }
-          utilities.push({
-            key: "space",
-            name: "space",
-            href: "#",
-            desc: collapseWs(stripMdLinks(descLines.join("\n"))),
-          });
-          i = j;
-          continue;
-        }
-        if (trimmed === "### other") {
-          mode = "other";
-          i++;
-          continue;
-        }
-      }
-      soliloquyBodyLines.push(line);
-      i++;
-      continue;
-    }
-
     if (mode === "miniapps") {
       if (trimmed.startsWith("## ")) {
         mode = "idle";
@@ -267,6 +208,12 @@ export function parseReadme(md: string): ReadmeBundle {
       if (linked) {
         if (currentCategory) linked.category = currentCategory;
         pushUnique(miniapps, linked);
+      } else {
+        const other = parseOtherLine(line);
+        if (other) {
+          if (currentCategory) other.category = currentCategory;
+          pushUnique(miniapps, other);
+        }
       }
       i++;
       continue;
@@ -354,38 +301,31 @@ export function parseReadme(md: string): ReadmeBundle {
       continue;
     }
 
+    if (
+      trimmed.startsWith("## ") &&
+      !isExcludedHeadline &&
+      linkMatches.length === 1
+    ) {
+      const m = linkMatches[0]!;
+      const nm = m[1]!;
+      let j = i + 1;
+      const descLines: string[] = [];
+      while (j < lines.length && !lines[j]!.trim().startsWith("## ") && !lines[j]!.trim().startsWith("### ")) {
+        descLines.push(lines[j]!);
+        j++;
+      }
+      utilities.push({
+        key: projectKey(nm),
+        name: displayName(nm),
+        href: m[2]!,
+        desc: collapseWs(stripMdLinks(descLines.join("\n"))),
+      });
+      i = j;
+      continue;
+    }
+
     if (trimmed === "### subprojects") {
       mode = "subprojects";
-      i++;
-      continue;
-    }
-
-    const h2Sol = trimmed.match(H2_LINK);
-    if (h2Sol && projectKey(h2Sol[1]!) === "soliloquy") {
-      const nm = h2Sol[1]!;
-      pendingSoliloquy = {
-        key: projectKey(nm),
-        name: displayName(nm),
-        href: h2Sol[2]!,
-        desc: "",
-      };
-      soliloquyBodyLines.length = 0;
-      mode = "soliloquy_body";
-      i++;
-      continue;
-    }
-
-    const sol = trimmed.match(H3_LINK);
-    if (sol && projectKey(sol[1]!) === "soliloquy") {
-      const nm = sol[1]!;
-      pendingSoliloquy = {
-        key: projectKey(nm),
-        name: displayName(nm),
-        href: sol[2]!,
-        desc: "",
-      };
-      soliloquyBodyLines.length = 0;
-      mode = "soliloquy_body";
       i++;
       continue;
     }
@@ -414,14 +354,29 @@ export function parseReadme(md: string): ReadmeBundle {
       continue;
     }
 
-    i++;
-  }
+    if (trimmed.startsWith("### ")) {
+      const h3Fallback = trimmed.match(H3_LINK);
+      const nm = h3Fallback
+        ? h3Fallback[1]!
+        : trimmed.replace("### ", "").trim();
+      const href = h3Fallback ? h3Fallback[2]! : "#";
+      let j = i + 1;
+      const descLines: string[] = [];
+      while (j < lines.length && !lines[j]!.trim().startsWith("### ") && !lines[j]!.trim().startsWith("## ")) {
+        descLines.push(lines[j]!);
+        j++;
+      }
+      utilities.push({
+        key: projectKey(nm),
+        name: displayName(nm),
+        href,
+        desc: collapseWs(stripMdLinks(descLines.join("\n"))),
+      });
+      i = j;
+      continue;
+    }
 
-  if (pendingSoliloquy) {
-    pendingSoliloquy.desc = collapseWs(
-      stripMdLinks(soliloquyBodyLines.join("\n")),
-    );
-    pushUnique(utilities, pendingSoliloquy);
+    i++;
   }
 
   return { mainHeroQuote, mainProjects, utilities, miniapps, libraries };
