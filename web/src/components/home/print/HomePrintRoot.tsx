@@ -732,7 +732,94 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
       >
         {heroProject ? <ProjectHeroCard item={heroProject} /> : null}
         {featuredSection ? (
-          <ProjectSectionBlock section={featuredSection} />
+          <section>
+            <div
+              style={{
+                fontFamily: mono,
+                fontSize: 7.5,
+                letterSpacing: "-0.04em",
+                textTransform: "uppercase",
+                color: C.orange,
+                marginBottom: 5,
+              }}
+            >
+              <InlineMdText text={featuredSection.title} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              {featuredSection.items.map((item, i) => {
+                const isResumeItem = "meta" in item;
+                const baseBlurb = isResumeItem ? resumeItemBlurb(item) : item.desc;
+                const stack = !isResumeItem ? item.stack?.trim() : undefined;
+                const blurb = stack ? `${baseBlurb} Built with ${stack}` : baseBlurb;
+                const label =
+                  "meta" in item && item.meta ? item.meta : item.name;
+                const row = (
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "140px 1fr auto",
+                      gap: "0 12px",
+                      padding: "6px 12px",
+                      background: C.cream,
+                      border: `1px solid ${C.rule}`,
+                      borderRadius: 4,
+                      alignItems: "start",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: 9,
+                        fontWeight: 700,
+                        color: C.black,
+                        lineHeight: 1.15,
+                      }}
+                    >
+                      {label}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 7,
+                        color: C.mid,
+                        lineHeight: 1.4,
+                        paddingTop: 1,
+                      }}
+                    >
+                      {blurb}
+                    </div>
+                    {stack ? (
+                      <div
+                        style={{
+                          fontFamily: mono,
+                          fontSize: 6.5,
+                          letterSpacing: "-0.04em",
+                          color: C.orange,
+                          whiteSpace: "nowrap",
+                          paddingTop: 1,
+                        }}
+                      >
+                        {stack}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+                return item.href ? (
+                  <a
+                    key={`${item.name}:${item.href}:${i}`}
+                    href={item.href}
+                    style={{
+                      color: "inherit",
+                      textDecoration: "none",
+                      display: "block",
+                    }}
+                  >
+                    {row}
+                  </a>
+                ) : (
+                  <div key={`${item.name}:${item.href}:${i}`}>{row}</div>
+                );
+              })}
+            </div>
+          </section>
         ) : null}
         {otherSection ? (
           <section>

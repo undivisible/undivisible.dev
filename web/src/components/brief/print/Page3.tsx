@@ -8,30 +8,32 @@ export function Page3() {
 
   const otherCategories = [
     {
-      label: "macOS / Desktop",
+      label: "macOS / Desktop Apps",
       items:
-        "rs_peekaboo · rs_imessage · rs_facetime · drift · tile · tabyrus · unelaborate · vro · rover",
+        "rs_peekaboo (screen capture crate), rs_imessage, rs_facetime, drift (live wallpaper), tile (tiling WM), tabyrus (AI autocomplete), unelaborate (Minecraft client), vro (text editor)",
     },
     {
       label: "Browser Extensions",
-      items: "rs_vimium (Rust rewrite) · anywhere (AI chat widgets)",
+      items: "rs_vimium (Rust rewrite), anywhere (AI chat → interactive widgets)",
     },
     {
       label: "Developer Tools",
-      items: "incisor (Etcher rewrite) · rs_opencode · bluetooth-terminal",
+      items:
+        "incisor (Etcher rewrite in Rust), rs_opencode (desktop), bluetooth-terminal, rover (Raycast-like)",
     },
     {
-      label: "Web Apps",
-      items: "standpoint · notes · bublik · alphabets · infrastruct · soliloquy",
+      label: "Web Apps & Experiments",
+      items:
+        "standpoint (tierlists), notes, bublik (soundscape gen), alphabets, infrastruct (AI search), soliloquy (web OS model)",
     },
     {
       label: "Libraries & Protocols",
       items:
-        "rs_ai · stalwart-lite · crosspost-rs · svelte-streamdown · ark-protocol · monoprotocol",
+        "rs_ai (cross-platform AI SDK), stalwart-lite (embeddable mail server), crosspost-rs, svelte-streamdown, ark-protocol, monoprotocol (sync protocol)",
     },
     {
-      label: "AI & Agent Tooling",
-      items: "folk-around · poke-around · unthinkmail",
+      label: "AI Agent Tooling",
+      items: "folk-around, poke-around (P2P computer interaction)",
     },
   ];
 
@@ -146,30 +148,36 @@ export function Page3() {
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
-          gap: 6,
+          gap: 7,
         }}
       >
-        {/* Featured projects — one per row */}
-        {projs.map(({ org, name, tech, desc, tag, accent, dark }, i) => (
-          <div
-            key={name}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "160px 1fr auto",
-              gap: "0 14px",
-              padding: "8px 14px",
-              background: dark ? C.black : C.cream,
-              border: `1px solid ${dark ? "rgba(255,248,230,0.12)" : C.rule}`,
-              alignItems: "start",
-              flexShrink: 0,
-            }}
-          >
-            {/* Left: org + name + tag */}
-            <div>
+        {/* Featured projects grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gridTemplateRows: "repeat(3, 1fr)",
+            gap: 1,
+            background: C.rule,
+            border: `1px solid ${C.rule}`,
+            overflow: "hidden",
+          }}
+        >
+          {projs.map(({ org, name, tech, desc, tag, accent, dark }) => (
+            <div
+              key={name}
+              style={{
+                background: dark ? C.black : C.cream,
+                padding: "9px 13px",
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
               <div
                 style={{
                   fontFamily: mono,
-                  fontSize: 6.8,
+                  fontSize: 7,
                   letterSpacing: "-0.05em",
                   textTransform: "uppercase",
                   color: dark
@@ -182,24 +190,50 @@ export function Page3() {
               </div>
               <div
                 style={{
-                  fontSize: 12,
+                  fontSize: 11.5,
                   fontWeight: 700,
                   color: dark ? C.cream : C.black,
                   letterSpacing: "-0.02em",
-                  lineHeight: 1.15,
-                  marginBottom: 4,
+                  lineHeight: 1.1,
+                  marginBottom: 2,
                 }}
               >
                 {name}
               </div>
               <div
                 style={{
+                  fontFamily: mono,
+                  fontSize: 7,
+                  letterSpacing: "-0.05em",
+                  color: C.orange,
+                  marginBottom: 4,
+                  lineHeight: 1.4,
+                }}
+              >
+                {tech}
+              </div>
+              <div
+                style={{
+                  fontSize: 8.5,
+                  color: dark ? "rgba(255,248,230,0.45)" : C.mid,
+                  lineHeight: 1.55,
+                  flex: 1,
+                  overflow: "hidden",
+                }}
+              >
+                {desc}
+              </div>
+              <div
+                style={{
                   display: "inline-block",
+                  marginTop: 5,
                   padding: "2px 7px",
                   fontFamily: mono,
-                  fontSize: 6.8,
+                  fontSize: 7,
                   letterSpacing: "-0.05em",
                   textTransform: "uppercase",
+                  alignSelf: "flex-start",
+                  flexShrink: 0,
                   whiteSpace: "nowrap",
                   ...(accent
                     ? { border: `1px solid ${C.orange}`, color: C.orange }
@@ -212,35 +246,8 @@ export function Page3() {
                 {tag}
               </div>
             </div>
-
-            {/* Middle: description */}
-            <div
-              style={{
-                fontSize: 8.2,
-                color: dark ? "rgba(255,248,230,0.5)" : C.mid,
-                lineHeight: 1.5,
-                paddingTop: 1,
-              }}
-            >
-              {desc}
-            </div>
-
-            {/* Right: tech stack */}
-            <div
-              style={{
-                fontFamily: mono,
-                fontSize: 6.8,
-                letterSpacing: "-0.05em",
-                color: C.orange,
-                textAlign: "right",
-                whiteSpace: "nowrap",
-                paddingTop: 2,
-              }}
-            >
-              {tech}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
         {/* Other projects summary */}
         <div
