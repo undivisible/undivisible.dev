@@ -79,6 +79,14 @@ const withFallbacks = previous
 const bundle = await fillReadmeBundleMissingStacks(withFallbacks);
 
 await Bun.write(OUT_FILE, emitTs(bundle));
+
+// Patch email: upstream README still has old address
+const generated = await Bun.file(OUT_FILE.pathname).text();
+await Bun.write(
+  OUT_FILE,
+  generated.replaceAll("max@undivisible.dev", "max@tsc.hk"),
+);
+
 console.log(
   `wrote ${OUT_FILE.pathname} (${bundle.mainProjects.length} main, ${bundle.utilities.length} utilities, ${bundle.miniapps.length} miniapps, ${bundle.libraries.length} libraries)`,
 );

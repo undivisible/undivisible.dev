@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     width: "32.1%",
   },
   stat: {
-    width: "24%",
+    flex: 1,
     borderTopWidth: 2,
     borderTopColor: C.orange,
     paddingTop: 5,
@@ -302,7 +302,7 @@ function ResumeDocument() {
     >
       <PageFrame title="Resume" page={1} total={2}>
         <View style={styles.row}>
-          <View style={{ width: "58%" }}>
+          <View style={{ width: "57%" }}>
             <Text style={styles.h1}>Max Carter</Text>
             <Text style={[styles.h2, { marginBottom: 10 }]}>
               Builder across AI automation, web products, open-source systems,
@@ -310,7 +310,7 @@ function ResumeDocument() {
             </Text>
             <ContactRows />
           </View>
-          <View style={{ width: "42%" }}>
+          <View style={{ width: "41%" }}>
             <Text style={styles.h3}>Skills</Text>
             {resumeDoc.skills.map((skill) => (
               <View key={skill[0]} style={styles.card}>

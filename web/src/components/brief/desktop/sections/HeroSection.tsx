@@ -139,7 +139,7 @@ export function HeroSection() {
           >
             {(
               [
-                [true, "max@undivisible.dev", "mailto:max@undivisible.dev"],
+                [true, "max@tsc.hk", "mailto:max@tsc.hk"],
                 [false, "+61 481 729 894", "tel:+61481729894"],
                 [false, "undivisible.dev", "https://undivisible.dev"],
                 [

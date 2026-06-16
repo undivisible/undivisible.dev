@@ -109,7 +109,7 @@ export function CasesSection() {
           </div>
         </div>
         <a
-          href="mailto:max@undivisible.dev"
+          href="mailto:max@tsc.hk"
           style={{
             fontFamily: mono,
             fontSize: 11,
@@ -121,7 +121,7 @@ export function CasesSection() {
             transition: "opacity 0.18s ease",
           }}
         >
-          max@undivisible.dev
+          max@tsc.hk
         </a>
       </motion.div>
 

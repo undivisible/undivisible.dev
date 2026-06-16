@@ -60,8 +60,8 @@ export function Page1() {
   const contacts = [
     {
       k: "Email",
-      v: "max@undivisible.dev",
-      href: "mailto:max@undivisible.dev",
+      v: "max@tsc.hk",
+      href: "mailto:max@tsc.hk",
     },
     { k: "Web", v: "undivisible.dev", href: "https://undivisible.dev" },
     {
@@ -161,7 +161,7 @@ export function Page1() {
           <div style={{ textAlign: "right" }}>
             {(
               [
-                ["o", "max@undivisible.dev", "mailto:max@undivisible.dev"],
+                ["o", "max@tsc.hk", "mailto:max@tsc.hk"],
                 ["", "+61 481 729 894", "tel:+61481729894"],
                 ["", "@undivisible.dev", "https://undivisible.dev"],
                 [

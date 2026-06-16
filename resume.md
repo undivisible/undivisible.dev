@@ -8,7 +8,7 @@ I make things for people. Part-time language learner, part-time philosopher, ful
 
 |           |                                |
 | --------- | ------------------------------ |
-| Email     | max@undivisible.dev            |
+| Email     | max@tsc.hk                    |
 | Phone     | +61 481 729 894                |
 | Instagram | @undivisible.dev               |
 | Twitter   | @makethings4ppl                |

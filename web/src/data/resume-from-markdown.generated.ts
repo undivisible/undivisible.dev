@@ -8,7 +8,7 @@ export const resumeFromMarkdown = {
   "contact": [
     [
       "Email",
-      "max@undivisible.dev"
+      "max@tsc.hk"
     ],
     [
       "Phone",

@@ -170,7 +170,7 @@ const projs = [
 ];
 
 const contacts = [
-  { label: "max@undivisible.dev", href: "mailto:max@undivisible.dev" },
+  { label: "max@tsc.hk", href: "mailto:max@tsc.hk" },
   { label: "+61 481 729 894", href: "tel:+61481729894" },
   { label: "undivisible.dev", href: "https://undivisible.dev" },
   { label: "github.com/undivisible", href: "https://github.com/undivisible" },
@@ -702,7 +702,7 @@ export function MobileRoot({ embed = false }: { embed?: boolean } = {}) {
               letterSpacing: "-0.02em",
             }}
           >
-            max@undivisible.dev · github.com/undivisible
+            max@tsc.hk · github.com/undivisible
           </div>
         </div>
       </div>

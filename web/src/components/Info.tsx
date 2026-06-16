@@ -31,13 +31,18 @@ const socials = [
   },
   {
     name: "email",
-    username: "max@undivisible.dev",
-    href: "mailto:max@undivisible.dev",
+    username: "max@tsc.hk",
+    href: "mailto:max@tsc.hk",
   },
   {
     name: "github",
     username: "undivisible",
     href: "https://github.com/undivisible",
+  },
+  {
+    name: "tsc.hk",
+    username: "tsc.hk",
+    href: "https://tsc.hk",
   },
 ];
 
