@@ -215,7 +215,7 @@ function ProjectHeroCard({ item }: { item: ReadmeProject }) {
         background: C.cream,
         border: `1px solid ${C.rule}`,
         borderRadius: 6,
-        padding: "14px 16px 12px",
+        padding: "26px 16px 14px",
       }}
     >
       <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 5 }}>
@@ -737,7 +737,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
             >
               <InlineMdText text={featuredSection.title} />
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 5, flex: 1, minHeight: 0, justifyContent: "stretch" }}>
+            <div style={{ flex: 1, minHeight: 0, height: 0, display: "flex", flexDirection: "column", gap: 5 }}>
               {featuredSection.items.map((item, i) => {
                 const isResumeItem = "meta" in item;
                 const baseBlurb = isResumeItem ? resumeItemBlurb(item) : item.desc;
@@ -752,7 +752,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                       gridTemplateColumns: "150px 1fr auto",
                       gap: "0 16px",
                       padding: "10px 14px",
-                      flex: "1 1 0",
+                      flex: 1,
                       minHeight: 0,
                       background: C.cream,
                       border: `1px solid ${C.rule}`,
