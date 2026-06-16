@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { ServicesSection } from "@/components/brief/desktop/sections/ServicesSection";
 import { Info } from "@/components/Info";
 import Ascii from "@/components/Ascii";
@@ -10,9 +11,26 @@ import { PortfolioCaseStudies } from "@/components/site/PortfolioCaseStudies";
 import { PortfolioPillars } from "@/components/site/PortfolioPillars";
 import { formatNowMarkdown } from "@/lib/format-now-markdown";
 import { useSiteVisualEffects } from "@/hooks/use-site-visual-effects";
+import {
+  clearSitePrintTarget,
+  printSitePdf,
+  type SitePrintTarget,
+} from "@/lib/site-print";
 import type { ReadmeBundle } from "@/lib/profile-readme";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { useLastFmVisualData } from "@/lib/useLastFmVisualData";
+
+const HomePrintRoot = dynamic(
+  () =>
+    import("@/components/home/print/HomePrintRoot").then(
+      (m) => m.HomePrintRoot,
+    ),
+  { ssr: false },
+);
+const PrintRoot = dynamic(
+  () => import("@/components/brief/print/PrintRoot").then((m) => m.PrintRoot),
+  { ssr: false },
+);
 
 async function fetchFreshReadme(): Promise<ReadmeBundle | null> {
   try {
@@ -55,12 +73,43 @@ export default function Home({
   const [nowMode, setNowMode] = useState(false);
   const [freshReadme, setFreshReadme] = useState<ReadmeBundle | null>(null);
   const activeReadme = freshReadme ?? readme;
+  const [printMounted, setPrintMounted] = useState(false);
+  useEffect(() => {
+    void import("@/components/home/print/HomePrintRoot");
+    void import("@/components/brief/print/PrintRoot");
+    setPrintMounted(true);
+  }, []);
+
+  const runPrint = useCallback(
+    async (target: SitePrintTarget) => {
+      if (!printMounted) setPrintMounted(true);
+      await printSitePdf(target);
+    },
+    [printMounted],
+  );
 
   useEffect(() => {
     fetchFreshReadme().then((r) => {
       if (r) setFreshReadme(r);
     });
   }, []);
+
+  useEffect(() => {
+    const onAfterPrint = () => clearSitePrintTarget();
+    window.addEventListener("afterprint", onAfterPrint);
+    return () => window.removeEventListener("afterprint", onAfterPrint);
+  }, []);
+
+  const printLayers = printMounted ? (
+    <>
+      <div className="print-only print-layer-resume" aria-hidden>
+        <HomePrintRoot />
+      </div>
+      <div className="print-only print-layer-brief" aria-hidden>
+        <PrintRoot />
+      </div>
+    </>
+  ) : null;
 
   useLayoutEffect(() => {
     document.documentElement.classList.add("snap-home");
@@ -116,13 +165,17 @@ export default function Home({
             {formatNowMarkdown(nowMarkdown)}
           </article>
         </div>
+        {printLayers}
       </>
     );
   }
 
   return (
     <>
-      <SiteNav />
+      <SiteNav
+        onPrintResume={() => runPrint("resume")}
+        onPrintBrief={() => runPrint("brief")}
+      />
       <div
         className="screen-only site-shell relative min-h-dvh sm:min-h-dvh"
         style={dayTheme.style}
@@ -181,6 +234,7 @@ export default function Home({
           </div>
         </div>
       </div>
+      {printLayers}
     </>
   );
 }
