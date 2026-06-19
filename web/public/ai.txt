@@ -1,0 +1,6 @@
+User-Agent: *
+Allow: /
+
+# LLM-friendly index: https://undivisible.dev/llms.txt
+# Markdown: https://undivisible.dev/now.md https://undivisible.dev/resume.md https://undivisible.dev/agents.md
+# Agent HTML index: https://undivisible.dev/agent
