@@ -1,20 +1,20 @@
 # undivisible.dev
 
-> Portfolio and contact site for Max Carter (undivisible): software systems, AI automation, and low-level tooling. Human UI is visual; agents should use plain markdown URLs below.
+> Max Carter (undivisible) — software systems, AI automation, low-level tooling. **Agents: GET the markdown files below** (static hosting; same bytes as curl).
 
-This site follows the [llms.txt](https://llmstxt.org/) convention: curated links to markdown sources. Fetch `text/markdown` or `text/plain` at each path. The interactive site is at https://undivisible.dev/; agent-readable bundle at https://undivisible.dev/agent.
+Hosted on GitHub Pages: `/now.md` and `/resume.md` are real files in the deploy bundle, not HTML wrappers.
 
-## Primary markdown
+## Markdown (fetch directly)
 
-- [Now / profile](https://undivisible.dev/now.md): Current focus, project list, and short bio (synced from GitHub `now.md` or README).
-- [Resume](https://undivisible.dev/resume.md): Full CV — experience, skills, contact.
-- [AGENTS.md](https://undivisible.dev/agents.md): Repo agent instructions for contributors and coding agents.
+- [Now / profile](https://undivisible.dev/now.md): Projects and current focus.
+- [Resume](https://undivisible.dev/resume.md): Experience, skills, contact.
+- [Agent how-to](https://undivisible.dev/agent.md): Which URLs to use; static vs Cloudflare-style negotiation.
 
-## Pages
+## Index
 
-- [Agent mode](https://undivisible.dev/agent): Single HTML page listing the same markdown with direct download links (no WebGL UI).
-- [Home](https://undivisible.dev/): Full portfolio (not optimized for token use).
+- [llms.txt](https://undivisible.dev/llms.txt): This file.
+- [Agent page](https://undivisible.dev/agent): HTML link list only (no inlined content).
 
 ## Optional
 
-- [GitHub profile README source](https://raw.githubusercontent.com/undivisible/undivisible/main/now.md): Upstream `now.md` when you need the latest before deploy sync.
+- [Upstream now.md](https://raw.githubusercontent.com/undivisible/undivisible/main/now.md): GitHub source before deploy sync.

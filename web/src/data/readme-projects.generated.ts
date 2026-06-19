@@ -79,7 +79,7 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "key": "alpenglow",
     "name": "alpenglow",
     "href": "https://github.com/tschk/alpenglow",
-    "desc": "is my distro of linux based on chimera, void, alpine and oasis. the minimal build smaller than an image taken on a modern day phone, standard is smaller than a 50MP image. boots in under a second and runs completely in RAM. ships with my own custom package manager oil, which has been lightened for this operating system. there is a work in progress desktop environment – alpenglowed built on top of wayland to render the entire desktop environment in crepuscular gpui.",
+    "desc": "is my distro of linux based on chimera, void, alpine and oasis. the minimal build is smaller than an image taken on a modern day phone, standard is smaller than a 50MP image. boots in under a second and runs completely in RAM. ships with my own custom package manager oil, which has been lightened for this operating system. there is a work in progress desktop environment – alpenglowed built on top of wayland to render the entire desktop environment in crepuscular gpui.",
     "stack": "Rust, C, Zig, Other."
   },
   {

@@ -26,7 +26,6 @@ async function fetchNow(): Promise<string | null> {
 
 const now = await fetchNow();
 const resume = await Bun.file(new URL("../../resume.md", import.meta.url)).text();
-const agents = await Bun.file(new URL("../../AGENTS.md", import.meta.url)).text();
 
 if (now) {
   await Bun.write(new URL("now.md", PUBLIC_DIR), now);
@@ -38,51 +37,62 @@ if (now) {
 await Bun.write(new URL("resume.md", PUBLIC_DIR), resume);
 console.log(`wrote public/resume.md (${resume.length} chars)`);
 
-await Bun.write(new URL("agents.md", PUBLIC_DIR), agents);
-console.log(`wrote public/agents.md (${agents.length} chars)`);
+const agentMd = `# undivisible.dev — agent index
+
+> Static site (GitHub Pages). Use **direct file URLs** — not HTML from \`/\`.
+
+## Fetch these (plain text)
+
+| URL | Content |
+|-----|---------|
+| ${SITE}/llms.txt | Curated link index ([llms.txt](https://llmstxt.org/) spec) |
+| ${SITE}/now.md | Profile, project list, now |
+| ${SITE}/resume.md | Resume / CV |
+
+Example: \`curl -sL ${SITE}/now.md\`
+
+## Not available here
+
+- No \`Accept: text/markdown\` on HTML routes (unlike Cloudflare markdown for agents on dynamic hosts).
+- Do not scrape \`${SITE}/\` (WebGL UI); use \`.md\` paths above.
+
+## Humans
+
+- ${SITE}/agent — this index as HTML
+- ${SITE}/ — portfolio
+`;
+
+await Bun.write(new URL("agent.md", PUBLIC_DIR), agentMd);
+console.log("wrote public/agent.md");
 
 const llms = `# undivisible.dev
 
-> Portfolio and contact site for Max Carter (undivisible): software systems, AI automation, and low-level tooling. Human UI is visual; agents should use plain markdown URLs below.
+> Max Carter (undivisible) — software systems, AI automation, low-level tooling. **Agents: GET the markdown files below** (static hosting; same bytes as curl).
 
-This site follows the [llms.txt](https://llmstxt.org/) convention: curated links to markdown sources. Fetch \`text/markdown\` or \`text/plain\` at each path. The interactive site is at ${SITE}/; agent-readable bundle at ${SITE}/agent.
+Hosted on GitHub Pages: \`/now.md\` and \`/resume.md\` are real files in the deploy bundle, not HTML wrappers.
 
-## Primary markdown
+## Markdown (fetch directly)
 
-- [Now / profile](${SITE}/now.md): Current focus, project list, and short bio (synced from GitHub \`now.md\` or README).
-- [Resume](${SITE}/resume.md): Full CV — experience, skills, contact.
-- [AGENTS.md](${SITE}/agents.md): Repo agent instructions for contributors and coding agents.
+- [Now / profile](${SITE}/now.md): Projects and current focus.
+- [Resume](${SITE}/resume.md): Experience, skills, contact.
+- [Agent how-to](${SITE}/agent.md): Which URLs to use; static vs Cloudflare-style negotiation.
 
-## Pages
+## Index
 
-- [Agent mode](${SITE}/agent): Single HTML page listing the same markdown with direct download links (no WebGL UI).
-- [Home](${SITE}/): Full portfolio (not optimized for token use).
+- [llms.txt](${SITE}/llms.txt): This file.
+- [Agent page](${SITE}/agent): HTML link list only (no inlined content).
 
 ## Optional
 
-- [GitHub profile README source](https://raw.githubusercontent.com/undivisible/undivisible/main/now.md): Upstream \`now.md\` when you need the latest before deploy sync.
+- [Upstream now.md](https://raw.githubusercontent.com/undivisible/undivisible/main/now.md): GitHub source before deploy sync.
 `;
 
 await Bun.write(new URL("llms.txt", PUBLIC_DIR), llms);
 console.log("wrote public/llms.txt");
 
-const ai = `User-Agent: *
-Allow: /
-
-# LLM-friendly index: ${SITE}/llms.txt
-# Markdown: ${SITE}/now.md ${SITE}/resume.md ${SITE}/agents.md
-# Agent HTML index: ${SITE}/agent
-`;
-
-await Bun.write(new URL("ai.txt", PUBLIC_DIR), ai);
-console.log("wrote public/ai.txt");
-
 const robots = `User-agent: *
 Allow: /
 
-Sitemap: ${SITE}/sitemap.xml
-
-# LLM agent index (llms.txt spec)
 # llms.txt: ${SITE}/llms.txt
 `;
 

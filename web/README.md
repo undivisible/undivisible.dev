@@ -13,7 +13,7 @@ Production site for undivisible.dev. Built with Next.js 16 (App Router), React 1
 - **PDF** — `@react-pdf/renderer` documents for resume and brief downloads.
 - **Profile data** — `getProfileReadmeProjects()` fetches `now.md` (fallback `README.md`), normalizes utilities (e.g. aurorality, eqswift). `PROFILE_README_URL` overrides fetch URL. `bun run sync:readme` writes `readme-projects.generated.ts`.
 - **Last.fm** — Client fetch + optional `public/lastfm-recent.json` from `bun run sync:lastfm` when `NEXT_PUBLIC_LASTFM_API_KEY` is set.
-- **Agent mode** — `/agent` plain HTML index; static `public/llms.txt`, `now.md`, `resume.md`, `agents.md`, `ai.txt`, `robots.txt` (llms.txt spec). `bun run sync:agent` on prebuild.
+- **Agent mode** — `/agent` lists direct URLs; static `public/llms.txt`, `agent.md`, `now.md`, `resume.md`, `robots.txt` (GitHub Pages serves them as plain files — no `Accept: text/markdown` on HTML). `bun run sync:agent` on prebuild.
 
 ## Commands
 
