@@ -25,7 +25,9 @@ async function fetchNow(): Promise<string | null> {
 }
 
 const now = await fetchNow();
-const resume = await Bun.file(new URL("../../resume.md", import.meta.url)).text();
+const resume = await Bun.file(
+  new URL("../../resume.md", import.meta.url),
+).text();
 
 if (now) {
   await Bun.write(new URL("now.md", PUBLIC_DIR), now);

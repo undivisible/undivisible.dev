@@ -3,11 +3,16 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Agent mode · undivisible.dev",
-  description: "Direct markdown URLs for AI agents (static files, not HTML scrape).",
+  description:
+    "Direct markdown URLs for AI agents (static files, not HTML scrape).",
 };
 
 const FETCH_PATHS = [
-  { href: "/llms.txt", label: "llms.txt", note: "Curated index (llms.txt spec)" },
+  {
+    href: "/llms.txt",
+    label: "llms.txt",
+    note: "Curated index (llms.txt spec)",
+  },
   { href: "/agent.md", label: "agent.md", note: "Short how-to for agents" },
   { href: "/now.md", label: "now.md", note: "Profile / projects / now" },
   { href: "/resume.md", label: "resume.md", note: "CV and contact" },
@@ -25,7 +30,9 @@ export default function AgentPage() {
       <h1 className="mt-2 text-lg text-white">Fetch markdown directly</h1>
       <p className="mt-4 text-white/70">
         This site is static on GitHub Pages. Agents should{" "}
-        <strong className="font-medium text-white/90">GET the .md / .txt URLs</strong>
+        <strong className="font-medium text-white/90">
+          GET the .md / .txt URLs
+        </strong>
         , not parse the visual home page. There is no{" "}
         <code className="text-white/85">Accept: text/markdown</code> negotiation
         (that needs an edge like Cloudflare Workers); paths below are already
