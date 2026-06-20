@@ -48,10 +48,12 @@ const agentMd = `# undivisible.dev — agent index
 | URL | Content |
 |-----|---------|
 | ${SITE}/llms.txt | Curated link index ([llms.txt](https://llmstxt.org/) spec) |
+| ${SITE}/llms-full.txt | Full agent-readable bundle: agent guide, now/profile, resume |
+| ${SITE}/agent.md | Agent guide and fetch order |
 | ${SITE}/now.md | Profile, project list, now |
 | ${SITE}/resume.md | Resume / CV |
 
-Example: \`curl -sL ${SITE}/now.md\`
+Best first request for full context: \`curl -sL ${SITE}/llms-full.txt\`
 
 ## Not available here
 
@@ -71,10 +73,11 @@ const llms = `# undivisible.dev
 
 > Max Carter (undivisible) — software systems, AI automation, low-level tooling. **Agents: GET the markdown files below** (static hosting; same bytes as curl).
 
-Hosted on GitHub Pages: \`/now.md\` and \`/resume.md\` are real files in the deploy bundle, not HTML wrappers.
+Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrappers.
 
 ## Markdown (fetch directly)
 
+- [Full bundle](${SITE}/llms-full.txt): Agent guide, profile/current projects, and resume in one Markdown request.
 - [Now / profile](${SITE}/now.md): Projects and current focus.
 - [Resume](${SITE}/resume.md): Experience, skills, contact.
 - [Agent how-to](${SITE}/agent.md): Which URLs to use; static vs Cloudflare-style negotiation.
@@ -92,10 +95,33 @@ Hosted on GitHub Pages: \`/now.md\` and \`/resume.md\` are real files in the dep
 await Bun.write(new URL("llms.txt", PUBLIC_DIR), llms);
 console.log("wrote public/llms.txt");
 
+const llmsFull = `${llms}
+
+---
+
+${agentMd}
+
+---
+
+# Now / profile
+
+${now ?? "No profile markdown was fetched during this build."}
+
+---
+
+# Resume
+
+${resume}
+`;
+
+await Bun.write(new URL("llms-full.txt", PUBLIC_DIR), llmsFull);
+console.log("wrote public/llms-full.txt");
+
 const robots = `User-agent: *
 Allow: /
 
 # llms.txt: ${SITE}/llms.txt
+# llms-full.txt: ${SITE}/llms-full.txt
 `;
 
 await Bun.write(new URL("robots.txt", PUBLIC_DIR), robots);

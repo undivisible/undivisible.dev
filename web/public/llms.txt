@@ -2,10 +2,11 @@
 
 > Max Carter (undivisible) — software systems, AI automation, low-level tooling. **Agents: GET the markdown files below** (static hosting; same bytes as curl).
 
-Hosted on GitHub Pages: `/now.md` and `/resume.md` are real files in the deploy bundle, not HTML wrappers.
+Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrappers.
 
 ## Markdown (fetch directly)
 
+- [Full bundle](https://undivisible.dev/llms-full.txt): Agent guide, profile/current projects, and resume in one Markdown request.
 - [Now / profile](https://undivisible.dev/now.md): Projects and current focus.
 - [Resume](https://undivisible.dev/resume.md): Experience, skills, contact.
 - [Agent how-to](https://undivisible.dev/agent.md): Which URLs to use; static vs Cloudflare-style negotiation.

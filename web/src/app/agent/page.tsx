@@ -13,6 +13,11 @@ const FETCH_PATHS = [
     label: "llms.txt",
     note: "Curated index (llms.txt spec)",
   },
+  {
+    href: "/llms-full.txt",
+    label: "llms-full.txt",
+    note: "Full Markdown bundle in one request",
+  },
   { href: "/agent.md", label: "agent.md", note: "Short how-to for agents" },
   { href: "/now.md", label: "now.md", note: "Profile / projects / now" },
   { href: "/resume.md", label: "resume.md", note: "CV and contact" },

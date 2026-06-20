@@ -7,10 +7,12 @@
 | URL | Content |
 |-----|---------|
 | https://undivisible.dev/llms.txt | Curated link index ([llms.txt](https://llmstxt.org/) spec) |
+| https://undivisible.dev/llms-full.txt | Full agent-readable bundle: agent guide, now/profile, resume |
+| https://undivisible.dev/agent.md | Agent guide and fetch order |
 | https://undivisible.dev/now.md | Profile, project list, now |
 | https://undivisible.dev/resume.md | Resume / CV |
 
-Example: `curl -sL https://undivisible.dev/now.md`
+Best first request for full context: `curl -sL https://undivisible.dev/llms-full.txt`
 
 ## Not available here
 

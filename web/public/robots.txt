@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 # llms.txt: https://undivisible.dev/llms.txt
+# llms-full.txt: https://undivisible.dev/llms-full.txt

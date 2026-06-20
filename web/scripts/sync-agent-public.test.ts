@@ -13,10 +13,19 @@ test("sync-agent-public writes fetchable markdown under public/", async () => {
   expect(code).toBe(0);
 
   const pub = path.join(import.meta.dirname, "../public");
-  for (const name of ["resume.md", "llms.txt", "agent.md", "robots.txt"]) {
+  for (const name of [
+    "resume.md",
+    "llms.txt",
+    "llms-full.txt",
+    "agent.md",
+    "robots.txt",
+  ]) {
     const text = await Bun.file(path.join(pub, name)).text();
     expect(text.length).toBeGreaterThan(10);
   }
   const llms = await Bun.file(path.join(pub, "llms.txt")).text();
   expect(llms).toContain("https://example.test/now.md");
+  const full = await Bun.file(path.join(pub, "llms-full.txt")).text();
+  expect(full).toContain("# Resume");
+  expect(await Bun.file(path.join(pub, "ai.txt")).exists()).toBe(false);
 });
