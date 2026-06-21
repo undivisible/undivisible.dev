@@ -71,13 +71,13 @@ _late 2024_
 
 ## Skills
 
-| Area      |                                                                                                |
-| --------- | ---------------------------------------------------------------------------------------------- |
-| Languages | Rust, Swift, TypeScript/JavaScript, Python, Go, V, Zig, C / C#                                 |
-| Frontend  | React, Next.js, SvelteKit, Solid, Tailwind, Astro, WebGL, SwiftUI, Crepuscularity              |
-| Systems   | GPUI, Ratatui, MV3 extensions, FFI, UniFFI, Servo, V8, WASM, Linux                             |
-| AI / Data | OpenAI, MCP, RAG, Transformers.js, local models, Hugging Face, Supabase, PostgreSQL, SurrealDB |
-| Infra     | Cloudflare Workers, Docker, GitHub Actions, CI/CD, SQLite                                      |
+| Area      |                                                                                                       |
+| --------- | ------------------------------------------------------------------------------------------------------|
+| Languages | Rust, Swift, TypeScript/JavaScript, Python, Go, V, Zig, C / C#                                        |
+| Frontend  | React, Next.js, SvelteKit, Solid, Tailwind, Astro, WebGL, SwiftUI, Crepuscularity                     |
+| Systems   | GPUI, Ratatui, MV3 extensions, FFI, UniFFI, Servo, V8, WASM, Linux                                    |
+| AI / Data | OpenAI, MCP, RAG, Transformers.js, local models, Hugging Face, Supabase, PostgreSQL, SQLite, SurrealDB|
+| Infra     | Cloudflare, Docker, GCP, Vercel, Netlify, Railway, GitHub Actions, CI/CD                              |
 
 ## Education
 
