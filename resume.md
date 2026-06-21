@@ -90,9 +90,10 @@ Cantonese · English · Russian · Mandarin · Indonesian · Learning Japanese
 
 ## Community
 
-- Volunteer English teacher for Russian speakers online, 2022–present.
+- Volunteer English teacher for Russian and other ESL speakers online, 2022–present.
 - Barbie CTF 2023, Petrozavodsk: 12th place in Russian exploit competition.
 - PECAN CTF 2025: 15th nationally, 4th in division.
+- Participated in HackerOne, HackTheBox and related organisations.
 
 ## Interests
 
