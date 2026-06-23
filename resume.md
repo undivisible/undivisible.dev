@@ -73,7 +73,7 @@ _late 2024_
 
 | Area      |                                                                                                       |
 | --------- | ------------------------------------------------------------------------------------------------------|
-| Languages | Rust, Swift, TypeScript/JavaScript, Python, Go, V, Zig, C / C#                                        |
+| Languages | Rust, Swift, TypeScript/JavaScript, Python, Go, V, Zig, C, C++, C#, Inauguration                      |
 | Frontend  | React + Native, Next.js, Solid, SvelteKit, Tailwind, SwiftUI, Crepuscularity                          |
 | Systems   | GPUI, Ratatui, MV3 extensions, FFI, UniFFI, Servo, V8, WASM, Linux                                    |
 | AI / Data | OpenAI, MCP, RAG, Transformers.js, local models, Hugging Face, Supabase, PostgreSQL, SQLite, SurrealDB|
