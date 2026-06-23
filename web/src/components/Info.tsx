@@ -3,24 +3,18 @@ import type { CSSProperties } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { lifeTimeline } from "@/data/life-timeline";
-import {
-  contactHref,
-  resumeCommunity,
-  resumeContact,
-  resumeEducation,
-  resumeExperience,
-  resumeInterests,
-  resumeSkillGroups,
-  resumeSocialLinks,
-} from "@/data/resume-document";
+import { contactHref, resumeSocialLinksFrom } from "@/data/resume-document";
+import { ClockPanel } from "@/components/ClockPanel";
+import { useResumeDocument } from "@/hooks/use-resume-document";
 import { projectKey, type ReadmeBundle } from "@/lib/profile-readme";
+import type { NowContent } from "@/lib/parse-now-markdown";
 import { pillarKeys } from "@/data/portfolio-featured";
 import { TILE_LINK_HOVER } from "@/components/brief/ui/constants";
 import { RandomizedText } from "./randomized-text";
 
 const REVEAL_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-const socials = resumeSocialLinks();
+
 
 const hoverNames = [
   "祁明思",
@@ -56,18 +50,26 @@ export function Info({
   dayTheme,
   getTransportStyle: getTransportStyleProp,
   readme,
-  nowMarkdown,
-  onOpenNow,
+  now,
+  nowArticleOpen = false,
+  onToggleNowArticle,
   slice = "all",
 }: {
   colors: string[];
   dayTheme?: HongKongDayTheme;
   getTransportStyle?: HongKongDayTheme["getTransportStyle"];
   readme: ReadmeBundle;
-  nowMarkdown: string | null;
-  onOpenNow: () => void;
+  now: NowContent;
+  nowArticleOpen?: boolean;
+  onToggleNowArticle?: () => void;
   slice?: "all" | "intro" | "folio" | "bio";
 }) {
+  const resumeDocLive = useResumeDocument();
+  const socials = resumeSocialLinksFrom(resumeDocLive);
+  const resumeExperienceLive = resumeDocLive.experience.map((job) => ({
+    ...job,
+    points: job.bullets,
+  }));
   const getTransportStyle =
     getTransportStyleProp ?? dayTheme?.getTransportStyle;
   if (!getTransportStyle) {
@@ -132,7 +134,6 @@ export function Info({
   }, [tidbits]);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const clockRef = useRef<HTMLDivElement | null>(null);
   const [hoveredPill, setHoveredPill] = useState<string | null>(null);
   const [nameHovered, setNameHovered] = useState(false);
   const [displayName, setDisplayName] = useState("max carter");
@@ -140,7 +141,6 @@ export function Info({
   const [loaded, setLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [hydrated, setHydrated] = useState(false);
-  const [clockHovered, setClockHovered] = useState(false);
   const [openCategories, setOpenCategories] = useState<Set<string>>(
     () => new Set(["web apps"]),
   );
@@ -159,18 +159,6 @@ export function Info({
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
-
-  useEffect(() => {
-    const clock = clockRef.current;
-    if (!clock || !dayTheme) {
-      return;
-    }
-
-    clock.addEventListener("wheel", dayTheme.onClockWheel, { passive: false });
-    return () => {
-      clock.removeEventListener("wheel", dayTheme.onClockWheel);
-    };
-  }, [dayTheme?.onClockWheel]);
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => setHydrated(true));
@@ -238,120 +226,6 @@ export function Info({
     }),
     [],
   );
-
-  const weatherText =
-    hydrated && dayTheme ? dayTheme.weatherDisplay : "--°C --";
-  const hkgText = hydrated && dayTheme ? dayTheme.hkgTime : "--:--:--";
-  const melText = hydrated && dayTheme ? dayTheme.melTime : "--:--:--";
-  const localText = hydrated && dayTheme ? dayTheme.localTime : "--:--:--";
-
-  const clockPanel = dayTheme ? (
-    <div
-      ref={clockRef}
-      data-time-scrubber="true"
-      className="w-fit shrink-0 text-[10px] uppercase tracking-[0.18em] [font-family:var(--font-jetbrains-mono),monospace] sm:text-[11px] sm:tracking-[0.22em]"
-      style={{ color: "var(--page-text)" }}
-      onMouseEnter={() => setClockHovered(true)}
-      onMouseLeave={() => {
-        setClockHovered(false);
-        dayTheme?.resetScrub();
-      }}
-    >
-      <div className="mb-2">
-        <a
-          href={dayTheme.weatherHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline decoration-dotted underline-offset-2 transition-opacity hover:opacity-90"
-          style={{ color: "var(--page-text-soft)" }}
-        >
-          {weatherText}
-        </a>
-      </div>
-      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <a
-          href={dayTheme.hkgClockHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex flex-wrap items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
-          style={{ color: "var(--page-text)" }}
-        >
-          <span
-            className="w-[3.2rem] shrink-0"
-            style={{ color: "var(--page-text-soft)" }}
-          >
-            HKG
-          </span>
-          <span>{hkgText}</span>
-        </a>
-        {nowMarkdown ? (
-          <button
-            type="button"
-            className={`cursor-pointer normal-case tracking-normal transition-all duration-300 ease-out max-lg:pointer-events-auto max-lg:opacity-100 max-lg:rounded-md max-lg:border max-lg:border-white/25 max-lg:bg-white/[0.06] max-lg:px-2 max-lg:py-0.5 max-lg:no-underline lg:border-none lg:bg-transparent lg:p-0 lg:underline lg:decoration-dotted lg:underline-offset-4 ${
-              clockHovered
-                ? "lg:pointer-events-auto lg:opacity-100"
-                : "lg:pointer-events-none lg:opacity-0"
-            }`}
-            style={{ color: "var(--page-text-muted)" }}
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              onOpenNow();
-            }}
-          >
-            now
-          </button>
-        ) : null}
-      </div>
-      <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <a
-          href={dayTheme.melClockHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex flex-wrap items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
-          style={{ color: "var(--page-text)" }}
-        >
-          <span
-            className="w-[3.2rem] shrink-0"
-            style={{ color: "var(--page-text-soft)" }}
-          >
-            MEL
-          </span>
-          <span>{melText}</span>
-        </a>
-        <span
-          aria-hidden={!clockHovered}
-          className={`hidden max-w-[10rem] normal-case tracking-normal text-[9px] leading-snug transition-opacity duration-300 ease-out lg:inline-block lg:max-w-none ${
-            clockHovered
-              ? "lg:opacity-100"
-              : "lg:pointer-events-none lg:opacity-0"
-          }`}
-          style={{ color: "var(--page-text-muted)" }}
-        >
-          scroll to change time
-        </span>
-      </div>
-      {dayTheme.showLocalTime && (
-        <div className="mt-1">
-          <a
-            href={dayTheme.localClockHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex flex-wrap items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
-            style={{ color: "var(--page-text)" }}
-          >
-            <span
-              className="w-[3.2rem] shrink-0"
-              style={{ color: "var(--page-text-soft)" }}
-            >
-              {dayTheme.localLabel}
-            </span>
-            <span>{localText}</span>
-          </a>
-        </div>
-      )}
-    </div>
-  ) : null;
 
   const socialPills = (
     <div className="grid w-full grid-cols-2 gap-2.5 sm:grid-cols-5 sm:gap-3">
@@ -505,7 +379,15 @@ export function Info({
           className="scroll-mt-20 relative flex min-h-[calc(100svh-9.5rem)] snap-start snap-always flex-col sm:min-h-[calc(100svh-10rem)]"
         >
           <div className="relative z-[80] flex min-h-0 w-full max-w-5xl flex-1 flex-col pr-2 pb-6 sm:pb-8 sm:pr-36 lg:pr-44">
-            <div className="w-fit shrink-0">{clockPanel}</div>
+            {dayTheme ? (
+              <ClockPanel
+                dayTheme={dayTheme}
+                now={now}
+                nowArticleOpen={nowArticleOpen}
+                onToggleNowArticle={onToggleNowArticle}
+                hydrated={hydrated}
+              />
+            ) : null}
             <div className="min-h-0 flex-1" aria-hidden />
             <motion.div
               className="w-full shrink-0"
@@ -689,7 +571,7 @@ export function Info({
                   </h3>
                 </motion.div>
                 <div className="space-y-10">
-                  {resumeExperience.map((job, i) => (
+                  {resumeExperienceLive.map((job, i) => (
                     <motion.div
                       key={`${job.org}-${job.role}`}
                       initial={{ opacity: 0, y: 16 }}
@@ -737,7 +619,7 @@ export function Info({
                     className="space-y-3 text-sm leading-relaxed"
                     style={{ color: "var(--page-text-muted)" }}
                   >
-                    {resumeEducation.map((line) => (
+                    {resumeDocLive.education.map((line) => (
                       <li key={line}>{line}</li>
                     ))}
                   </ul>
@@ -750,7 +632,7 @@ export function Info({
                     className="list-disc space-y-2 pl-5 text-sm leading-relaxed"
                     style={{ color: "var(--page-text-muted)" }}
                   >
-                    {resumeCommunity.map((line) => (
+                    {resumeDocLive.community.map((line) => (
                       <li key={line}>{line}</li>
                     ))}
                   </ul>
@@ -767,7 +649,7 @@ export function Info({
                   interests
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {resumeInterests.map((item) => (
+                  {resumeDocLive.interests.map((item) => (
                     <span
                       key={item}
                       className="cursor-default rounded-full border border-white/[0.07] bg-white/[0.03] px-3 py-1.5 text-[12px] text-white/55 transition-colors duration-200 ease-out hover:bg-white/[0.1] hover:text-white/75"
@@ -788,7 +670,7 @@ export function Info({
                   capabilities
                 </h3>
                 <div className="space-y-5">
-                  {resumeSkillGroups.map(([label, value]) => (
+                  {resumeDocLive.skills.map(([label, value]) => (
                     <div key={label}>
                       <div className="text-[9px] uppercase tracking-[0.14em] text-white/30 font-mono">
                         {label}
@@ -824,7 +706,7 @@ export function Info({
                   contact
                 </h3>
                 <dl className="grid gap-4 text-sm sm:grid-cols-2">
-                  {resumeContact
+                  {resumeDocLive.contact
                     .filter(([label]) => label !== "LinkedIn")
                     .map(([label, value]) => {
                       const href = contactHref(label, value);

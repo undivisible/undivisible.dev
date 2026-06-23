@@ -52,8 +52,10 @@ export function resumeContactValue(label: string): string | undefined {
   return resumeContact.find(([l]) => l === label)?.[1];
 }
 
-export function resumeSocialLinks(): ResumeSocialLink[] {
-  return resumeContact
+export function resumeSocialLinksFrom(
+  doc: ResumeDocument = resumeDoc,
+): ResumeSocialLink[] {
+  return doc.contact
     .filter(([label]) => label in SOCIAL_CONTACT_LABELS)
     .map(([label, value]) => {
       const href = contactHref(label, value);
@@ -66,4 +68,15 @@ export function resumeSocialLinks(): ResumeSocialLink[] {
       };
     })
     .filter((x): x is ResumeSocialLink => x !== null);
+}
+
+export function resumeSocialLinks(): ResumeSocialLink[] {
+  return resumeSocialLinksFrom(resumeDoc);
+}
+
+export function resumeContactValueFrom(
+  label: string,
+  doc: ResumeDocument = resumeDoc,
+): string | undefined {
+  return doc.contact.find(([l]) => l === label)?.[1];
 }

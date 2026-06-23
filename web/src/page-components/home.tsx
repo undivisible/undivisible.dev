@@ -10,6 +10,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { PortfolioCaseStudies } from "@/components/site/PortfolioCaseStudies";
 import { PortfolioPillars } from "@/components/site/PortfolioPillars";
 import { formatNowMarkdown } from "@/lib/format-now-markdown";
+import { useNowMarkdown, useRemoteReadme } from "@/hooks/use-remote-content";
 import { useSiteVisualEffects } from "@/hooks/use-site-visual-effects";
 import {
   clearSitePrintTarget,
@@ -32,28 +33,6 @@ const PrintRoot = dynamic(
   { ssr: false },
 );
 
-async function fetchFreshReadme(): Promise<ReadmeBundle | null> {
-  try {
-    const urls = [
-      "https://raw.githubusercontent.com/undivisible/undivisible/main/now.md",
-      "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md",
-    ];
-    let md = "";
-    for (const url of urls) {
-      const res = await fetch(url, { next: { revalidate: 3600 } });
-      if (res.ok) {
-        md = await res.text();
-        break;
-      }
-    }
-    if (!md) return null;
-    const mod = await import("@/lib/profile-readme");
-    return mod.normalizeReadmeBundle(mod.parseReadme(md));
-  } catch {
-    return null;
-  }
-}
-
 export default function Home({
   readme,
   nowMarkdown,
@@ -70,10 +49,15 @@ export default function Home({
     visualEffects ||
     dayTheme.shader.weatherKind === "rain" ||
     dayTheme.shader.weatherKind === "storm";
-  const [nowMode, setNowMode] = useState(false);
-  const [freshReadme, setFreshReadme] = useState<ReadmeBundle | null>(null);
-  const activeReadme = freshReadme ?? readme;
+  const now = useNowMarkdown(nowMarkdown);
+  const activeReadme = useRemoteReadme(readme);
+  const [nowArticleOpen, setNowArticleOpen] = useState(false);
   const [printMounted, setPrintMounted] = useState(false);
+
+  const toggleNowArticle = useCallback(() => {
+    if (!now.article) return;
+    setNowArticleOpen((open) => !open);
+  }, [now.article]);
   useEffect(() => {
     void import("@/components/home/print/HomePrintRoot");
     void import("@/components/brief/print/PrintRoot");
@@ -87,12 +71,6 @@ export default function Home({
     },
     [printMounted],
   );
-
-  useEffect(() => {
-    fetchFreshReadme().then((r) => {
-      if (r) setFreshReadme(r);
-    });
-  }, []);
 
   useEffect(() => {
     const onAfterPrint = () => clearSitePrintTarget();
@@ -126,56 +104,70 @@ export default function Home({
   }, [initialHash]);
 
   useEffect(() => {
-    if (!nowMode) {
-      return undefined;
-    }
+    if (!nowArticleOpen) return undefined;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setNowMode(false);
-      }
+      if (event.key === "Escape") setNowArticleOpen(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [nowMode]);
+  }, [nowArticleOpen]);
 
-  if (nowMode && nowMarkdown) {
-    return (
-      <>
-        <div
-          className="screen-only fixed inset-0 z-[200] h-dvh overflow-auto"
-          style={dayTheme.style}
-        >
-          <Light
-            scene={dayTheme.shader}
-            animated={animateWeather}
-            className="pointer-events-none fixed inset-0 z-0 h-full w-full"
-          />
-          <button
-            type="button"
-            className="absolute left-4 top-4 z-20 cursor-pointer border-none bg-transparent p-0 text-[10px] uppercase tracking-[0.22em] underline underline-offset-4"
-            style={{ color: "var(--page-text-muted)" }}
-            onClick={() => setNowMode(false)}
-          >
-            back
-          </button>
-          <article
-            className="relative z-10 mx-auto max-w-lg px-6 pb-16 pt-20 text-sm leading-relaxed [font-family:var(--font-jetbrains-mono),monospace]"
-            style={{ color: "var(--page-text)" }}
-          >
-            {formatNowMarkdown(nowMarkdown)}
-          </article>
-        </div>
-        {printLayers}
-      </>
-    );
-  }
+  useEffect(() => {
+    if (!now.article) setNowArticleOpen(false);
+  }, [now.article]);
+
+  const mainColumn = nowArticleOpen && now.article ? (
+    <article
+      className="relative z-10 mx-auto max-w-lg px-5 pb-24 pt-6 text-sm leading-relaxed [font-family:var(--font-jetbrains-mono),monospace] sm:px-8 lg:px-10"
+      style={{ color: "var(--page-text)" }}
+    >
+      {formatNowMarkdown(now.article)}
+    </article>
+  ) : (
+    <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-24 pt-5 sm:px-8 sm:pt-8 lg:px-10 lg:pt-10">
+      <div className="min-w-0 space-y-0">
+        <Info
+          colors={colors}
+          dayTheme={dayTheme}
+          readme={activeReadme}
+          now={now}
+          nowArticleOpen={nowArticleOpen}
+          onToggleNowArticle={toggleNowArticle}
+          slice="intro"
+        />
+        <ServicesSection embedded />
+        <PortfolioCaseStudies />
+        <PortfolioPillars readme={activeReadme} />
+        <Info
+          colors={colors}
+          getTransportStyle={dayTheme.getTransportStyle}
+          readme={activeReadme}
+          now={now}
+          nowArticleOpen={nowArticleOpen}
+          onToggleNowArticle={toggleNowArticle}
+          slice="folio"
+        />
+        <Info
+          colors={colors}
+          getTransportStyle={dayTheme.getTransportStyle}
+          readme={activeReadme}
+          now={now}
+          nowArticleOpen={nowArticleOpen}
+          onToggleNowArticle={toggleNowArticle}
+          slice="bio"
+        />
+      </div>
+    </div>
+  );
 
   return (
     <>
-      <SiteNav
-        onPrintResume={() => runPrint("resume")}
-        onPrintBrief={() => runPrint("brief")}
-      />
+      {!nowArticleOpen ? (
+        <SiteNav
+          onPrintResume={() => runPrint("resume")}
+          onPrintBrief={() => runPrint("brief")}
+        />
+      ) : null}
       <div
         className="screen-only site-shell relative min-h-dvh sm:min-h-dvh"
         style={dayTheme.style}
@@ -202,37 +194,7 @@ export default function Home({
           )}
         </div>
 
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-24 pt-5 sm:px-8 sm:pt-8 lg:px-10 lg:pt-10">
-          <div className="min-w-0 space-y-0">
-            <Info
-              colors={colors}
-              dayTheme={dayTheme}
-              readme={activeReadme}
-              nowMarkdown={nowMarkdown}
-              onOpenNow={() => setNowMode(true)}
-              slice="intro"
-            />
-            <ServicesSection embedded />
-            <PortfolioCaseStudies />
-            <PortfolioPillars readme={activeReadme} />
-            <Info
-              colors={colors}
-              getTransportStyle={dayTheme.getTransportStyle}
-              readme={activeReadme}
-              nowMarkdown={nowMarkdown}
-              onOpenNow={() => setNowMode(true)}
-              slice="folio"
-            />
-            <Info
-              colors={colors}
-              getTransportStyle={dayTheme.getTransportStyle}
-              readme={activeReadme}
-              nowMarkdown={nowMarkdown}
-              onOpenNow={() => setNowMode(true)}
-              slice="bio"
-            />
-          </div>
-        </div>
+        {mainColumn}
       </div>
       {printLayers}
     </>
