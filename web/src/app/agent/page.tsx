@@ -19,7 +19,7 @@ const FETCH_PATHS = [
     note: "Full Markdown bundle in one request",
   },
   { href: "/agent.md", label: "agent.md", note: "Short how-to for agents" },
-  { href: "/now.md", label: "now.md", note: "Profile / projects / now" },
+  { href: "/now.md", label: "now.md", note: "Now status (deploy snapshot; live site fetches GitHub)" },
   { href: "/resume.md", label: "resume.md", note: "CV and contact" },
 ] as const;
 
