@@ -13,7 +13,7 @@ I make things for people. Part-time language learner, part-time philosopher, ful
 | Instagram | @undivisible.dev               |
 | Twitter   | @makethings4ppl                |
 | GitHub    | github.com/undivisible         |
-| Location  | Melbourne / Sydney / Hong Kong |
+| Location  | Melbourne / Hong Kong          |
 
 ## Experience
 
