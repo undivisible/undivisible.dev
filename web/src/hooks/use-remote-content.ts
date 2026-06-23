@@ -22,11 +22,6 @@ export function useNowMarkdown(fallback?: string | null) {
   return parseNowMarkdown(raw);
 }
 
-/** @deprecated use useNowMarkdown */
-export function useNowStatus(fallback?: string | null): string | null {
-  return useNowMarkdown(fallback).status;
-}
-
 export function useRemoteReadme(seed: ReadmeBundle) {
   const [readme, setReadme] = useState<ReadmeBundle>(seed);
 

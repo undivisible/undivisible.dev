@@ -50,7 +50,7 @@ export const utilitiesFromReadme: ReadmeProject[] = [
   {
     "key": "wax",
     "name": "wax",
-    "href": "https://github.com/tschk/wax",
+    "href": "https://github.com/plyght/wax",
     "desc": "fast homebrew-compatible package manager in rust. uses homebrew's ecosystem (formulae, bottles, casks) without the ruby/git overhead — compiled, async, parallel installs, lockfiles, and experimental winget/scoop/nix-like support.",
     "stack": "Rust."
   },

@@ -1,5 +1,5 @@
 import { parseResumeMarkdown } from "../src/lib/parse-resume-markdown.ts";
-import { fetchResumeMarkdown } from "../src/lib/resume-source.ts";
+import { fetchResumeMarkdown } from "./fetch-resume-markdown.ts";
 
 const OUT_FILE = new URL(
   "../src/data/resume-from-markdown.generated.ts",

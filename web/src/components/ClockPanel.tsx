@@ -84,23 +84,6 @@ export function ClockPanel({
           </span>
           <span>{hkgText}</span>
         </a>
-      </div>
-      <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <a
-          href={dayTheme.melClockHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex flex-wrap items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
-          style={{ color: "var(--page-text)" }}
-        >
-          <span
-            className="w-[3.2rem] shrink-0"
-            style={{ color: "var(--page-text-soft)" }}
-          >
-            MEL
-          </span>
-          <span>{melText}</span>
-        </a>
         {showStatus ? (
           statusInteractive ? (
             <button
@@ -128,9 +111,26 @@ export function ClockPanel({
             </span>
           )
         ) : null}
+      </div>
+      <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <a
+          href={dayTheme.melClockHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex flex-wrap items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
+          style={{ color: "var(--page-text)" }}
+        >
+          <span
+            className="w-[3.2rem] shrink-0"
+            style={{ color: "var(--page-text-soft)" }}
+          >
+            MEL
+          </span>
+          <span>{melText}</span>
+        </a>
         <span
           aria-hidden={!clockHovered && !statusActive}
-          className={`hidden max-w-[10rem] normal-case tracking-normal text-[9px] leading-snug transition-opacity duration-300 ease-out lg:inline-block lg:max-w-none ${
+          className={`hidden max-w-[10rem] normal-case tracking-normal text-[9px] leading-snug transition-opacity duration-300 ease-out max-lg:inline-block max-lg:opacity-0 lg:inline-block lg:max-w-none ${
             clockHovered
               ? "lg:opacity-100"
               : "lg:pointer-events-none lg:opacity-0"

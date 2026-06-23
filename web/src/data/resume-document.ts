@@ -8,7 +8,7 @@ import { resumeFromMarkdown } from "@/data/resume-from-markdown.generated";
 import {
   contactDisplayUsername,
   contactHref,
-} from "@/lib/resume-source";
+} from "@/lib/resume-contact";
 
 export type { ResumeContactRow, ResumeExperience, ResumeProject };
 
@@ -74,9 +74,4 @@ export function resumeSocialLinks(): ResumeSocialLink[] {
   return resumeSocialLinksFrom(resumeDoc);
 }
 
-export function resumeContactValueFrom(
-  label: string,
-  doc: ResumeDocument = resumeDoc,
-): string | undefined {
-  return doc.contact.find(([l]) => l === label)?.[1];
-}
+

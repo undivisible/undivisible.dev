@@ -1,5 +1,5 @@
 import { DEFAULT_PROFILE_MARKDOWN_URL } from "../src/lib/profile-readme.ts";
-import { fetchResumeMarkdown } from "../src/lib/resume-source.ts";
+import { fetchResumeMarkdown } from "./fetch-resume-markdown.ts";
 
 const PUBLIC_DIR = new URL("../public/", import.meta.url);
 const SITE = process.env.SITE_URL ?? "https://undivisible.dev";
