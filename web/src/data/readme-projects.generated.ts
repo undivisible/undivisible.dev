@@ -155,8 +155,8 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "stack": "Rust."
   },
   {
-    "key": "rs_opencodedesktop",
-    "name": "rs_opencodedesktop",
+    "key": "rs_opencodedesktop-shelved-for-now-repo-private",
+    "name": "rs_opencodedesktop (shelved for now, repo private)",
     "href": "https://github.com/semitechnological/rs_opencodedesktop",
     "desc": "a (wip) rust + crepuscularity rewrite of opencode desktop that actually runs at 120fps.",
     "category": "developer tools"
@@ -212,7 +212,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "key": "unthinkclaw",
     "name": "unthinkclaw",
     "href": "https://github.com/undivisible/unthinkclaw",
-    "desc": "openclaw but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms.",
+    "desc": "openclaw + hermes but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms.",
     "category": "mobile & desktop",
     "stack": "Rust, JavaScript, Other."
   },
@@ -223,6 +223,14 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "desc": "macos drift screensaver as a live wallpaper on linux, macos, windows. spotify and apple music now playing support.",
     "category": "mobile & desktop",
     "stack": "Rust, WGSL, PowerShell, Shell."
+  },
+  {
+    "key": "arcanbar",
+    "name": "arcanbar",
+    "href": "https://github.com/undivisible/arcanbar",
+    "desc": "polybar for the arcan compositor.",
+    "category": "mobile & desktop",
+    "stack": "Lua."
   },
   {
     "key": "vro",
@@ -258,7 +266,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
   },
   {
     "key": "tabyrus",
-    "name": "tabyrus (wip)",
+    "name": "tabyrus (shelved)",
     "href": "https://github.com/semitechnological/tabyrus",
     "desc": "ai-powered autocomplete anywhere on your mac. uses cotabby as a reference but uses a rust backend + mlx.",
     "category": "mobile & desktop",
@@ -266,7 +274,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
   },
   {
     "key": "rover",
-    "name": "rover (shelved)",
+    "name": "rover",
     "href": "#",
     "desc": "utilities and plugin system for mac, based on raycast + ghostty.",
     "category": "mobile & desktop"
@@ -296,17 +304,24 @@ export const librariesFromReadme: ReadmeProject[] = [
     "stack": "Rust."
   },
   {
+    "key": "rs_gbrain",
+    "name": "rs_gbrain",
+    "href": "https://github.com/undivisible/rs_gbrain",
+    "desc": "garry tan's gbrain for openclaw rewritten in rust.",
+    "stack": "Rust, Shell."
+  },
+  {
     "key": "rs_imessage",
     "name": "rs_imessage",
     "href": "https://github.com/undivisible/rs_imessage",
-    "desc": "rust imessage crate and cli",
+    "desc": "rust imessage crate and cli.",
     "stack": "Rust, Other."
   },
   {
     "key": "rs_facetime",
     "name": "rs_facetime",
     "href": "https://github.com/undivisible/rs_facetime",
-    "desc": "rust facetime crate and cli",
+    "desc": "rust facetime crate and cli.",
     "stack": "Rust, Objective-C, Makefile, Shell."
   },
   {
@@ -320,15 +335,28 @@ export const librariesFromReadme: ReadmeProject[] = [
     "key": "crosspost-rs",
     "name": "crosspost-rs",
     "href": "https://github.com/arkiecompany/crosspost-rs",
-    "desc": "a rust crossposting library for multiple social media platforms",
+    "desc": "a rust crossposting library for multiple social media platforms.",
     "stack": "Rust, Dockerfile."
   },
   {
     "key": "svelte-streamdown",
     "name": "svelte-streamdown",
-    "href": "https://github.com/undivisible/svelte-streamdown",
-    "desc": "a svelte version of vercel's streamdown for streamable markdown rendering with interactive codeblocks and math rendering.",
-    "stack": "TypeScript, Svelte, Other."
+    "href": "https://sveltestreamdown.undivisible.dev/",
+    "desc": "a svelte version of vercel's streamdown for streamable markdown rendering with interactive codeblocks and math rendering."
+  },
+  {
+    "key": "tree-sitter-v",
+    "name": "tree-sitter-v",
+    "href": "https://github.com/undivisible/tree-sitter-v",
+    "desc": "tree sitter parsing and grammars for v.",
+    "stack": "C, Other."
+  },
+  {
+    "key": "tree-sitter-holyc",
+    "name": "tree-sitter-holyc",
+    "href": "https://github.com/undivisible/tree-sitter-holyc",
+    "desc": "tree sitter parsing and grammars for the holiest programming language on earth.",
+    "stack": "C, C++, JavaScript, Rust, Tree-sitter Query."
   },
   {
     "key": "ark-protocol",

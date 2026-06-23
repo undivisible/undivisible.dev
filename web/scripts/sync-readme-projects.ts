@@ -63,12 +63,21 @@ export const librariesFromReadme: ReadmeProject[] = ${JSON.stringify(bundle.libr
 `;
 }
 
+const LOCAL_NOW = new URL("../public/now.md", import.meta.url);
+
 let md: string;
 try {
   md = await fetchProfileMarkdown({ urls: profileMarkdownUrls() });
 } catch (error) {
-  console.error(error);
-  process.exit(1);
+  try {
+    md = await Bun.file(LOCAL_NOW).text();
+    console.warn(
+      `profile fetch failed (${error}); using ${LOCAL_NOW.pathname}`,
+    );
+  } catch {
+    console.error(error);
+    process.exit(1);
+  }
 }
 
 const freshBundle = normalizeReadmeBundle(parseReadme(md));

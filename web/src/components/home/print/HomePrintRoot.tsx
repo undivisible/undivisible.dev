@@ -4,7 +4,11 @@ import { Ft } from "@/components/brief/ui/Ft";
 import { Tb } from "@/components/brief/ui/Tb";
 import { lifeTimeline } from "@/data/life-timeline";
 import type { ReadmeProject } from "@/lib/profile-readme";
-import { getReadmeBundleFromGenerated } from "@/lib/profile-readme";
+import {
+  getReadmeBundleFromGenerated,
+  resumePrintProjectSections,
+  resumeProjectCategoryRows,
+} from "@/lib/profile-readme";
 import { resumeDoc } from "@/data/resume-document";
 import {
   parseInlineMdSegments,
@@ -691,14 +695,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
   const featuredSection = sections.find((s) => s.title === "Flagship projects");
   const otherSection = sections.find((s) => s.title === "Other projects");
 
-  const otherCategories = [
-    { label: "macOS / Desktop", items: "rs_peekaboo, rs_imessage, rs_facetime, drift, tile, tabyrus, unelaborate, vro, rover" },
-    { label: "Browser Extensions", items: "rs_vimium (Rust rewrite), anywhere (AI chat widgets)" },
-    { label: "Developer Tools", items: "incisor (Etcher rewrite), rs_opencode, bluetooth-terminal" },
-    { label: "Web Apps", items: "standpoint, notes, bublik, alphabets, infrastruct, soliloquy" },
-    { label: "Libraries", items: "rs_ai, stalwart-lite, crosspost-rs, svelte-streamdown, ark-protocol, monoprotocol" },
-    { label: "AI & Automation", items: "folk-around, poke-around, unthinkmail" },
-  ];
+  const otherCategories = resumeProjectCategoryRows(readmeBundle);
 
   return (
     <div
@@ -894,36 +891,6 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
 
 const readmeBundle = getReadmeBundleFromGenerated();
 
-const FEATURED_PROJECTS: string[] = [
-  "inauguration",
-  "alpenglow",
-  "space",
-  "wax",
-  "rv8",
-  "unthinkclaw",
-];
-
-function isFeaturedProject(project: ReadmeProject): boolean {
-  return FEATURED_PROJECTS.includes(project.key);
-}
-
-function websiteProjectSections(): PrintProjectSection[] {
-  const allProjects = [
-    ...readmeBundle.mainProjects,
-    ...readmeBundle.utilities,
-    ...readmeBundle.libraries,
-    ...readmeBundle.miniapps,
-  ];
-
-  const featured = allProjects.filter(isFeaturedProject);
-  const rest = allProjects.filter((p) => !isFeaturedProject(p));
-
-  return [
-    { title: "Flagship projects", items: featured },
-    { title: "Other projects", items: rest },
-  ];
-}
-
 function PrintPage({
   children,
   page,
@@ -971,7 +938,7 @@ function PrintPage({
 
 export function HomePrintRoot() {
   const doc = resumeDoc;
-  const projectSections = websiteProjectSections();
+  const projectSections = resumePrintProjectSections(readmeBundle);
   const totalPages = 2;
 
   return (
