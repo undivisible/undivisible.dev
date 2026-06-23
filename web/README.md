@@ -12,6 +12,7 @@ Production site for undivisible.dev. Built with Next.js 16 (App Router), React 1
 - **Info slices** — Hero (`#start`), work grid + readme utilities (`#work`), bio / resume / contact (`#world`, `#contact`).
 - **PDF** — `@react-pdf/renderer` documents for resume and brief downloads.
 - **Profile data** — `getProfileReadmeProjects()` fetches `now.md` (fallback `README.md`), normalizes utilities (e.g. aurorality, eqswift). `PROFILE_README_URL` overrides fetch URL. `bun run sync:readme` writes `readme-projects.generated.ts`.
+- **Resume** — `fetchResumeMarkdown()` pulls `resume.md` from `undivisible/undivisible`; `bun run sync:resume` parses contact/experience into `resume-from-markdown.generated.ts`. Email and social links on the site come from the resume Contact table. `RESUME_MARKDOWN_URL` overrides the raw URL.
 - **Last.fm** — Client fetch + optional `public/lastfm-recent.json` from `bun run sync:lastfm` when `NEXT_PUBLIC_LASTFM_API_KEY` is set.
 - **Agent mode** — `/agent` lists direct URLs; static `public/llms.txt`, `llms-full.txt`, `agent.md`, `now.md`, `resume.md`, `robots.txt` (GitHub Pages serves them as plain files — no `Accept: text/markdown` on HTML). `bun run sync:agent` on prebuild.
 
@@ -30,6 +31,7 @@ Production site for undivisible.dev. Built with Next.js 16 (App Router), React 1
 
 - `NEXT_PUBLIC_LASTFM_USERNAME`, `NEXT_PUBLIC_LASTFM_API_KEY`
 - `PROFILE_README_URL` (optional readme / now.md raw URL)
+- `RESUME_MARKDOWN_URL` (optional resume.md raw URL)
 
 ## Content source
 

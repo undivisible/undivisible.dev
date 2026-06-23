@@ -1,6 +1,6 @@
 # undivisible.dev
 
-The Next.js site reads profile project lists from [`now.md`](https://github.com/undivisible/undivisible/blob/main/now.md) on `undivisible/undivisible` (same Markdown shape as the old README). If `now.md` is missing, sync and runtime fetch fall back to `README.md` on that repo. Set `PROFILE_README_URL` to override the raw URL when syncing or running locally.
+Profile and CV markdown live on [`undivisible/undivisible`](https://github.com/undivisible/undivisible): [`now.md`](https://github.com/undivisible/undivisible/blob/main/now.md) (project list; falls back to `README.md` if missing) and [`resume.md`](https://github.com/undivisible/undivisible/blob/main/resume.md) (CV and contact). This repo does not author those files; `web` sync scripts fetch raw GitHub URLs at build time and write deploy copies under `web/public/`. Override with `PROFILE_README_URL` or `RESUME_MARKDOWN_URL` when syncing locally.
 
 ## Structure
 
