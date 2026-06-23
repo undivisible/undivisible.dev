@@ -394,7 +394,7 @@ export const LEGACY_PROFILE_MARKDOWN_URL =
 export function profileMarkdownUrls(): string[] {
   return process.env.PROFILE_README_URL
     ? [process.env.PROFILE_README_URL]
-    : [DEFAULT_PROFILE_MARKDOWN_URL, LEGACY_PROFILE_MARKDOWN_URL];
+    : [LEGACY_PROFILE_MARKDOWN_URL];
 }
 
 export function promoteAuroralityToUtilities(
