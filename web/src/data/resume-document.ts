@@ -5,6 +5,10 @@ import {
   type ResumeProject,
 } from "@/lib/parse-resume-markdown";
 import { resumeFromMarkdown } from "@/data/resume-from-markdown.generated";
+import {
+  contactDisplayUsername,
+  contactHref,
+} from "@/lib/resume-source";
 
 export type { ResumeContactRow, ResumeExperience, ResumeProject };
 
@@ -29,4 +33,37 @@ export const resumeCommunity: string[] = [...resumeDoc.community];
 
 export const resumeInterests: string[] = [...resumeDoc.interests];
 
-export { resumeFromMarkdown, resumeDoc };
+export { resumeFromMarkdown, resumeDoc, contactHref, contactDisplayUsername };
+
+export type ResumeSocialLink = {
+  name: string;
+  username: string;
+  href: string;
+};
+
+const SOCIAL_CONTACT_LABELS: Record<string, string> = {
+  Instagram: "instagram",
+  Twitter: "twitter",
+  Email: "email",
+  GitHub: "github",
+};
+
+export function resumeContactValue(label: string): string | undefined {
+  return resumeContact.find(([l]) => l === label)?.[1];
+}
+
+export function resumeSocialLinks(): ResumeSocialLink[] {
+  return resumeContact
+    .filter(([label]) => label in SOCIAL_CONTACT_LABELS)
+    .map(([label, value]) => {
+      const href = contactHref(label, value);
+      if (!href) return null;
+      return {
+        name: SOCIAL_CONTACT_LABELS[label]!,
+        username:
+          label === "Email" ? value : contactDisplayUsername(label, value),
+        href,
+      };
+    })
+    .filter((x): x is ResumeSocialLink => x !== null);
+}

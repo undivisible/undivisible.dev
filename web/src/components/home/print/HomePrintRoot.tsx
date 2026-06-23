@@ -9,7 +9,7 @@ import {
   resumePrintProjectSections,
   resumeProjectCategoryRows,
 } from "@/lib/profile-readme";
-import { resumeDoc } from "@/data/resume-document";
+import { contactHref, resumeDoc } from "@/data/resume-document";
 import {
   parseInlineMdSegments,
   resumeItemBlurb,
@@ -29,14 +29,7 @@ type PrintProjectSection = {
   items: PrintProject[];
 };
 
-function contactHref(label: string, value: string) {
-  if (label === "Email") return `mailto:${value}`;
-  if (label === "Phone") return `tel:${value.replace(/[^\d+]/g, "")}`;
-  if (label === "Instagram") return "https://instagram.com/undivisible.dev";
-  if (label === "Twitter") return "https://x.com/makethings4ppl";
-  if (label === "GitHub") return `https://${value}`;
-  return null;
-}
+
 
 function InlineMdText({
   text,

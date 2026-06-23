@@ -4,12 +4,14 @@ import { motion, AnimatePresence } from "motion/react";
 import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { lifeTimeline } from "@/data/life-timeline";
 import {
+  contactHref,
   resumeCommunity,
   resumeContact,
   resumeEducation,
   resumeExperience,
   resumeInterests,
   resumeSkillGroups,
+  resumeSocialLinks,
 } from "@/data/resume-document";
 import { projectKey, type ReadmeBundle } from "@/lib/profile-readme";
 import { pillarKeys } from "@/data/portfolio-featured";
@@ -18,33 +20,7 @@ import { RandomizedText } from "./randomized-text";
 
 const REVEAL_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-const socials = [
-  {
-    name: "instagram",
-    username: "@undivisible.dev",
-    href: "https://instagram.com/undivisible.dev",
-  },
-  {
-    name: "twitter",
-    username: "@makethings4ppl",
-    href: "https://twitter.com/makethings4ppl",
-  },
-  {
-    name: "email",
-    username: "max@tsc.hk",
-    href: "mailto:max@tsc.hk",
-  },
-  {
-    name: "github",
-    username: "undivisible",
-    href: "https://github.com/undivisible",
-  },
-  {
-    name: "tsc.hk",
-    username: "tsc.hk",
-    href: "https://tsc.hk",
-  },
-];
+const socials = resumeSocialLinks();
 
 const hoverNames = [
   "祁明思",
@@ -851,18 +827,7 @@ export function Info({
                   {resumeContact
                     .filter(([label]) => label !== "LinkedIn")
                     .map(([label, value]) => {
-                      const href =
-                        label === "Email"
-                          ? `mailto:${value}`
-                          : label === "Phone"
-                            ? `tel:${value.replace(/\s/g, "")}`
-                            : label === "Instagram"
-                              ? "https://instagram.com/undivisible.dev"
-                              : label === "Twitter"
-                                ? "https://twitter.com/makethings4ppl"
-                                : label === "GitHub"
-                                  ? "https://github.com/undivisible"
-                                  : undefined;
+                      const href = contactHref(label, value);
                       return (
                         <div key={label} className="flex flex-col gap-0.5">
                           <dt className="text-[9px] uppercase tracking-[0.12em] text-white/30 font-mono">
