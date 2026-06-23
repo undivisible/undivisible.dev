@@ -385,6 +385,9 @@ export function parseReadme(md: string): ReadmeBundle {
 export const DEFAULT_PROFILE_MARKDOWN_URL =
   "https://raw.githubusercontent.com/undivisible/undivisible/main/now.md";
 
+export const DEFAULT_RESUME_MARKDOWN_URL =
+  "https://raw.githubusercontent.com/undivisible/undivisible/main/resume.md";
+
 export const LEGACY_PROFILE_MARKDOWN_URL =
   "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md";
 

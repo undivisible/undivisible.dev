@@ -1,4 +1,5 @@
 import { DEFAULT_PROFILE_MARKDOWN_URL } from "../src/lib/profile-readme.ts";
+import { fetchResumeMarkdown } from "../src/lib/resume-source.ts";
 
 const PUBLIC_DIR = new URL("../public/", import.meta.url);
 const SITE = process.env.SITE_URL ?? "https://undivisible.dev";
@@ -25,9 +26,13 @@ async function fetchNow(): Promise<string | null> {
 }
 
 const now = await fetchNow();
-const resume = await Bun.file(
-  new URL("../../resume.md", import.meta.url),
-).text();
+let resume: string;
+try {
+  resume = await fetchResumeMarkdown();
+} catch {
+  console.warn("resume.md not fetched; skipping public/resume.md");
+  resume = "";
+}
 
 if (now) {
   await Bun.write(new URL("now.md", PUBLIC_DIR), now);
@@ -36,8 +41,10 @@ if (now) {
   console.warn("now.md not fetched; skipping public/now.md");
 }
 
-await Bun.write(new URL("resume.md", PUBLIC_DIR), resume);
-console.log(`wrote public/resume.md (${resume.length} chars)`);
+if (resume) {
+  await Bun.write(new URL("resume.md", PUBLIC_DIR), resume);
+  console.log(`wrote public/resume.md (${resume.length} chars)`);
+}
 
 const agentMd = `# undivisible.dev — agent index
 
@@ -90,6 +97,7 @@ Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrap
 ## Optional
 
 - [Upstream now.md](https://raw.githubusercontent.com/undivisible/undivisible/main/now.md): GitHub source before deploy sync.
+- [Upstream resume.md](https://raw.githubusercontent.com/undivisible/undivisible/main/resume.md): GitHub source before deploy sync.
 `;
 
 await Bun.write(new URL("llms.txt", PUBLIC_DIR), llms);
@@ -111,7 +119,7 @@ ${now ?? "No profile markdown was fetched during this build."}
 
 # Resume
 
-${resume}
+${resume || "No resume markdown was fetched during this build."}
 `;
 
 await Bun.write(new URL("llms-full.txt", PUBLIC_DIR), llmsFull);
