@@ -591,6 +591,13 @@ function isFeaturedResumeProject(project: ReadmeProject): boolean {
   return FEATURED_RESUME_PROJECT_KEYS.has(project.key);
 }
 
+function resumeProjectKeysAboveFold(bundle: ReadmeBundle): Set<string> {
+  const keys = new Set(FEATURED_RESUME_PROJECT_KEYS);
+  const hero = bundle.mainProjects[0]?.key;
+  if (hero) keys.add(hero);
+  return keys;
+}
+
 export type ResumePrintProjectSection = {
   title: string;
   items: ReadmeProject[];
@@ -599,6 +606,7 @@ export type ResumePrintProjectSection = {
 export function resumePrintProjectSections(
   bundle: ReadmeBundle,
 ): ResumePrintProjectSection[] {
+  const aboveFold = resumeProjectKeysAboveFold(bundle);
   const allProjects = [
     ...bundle.mainProjects,
     ...bundle.utilities,
@@ -606,7 +614,9 @@ export function resumePrintProjectSections(
     ...bundle.miniapps,
   ];
   const featured = allProjects.filter(isFeaturedResumeProject);
-  const rest = allProjects.filter((p) => !isFeaturedResumeProject(p));
+  const rest = allProjects.filter(
+    (p) => !isFeaturedResumeProject(p) && !aboveFold.has(p.key),
+  );
   return [
     { title: "Flagship projects", items: featured },
     { title: "Other projects", items: rest },
@@ -618,13 +628,13 @@ export type ResumeProjectCategoryRow = { label: string; items: string };
 export function resumeProjectCategoryRows(
   bundle: ReadmeBundle,
 ): ResumeProjectCategoryRow[] {
-  const featuredKeys = FEATURED_RESUME_PROJECT_KEYS;
+  const aboveFold = resumeProjectKeysAboveFold(bundle);
   const rest = [
     ...bundle.utilities,
     ...bundle.miniapps,
     ...bundle.libraries,
-    ...bundle.mainProjects.filter((p) => !featuredKeys.has(p.key)),
-  ].filter((p) => !featuredKeys.has(p.key));
+    ...bundle.mainProjects,
+  ].filter((p) => !aboveFold.has(p.key));
 
   const buckets = new Map<string, ReadmeProject[]>();
   const bucketLabel = (p: ReadmeProject): string => {
