@@ -48,6 +48,10 @@ const SOCIAL_CONTACT_LABELS: Record<string, string> = {
   GitHub: "github",
 };
 
+const EXTRA_SOCIAL_LINKS: ResumeSocialLink[] = [
+  { name: "tsc.hk", username: "tsc.hk", href: "https://tsc.hk" },
+];
+
 export function resumeContactValue(label: string): string | undefined {
   return resumeContact.find(([l]) => l === label)?.[1];
 }
@@ -67,7 +71,8 @@ export function resumeSocialLinksFrom(
         href,
       };
     })
-    .filter((x): x is ResumeSocialLink => x !== null);
+    .filter((x): x is ResumeSocialLink => x !== null)
+    .concat(EXTRA_SOCIAL_LINKS);
 }
 
 export function resumeSocialLinks(): ResumeSocialLink[] {
