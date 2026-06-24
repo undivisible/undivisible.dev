@@ -13,7 +13,7 @@ I make things for people. Part-time language learner, part-time philosopher, ful
 | Instagram | @undivisible.dev               |
 | Twitter   | @makethings4ppl                |
 | GitHub    | github.com/undivisible         |
-| Location  | Melbourne / Sydney / Hong Kong |
+| Location  | Melbourne / Hong Kong          |
 
 ## Experience
 
@@ -31,8 +31,8 @@ _Status_
 - **[Studio of Optimisations](https://optimisations.studio)** · **[Graft AI](https://graftai.com.au)** · **Production** · **[+61 3 8828 9225](tel:+61388289225)** — Dual-brand sales funnels (same codebase): Arkie-backed chat, live voice, calendar booking, lead capture, Notion connect portal. _Built with: SvelteKit 5, TypeScript, Tailwind CSS v4, Cloudflare Workers, Arkie API proxy, Bun._
 - **[Arkie](https://arkie.company)** · **Production** · Centralized MCP/AI backend for all Arkie apps: per-app system prompts, tool sets, chat/stream, calendar booking, Stripe/Calendly/Notion webhooks, Gemini Live voice, embeddings, admin console, OAuth for Claude MCP. _Built with: Rust, Axum, Tokio, Google Gemini, Supabase (PostgREST, Auth, pgvector), Cloudflare Workers/Containers, DigitalOcean SIP edge._
 - **[Pava](https://pava.studio)** · **Closed beta** (approaching release) · AI content strategist and crossposting: brand chat, idea generation, AI-negotiated Stripe pricing, competitor analysis, video review, enterprise/agency workspaces, 13+ platforms via Late API. _Built with: Next.js 16, TypeScript, Supabase, Stripe, Google Gemini, Late API, Tailwind CSS v4, Capacitor, Bun._
-- **[Unthought](https://unthought.arkie.company)** · **Alpha** · Business platforming: custom domain, AI-generated site, professional email, Cloudflare edge deploy, Stripe checkout, Stalwart mail provisioning, Tangent integration hooks. _Built with: Next.js 16, TypeScript, Supabase, Cloudflare (OpenNext, D1, R2, Queues), Arkie, Stripe, Porkbun, Bun._
-- **[Tangent](https://tangent.undivisible.dev)** · **Alpha** · Discord automation for digital product sellers: Stripe payment webhooks, order fulfillment (keys, roles, content), ticketing, purchase-linked profiles, Gemini RAG support and image verification, event-driven workflows, admin dashboard, MCP tools for store ops. _Built with: Go (discordgo), SQLite/Postgres, Google Gemini, Astro 4, Alpine.js, htmx, UnoCSS, Cloudflare Workers (MCP, D1, Durable Objects)._
+- **[Unthought](https://unthought.arkie.company)** · **Alpha** · Business platforming: custom domain, AI-generated site, professional email, Cloudflare edge deploy, Stripe checkout, Stalwart mail provisioning (made with my own custom lightened Stalwart crate), Tangent integration hooks. _Built with: Next.js 16, TypeScript, Supabase, Cloudflare (OpenNext, D1, R2, Queues), Arkie, Stripe, Porkbun, Bun._
+- **[Tangent](https://tangent.arkie.company)** · **Pre-Alpha** · Discord automation for digital product sellers: Stripe payment webhooks, order fulfillment (keys, roles, content), ticketing, purchase-linked profiles, Gemini RAG support and image verification, event-driven workflows, admin dashboard, MCP tools for store ops. _Built with: Go (discordgo), SQLite/Postgres, Google Gemini, Astro 4, Alpine.js, htmx, UnoCSS, Cloudflare Workers (MCP, D1, Durable Objects)._
 - **Currant** · **Work in progress** · Multi-tenant AI sales agents and job management for trades businesses; autonomous agents across WhatsApp, Telegram, SMS, Instagram, Slack, email, and native SIP/RTP phone; leads → quotes → jobs → invoices. _Built with: Go, Python (FastAPI), Elixir (Phoenix), Rust (telephony), Vlang (filter), SvelteKit, React Native (Expo), Tauri, SurrealDB, Redis, Gemini, Stripe, Square._
 - **Waarom** · **Work in progress** · AI step-by-step in-product guidance: GPUI desktop companion, `@waarom/embed` SDK, Crepuscularity static portal and knowledge base. _Built with: Rust, GPUI, Crepuscularity, Gemini, TypeScript (embed SDK), MV3 web extension runtime._
 
@@ -51,7 +51,8 @@ _2023–present_
 **Platforms being built**
 
 - **Ark** — Ultra-simple hosted app platform (Vercel-style ergonomics, Railway-style flexibility): Rust control-plane API, V language CLI (`deploy`, `logs`, `rollback`), Svelte dashboard, YAML app manifests, open-source `ark-protocol` edge ingress spec. _Built with: Rust (Axum), V, Svelte 5, SurrealDB, Docker Compose, Bun._
-- **[Mono](https://github.com/atechnology-company/mono)** — Post-web computing infrastructure with an open-source `mono-protocol` spec: object-centric, identity-addressed encrypted replication; mesh gossip, gateway relay, using `unthinkclaw` agent runtime, mono-browser shell (Crepuscularity/GPUI). _Built with: Rust (`mono-protocol`, `mono-mesh`, `mono-gateway`, `mono-agent`, `mono-browser`)._
+- **Mono** — Designed a distributed identity-addressed replication platform enabling encrypted peer-to-peer data synchronization, agent communication, and persistent session continuity across devices. _Built with: Rust, C++, Crepuscularity._
+- **Cupboard** - Built a local-first device ecosystem enabling seamless LAN-based sync of files, photos, clipboard, browser state, and app sessions across desktop, mobile, and web without accounts or cloud dependencies. _Built with: Rust, Crepuscularity._
 
 ### Systems and Product Architect — Gizzmo Electronics
 
@@ -71,18 +72,19 @@ _late 2024_
 
 ## Skills
 
-| Area      |                                                                                                |
-| --------- | ---------------------------------------------------------------------------------------------- |
-| Languages | Rust, Swift, TypeScript/JavaScript, Python, Go, V, Zig, C / C#                                 |
-| Frontend  | React, Next.js, SvelteKit, Solid, Tailwind, Astro, WebGL, SwiftUI, Crepuscularity              |
-| Systems   | GPUI, Ratatui, MV3 extensions, FFI, UniFFI, Servo, V8, WASM, Linux                             |
-| AI / Data | OpenAI, MCP, RAG, Transformers.js, local models, Hugging Face, Supabase, PostgreSQL, SurrealDB |
-| Infra     | Cloudflare Workers, Docker, GitHub Actions, CI/CD, SQLite                                      |
+| Area      |                                                                                                       |
+| --------- | ------------------------------------------------------------------------------------------------------|
+| Languages | Rust, Swift, TypeScript/JavaScript, Python, Go, V, Zig, C, C++, C#, Inauguration                      |
+| Frontend  | React + Native, Next.js, Solid, SvelteKit, Tailwind, SwiftUI, Crepuscularity                          |
+| Systems   | GPUI, Ratatui, MV3 extensions, FFI, UniFFI, Servo, V8, WASM, Linux                                    |
+| AI / Data | OpenAI, MCP, RAG, Transformers.js, Hugging Face, Supabase, PostgreSQL, SQLite, SurrealDB              |
+| Infra     | Cloudflare, Docker, GCP, Vercel, Netlify, Railway, GitHub Actions, CI/CD                              |
 
 ## Education
 
 - Certificate III in Information Technology coursework, Box Hill Institute. Completing unfinished units this year.
 - VCE coursework at Eltham High School, including Information Technology, Applied Computing, Politics, Philosophy, Extended Investigation, Linguistics, and Indonesian; left before Year 12 completion to build full time.
+- Various online cybersecurity courses
 
 ## Languages
 
@@ -90,9 +92,10 @@ Cantonese · English · Russian · Mandarin · Indonesian · Learning Japanese
 
 ## Community
 
-- Volunteer English teacher for Russian speakers online, 2022–present.
+- Volunteer English teacher for Russian and other ESL speakers online, 2022–present.
 - Barbie CTF 2023, Petrozavodsk: 12th place in Russian exploit competition.
 - PECAN CTF 2025: 15th nationally, 4th in division.
+- Participated in HackerOne, HackTheBox and related organisations.
 
 ## Interests
 
