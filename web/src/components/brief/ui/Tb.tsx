@@ -5,10 +5,12 @@ export function Tb({
   left,
   right,
   dark,
+  fontSize = 6,
 }: {
   left: ReactNode;
   right: ReactNode;
   dark?: boolean;
+  fontSize?: number;
 }) {
   return (
     <div
@@ -26,7 +28,7 @@ export function Tb({
       <span
         style={{
           fontFamily: mono,
-          fontSize: 6,
+          fontSize,
           lineHeight: 1,
           letterSpacing: "-0.05em",
           textTransform: "uppercase",
@@ -39,7 +41,7 @@ export function Tb({
       <span
         style={{
           fontFamily: mono,
-          fontSize: 6,
+          fontSize,
           lineHeight: 1,
           letterSpacing: "-0.05em",
           textTransform: "uppercase",

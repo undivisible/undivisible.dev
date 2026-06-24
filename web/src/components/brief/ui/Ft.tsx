@@ -4,10 +4,12 @@ export function Ft({
   left,
   right,
   dark,
+  fontSize = 5.5,
 }: {
   left: string;
   right: string;
   dark?: boolean;
+  fontSize?: number;
 }) {
   return (
     <div
@@ -24,7 +26,7 @@ export function Ft({
       <span
         style={{
           fontFamily: mono,
-          fontSize: 5.5,
+          fontSize,
           letterSpacing: "-0.05em",
           textTransform: "uppercase",
           color: dark ? "rgba(10,10,10,0.55)" : "rgba(255,248,230,0.2)",
@@ -37,7 +39,7 @@ export function Ft({
         href="https://undivisible.dev"
         style={{
           fontFamily: mono,
-          fontSize: 5.5,
+          fontSize,
           letterSpacing: "-0.05em",
           textTransform: "uppercase",
           color: dark ? C.black : C.orange,
