@@ -124,11 +124,11 @@ function Bullet({
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "6px 1fr",
-        gap: 6,
-        fontSize: 7.8,
+        gridTemplateColumns: "5px 1fr",
+        gap: 5,
+        fontSize: 7,
         color: onDark ? "rgba(255,248,230,0.62)" : C.mid,
-        lineHeight: 1.4,
+        lineHeight: 1.35,
       }}
     >
       <span style={{ color: C.orange }}>•</span>
@@ -151,10 +151,10 @@ function Tag({
           ? "1px solid rgba(255,248,230,0.14)"
           : `1px solid ${C.rule}`,
         background: onDark ? "rgba(255,248,230,0.06)" : "rgba(10,10,10,0.04)",
-        padding: "2px 6px",
-        fontSize: 7,
+        padding: "1px 4px",
+        fontSize: 6,
         color: onDark ? "rgba(255,248,230,0.58)" : C.mid,
-        lineHeight: 1.2,
+        lineHeight: 1.1,
         whiteSpace: "nowrap",
       }}
     >
@@ -369,11 +369,11 @@ function ResumeHeader() {
       style={{
         background: C.black,
         color: C.cream,
-        padding: "10px 18px 8px",
+        padding: "8px 16px 6px",
         borderBottom: `3px solid ${C.orange}`,
         display: "grid",
-        gridTemplateColumns: "1fr 140px",
-        gap: 12,
+        gridTemplateColumns: "1fr 120px",
+        gap: 10,
         alignItems: "end",
         flexShrink: 0,
       }}
@@ -382,11 +382,11 @@ function ResumeHeader() {
         <div
           style={{
             fontFamily: mono,
-            fontSize: 6.5,
+            fontSize: 6,
             letterSpacing: "-0.05em",
             textTransform: "uppercase",
             color: C.orange,
-            marginBottom: 4,
+            marginBottom: 3,
           }}
         >
           {doc.nameLine}
@@ -394,18 +394,18 @@ function ResumeHeader() {
         <div
           style={{
             fontFamily: serif,
-            fontSize: 26,
-            lineHeight: 0.98,
-            letterSpacing: "-0.03em",
+            fontSize: 22,
+            lineHeight: 1,
+            letterSpacing: "-0.02em",
           }}
         >
           {doc.titleLine}.
         </div>
         <div
           style={{
-            marginTop: 8,
-            fontSize: 7.5,
-            lineHeight: 1.4,
+            marginTop: 6,
+            fontSize: 7,
+            lineHeight: 1.35,
             color: "rgba(255,248,230,0.62)",
           }}
         >
@@ -420,10 +420,10 @@ function ResumeHeader() {
               key={label}
               style={{
                 display: "grid",
-                gridTemplateColumns: "36px 1fr",
-                gap: 3,
-                fontSize: 6.5,
-                lineHeight: 1.3,
+                gridTemplateColumns: "32px 1fr",
+                gap: 2,
+                fontSize: 6,
+                lineHeight: 1.25,
               }}
             >
               <span
@@ -469,10 +469,10 @@ function ProfileSidebar() {
       style={{
         background: C.black,
         color: C.cream,
-        padding: "8px 18px 10px",
+        padding: "6px 14px 8px",
         display: "flex",
         flexDirection: "column",
-        gap: 6,
+        gap: 5,
         height: "auto",
         minHeight: 0,
         alignSelf: "stretch",
@@ -484,7 +484,7 @@ function ProfileSidebar() {
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(9, 1fr)",
-            gap: 2,
+            gap: 1,
           }}
         >
           {lifeTimeline.map((item) => (
@@ -492,13 +492,13 @@ function ProfileSidebar() {
               key={`${item.age}-${item.title}`}
               style={{
                 border: "1px solid rgba(255,248,230,0.12)",
-                padding: "2px 3px",
+                padding: "1px 2px",
               }}
             >
               <div
                 style={{
                   fontFamily: mono,
-                  fontSize: 5,
+                  fontSize: 4.5,
                   textTransform: "uppercase",
                   color: C.orange,
                   lineHeight: 1.1,
@@ -508,8 +508,8 @@ function ProfileSidebar() {
               </div>
               <div
                 style={{
-                  marginTop: 1,
-                  fontSize: 5.5,
+                  marginTop: 0,
+                  fontSize: 5,
                   fontWeight: 700,
                   color: C.cream,
                   lineHeight: 1.1,
@@ -522,14 +522,14 @@ function ProfileSidebar() {
         </div>
       </section>
 
-      <div style={{ display: "flex", flexDirection: "row", gap: 12 }}>
-        <section style={{ flex: "1.6 1 0" }}>
+      <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
+        <section style={{ flex: "1.4 1 0" }}>
           <SectionTitle onDark>Technical stack</SectionTitle>
           <div
             style={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
-              gap: "3px 10px",
+              gap: "2px 8px",
             }}
           >
             {doc.skills.map(([label, value]) => (
@@ -537,7 +537,7 @@ function ProfileSidebar() {
                 <div
                   style={{
                     fontFamily: mono,
-                    fontSize: 6,
+                    fontSize: 5.5,
                     textTransform: "uppercase",
                     color: "rgba(255,248,230,0.35)",
                     marginBottom: 1,
@@ -547,9 +547,9 @@ function ProfileSidebar() {
                 </div>
                 <div
                   style={{
-                    fontSize: 7.1,
+                    fontSize: 6.5,
                     color: "rgba(255,248,230,0.62)",
-                    lineHeight: 1.32,
+                    lineHeight: 1.25,
                   }}
                 >
                   {value}
@@ -559,16 +559,16 @@ function ProfileSidebar() {
           </div>
         </section>
 
-        <section style={{ flex: "1.05 1 0" }}>
+        <section style={{ flex: "1 1 0" }}>
           <SectionTitle onDark>Education</SectionTitle>
-          <div style={{ display: "grid", gap: 2 }}>
+          <div style={{ display: "grid", gap: 1 }}>
             {doc.education.map((item) => (
               <div
                 key={item}
                 style={{
-                  fontSize: 7.1,
+                  fontSize: 6.5,
                   color: "rgba(255,248,230,0.62)",
-                  lineHeight: 1.32,
+                  lineHeight: 1.25,
                 }}
               >
                 {item}
@@ -578,9 +578,9 @@ function ProfileSidebar() {
         </section>
 
         {doc.humanLanguages.length > 0 ? (
-          <section style={{ flex: "0.72 1 0" }}>
+          <section style={{ flex: "0.6 1 0" }}>
             <SectionTitle onDark>Languages</SectionTitle>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
               {doc.humanLanguages.map((item) => (
                 <Tag key={item} onDark>
                   {item}
@@ -590,9 +590,9 @@ function ProfileSidebar() {
           </section>
         ) : null}
 
-        <section style={{ flex: "0.98 1 0" }}>
+        <section style={{ flex: "0.8 1 0" }}>
           <SectionTitle onDark>Community / CTF</SectionTitle>
-          <div style={{ display: "grid", gap: 2 }}>
+          <div style={{ display: "grid", gap: 1 }}>
             {doc.community.map((item) => (
               <Bullet key={item} onDark>
                 {item}
@@ -602,9 +602,9 @@ function ProfileSidebar() {
         </section>
 
         {doc.interests.length > 0 ? (
-          <section style={{ flex: "0.82 1 0" }}>
+          <section style={{ flex: "0.7 1 0" }}>
             <SectionTitle onDark>Interests</SectionTitle>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
               {doc.interests.map((item) => (
                 <Tag key={item} onDark>
                   {item}
