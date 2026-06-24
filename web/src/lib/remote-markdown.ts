@@ -107,13 +107,23 @@ export async function fetchReadmeMarkdown(options?: {
   return null;
 }
 
+export function resumeMarkdownCacheUrl(): string {
+  return (
+    process.env.NEXT_PUBLIC_RESUME_MARKDOWN_URL ??
+    DEFAULT_RESUME_MARKDOWN_URL
+  );
+}
+
+/** Sync read of cached resume markdown (any age). For print layout before fetch completes. */
+export function readRemoteMarkdownCache(url: string): string | null {
+  return readCache(url, Number.POSITIVE_INFINITY);
+}
+
 export async function fetchResumeMarkdownCached(options?: {
   signal?: AbortSignal;
   forceRefresh?: boolean;
 }): Promise<string | null> {
-  const url =
-    process.env.NEXT_PUBLIC_RESUME_MARKDOWN_URL ??
-    DEFAULT_RESUME_MARKDOWN_URL;
+  const url = resumeMarkdownCacheUrl();
 
   if (!options?.forceRefresh) {
     const cached = readCache(url, DEFAULT_TTL_MS);
