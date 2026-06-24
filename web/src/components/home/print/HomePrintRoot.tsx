@@ -957,7 +957,7 @@ function PrintPage({
 }
 
 export function HomePrintRoot() {
-  const doc = resumeDoc;
+  const doc = getCachedResumeDocument();
   const projectSections = resumePrintProjectSections(readmeBundle);
   const totalPages = 2;
 
