@@ -12,6 +12,7 @@ import {
 import { contactHref, resumeDoc } from "@/data/resume-document";
 import {
   parseInlineMdSegments,
+  parseResumeMarkdown,
   resumeItemBlurb,
   resumeItemKey,
   type ResumeListItem,
@@ -20,6 +21,32 @@ import {
 
 const PAGE_W = "210mm";
 const PAGE_H = "297mm";
+
+const CACHE_PREFIX = "undivisible-remote-md:";
+const DEFAULT_RESUME_MARKDOWN_URL =
+  "https://raw.githubusercontent.com/undivisible/undivisible/main/resume.md";
+
+function readCache(url: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(`${CACHE_PREFIX}${url}`);
+    if (!raw) return null;
+    const entry = JSON.parse(raw) as { body: string; at: number };
+    return entry.body;
+  } catch {
+    return null;
+  }
+}
+
+function getCachedResumeDocument() {
+  const cached = readCache(DEFAULT_RESUME_MARKDOWN_URL);
+  if (!cached) return resumeDoc;
+  try {
+    return parseResumeMarkdown(cached);
+  } catch {
+    return resumeDoc;
+  }
+}
 
 type PrintProject = ReadmeProject | ResumeListItem;
 
@@ -336,7 +363,7 @@ function SubsectionBlock({ sub }: { sub: ResumeSubsection }) {
 }
 
 function ResumeHeader() {
-  const doc = resumeDoc;
+  const doc = getCachedResumeDocument();
   return (
     <div
       style={{
@@ -436,7 +463,7 @@ function ResumeHeader() {
 }
 
 function ProfileSidebar() {
-  const doc = resumeDoc;
+  const doc = getCachedResumeDocument();
   return (
     <div
       style={{

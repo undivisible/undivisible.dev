@@ -13,7 +13,7 @@ export const REMOTE_README_URLS = [
 ].filter((u): u is string => Boolean(u));
 
 const CACHE_PREFIX = "undivisible-remote-md:";
-const DEFAULT_TTL_MS = 5 * 60 * 1000;
+const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 type CacheEntry = { body: string; at: number };
 
@@ -55,37 +55,41 @@ async function fetchText(url: string, signal?: AbortSignal): Promise<string> {
 
 export async function fetchNowStatus(options?: {
   signal?: AbortSignal;
-  ttlMs?: number;
-  fallback?: string | null;
+  forceRefresh?: boolean;
 }): Promise<string | null> {
   const url = NOW_STATUS_URL;
-  const ttl = options?.ttlMs ?? DEFAULT_TTL_MS;
-  const cached = readCache(url, ttl);
-  if (cached) return cached;
+
+  if (!options?.forceRefresh) {
+    const cached = readCache(url, DEFAULT_TTL_MS);
+    if (cached) return cached;
+  }
 
   try {
     const body = await fetchText(url, options?.signal);
-    if (!body) return options?.fallback ?? null;
+    if (!body) return null;
     writeCache(url, body);
     return body;
   } catch {
     const stale = readCache(url, Number.POSITIVE_INFINITY);
     if (stale) return stale;
-    return options?.fallback ?? null;
+    return null;
   }
 }
 
 export async function fetchReadmeMarkdown(options?: {
   signal?: AbortSignal;
-  ttlMs?: number;
+  forceRefresh?: boolean;
 }): Promise<string | null> {
-  const ttl = options?.ttlMs ?? DEFAULT_TTL_MS;
-  for (const url of REMOTE_README_URLS) {
-    const cached = readCache(url, ttl);
-    if (cached) return cached;
+  const urls = REMOTE_README_URLS;
+
+  if (!options?.forceRefresh) {
+    for (const url of urls) {
+      const cached = readCache(url, DEFAULT_TTL_MS);
+      if (cached) return cached;
+    }
   }
 
-  for (const url of REMOTE_README_URLS) {
+  for (const url of urls) {
     try {
       const body = await fetchText(url, options?.signal);
       if (!body) continue;
@@ -96,7 +100,7 @@ export async function fetchReadmeMarkdown(options?: {
     }
   }
 
-  for (const url of REMOTE_README_URLS) {
+  for (const url of urls) {
     const stale = readCache(url, Number.POSITIVE_INFINITY);
     if (stale) return stale;
   }
@@ -105,24 +109,25 @@ export async function fetchReadmeMarkdown(options?: {
 
 export async function fetchResumeMarkdownCached(options?: {
   signal?: AbortSignal;
-  ttlMs?: number;
-  fallback?: string | null;
+  forceRefresh?: boolean;
 }): Promise<string | null> {
   const url =
     process.env.NEXT_PUBLIC_RESUME_MARKDOWN_URL ??
     DEFAULT_RESUME_MARKDOWN_URL;
-  const ttl = options?.ttlMs ?? DEFAULT_TTL_MS;
-  const cached = readCache(url, ttl);
-  if (cached) return cached;
+
+  if (!options?.forceRefresh) {
+    const cached = readCache(url, DEFAULT_TTL_MS);
+    if (cached) return cached;
+  }
 
   try {
     const body = await fetchText(url, options?.signal);
-    if (!body) return options?.fallback ?? null;
+    if (!body) return null;
     writeCache(url, body);
     return body;
   } catch {
     const stale = readCache(url, Number.POSITIVE_INFINITY);
     if (stale) return stale;
-    return options?.fallback ?? null;
+    return null;
   }
 }

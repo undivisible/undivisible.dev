@@ -20,6 +20,7 @@ import {
 import type { ReadmeBundle } from "@/lib/profile-readme";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { useLastFmVisualData } from "@/lib/useLastFmVisualData";
+import { fetchResumeMarkdownCached } from "@/lib/remote-markdown";
 
 const HomePrintRoot = dynamic(
   () =>
@@ -49,7 +50,7 @@ export default function Home({
     visualEffects ||
     dayTheme.shader.weatherKind === "rain" ||
     dayTheme.shader.weatherKind === "storm";
-  const now = useNowMarkdown(nowMarkdown);
+  const now = useNowMarkdown();
   const activeReadme = useRemoteReadme(readme);
   const [nowArticleOpen, setNowArticleOpen] = useState(false);
   const [printMounted, setPrintMounted] = useState(false);
@@ -66,6 +67,10 @@ export default function Home({
 
   const runPrint = useCallback(
     async (target: SitePrintTarget) => {
+      // For resume print, force refresh to get latest content
+      if (target === "resume") {
+        await fetchResumeMarkdownCached({ forceRefresh: true });
+      }
       if (!printMounted) setPrintMounted(true);
       await printSitePdf(target);
     },
