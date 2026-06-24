@@ -242,7 +242,7 @@ function FeaturedProjectRow({ item }: { item: PrintProject }) {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "70px 1fr 130px",
+        gridTemplateColumns: "70px 1fr 175px",
         gap: "0 10px",
         padding: "6px 10px",
         flex: 1,
