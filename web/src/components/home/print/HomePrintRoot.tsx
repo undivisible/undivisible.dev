@@ -32,6 +32,14 @@ function pt(n: number) {
 }
 
 const CHROME = { tb: pt(6), ft: pt(5.5) };
+const EXP_PAGE = {
+  sectionTitle: pt(6.3),
+  role: pt(10.7),
+  time: pt(6.3),
+  bullet: pt(6.1),
+  subTitle: pt(6.2),
+  productLine: pt(7),
+};
 
 function getCachedResumeDocument() {
   const cached = readRemoteMarkdownCache(resumeMarkdownCacheUrl());
@@ -97,15 +105,17 @@ function InlineMdText({
 function SectionTitle({
   children,
   onDark = false,
+  fontSize = pt(7.2),
 }: {
   children: ReactNode;
   onDark?: boolean;
+  fontSize?: number;
 }) {
   return (
     <div
       style={{
         fontFamily: mono,
-        fontSize: pt(7.2),
+        fontSize,
         letterSpacing: "-0.04em",
         textTransform: "uppercase",
         color: C.orange,
@@ -120,9 +130,11 @@ function SectionTitle({
 function Bullet({
   children,
   onDark = false,
+  fontSize = pt(7),
 }: {
   children: string;
   onDark?: boolean;
+  fontSize?: number;
 }) {
   return (
     <div
@@ -130,7 +142,7 @@ function Bullet({
         display: "grid",
         gridTemplateColumns: "5px 1fr",
         gap: 5,
-        fontSize: pt(7),
+        fontSize,
         color: onDark ? "rgba(255,248,230,0.62)" : C.mid,
         lineHeight: 1.35,
       }}
@@ -400,7 +412,13 @@ function ExpProductLine({ item }: { item: ResumeListItem }) {
     item.name
   );
   return (
-    <div style={{ fontSize: pt(8), color: C.mid, lineHeight: 1.45 }}>
+    <div
+      style={{
+        fontSize: EXP_PAGE.productLine,
+        color: C.mid,
+        lineHeight: 1.45,
+      }}
+    >
       <span style={{ fontWeight: 700, color: C.black }}>{label}</span>
       {parts.length ? <> — {parts}</> : null}
     </div>
@@ -413,7 +431,7 @@ function SubsectionBlock({ sub }: { sub: ResumeSubsection }) {
       <div
         style={{
           fontFamily: mono,
-          fontSize: pt(7.1),
+          fontSize: EXP_PAGE.subTitle,
           letterSpacing: "-0.04em",
           textTransform: "uppercase",
           color: C.mid,
@@ -553,7 +571,7 @@ function ProfileSidebar() {
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(9, 1fr)",
-            gap: 1,
+            gap: 2,
           }}
         >
           {lifeTimeline.map((item) => (
@@ -561,27 +579,27 @@ function ProfileSidebar() {
               key={`${item.age}-${item.title}`}
               style={{
                 border: "1px solid rgba(255,248,230,0.12)",
-                padding: "1px 2px",
+                padding: "2px 3px",
               }}
             >
               <div
                 style={{
                   fontFamily: mono,
-                  fontSize: pt(4.5),
+                  fontSize: pt(5.5),
                   textTransform: "uppercase",
                   color: C.orange,
-                  lineHeight: 1.1,
+                  lineHeight: 1.15,
                 }}
               >
                 Age {item.age}
               </div>
               <div
                 style={{
-                  marginTop: 0,
-                  fontSize: pt(5),
+                  marginTop: 1,
+                  fontSize: pt(6),
                   fontWeight: 700,
                   color: C.cream,
-                  lineHeight: 1.1,
+                  lineHeight: 1.15,
                 }}
               >
                 {item.title}
@@ -1036,7 +1054,9 @@ export function HomePrintRoot() {
                 flexDirection: "column",
               }}
             >
-              <SectionTitle>Experience</SectionTitle>
+              <SectionTitle fontSize={EXP_PAGE.sectionTitle}>
+                Experience
+              </SectionTitle>
               <div
                 style={{
                   display: "flex",
@@ -1063,7 +1083,7 @@ export function HomePrintRoot() {
                     >
                       <div
                         style={{
-                          fontSize: pt(12.2),
+                          fontSize: EXP_PAGE.role,
                           fontWeight: 700,
                           color: C.black,
                           lineHeight: 1.12,
@@ -1076,7 +1096,7 @@ export function HomePrintRoot() {
                         <div
                           style={{
                             fontFamily: mono,
-                            fontSize: pt(7.2),
+                            fontSize: EXP_PAGE.time,
                             textTransform: "uppercase",
                             color: C.mid,
                             whiteSpace: "nowrap",
@@ -1088,7 +1108,9 @@ export function HomePrintRoot() {
                     </div>
                     <div style={{ marginTop: 5, display: "grid", gap: 3 }}>
                       {job.bullets.map((point) => (
-                        <Bullet key={point}>{point}</Bullet>
+                        <Bullet key={point} fontSize={EXP_PAGE.bullet}>
+                          {point}
+                        </Bullet>
                       ))}
                     </div>
                     {job.subsections.map((sub) => (
