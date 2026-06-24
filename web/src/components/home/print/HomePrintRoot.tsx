@@ -45,6 +45,15 @@ function getCachedResumeDocument() {
 
 type PrintProject = ReadmeProject | ResumeListItem;
 
+function printProjectCopy(item: PrintProject) {
+  const isResumeItem = "meta" in item;
+  const baseBlurb = isResumeItem ? resumeItemBlurb(item) : item.desc;
+  const stack = !isResumeItem ? item.stack?.trim() : undefined;
+  const blurb = stack ? `${baseBlurb} Built with ${stack}` : baseBlurb;
+  const label = isResumeItem && item.meta ? item.meta : item.name;
+  return { label, blurb, stack, href: item.href };
+}
+
 type PrintProjectSection = {
   title: string;
   intro?: string;
@@ -159,11 +168,7 @@ function Tag({
 }
 
 function ProjectCard({ item }: { item: PrintProject }) {
-  const isResumeItem = "meta" in item;
-  const baseBlurb = isResumeItem ? resumeItemBlurb(item) : item.desc;
-  const stack = !isResumeItem ? item.stack?.trim() : undefined;
-  const blurb = stack ? `${baseBlurb} Built with ${stack}` : baseBlurb;
-  const label = "meta" in item && item.meta ? item.meta : item.name;
+  const { label, blurb, href } = printProjectCopy(item);
   const content = (
     <div
       style={{
@@ -202,9 +207,9 @@ function ProjectCard({ item }: { item: PrintProject }) {
     </div>
   );
 
-  return item.href ? (
+  return href ? (
     <a
-      href={item.href}
+      href={href}
       style={{
         color: "inherit",
         textDecoration: "none",
@@ -216,6 +221,75 @@ function ProjectCard({ item }: { item: PrintProject }) {
     </a>
   ) : (
     content
+  );
+}
+
+function FeaturedProjectRow({ item }: { item: PrintProject }) {
+  const { label, blurb, stack, href } = printProjectCopy(item);
+  const row = (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "70px 1fr 130px",
+        gap: "0 10px",
+        padding: "6px 10px",
+        flex: 1,
+        minHeight: 0,
+        background: C.cream,
+        border: `1px solid ${C.rule}`,
+        borderRadius: 4,
+        alignItems: "center",
+      }}
+    >
+      <div
+        style={{
+          fontSize: pt(8.5),
+          fontWeight: 700,
+          color: C.black,
+          lineHeight: 1.15,
+        }}
+      >
+        {label}
+      </div>
+      <div
+        style={{
+          fontSize: pt(7),
+          color: C.mid,
+          lineHeight: 1.4,
+        }}
+      >
+        {blurb}
+      </div>
+      {stack ? (
+        <div
+          style={{
+            fontFamily: mono,
+            fontSize: pt(7),
+            letterSpacing: "-0.04em",
+            color: C.orange,
+            whiteSpace: "nowrap",
+            textAlign: "right",
+          }}
+        >
+          {stack}
+        </div>
+      ) : null}
+    </div>
+  );
+  return href ? (
+    <a
+      href={href}
+      style={{
+        color: "inherit",
+        textDecoration: "none",
+        flex: 1,
+        display: "flex",
+      }}
+    >
+      {row}
+    </a>
+  ) : (
+    <div style={{ flex: 1, display: "flex" }}>{row}</div>
   );
 }
 
@@ -750,80 +824,12 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
               <InlineMdText text={featuredSection.title} />
             </div>
             <div style={{ flex: 1, minHeight: 0, height: 0, display: "flex", flexDirection: "column", gap: 4 }}>
-              {featuredSection.items.map((item, i) => {
-                const isResumeItem = "meta" in item;
-                const baseBlurb = isResumeItem ? resumeItemBlurb(item) : item.desc;
-                const stack = !isResumeItem ? item.stack?.trim() : undefined;
-                const blurb = stack ? `${baseBlurb} Built with ${stack}` : baseBlurb;
-                const label =
-                  "meta" in item && item.meta ? item.meta : item.name;
-                const row = (
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "70px 1fr 130px",
-                      gap: "0 10px",
-                      padding: "6px 10px",
-                      flex: 1,
-                      minHeight: 0,
-                      background: C.cream,
-                      border: `1px solid ${C.rule}`,
-                      borderRadius: 4,
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: pt(8.5),
-                        fontWeight: 700,
-                        color: C.black,
-                        lineHeight: 1.15,
-                      }}
-                    >
-                      {label}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: pt(7),
-                        color: C.mid,
-                        lineHeight: 1.4,
-                      }}
-                    >
-                      {blurb}
-                    </div>
-                    {stack ? (
-                      <div
-                        style={{
-                          fontFamily: mono,
-                          fontSize: pt(7),
-                          letterSpacing: "-0.04em",
-                          color: C.orange,
-                          whiteSpace: "nowrap",
-                          textAlign: "right",
-                        }}
-                      >
-                        {stack}
-                      </div>
-                    ) : null}
-                  </div>
-                );
-                return item.href ? (
-                  <a
-                    key={`${item.name}:${item.href}:${i}`}
-                    href={item.href}
-                    style={{
-                      color: "inherit",
-                      textDecoration: "none",
-                      flex: 1,
-                      display: "flex",
-                    }}
-                  >
-                    {row}
-                  </a>
-                ) : (
-                  <div key={`${item.name}:${item.href}:${i}`} style={{ flex: 1, display: "flex" }}>{row}</div>
-                );
-              })}
+              {featuredSection.items.map((item, i) => (
+                <FeaturedProjectRow
+                  key={`${item.name}:${item.href}:${i}`}
+                  item={item}
+                />
+              ))}
             </div>
           </section>
         ) : null}
