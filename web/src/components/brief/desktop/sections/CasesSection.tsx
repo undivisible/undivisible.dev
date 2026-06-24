@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { briefCases } from "@/data/brief-cases";
-import { contactHref, resumeContactValue } from "@/data/resume-document";
+import { contactHref, resumeContactValue, resumeDoc } from "@/data/resume-document";
 import {
   GRADIENT,
   mono,
@@ -111,7 +111,7 @@ export function CasesSection() {
         </div>
         <a
           href={
-            contactHref("Email", resumeContactValue("Email") ?? "") ??
+            contactHref("Email", resumeContactValue(resumeDoc, "Email") ?? "") ??
             "mailto:max@tsc.hk"
           }
           style={{

@@ -66,10 +66,7 @@ export function Info({
 }) {
   const resumeDocLive = useResumeDocument();
   const socials = resumeSocialLinksFrom(resumeDocLive);
-  const resumeExperienceLive = resumeDocLive.experience.map((job) => ({
-    ...job,
-    points: job.bullets,
-  }));
+
   const getTransportStyle =
     getTransportStyleProp ?? dayTheme?.getTransportStyle;
   if (!getTransportStyle) {
@@ -571,7 +568,7 @@ export function Info({
                   </h3>
                 </motion.div>
                 <div className="space-y-10">
-                  {resumeExperienceLive.map((job, i) => (
+                  {resumeDocLive.experience.map((job, i) => (
                     <motion.div
                       key={`${job.org}-${job.role}`}
                       initial={{ opacity: 0, y: 16 }}
@@ -595,7 +592,7 @@ export function Info({
                         className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed"
                         style={{ color: "var(--page-text-muted)" }}
                       >
-                        {job.points.map((p) => (
+                        {job.bullets.map((p) => (
                           <li key={p}>{p}</li>
                         ))}
                       </ul>
