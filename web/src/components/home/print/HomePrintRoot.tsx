@@ -183,7 +183,7 @@ function ProjectCard({ item }: { item: PrintProject }) {
     >
       <div
         style={{
-          fontSize: 8.8,
+          fontSize: 8,
           fontWeight: 700,
           color: C.black,
           lineHeight: 1.15,
@@ -196,7 +196,7 @@ function ProjectCard({ item }: { item: PrintProject }) {
         <div
           style={{
             marginTop: 2,
-            fontSize: 6.8,
+            fontSize: 6,
             color: C.mid,
             lineHeight: 1.3,
           }}
@@ -239,14 +239,14 @@ function ProjectHeroCard({ item }: { item: ReadmeProject }) {
         background: C.cream,
         border: `1px solid ${C.rule}`,
         borderRadius: 6,
-        padding: "26px 16px 14px",
+        padding: "20px 16px 12px",
       }}
     >
       <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 5 }}>
         <div
           style={{
             fontFamily: serif,
-            fontSize: 28,
+            fontSize: 24,
             lineHeight: 0.95,
             letterSpacing: "-0.03em",
             color: C.black,
@@ -257,7 +257,7 @@ function ProjectHeroCard({ item }: { item: ReadmeProject }) {
         <div
           style={{
             fontFamily: mono,
-            fontSize: 7.5,
+            fontSize: 7,
             letterSpacing: "-0.04em",
             textTransform: "uppercase",
             color: C.orange,
@@ -269,7 +269,7 @@ function ProjectHeroCard({ item }: { item: ReadmeProject }) {
       </div>
       <div
         style={{
-          fontSize: 9.2,
+          fontSize: 8.5,
           color: C.mid,
           lineHeight: 1.45,
         }}
@@ -331,7 +331,7 @@ function ExpProductLine({ item }: { item: ResumeListItem }) {
     item.name
   );
   return (
-    <div style={{ fontSize: 8.8, color: C.mid, lineHeight: 1.45 }}>
+    <div style={{ fontSize: 8, color: C.mid, lineHeight: 1.45 }}>
       <span style={{ fontWeight: 700, color: C.black }}>{label}</span>
       {parts.length ? <> — {parts}</> : null}
     </div>
@@ -369,11 +369,11 @@ function ResumeHeader() {
       style={{
         background: C.black,
         color: C.cream,
-        padding: "16px 26px 14px",
+        padding: "12px 22px 10px",
         borderBottom: `3px solid ${C.orange}`,
         display: "grid",
-        gridTemplateColumns: "1fr 178px",
-        gap: 18,
+        gridTemplateColumns: "1fr 160px",
+        gap: 14,
         alignItems: "end",
         flexShrink: 0,
       }}
@@ -382,11 +382,11 @@ function ResumeHeader() {
         <div
           style={{
             fontFamily: mono,
-            fontSize: 7.4,
+            fontSize: 7,
             letterSpacing: "-0.05em",
             textTransform: "uppercase",
             color: C.orange,
-            marginBottom: 8,
+            marginBottom: 6,
           }}
         >
           {doc.nameLine}
@@ -394,7 +394,7 @@ function ResumeHeader() {
         <div
           style={{
             fontFamily: serif,
-            fontSize: 34,
+            fontSize: 30,
             lineHeight: 0.94,
             letterSpacing: "-0.03em",
           }}
@@ -404,7 +404,7 @@ function ResumeHeader() {
         <div
           style={{
             marginTop: 10,
-            fontSize: 9,
+            fontSize: 8,
             lineHeight: 1.45,
             color: "rgba(255,248,230,0.62)",
           }}
@@ -420,9 +420,9 @@ function ResumeHeader() {
               key={label}
               style={{
                 display: "grid",
-                gridTemplateColumns: "44px 1fr",
-                gap: 5,
-                fontSize: 7.3,
+                gridTemplateColumns: "40px 1fr",
+                gap: 4,
+                fontSize: 7,
                 lineHeight: 1.34,
               }}
             >
@@ -624,7 +624,7 @@ function ProjectsPageHeader({ projectCount }: { projectCount: number }) {
       style={{
         background: C.black,
         color: C.cream,
-        padding: "14px 26px 12px",
+        padding: "10px 22px 8px",
         borderBottom: `3px solid ${C.orange}`,
         flexShrink: 0,
       }}
@@ -634,13 +634,13 @@ function ProjectsPageHeader({ projectCount }: { projectCount: number }) {
           display: "grid",
           gridTemplateColumns: "1fr auto",
           alignItems: "end",
-          gap: 12,
+          gap: 10,
         }}
       >
         <div
           style={{
             fontFamily: serif,
-            fontSize: 26,
+            fontSize: 22,
             lineHeight: 0.98,
             letterSpacing: "-0.03em",
             color: C.cream,
@@ -652,7 +652,7 @@ function ProjectsPageHeader({ projectCount }: { projectCount: number }) {
         <div
           style={{
             fontFamily: mono,
-            fontSize: 6.5,
+            fontSize: 6,
             letterSpacing: "-0.03em",
             textTransform: "uppercase",
             color: "rgba(255,248,230,0.45)",
@@ -732,10 +732,10 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
         style={{
           flex: 1,
           minHeight: 0,
-          padding: "22px 22px 22px",
+          padding: "16px 22px 22px",
           display: "flex",
           flexDirection: "column",
-          gap: 6,
+          gap: 5,
         }}
       >
         {heroProject ? <ProjectHeroCard item={heroProject} /> : null}
@@ -744,17 +744,17 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
             <div
               style={{
                 fontFamily: mono,
-                fontSize: 7.5,
+                fontSize: 7,
                 letterSpacing: "-0.04em",
                 textTransform: "uppercase",
                 color: C.orange,
-                marginBottom: 5,
+                marginBottom: 4,
                 flexShrink: 0,
               }}
             >
               <InlineMdText text={featuredSection.title} />
             </div>
-            <div style={{ flex: 1, minHeight: 0, height: 0, display: "flex", flexDirection: "column", gap: 5 }}>
+            <div style={{ flex: 1, minHeight: 0, height: 0, display: "flex", flexDirection: "column", gap: 4 }}>
               {featuredSection.items.map((item, i) => {
                 const isResumeItem = "meta" in item;
                 const baseBlurb = isResumeItem ? resumeItemBlurb(item) : item.desc;
@@ -766,9 +766,9 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                   <div
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "90px 1fr 170px",
-                      gap: "0 16px",
-                      padding: "10px 14px",
+                      gridTemplateColumns: "80px 1fr 150px",
+                      gap: "0 12px",
+                      padding: "8px 12px",
                       flex: 1,
                       minHeight: 0,
                       background: C.cream,
@@ -779,7 +779,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                   >
                     <div
                       style={{
-                        fontSize: 10.5,
+                        fontSize: 9.5,
                         fontWeight: 700,
                         color: C.black,
                         lineHeight: 1.2,
@@ -789,7 +789,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                     </div>
                     <div
                       style={{
-                        fontSize: 8.5,
+                        fontSize: 8,
                         color: C.mid,
                         lineHeight: 1.45,
                       }}
@@ -800,7 +800,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                       <div
                         style={{
                           fontFamily: mono,
-                          fontSize: 7.5,
+                          fontSize: 7,
                           letterSpacing: "-0.04em",
                           color: C.orange,
                           whiteSpace: "nowrap",
@@ -840,22 +840,22 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
           style={{
             background: C.black,
             color: C.cream,
-            padding: "10px 22px 10px",
+            padding: "8px 22px 8px",
             flexShrink: 0,
           }}
         >
           <div
             style={{
               fontFamily: mono,
-              fontSize: 8.5,
+              fontSize: 7.5,
               letterSpacing: "-0.04em",
               textTransform: "uppercase",
               color: C.orange,
-              marginBottom: 6,
+              marginBottom: 4,
             }}
           >
             + {otherSection.items.length} more projects across categories
-            <span style={{ color: "rgba(255,248,230,0.4)", marginLeft: 8 }}>
+            <span style={{ color: "rgba(255,248,230,0.4)", marginLeft: 6 }}>
               full list on github.com/undivisible & undivisible.dev
             </span>
           </div>
