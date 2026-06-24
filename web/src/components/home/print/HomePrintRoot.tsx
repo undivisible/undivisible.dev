@@ -9,7 +9,7 @@ import {
   resumePrintProjectSections,
   resumeProjectCategoryRows,
 } from "@/lib/profile-readme";
-import { contactHref, resumeDoc } from "@/data/resume-document";
+import { resumeDoc } from "@/data/resume-document";
 import {
   parseInlineMdSegments,
   parseResumeMarkdown,
@@ -18,28 +18,23 @@ import {
   type ResumeListItem,
   type ResumeSubsection,
 } from "@/lib/parse-resume-markdown";
+import {
+  readRemoteMarkdownCache,
+  resumeMarkdownCacheUrl,
+} from "@/lib/remote-markdown";
+import { contactHref } from "@/lib/resume-contact";
 
 const PAGE_W = "210mm";
 const PAGE_H = "297mm";
 
-const CACHE_PREFIX = "undivisible-remote-md:";
-const DEFAULT_RESUME_MARKDOWN_URL =
-  "https://raw.githubusercontent.com/undivisible/undivisible/main/resume.md";
-
-function readCache(url: string): string | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = localStorage.getItem(`${CACHE_PREFIX}${url}`);
-    if (!raw) return null;
-    const entry = JSON.parse(raw) as { body: string; at: number };
-    return entry.body;
-  } catch {
-    return null;
-  }
+function pt(n: number) {
+  return Math.round(n * 1.25 * 10) / 10;
 }
 
+const CHROME = { tb: pt(6), ft: pt(5.5) };
+
 function getCachedResumeDocument() {
-  const cached = readCache(DEFAULT_RESUME_MARKDOWN_URL);
+  const cached = readRemoteMarkdownCache(resumeMarkdownCacheUrl());
   if (!cached) return resumeDoc;
   try {
     return parseResumeMarkdown(cached);
@@ -101,7 +96,7 @@ function SectionTitle({
     <div
       style={{
         fontFamily: mono,
-        fontSize: 7.2,
+        fontSize: pt(7.2),
         letterSpacing: "-0.04em",
         textTransform: "uppercase",
         color: C.orange,
@@ -126,7 +121,7 @@ function Bullet({
         display: "grid",
         gridTemplateColumns: "5px 1fr",
         gap: 5,
-        fontSize: 7,
+        fontSize: pt(7),
         color: onDark ? "rgba(255,248,230,0.62)" : C.mid,
         lineHeight: 1.35,
       }}
@@ -152,7 +147,7 @@ function Tag({
           : `1px solid ${C.rule}`,
         background: onDark ? "rgba(255,248,230,0.06)" : "rgba(10,10,10,0.04)",
         padding: "1px 4px",
-        fontSize: 6,
+        fontSize: pt(6),
         color: onDark ? "rgba(255,248,230,0.58)" : C.mid,
         lineHeight: 1.1,
         whiteSpace: "nowrap",
@@ -183,7 +178,7 @@ function ProjectCard({ item }: { item: PrintProject }) {
     >
       <div
         style={{
-          fontSize: 8,
+          fontSize: pt(8),
           fontWeight: 700,
           color: C.black,
           lineHeight: 1.15,
@@ -196,7 +191,7 @@ function ProjectCard({ item }: { item: PrintProject }) {
         <div
           style={{
             marginTop: 2,
-            fontSize: 6,
+            fontSize: pt(6),
             color: C.mid,
             lineHeight: 1.3,
           }}
@@ -246,7 +241,7 @@ function ProjectHeroCard({ item }: { item: ReadmeProject }) {
         <div
           style={{
             fontFamily: serif,
-            fontSize: 20,
+            fontSize: pt(20),
             lineHeight: 0.95,
             letterSpacing: "-0.03em",
             color: C.black,
@@ -257,7 +252,7 @@ function ProjectHeroCard({ item }: { item: ReadmeProject }) {
         <div
           style={{
             fontFamily: mono,
-            fontSize: 6.5,
+            fontSize: pt(6.5),
             letterSpacing: "-0.04em",
             textTransform: "uppercase",
             color: C.orange,
@@ -269,7 +264,7 @@ function ProjectHeroCard({ item }: { item: ReadmeProject }) {
       </div>
       <div
         style={{
-          fontSize: 7.5,
+          fontSize: pt(7.5),
           color: C.mid,
           lineHeight: 1.4,
         }}
@@ -331,7 +326,7 @@ function ExpProductLine({ item }: { item: ResumeListItem }) {
     item.name
   );
   return (
-    <div style={{ fontSize: 8, color: C.mid, lineHeight: 1.45 }}>
+    <div style={{ fontSize: pt(8), color: C.mid, lineHeight: 1.45 }}>
       <span style={{ fontWeight: 700, color: C.black }}>{label}</span>
       {parts.length ? <> — {parts}</> : null}
     </div>
@@ -344,7 +339,7 @@ function SubsectionBlock({ sub }: { sub: ResumeSubsection }) {
       <div
         style={{
           fontFamily: mono,
-          fontSize: 7.1,
+          fontSize: pt(7.1),
           letterSpacing: "-0.04em",
           textTransform: "uppercase",
           color: C.mid,
@@ -382,7 +377,7 @@ function ResumeHeader() {
         <div
           style={{
             fontFamily: mono,
-            fontSize: 6,
+            fontSize: pt(6),
             letterSpacing: "-0.05em",
             textTransform: "uppercase",
             color: C.orange,
@@ -394,7 +389,7 @@ function ResumeHeader() {
         <div
           style={{
             fontFamily: serif,
-            fontSize: 22,
+            fontSize: pt(22),
             lineHeight: 1,
             letterSpacing: "-0.02em",
           }}
@@ -404,7 +399,7 @@ function ResumeHeader() {
         <div
           style={{
             marginTop: 6,
-            fontSize: 7,
+            fontSize: pt(7),
             lineHeight: 1.35,
             color: "rgba(255,248,230,0.62)",
           }}
@@ -422,7 +417,7 @@ function ResumeHeader() {
                 display: "grid",
                 gridTemplateColumns: "32px 1fr",
                 gap: 2,
-                fontSize: 6,
+                fontSize: pt(6),
                 lineHeight: 1.25,
               }}
             >
@@ -469,7 +464,7 @@ function ProfileSidebar() {
       style={{
         background: C.black,
         color: C.cream,
-        padding: "6px 14px 8px",
+        padding: "7px 14px 9px",
         display: "flex",
         flexDirection: "column",
         gap: 5,
@@ -498,7 +493,7 @@ function ProfileSidebar() {
               <div
                 style={{
                   fontFamily: mono,
-                  fontSize: 4.5,
+                  fontSize: pt(4.5),
                   textTransform: "uppercase",
                   color: C.orange,
                   lineHeight: 1.1,
@@ -509,7 +504,7 @@ function ProfileSidebar() {
               <div
                 style={{
                   marginTop: 0,
-                  fontSize: 5,
+                  fontSize: pt(5),
                   fontWeight: 700,
                   color: C.cream,
                   lineHeight: 1.1,
@@ -537,7 +532,7 @@ function ProfileSidebar() {
                 <div
                   style={{
                     fontFamily: mono,
-                    fontSize: 5.5,
+                    fontSize: pt(5.5),
                     textTransform: "uppercase",
                     color: "rgba(255,248,230,0.35)",
                     marginBottom: 1,
@@ -547,7 +542,7 @@ function ProfileSidebar() {
                 </div>
                 <div
                   style={{
-                    fontSize: 6.5,
+                    fontSize: pt(6.5),
                     color: "rgba(255,248,230,0.62)",
                     lineHeight: 1.25,
                   }}
@@ -566,7 +561,7 @@ function ProfileSidebar() {
               <div
                 key={item}
                 style={{
-                  fontSize: 6.5,
+                  fontSize: pt(6.5),
                   color: "rgba(255,248,230,0.62)",
                   lineHeight: 1.25,
                 }}
@@ -640,7 +635,7 @@ function ProjectsPageHeader({ projectCount }: { projectCount: number }) {
         <div
           style={{
             fontFamily: serif,
-            fontSize: 18,
+            fontSize: pt(18),
             lineHeight: 1,
             letterSpacing: "-0.02em",
             color: C.cream,
@@ -652,7 +647,7 @@ function ProjectsPageHeader({ projectCount }: { projectCount: number }) {
         <div
           style={{
             fontFamily: mono,
-            fontSize: 5.5,
+            fontSize: pt(5.5),
             letterSpacing: "-0.02em",
             textTransform: "uppercase",
             color: "rgba(255,248,230,0.45)",
@@ -672,7 +667,7 @@ function ProjectSectionBlock({ section }: { section: PrintProjectSection }) {
       <div
         style={{
           fontFamily: mono,
-          fontSize: 6.5,
+          fontSize: pt(6.5),
           letterSpacing: "-0.04em",
           textTransform: "uppercase",
           color: C.orange,
@@ -686,7 +681,7 @@ function ProjectSectionBlock({ section }: { section: PrintProjectSection }) {
           style={{
             marginTop: -1,
             marginBottom: 2,
-            fontSize: 5.5,
+            fontSize: pt(5.5),
             color: C.mid,
             lineHeight: 1.2,
           }}
@@ -744,7 +739,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
             <div
               style={{
                 fontFamily: mono,
-                fontSize: 7,
+                fontSize: pt(7),
                 letterSpacing: "-0.04em",
                 textTransform: "uppercase",
                 color: C.orange,
@@ -779,7 +774,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                   >
                     <div
                       style={{
-                        fontSize: 8.5,
+                        fontSize: pt(8.5),
                         fontWeight: 700,
                         color: C.black,
                         lineHeight: 1.15,
@@ -789,7 +784,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                     </div>
                     <div
                       style={{
-                        fontSize: 7,
+                        fontSize: pt(7),
                         color: C.mid,
                         lineHeight: 1.4,
                       }}
@@ -800,7 +795,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                       <div
                         style={{
                           fontFamily: mono,
-                          fontSize: 7,
+                          fontSize: pt(7),
                           letterSpacing: "-0.04em",
                           color: C.orange,
                           whiteSpace: "nowrap",
@@ -847,7 +842,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
           <div
             style={{
               fontFamily: mono,
-              fontSize: 7.5,
+              fontSize: pt(7.5),
               letterSpacing: "-0.04em",
               textTransform: "uppercase",
               color: C.orange,
@@ -882,7 +877,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                 <div
                   style={{
                     fontFamily: mono,
-                    fontSize: 7.2,
+                    fontSize: pt(7.2),
                     letterSpacing: "-0.04em",
                     textTransform: "uppercase",
                     color: C.orange,
@@ -893,7 +888,7 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
                 </div>
                 <div
                   style={{
-                    fontSize: 7.8,
+                    fontSize: pt(7.8),
                     color: "rgba(255,248,230,0.6)",
                     lineHeight: 1.5,
                   }}
@@ -950,6 +945,7 @@ function PrintPage({
         <Ft
           left="Max Carter — Resume"
           right={`undivisible.dev · ${page}/${total}`}
+          fontSize={CHROME.ft}
         />
       </div>
     </div>
@@ -1002,6 +998,7 @@ export function HomePrintRoot() {
               undivisible.dev
             </a>
           }
+          fontSize={CHROME.tb}
         />
         <div
           style={{
@@ -1027,7 +1024,7 @@ export function HomePrintRoot() {
                 background: C.cream,
                 flex: 1,
                 minHeight: 0,
-                padding: "16px 26px 14px",
+                padding: "14px 26px 12px",
                 boxSizing: "border-box",
                 display: "flex",
                 flexDirection: "column",
@@ -1047,7 +1044,7 @@ export function HomePrintRoot() {
                     key={`${job.org}-${job.role}`}
                     style={{
                       borderTop: `1px solid ${C.rule}`,
-                      padding: "10px 0",
+                      padding: "11px 0",
                     }}
                   >
                     <div
@@ -1060,7 +1057,7 @@ export function HomePrintRoot() {
                     >
                       <div
                         style={{
-                          fontSize: 12.2,
+                          fontSize: pt(12.2),
                           fontWeight: 700,
                           color: C.black,
                           lineHeight: 1.12,
@@ -1073,7 +1070,7 @@ export function HomePrintRoot() {
                         <div
                           style={{
                             fontFamily: mono,
-                            fontSize: 7.2,
+                            fontSize: pt(7.2),
                             textTransform: "uppercase",
                             color: C.mid,
                             whiteSpace: "nowrap",
@@ -1119,6 +1116,7 @@ export function HomePrintRoot() {
               tabs clickable
             </a>
           }
+          fontSize={CHROME.tb}
         />
         <ProjectsPage sections={projectSections} />
       </PrintPage>
