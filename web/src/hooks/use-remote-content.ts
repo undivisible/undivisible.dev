@@ -1,10 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { normalizeReadmeBundle, parseReadme, type ReadmeBundle } from "@/lib/profile-readme";
-import { fetchNowStatus, fetchReadmeMarkdown } from "@/lib/remote-markdown";
+import { useCallback, useEffect, useState } from "react";
+import { flushSync } from "react-dom";
+import {
+  normalizeReadmeBundle,
+  parseReadme,
+  readmeBundleProjectCount,
+  type ReadmeBundle,
+} from "@/lib/parse-readme-markdown";
+import {
+  fetchNowStatus,
+  fetchReadmeMarkdown,
+  REMOTE_README_URLS,
+} from "@/lib/remote-markdown";
 import { nowMarkdownFromRepo } from "@/data/now-markdown.generated";
-import { parseNowMarkdown, type NowContent } from "@/lib/parse-now-markdown";
+import { parseNowMarkdown } from "@/lib/parse-now-markdown";
 
 export function useNowMarkdown() {
   const [raw, setRaw] = useState<string | null>(null);
@@ -15,34 +25,56 @@ export function useNowMarkdown() {
     return () => ac.abort();
   }, []);
 
-  // Return parsed content with fallback to seed (for initial render before fetch)
   if (raw === null) {
     return parseNowMarkdown(nowMarkdownFromRepo);
   }
   return parseNowMarkdown(raw);
 }
 
-export function refreshNowMarkdown(): Promise<string | null> {
-  const controller = new AbortController();
-  return fetchNowStatus({ signal: controller.signal, forceRefresh: true });
+export async function loadRemoteReadmeBundle(
+  signal?: AbortSignal,
+  options?: { forceRefresh?: boolean },
+): Promise<ReadmeBundle | null> {
+  let best: ReadmeBundle | null = null;
+  let bestCount = 0;
+  for (const url of REMOTE_README_URLS) {
+    const md = await fetchReadmeMarkdown({
+      signal,
+      url,
+      forceRefresh: options?.forceRefresh,
+    });
+    if (!md) continue;
+    const bundle = normalizeReadmeBundle(parseReadme(md));
+    const count = readmeBundleProjectCount(bundle);
+    if (count > bestCount) {
+      best = bundle;
+      bestCount = count;
+    }
+  }
+  return bestCount > 0 ? best : null;
 }
 
 export function useRemoteReadme(seed: ReadmeBundle) {
   const [readme, setReadme] = useState<ReadmeBundle>(seed);
 
+  const refreshReadme = useCallback(
+    async (options?: { forceRefresh?: boolean }) => {
+      const best = await loadRemoteReadmeBundle(undefined, options);
+      if (best) {
+        flushSync(() => setReadme(best));
+      }
+      return best;
+    },
+    [],
+  );
+
   useEffect(() => {
     const ac = new AbortController();
-    void (async () => {
-      const md = await fetchReadmeMarkdown({ signal: ac.signal });
-      if (md) setReadme(normalizeReadmeBundle(parseReadme(md)));
-    })();
+    void loadRemoteReadmeBundle(ac.signal).then((best) => {
+      if (best) setReadme(best);
+    });
     return () => ac.abort();
   }, []);
 
-  return readme;
-}
-
-export function refreshReadmeMarkdown(): Promise<string | null> {
-  const controller = new AbortController();
-  return fetchReadmeMarkdown({ signal: controller.signal, forceRefresh: true });
+  return { readme, refreshReadme };
 }

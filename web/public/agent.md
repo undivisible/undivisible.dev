@@ -9,7 +9,7 @@
 | https://example.test/llms.txt | Curated link index ([llms.txt](https://llmstxt.org/) spec) |
 | https://example.test/llms-full.txt | Full agent-readable bundle: agent guide, now/profile, resume |
 | https://example.test/agent.md | Agent guide and fetch order |
-| https://example.test/now.md | Profile, project list, now |
+| https://example.test/now.md | Now status snapshot (upstream now.md; not the project list) |
 | https://example.test/resume.md | Resume / CV |
 
 Best first request for full context: `curl -sL https://example.test/llms-full.txt`

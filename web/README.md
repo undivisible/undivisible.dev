@@ -10,11 +10,12 @@ Production site for undivisible.dev. Built with Next.js 16 (App Router), React 1
 - **Services** — Embedded “What I do” + four service rows (motion on view).
 - **Portfolio** — Case studies (`#outcomes`) and flagship pillars (`#pillars`) from readme data.
 - **Info slices** — Hero (`#start`), work grid + readme utilities (`#work`), bio / resume / contact (`#world`, `#contact`).
-- **PDF** — `@react-pdf/renderer` documents for resume and brief downloads.
-- **Profile data** — `getProfileReadmeProjects()` fetches `now.md` (fallback `README.md`), normalizes utilities (e.g. aurorality, eqswift). `PROFILE_README_URL` overrides fetch URL. `bun run sync:readme` writes `readme-projects.generated.ts`.
+- **Print / PDF** — Browser print (`window.print`) from DOM layers: resume (`HomePrintRoot`) and brief (`PrintRoot`); not `@react-pdf`.
+- **Profile / projects** — Parsed from **`undivisible/undivisible` `README.md`** (not `now.md`). SSR seed: `getProfileReadmeProjects()` reads build-time `readme-projects.generated.ts`. After load, `useRemoteReadme` refetches README (then `now.md` only if README fails) from GitHub raw URLs and keeps the parse with the most projects. `bun run sync:readme` regenerates the generated file from the same README-first order. Normalizes utilities (e.g. aurorality, eqswift). `PROFILE_README_URL` / `NEXT_PUBLIC_PROFILE_README_URL` override the project-list URL.
 - **Resume** — `fetchResumeMarkdown()` pulls `resume.md` from `undivisible/undivisible`; `bun run sync:resume` parses contact/experience into `resume-from-markdown.generated.ts`. Email and social links on the site come from the resume Contact table. `RESUME_MARKDOWN_URL` overrides the raw URL.
 - **Last.fm** — Client fetch + optional `public/lastfm-recent.json` from `bun run sync:lastfm` when `NEXT_PUBLIC_LASTFM_API_KEY` is set.
-- **Agent mode** — `/agent` lists direct URLs; `public/llms.txt`, `llms-full.txt`, `agent.md`, `now.md`, `resume.md`, `robots.txt` are **prebuild snapshots** only (`bun run sync:agent`). The home UI fetches `now.md`, `README.md`, and `resume.md` from GitHub on load (localStorage cache).
+- **Now status** — `useNowMarkdown` fetches upstream **`now.md`** (status line / article). Deploy snapshot: `public/now.md` and `now-markdown.generated.ts` via `sync:now` / `sync:agent`.
+- **Agent mode** — `/agent` lists direct URLs; `public/llms.txt`, `llms-full.txt`, `agent.md`, `now.md`, `resume.md`, `robots.txt` are **prebuild snapshots** only (`bun run sync:agent`). Live home UI: **README** for projects, **now.md** for status, **resume.md** for CV (localStorage cache on raw fetches).
 
 ## Commands
 
@@ -30,9 +31,13 @@ Production site for undivisible.dev. Built with Next.js 16 (App Router), React 1
 ## Env (public)
 
 - `NEXT_PUBLIC_LASTFM_USERNAME`, `NEXT_PUBLIC_LASTFM_API_KEY`
-- `PROFILE_README_URL` (optional readme / now.md raw URL)
+- `PROFILE_README_URL` / `NEXT_PUBLIC_PROFILE_README_URL` (optional override for **project-list** markdown URL; default is upstream `README.md`)
 - `RESUME_MARKDOWN_URL` (optional resume.md raw URL)
 
-## Content source
+## Content source (`undivisible/undivisible`)
 
-Repo root `README.md` documents the upstream `now.md` / README profile sync for this workspace.
+- **Projects / work grid / pillars** → upstream **`README.md`** (`profileMarkdownUrls()`, `REMOTE_README_URLS`).
+- **Now line / article overlay** → upstream **`now.md`** (`NOW_STATUS_URL`, `NEXT_PUBLIC_NOW_STATUS_URL`).
+- **Resume / contact** → upstream **`resume.md`**.
+
+Repo root `README.md` summarizes the same split. Do not treat `now.md` as the project list.

@@ -1,19 +1,18 @@
 import {
+  DEFAULT_PROFILE_MARKDOWN_URL,
   DEFAULT_RESUME_MARKDOWN_URL,
-  LEGACY_PROFILE_MARKDOWN_URL,
-} from "@/lib/profile-readme";
+  PROFILE_PROJECT_LIST_MARKDOWN_URL,
+} from "@/lib/parse-readme-markdown";
 
 export const NOW_STATUS_URL =
-  process.env.NEXT_PUBLIC_NOW_STATUS_URL ??
-  "https://raw.githubusercontent.com/undivisible/undivisible/main/now.md";
+  process.env.NEXT_PUBLIC_NOW_STATUS_URL ?? DEFAULT_PROFILE_MARKDOWN_URL;
 
-export const REMOTE_README_URLS = [
-  process.env.NEXT_PUBLIC_PROFILE_README_URL,
-  LEGACY_PROFILE_MARKDOWN_URL,
-].filter((u): u is string => Boolean(u));
+export const REMOTE_README_URLS = process.env.NEXT_PUBLIC_PROFILE_README_URL
+  ? [process.env.NEXT_PUBLIC_PROFILE_README_URL]
+  : [PROFILE_PROJECT_LIST_MARKDOWN_URL, DEFAULT_PROFILE_MARKDOWN_URL];
 
 const CACHE_PREFIX = "undivisible-remote-md:";
-const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
 
 type CacheEntry = { body: string; at: number };
 
@@ -45,20 +44,15 @@ function writeCache(url: string, body: string) {
 }
 
 async function fetchText(url: string, signal?: AbortSignal): Promise<string> {
-  const res = await fetch(url, {
-    signal,
-    cache: "no-store",
-  });
+  const res = await fetch(url, { signal, cache: "no-store" });
   if (!res.ok) throw new Error(`${url} ${res.status}`);
   return (await res.text()).trim();
 }
 
-export async function fetchNowStatus(options?: {
-  signal?: AbortSignal;
-  forceRefresh?: boolean;
-}): Promise<string | null> {
-  const url = NOW_STATUS_URL;
-
+export async function fetchRemoteMarkdown(
+  url: string,
+  options?: { signal?: AbortSignal; forceRefresh?: boolean },
+): Promise<string | null> {
   if (!options?.forceRefresh) {
     const cached = readCache(url, DEFAULT_TTL_MS);
     if (cached) return cached;
@@ -70,51 +64,33 @@ export async function fetchNowStatus(options?: {
     writeCache(url, body);
     return body;
   } catch {
-    const stale = readCache(url, Number.POSITIVE_INFINITY);
-    if (stale) return stale;
-    return null;
+    return readCache(url, Number.POSITIVE_INFINITY);
   }
+}
+
+export async function fetchNowStatus(options?: {
+  signal?: AbortSignal;
+  forceRefresh?: boolean;
+}): Promise<string | null> {
+  return fetchRemoteMarkdown(NOW_STATUS_URL, options);
 }
 
 export async function fetchReadmeMarkdown(options?: {
   signal?: AbortSignal;
   forceRefresh?: boolean;
+  url?: string;
 }): Promise<string | null> {
-  const urls = REMOTE_README_URLS;
-
-  if (!options?.forceRefresh) {
-    for (const url of urls) {
-      const cached = readCache(url, DEFAULT_TTL_MS);
-      if (cached) return cached;
-    }
-  }
-
-  for (const url of urls) {
-    try {
-      const body = await fetchText(url, options?.signal);
-      if (!body) continue;
-      writeCache(url, body);
-      return body;
-    } catch {
-      continue;
-    }
-  }
-
-  for (const url of urls) {
-    const stale = readCache(url, Number.POSITIVE_INFINITY);
-    if (stale) return stale;
-  }
-  return null;
+  const url = options?.url ?? REMOTE_README_URLS[0];
+  if (!url) return null;
+  return fetchRemoteMarkdown(url, options);
 }
 
 export function resumeMarkdownCacheUrl(): string {
   return (
-    process.env.NEXT_PUBLIC_RESUME_MARKDOWN_URL ??
-    DEFAULT_RESUME_MARKDOWN_URL
+    process.env.NEXT_PUBLIC_RESUME_MARKDOWN_URL ?? DEFAULT_RESUME_MARKDOWN_URL
   );
 }
 
-/** Sync read of cached resume markdown (any age). For print layout before fetch completes. */
 export function readRemoteMarkdownCache(url: string): string | null {
   return readCache(url, Number.POSITIVE_INFINITY);
 }
@@ -123,21 +99,5 @@ export async function fetchResumeMarkdownCached(options?: {
   signal?: AbortSignal;
   forceRefresh?: boolean;
 }): Promise<string | null> {
-  const url = resumeMarkdownCacheUrl();
-
-  if (!options?.forceRefresh) {
-    const cached = readCache(url, DEFAULT_TTL_MS);
-    if (cached) return cached;
-  }
-
-  try {
-    const body = await fetchText(url, options?.signal);
-    if (!body) return null;
-    writeCache(url, body);
-    return body;
-  } catch {
-    const stale = readCache(url, Number.POSITIVE_INFINITY);
-    if (stale) return stale;
-    return null;
-  }
+  return fetchRemoteMarkdown(resumeMarkdownCacheUrl(), options);
 }

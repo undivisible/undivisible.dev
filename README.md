@@ -1,6 +1,14 @@
 # undivisible.dev
 
-Profile and CV markdown live on [`undivisible/undivisible`](https://github.com/undivisible/undivisible): [`now.md`](https://github.com/undivisible/undivisible/blob/main/now.md) (project list; falls back to `README.md` if missing) and [`resume.md`](https://github.com/undivisible/undivisible/blob/main/resume.md) (CV and contact). This repo does not author those files; `web` sync scripts fetch raw GitHub URLs at build time and write deploy copies under `web/public/`. Override with `PROFILE_README_URL` or `RESUME_MARKDOWN_URL` when syncing locally.
+Profile and CV markdown live on [`undivisible/undivisible`](https://github.com/undivisible/undivisible). This repo does not author those files; `web` sync scripts fetch raw GitHub URLs at build time and write deploy copies under `web/public/`.
+
+| Upstream file | Role |
+|---------------|------|
+| [`README.md`](https://github.com/undivisible/undivisible/blob/main/README.md) | **Project list** and portfolio sections parsed into the site (`parseReadme` / `readme-projects.generated.ts`). |
+| [`now.md`](https://github.com/undivisible/undivisible/blob/main/now.md) | **Now status** (short line; optional `---` + article). Clock overlay and `public/now.md` snapshot only—not the project list. |
+| [`resume.md`](https://github.com/undivisible/undivisible/blob/main/resume.md) | CV, contact, experience. |
+
+Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MARKDOWN_URL` when syncing locally.
 
 ## Structure
 
@@ -16,7 +24,7 @@ Profile and CV markdown live on [`undivisible/undivisible`](https://github.com/u
   - `six.five/r2/` - Imba site
   - `seven/` - Rust/Leptos WASM site
   - `eight/` - Next.js site
-  - `nine/` - Next.js 16 app snapshot (same layout as `web/` at archive time; not wired in turbo)
+  - `nine/` - Next.js 16 source snapshot only (`src/`, `app/`, configs); no `public/` bundle
 
 ## Development
 

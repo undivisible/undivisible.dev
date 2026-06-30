@@ -8,6 +8,7 @@ import {
   getReadmeBundleFromGenerated,
   resumePrintProjectSections,
   resumeProjectCategoryRows,
+  type ReadmeBundle,
 } from "@/lib/profile-readme";
 import { resumeDoc } from "@/data/resume-document";
 import {
@@ -305,9 +306,15 @@ function FeaturedProjectRow({ item }: { item: PrintProject }) {
   );
 }
 
-function ProjectHeroCard({ item }: { item: ReadmeProject }) {
+function ProjectHeroCard({
+  item,
+  heroQuote,
+}: {
+  item: ReadmeProject;
+  heroQuote: string;
+}) {
   const stack = item.stack ? item.stack.trim() : "";
-  const body = `${readmeBundle.mainHeroQuote} ${item.desc}`;
+  const body = `${heroQuote} ${item.desc}`;
 
   return (
     <a
@@ -796,13 +803,19 @@ function ProjectSectionBlock({ section }: { section: PrintProjectSection }) {
   );
 }
 
-function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
+function ProjectsPage({
+  sections,
+  readme,
+}: {
+  sections: PrintProjectSection[];
+  readme: ReadmeBundle;
+}) {
   const projectCount = sections.reduce((n, s) => n + s.items.length, 0);
-  const heroProject = readmeBundle.mainProjects[0];
+  const heroProject = readme.mainProjects[0];
   const featuredSection = sections.find((s) => s.title === "Flagship projects");
   const otherSection = sections.find((s) => s.title === "Other projects");
 
-  const otherCategories = resumeProjectCategoryRows(readmeBundle);
+  const otherCategories = resumeProjectCategoryRows(readme);
 
   return (
     <div
@@ -825,7 +838,9 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
           gap: 4,
         }}
       >
-        {heroProject ? <ProjectHeroCard item={heroProject} /> : null}
+        {heroProject ? (
+          <ProjectHeroCard item={heroProject} heroQuote={readme.mainHeroQuote} />
+        ) : null}
         {featuredSection ? (
           <section style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
             <div
@@ -928,8 +943,6 @@ function ProjectsPage({ sections }: { sections: PrintProjectSection[] }) {
   );
 }
 
-const readmeBundle = getReadmeBundleFromGenerated();
-
 function PrintPage({
   children,
   page,
@@ -976,9 +989,13 @@ function PrintPage({
   );
 }
 
-export function HomePrintRoot() {
+export function HomePrintRoot({
+  readme = getReadmeBundleFromGenerated(),
+}: {
+  readme?: ReadmeBundle;
+}) {
   const doc = getCachedResumeDocument();
-  const projectSections = resumePrintProjectSections(readmeBundle);
+  const projectSections = resumePrintProjectSections(readme);
   const totalPages = 2;
 
   return (
@@ -1146,7 +1163,7 @@ export function HomePrintRoot() {
           }
           fontSize={CHROME.tb}
         />
-        <ProjectsPage sections={projectSections} />
+        <ProjectsPage sections={projectSections} readme={readme} />
       </PrintPage>
     </div>
   );

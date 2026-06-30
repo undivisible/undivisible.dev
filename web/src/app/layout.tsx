@@ -32,7 +32,7 @@ export const metadata: Metadata = {
       ],
       "text/markdown": [
         { url: "/agent.md", title: "Agent guide" },
-        { url: "/now.md", title: "Now / profile" },
+        { url: "/now.md", title: "Now status" },
         { url: "/resume.md", title: "Resume" },
       ],
     },

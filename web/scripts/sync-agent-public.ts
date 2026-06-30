@@ -57,7 +57,7 @@ const agentMd = `# undivisible.dev — agent index
 | ${SITE}/llms.txt | Curated link index ([llms.txt](https://llmstxt.org/) spec) |
 | ${SITE}/llms-full.txt | Full agent-readable bundle: agent guide, now/profile, resume |
 | ${SITE}/agent.md | Agent guide and fetch order |
-| ${SITE}/now.md | Profile, project list, now |
+| ${SITE}/now.md | Now status snapshot (upstream now.md; not the project list) |
 | ${SITE}/resume.md | Resume / CV |
 
 Best first request for full context: \`curl -sL ${SITE}/llms-full.txt\`
@@ -85,7 +85,8 @@ Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrap
 ## Markdown (fetch directly)
 
 - [Full bundle](${SITE}/llms-full.txt): Agent guide, profile/current projects, and resume in one Markdown request.
-- [Now / profile](${SITE}/now.md): Projects and current focus.
+- [Now status](${SITE}/now.md): Short now line (upstream now.md snapshot).
+- [Project list source](https://raw.githubusercontent.com/undivisible/undivisible/main/README.md): Parsed for portfolio; live site and sync:readme use this README, not now.md.
 - [Resume](${SITE}/resume.md): Experience, skills, contact.
 - [Agent how-to](${SITE}/agent.md): Which URLs to use; static vs Cloudflare-style negotiation.
 
@@ -96,7 +97,8 @@ Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrap
 
 ## Optional
 
-- [Upstream now.md](https://raw.githubusercontent.com/undivisible/undivisible/main/now.md): GitHub source before deploy sync.
+- [Upstream now.md](https://raw.githubusercontent.com/undivisible/undivisible/main/now.md): Status text before deploy sync.
+- [Upstream README.md](https://raw.githubusercontent.com/undivisible/undivisible/main/README.md): Project list before deploy sync.
 - [Upstream resume.md](https://raw.githubusercontent.com/undivisible/undivisible/main/resume.md): GitHub source before deploy sync.
 `;
 

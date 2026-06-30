@@ -51,7 +51,7 @@ export default function Home({
     dayTheme.shader.weatherKind === "rain" ||
     dayTheme.shader.weatherKind === "storm";
   const now = useNowMarkdown();
-  const activeReadme = useRemoteReadme(readme);
+  const { readme: activeReadme, refreshReadme } = useRemoteReadme(readme);
   const [nowArticleOpen, setNowArticleOpen] = useState(false);
   const [printMounted, setPrintMounted] = useState(false);
 
@@ -69,12 +69,15 @@ export default function Home({
     async (target: SitePrintTarget) => {
       // For resume print, force refresh to get latest content
       if (target === "resume") {
-        await fetchResumeMarkdownCached({ forceRefresh: true });
+        await Promise.all([
+          fetchResumeMarkdownCached({ forceRefresh: true }),
+          refreshReadme({ forceRefresh: true }),
+        ]);
       }
       if (!printMounted) setPrintMounted(true);
       await printSitePdf(target);
     },
-    [printMounted],
+    [printMounted, refreshReadme],
   );
 
   useEffect(() => {
@@ -86,7 +89,7 @@ export default function Home({
   const printLayers = printMounted ? (
     <>
       <div className="print-only print-layer-resume" aria-hidden>
-        <HomePrintRoot />
+        <HomePrintRoot readme={activeReadme} />
       </div>
       <div className="print-only print-layer-brief" aria-hidden>
         <PrintRoot />

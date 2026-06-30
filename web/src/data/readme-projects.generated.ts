@@ -31,7 +31,7 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "name": "inauguration",
     "href": "https://github.com/tschk/inauguration",
     "desc": "an ultra-fast, general-purpose compiler pipeline for multiple languages designed around explicit capability management and deterministic execution graphs. it features a native language (inlang) that supports two synchronized syntaxes—a strict, explicit form ideal for tooling, agents, and deterministic builds, and a lightweight, human-friendly form optimized for readability.",
-    "stack": "Rust, Swift, V, C, Java, TypeScript."
+    "stack": "Rust, V, C, Java, Swift, TypeScript."
   },
   {
     "key": "equilibrium",
@@ -66,7 +66,7 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "name": "soliloquy",
     "href": "https://github.com/tschk/soliloquy",
     "desc": "an experimental operating system model for the web — immutable, browser-native, built on alpenglow + rv8.",
-    "stack": "Rust, Svelte, TypeScript, WGSL, CSS, HTML, Other."
+    "stack": "Rust, Svelte, TypeScript, CSS, HTML, JavaScript, Shell."
   },
   {
     "key": "rv8",
@@ -80,7 +80,7 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "name": "alpenglow",
     "href": "https://github.com/tschk/alpenglow",
     "desc": "is my distro of linux based on chimera, void, alpine and oasis. the minimal build is smaller than an image taken on a modern day phone, standard is smaller than a 50MP image. boots in under a second and runs completely in RAM. ships with my own custom package manager oil, which has been lightened for this operating system. there is a work in progress desktop environment – alpenglowed built on top of wayland to render the entire desktop environment in crepuscular gpui.",
-    "stack": "Rust, C, Zig, Other."
+    "stack": "Rust, C, Zig, Makefile."
   },
   {
     "key": "space",
@@ -104,6 +104,13 @@ export const utilitiesFromReadme: ReadmeProject[] = [
 ];
 
 export const miniappsFromReadme: ReadmeProject[] = [
+  {
+    "key": "crates-download-history",
+    "name": "crates download history",
+    "href": "https://cratesdownloadhistory.undivisible.dev/",
+    "desc": "see cumulative download history for a user on crates.io with embeddable svg charts into markdowns and websites.",
+    "category": "web apps"
+  },
   {
     "key": "standpoint",
     "name": "standpoint",
@@ -206,7 +213,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "href": "https://github.com/undivisible/poke-around",
     "desc": "lets poke interact with your computer across major oses.",
     "category": "mobile & desktop",
-    "stack": "Rust, TypeScript, Dockerfile."
+    "stack": "Rust, PowerShell, Dockerfile."
   },
   {
     "key": "unthinkclaw",
@@ -214,7 +221,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "href": "https://github.com/undivisible/unthinkclaw",
     "desc": "openclaw + hermes but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms.",
     "category": "mobile & desktop",
-    "stack": "Rust, JavaScript, Other."
+    "stack": "Rust, Other."
   },
   {
     "key": "drift",
@@ -222,7 +229,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "href": "https://github.com/undivisible/drift-wallpaper",
     "desc": "macos drift screensaver as a live wallpaper on linux, macos, windows. spotify and apple music now playing support.",
     "category": "mobile & desktop",
-    "stack": "Rust, WGSL, PowerShell, Shell."
+    "stack": "Rust, WGSL, PowerShell, Shell, Dockerfile."
   },
   {
     "key": "arcanbar",

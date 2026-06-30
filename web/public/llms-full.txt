@@ -7,7 +7,8 @@ Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrap
 ## Markdown (fetch directly)
 
 - [Full bundle](https://example.test/llms-full.txt): Agent guide, profile/current projects, and resume in one Markdown request.
-- [Now / profile](https://example.test/now.md): Projects and current focus.
+- [Now status](https://example.test/now.md): Short now line (upstream now.md snapshot).
+- [Project list source](https://raw.githubusercontent.com/undivisible/undivisible/main/README.md): Parsed for portfolio; live site and sync:readme use this README, not now.md.
 - [Resume](https://example.test/resume.md): Experience, skills, contact.
 - [Agent how-to](https://example.test/agent.md): Which URLs to use; static vs Cloudflare-style negotiation.
 
@@ -18,7 +19,8 @@ Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrap
 
 ## Optional
 
-- [Upstream now.md](https://raw.githubusercontent.com/undivisible/undivisible/main/now.md): GitHub source before deploy sync.
+- [Upstream now.md](https://raw.githubusercontent.com/undivisible/undivisible/main/now.md): Status text before deploy sync.
+- [Upstream README.md](https://raw.githubusercontent.com/undivisible/undivisible/main/README.md): Project list before deploy sync.
 - [Upstream resume.md](https://raw.githubusercontent.com/undivisible/undivisible/main/resume.md): GitHub source before deploy sync.
 
 
@@ -35,7 +37,7 @@ Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrap
 | https://example.test/llms.txt | Curated link index ([llms.txt](https://llmstxt.org/) spec) |
 | https://example.test/llms-full.txt | Full agent-readable bundle: agent guide, now/profile, resume |
 | https://example.test/agent.md | Agent guide and fetch order |
-| https://example.test/now.md | Profile, project list, now |
+| https://example.test/now.md | Now status snapshot (upstream now.md; not the project list) |
 | https://example.test/resume.md | Resume / CV |
 
 Best first request for full context: `curl -sL https://example.test/llms-full.txt`
