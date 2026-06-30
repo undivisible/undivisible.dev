@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import {
   normalizeReadmeBundle,
@@ -25,26 +25,32 @@ export function useNowMarkdown() {
     return () => ac.abort();
   }, []);
 
-  if (raw === null) {
-    return parseNowMarkdown(nowMarkdownFromRepo);
-  }
-  return parseNowMarkdown(raw);
+  const seed = nowMarkdownFromRepo;
+  return useMemo(
+    () => parseNowMarkdown(raw ?? seed),
+    [raw, seed],
+  );
 }
 
 export async function loadRemoteReadmeBundle(
   signal?: AbortSignal,
   options?: { forceRefresh?: boolean },
 ): Promise<ReadmeBundle | null> {
+  const bundles = await Promise.all(
+    REMOTE_README_URLS.map(async (url) => {
+      const md = await fetchReadmeMarkdown({
+        signal,
+        url,
+        forceRefresh: options?.forceRefresh,
+      });
+      if (!md) return null;
+      return normalizeReadmeBundle(parseReadme(md));
+    }),
+  );
   let best: ReadmeBundle | null = null;
   let bestCount = 0;
-  for (const url of REMOTE_README_URLS) {
-    const md = await fetchReadmeMarkdown({
-      signal,
-      url,
-      forceRefresh: options?.forceRefresh,
-    });
-    if (!md) continue;
-    const bundle = normalizeReadmeBundle(parseReadme(md));
+  for (const bundle of bundles) {
+    if (!bundle) continue;
     const count = readmeBundleProjectCount(bundle);
     if (count > bestCount) {
       best = bundle;

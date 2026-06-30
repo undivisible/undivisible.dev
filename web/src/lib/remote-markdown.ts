@@ -11,7 +11,7 @@ export const REMOTE_README_URLS = process.env.NEXT_PUBLIC_PROFILE_README_URL
   ? [process.env.NEXT_PUBLIC_PROFILE_README_URL]
   : [PROFILE_PROJECT_LIST_MARKDOWN_URL, DEFAULT_PROFILE_MARKDOWN_URL];
 
-const CACHE_PREFIX = "undivisible-remote-md:";
+const CACHE_PREFIX = "undivisible-remote-md:v2:";
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
 
 type CacheEntry = { body: string; at: number };

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Fragment } from "react";
+import { safeExternalHref } from "@/lib/safe-external-href";
 
 function splitBold(segment: string, keyBase: string): ReactNode[] {
   const chunks = segment.split(/(\*\*[^*]+\*\*)/g);
@@ -37,10 +38,11 @@ function splitLinks(text: string, keyBase: string): ReactNode {
       rest = rest.slice(1);
       continue;
     }
+    const href = safeExternalHref(m[2]!);
     out.push(
       <a
         key={`${keyBase}-a-${n}`}
-        href={m[2]}
+        href={href}
         target="_blank"
         rel="noreferrer"
         className="underline underline-offset-2"

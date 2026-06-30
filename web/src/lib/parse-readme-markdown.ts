@@ -1,11 +1,4 @@
-import {
-  librariesFromReadme,
-  mainHeroQuoteFromReadme,
-  mainProjectsFromReadme,
-  miniappsFromReadme,
-  utilitiesFromReadme,
-} from "@/data/readme-projects.generated";
-import { scrapeGithubRepoLanguages, sleep } from "@/lib/github-repo-languages";
+import { safeExternalHref } from "@/lib/safe-external-href";
 
 export type ReadmeProject = {
   key: string;
@@ -445,6 +438,20 @@ export function appendEqswiftToUtilities(bundle: ReadmeBundle): ReadmeBundle {
   return { ...bundle, miniapps, utilities };
 }
 
+function withSafeHrefs(bundle: ReadmeBundle): ReadmeBundle {
+  const map = (projects: ReadmeProject[]) =>
+    projects.map((p) => ({ ...p, href: safeExternalHref(p.href) }));
+  return {
+    ...bundle,
+    mainProjects: map(bundle.mainProjects),
+    utilities: map(bundle.utilities),
+    miniapps: map(bundle.miniapps),
+    libraries: map(bundle.libraries),
+  };
+}
+
 export function normalizeReadmeBundle(bundle: ReadmeBundle): ReadmeBundle {
-  return appendEqswiftToUtilities(promoteAuroralityToUtilities(bundle));
+  return withSafeHrefs(
+    appendEqswiftToUtilities(promoteAuroralityToUtilities(bundle)),
+  );
 }
