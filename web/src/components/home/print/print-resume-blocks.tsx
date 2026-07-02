@@ -114,8 +114,8 @@ export function ResumeHeader() {
         padding: "8px 16px 6px",
         borderBottom: `3px solid ${C.orange}`,
         display: "grid",
-        gridTemplateColumns: "1fr 128px",
-        gap: 10,
+        gridTemplateColumns: "minmax(0, 1fr) 148px",
+        gap: 16,
         alignItems: "end",
         flexShrink: 0,
       }}
@@ -149,7 +149,7 @@ export function ResumeHeader() {
             fontSize: pt(7),
             lineHeight: 1.35,
             color: "rgba(255,248,230,0.62)",
-            maxWidth: "90%",
+            maxWidth: "96%",
           }}
         >
           {doc.summary}
@@ -163,8 +163,8 @@ export function ResumeHeader() {
               key={label}
               style={{
                 display: "grid",
-                gridTemplateColumns: "32px 1fr",
-                gap: 2,
+                gridTemplateColumns: "38px minmax(0, 1fr)",
+                gap: 6,
                 fontSize: pt(6),
                 lineHeight: 1.25,
               }}
