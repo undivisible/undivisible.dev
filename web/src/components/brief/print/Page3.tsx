@@ -4,7 +4,31 @@ import { Ft } from "@/components/brief/ui/Ft";
 import { briefOpenSourceCards } from "@/lib/brief-open-source";
 
 export function Page3() {
-  const projs = briefOpenSourceCards();
+  const projs = briefOpenSourceCards().map((project) => {
+    if (project.name === "Space + rv8") {
+      return {
+        org: "Maincode",
+        name: "Mainrun",
+        tech: "C++ · Machine Learning Systems · Apple Silicon",
+        desc: "Participated in Maincode's machine learning assessment with no prior LLM training experience. Built a complete GPT-style training pipeline from scratch in C++: transformer architecture, tokenizer integration, data pipeline, optimizers, schedulers, checkpointing, and training loop. Reached ~1,900 tokens/s inference, ~300 ms training steps, final validation loss 0.974555, and best result in the assessment. Also submitted upstream tooling/script fixes.",
+        tag: "ML Systems",
+        accent: project.accent,
+        dark: project.dark,
+      };
+    }
+    if (project.name === "unthinkclaw + unthinkmail") {
+      return {
+        org: "Oppo / OnePlus",
+        name: "Firmware Reverse Engineering",
+        tech: "Embedded Systems · Firmware · Reverse Engineering",
+        desc: "Recovered a soft-bricked Oppo/OnePlus device without official docs. Reverse engineered vendor flashing validation, bypassed model/package checks safely, rebuilt a compatible firmware package from multiple releases, traced boot loops to the OCDT calibration partition, restored the original backup, and recovered boot, IMEI, and modem functionality.",
+        tag: "Firmware RE",
+        accent: project.accent,
+        dark: project.dark,
+      };
+    }
+    return project;
+  });
 
   const otherCategories = [
     {
@@ -14,7 +38,8 @@ export function Page3() {
     },
     {
       label: "Browser Extensions",
-      items: "rs_vimium (Rust rewrite), anywhere (AI chat → interactive widgets)",
+      items:
+        "rs_vimium (Rust rewrite), anywhere (AI chat → interactive widgets)",
     },
     {
       label: "Developer Tools",
@@ -24,7 +49,7 @@ export function Page3() {
     {
       label: "Web Apps & Experiments",
       items:
-        "standpoint (tierlists), notes, bublik (soundscape gen), alphabets, infrastruct (AI search), soliloquy (web OS model)",
+        "standpoint (tierlists), notes, bublik (soundscape gen), alphabets, infrastruct (AI search), soliloquy (web OS model), rv8 (browser engine)",
     },
     {
       label: "Libraries & Protocols",
@@ -33,7 +58,8 @@ export function Page3() {
     },
     {
       label: "AI Agent Tooling",
-      items: "folk-around, poke-around (P2P computer interaction)",
+      items:
+        "unthinkclaw (local-first Rust agent runtime), unthinkmail (IMAP via MCP), folk-around, poke-around (P2P computer interaction)",
     },
   ];
 
