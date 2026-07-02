@@ -27,12 +27,15 @@ export function getCachedResumeDocument() {
   }
 }
 
+function printStack(item: PrintProject): string | undefined {
+  const raw = item.stack?.trim();
+  return raw || undefined;
+}
+
 export function printProjectCopy(item: PrintProject) {
   const isResumeItem = "meta" in item;
-  const baseBlurb = isResumeItem ? item.desc.trim() : item.desc;
-  const stack = item.stack?.trim() || undefined;
-  const blurb =
-    !isResumeItem && stack ? `${baseBlurb} Built with ${stack}` : baseBlurb;
+  const blurb = isResumeItem ? item.desc.trim() : item.desc;
+  const stack = printStack(item);
   const label = item.name;
   return { label, blurb, stack, href: item.href };
 }

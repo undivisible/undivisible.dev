@@ -69,7 +69,7 @@ export function FeaturedProjectRow({ item }: { item: PrintProject }) {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "88px minmax(0, 1fr) minmax(120px, 175px)",
+        gridTemplateColumns: "70px 1fr 175px",
         gap: "0 10px",
         padding: "6px 10px",
         flex: 1,
@@ -99,20 +99,19 @@ export function FeaturedProjectRow({ item }: { item: PrintProject }) {
       >
         {blurb}
       </div>
-      {stack ? (
-        <div
-          style={{
-            fontFamily: mono,
-            fontSize: pt(7),
-            letterSpacing: "-0.04em",
-            color: C.orange,
-            whiteSpace: "nowrap",
-            textAlign: "right",
-          }}
-        >
-          {stack}
-        </div>
-      ) : null}
+      <div
+        style={{
+          fontFamily: mono,
+          fontSize: pt(7),
+          letterSpacing: "-0.04em",
+          color: C.orange,
+          textAlign: "right",
+          lineHeight: 1.35,
+          alignSelf: "center",
+        }}
+      >
+        {stack ?? ""}
+      </div>
     </div>
   );
   return href ? (

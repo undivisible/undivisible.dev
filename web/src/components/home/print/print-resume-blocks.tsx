@@ -114,13 +114,13 @@ export function ResumeHeader() {
         padding: "8px 16px 6px",
         borderBottom: `3px solid ${C.orange}`,
         display: "grid",
-        gridTemplateColumns: "minmax(0, 1fr) minmax(168px, 42%)",
-        gap: 14,
+        gridTemplateColumns: "1fr 128px",
+        gap: 10,
         alignItems: "end",
         flexShrink: 0,
       }}
     >
-      <div style={{ minWidth: 0, maxWidth: "58%" }}>
+      <div style={{ minWidth: 0 }}>
         <div
           style={{
             fontFamily: mono,
@@ -149,13 +149,13 @@ export function ResumeHeader() {
             fontSize: pt(7),
             lineHeight: 1.35,
             color: "rgba(255,248,230,0.62)",
-            maxWidth: "92%",
+            maxWidth: "90%",
           }}
         >
           {doc.summary}
         </div>
       </div>
-      <div style={{ display: "grid", gap: 2, minWidth: 0 }}>
+      <div style={{ display: "grid", gap: 2 }}>
         {doc.contact.map(([label, value]) => {
           const href = contactHref(label, value);
           return (
@@ -163,8 +163,8 @@ export function ResumeHeader() {
               key={label}
               style={{
                 display: "grid",
-                gridTemplateColumns: "44px 1fr",
-                gap: 6,
+                gridTemplateColumns: "32px 1fr",
+                gap: 2,
                 fontSize: pt(6),
                 lineHeight: 1.25,
               }}
