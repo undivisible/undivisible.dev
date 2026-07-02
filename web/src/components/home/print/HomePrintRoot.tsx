@@ -1,5 +1,6 @@
 import { Tb } from "@/components/brief/ui/Tb";
 import {
+  applyReadmeStackFallbacks,
   getReadmeBundleFromGenerated,
   resumePrintProjectSections,
   type ReadmeBundle,
@@ -61,8 +62,12 @@ export function HomePrintRoot({
   readme?: ReadmeBundle;
 }) {
   const doc = getCachedResumeDocument();
+  const readmeForPrint = applyReadmeStackFallbacks(
+    readme,
+    getReadmeBundleFromGenerated(),
+  );
   const projectSections = resumePrintSectionsWithAssessmentProjects(
-    resumePrintProjectSections(readme),
+    resumePrintProjectSections(readmeForPrint),
   );
   const totalPages = 2;
 
