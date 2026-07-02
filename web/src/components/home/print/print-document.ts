@@ -1,7 +1,6 @@
 import { resumeDoc } from "@/data/resume-document";
 import {
   parseResumeMarkdown,
-  resumeItemBlurb,
   type ResumeListItem,
 } from "@/lib/parse-resume-markdown";
 import type { ReadmeProject } from "@/lib/profile-readme";
@@ -30,9 +29,10 @@ export function getCachedResumeDocument() {
 
 export function printProjectCopy(item: PrintProject) {
   const isResumeItem = "meta" in item;
-  const baseBlurb = isResumeItem ? resumeItemBlurb(item) : item.desc;
+  const baseBlurb = isResumeItem ? item.desc.trim() : item.desc;
   const stack = item.stack?.trim() || undefined;
-  const blurb = stack ? `${baseBlurb} Built with ${stack}` : baseBlurb;
-  const label = isResumeItem && item.meta ? item.meta : item.name;
+  const blurb =
+    !isResumeItem && stack ? `${baseBlurb} Built with ${stack}` : baseBlurb;
+  const label = item.name;
   return { label, blurb, stack, href: item.href };
 }

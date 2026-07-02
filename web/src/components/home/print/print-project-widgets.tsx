@@ -1,6 +1,9 @@
 import { C, mono, sans, serif } from "@/components/brief/ui/constants";
 import type { ReadmeProject } from "@/lib/profile-readme";
-import { printProjectCopy, type PrintProject } from "@/components/home/print/print-document";
+import {
+  printProjectCopy,
+  type PrintProject,
+} from "@/components/home/print/print-document";
 import { pt } from "@/components/home/print/print-metrics";
 
 export function ProjectCard({ item }: { item: PrintProject }) {
@@ -66,7 +69,7 @@ export function FeaturedProjectRow({ item }: { item: PrintProject }) {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "70px 1fr 175px",
+        gridTemplateColumns: "88px minmax(0, 1fr) minmax(120px, 175px)",
         gap: "0 10px",
         padding: "6px 10px",
         flex: 1,
@@ -153,7 +156,14 @@ export function ProjectHeroCard({
         padding: "16px 12px 10px",
       }}
     >
-      <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 4 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "baseline",
+          gap: 10,
+          marginBottom: 4,
+        }}
+      >
         <div
           style={{
             fontFamily: serif,

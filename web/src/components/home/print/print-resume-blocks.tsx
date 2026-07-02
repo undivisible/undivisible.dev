@@ -9,7 +9,11 @@ import {
 } from "@/lib/parse-resume-markdown";
 import { contactHref } from "@/lib/resume-contact";
 import { getCachedResumeDocument } from "@/components/home/print/print-document";
-import { Bullet, SectionTitle, Tag } from "@/components/home/print/print-primitives";
+import {
+  Bullet,
+  SectionTitle,
+  Tag,
+} from "@/components/home/print/print-primitives";
 import { EXP_PAGE, pt } from "@/components/home/print/print-metrics";
 
 function ExpProductLine({ item }: { item: ResumeListItem }) {
@@ -110,13 +114,13 @@ export function ResumeHeader() {
         padding: "8px 16px 6px",
         borderBottom: `3px solid ${C.orange}`,
         display: "grid",
-        gridTemplateColumns: "1fr 120px",
-        gap: 10,
+        gridTemplateColumns: "minmax(0, 1fr) minmax(168px, 42%)",
+        gap: 14,
         alignItems: "end",
         flexShrink: 0,
       }}
     >
-      <div>
+      <div style={{ minWidth: 0, maxWidth: "58%" }}>
         <div
           style={{
             fontFamily: mono,
@@ -145,12 +149,13 @@ export function ResumeHeader() {
             fontSize: pt(7),
             lineHeight: 1.35,
             color: "rgba(255,248,230,0.62)",
+            maxWidth: "92%",
           }}
         >
           {doc.summary}
         </div>
       </div>
-      <div style={{ display: "grid", gap: 2 }}>
+      <div style={{ display: "grid", gap: 2, minWidth: 0 }}>
         {doc.contact.map(([label, value]) => {
           const href = contactHref(label, value);
           return (
@@ -158,8 +163,8 @@ export function ResumeHeader() {
               key={label}
               style={{
                 display: "grid",
-                gridTemplateColumns: "32px 1fr",
-                gap: 2,
+                gridTemplateColumns: "44px 1fr",
+                gap: 6,
                 fontSize: pt(6),
                 lineHeight: 1.25,
               }}
