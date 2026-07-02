@@ -27,10 +27,10 @@ import {
 const mainrunProject = {
   name: "Mainrun",
   href: "",
-  meta: "Mainrun (Machine Learning Systems)",
+  meta: "",
   desc: "Participated in Maincode's machine learning assessment with no prior LLM training experience. Built a complete GPT-style training pipeline from scratch in C++: transformer architecture, tokenizer integration, data pipeline, optimizers, schedulers, checkpointing, and training loop. Achieved ~1.6x faster inference than the reference Python implementation at ~1,900 tokens/second, reduced training step time to ~300 ms for ~1.7x faster training, optimized Apple Silicon performance, memory use, and throughput, reached final validation loss 0.974555, and placed best in the assessment. Also submitted an upstream tooling/scripts fix.",
   descSegments: [],
-  stack: "C++, Machine Learning Systems, Apple Silicon.",
+  stack: "Python, C++.",
 };
 
 const oppoFirmwareProject = {
@@ -39,8 +39,7 @@ const oppoFirmwareProject = {
   meta: "Oppo Firmware Reverse Engineering",
   desc: "Recovered a soft-bricked Oppo/OnePlus device without official documentation. Reverse engineered the vendor flashing utility and firmware validation process, identified model/package validation as the failure source, modified package configuration while preserving compatibility, rebuilt a working package from multiple firmware releases, traced boot loops to the OCDT calibration partition, restored the original backup, and recovered boot, IMEI, and modem functionality.",
   descSegments: [],
-  stack:
-    "Firmware reverse engineering, embedded systems debugging, low-level storage analysis.",
+  stack: "",
 };
 
 function resumePrintSectionsWithAssessmentProjects(

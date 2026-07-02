@@ -31,7 +31,7 @@ export function getCachedResumeDocument() {
 export function printProjectCopy(item: PrintProject) {
   const isResumeItem = "meta" in item;
   const baseBlurb = isResumeItem ? resumeItemBlurb(item) : item.desc;
-  const stack = !isResumeItem ? item.stack?.trim() : undefined;
+  const stack = item.stack?.trim() || undefined;
   const blurb = stack ? `${baseBlurb} Built with ${stack}` : baseBlurb;
   const label = isResumeItem && item.meta ? item.meta : item.name;
   return { label, blurb, stack, href: item.href };
