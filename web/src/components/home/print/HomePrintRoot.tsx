@@ -4,7 +4,10 @@ import {
   resumePrintProjectSections,
   type ReadmeBundle,
 } from "@/lib/profile-readme";
-import { getCachedResumeDocument } from "@/components/home/print/print-document";
+import {
+  getCachedResumeDocument,
+  type PrintProjectSection,
+} from "@/components/home/print/print-document";
 import { C, mono } from "@/components/brief/ui/constants";
 import {
   CHROME,
@@ -21,13 +24,47 @@ import {
   SubsectionBlock,
 } from "@/components/home/print/print-resume-blocks";
 
+const mainrunProject = {
+  name: "Mainrun",
+  href: "",
+  meta: "Mainrun (Machine Learning Systems)",
+  desc: "Participated in Maincode's machine learning assessment with no prior LLM training experience. Built a complete GPT-style training pipeline from scratch in C++: transformer architecture, tokenizer integration, data pipeline, optimizers, schedulers, checkpointing, and training loop. Achieved ~1.6x faster inference than the reference Python implementation at ~1,900 tokens/second, reduced training step time to ~300 ms for ~1.7x faster training, optimized Apple Silicon performance, memory use, and throughput, reached final validation loss 0.974555, and placed best in the assessment. Also submitted an upstream tooling/scripts fix.",
+  descSegments: [],
+  stack: "C++, Machine Learning Systems, Apple Silicon.",
+};
+
+const oppoFirmwareProject = {
+  name: "Oppo Firmware Reverse Engineering",
+  href: "",
+  meta: "Oppo Firmware Reverse Engineering",
+  desc: "Recovered a soft-bricked Oppo/OnePlus device without official documentation. Reverse engineered the vendor flashing utility and firmware validation process, identified model/package validation as the failure source, modified package configuration while preserving compatibility, rebuilt a working package from multiple firmware releases, traced boot loops to the OCDT calibration partition, restored the original backup, and recovered boot, IMEI, and modem functionality.",
+  descSegments: [],
+  stack:
+    "Firmware reverse engineering, embedded systems debugging, low-level storage analysis.",
+};
+
+function resumePrintSectionsWithAssessmentProjects(
+  sections: PrintProjectSection[],
+): PrintProjectSection[] {
+  return sections.map((section) =>
+    section.title === "Flagship projects"
+      ? {
+          ...section,
+          items: [...section.items, mainrunProject, oppoFirmwareProject],
+        }
+      : section,
+  );
+}
+
 export function HomePrintRoot({
   readme = getReadmeBundleFromGenerated(),
 }: {
   readme?: ReadmeBundle;
 }) {
   const doc = getCachedResumeDocument();
-  const projectSections = resumePrintProjectSections(readme);
+  const projectSections = resumePrintSectionsWithAssessmentProjects(
+    resumePrintProjectSections(readme),
+  );
   const totalPages = 2;
 
   return (

@@ -5,8 +5,6 @@ const FEATURED_RESUME_PROJECT_KEYS = new Set([
   "alpenglow",
   "space",
   "wax",
-  "rv8",
-  "unthinkclaw",
 ]);
 
 function isFeaturedResumeProject(project: ReadmeProject): boolean {
@@ -62,7 +60,8 @@ export function resumeProjectCategoryRows(
   const bucketLabel = (p: ReadmeProject): string => {
     if (p.category) return p.category;
     if (bundle.libraries.some((l) => l.key === p.key)) return "libraries";
-    if (bundle.utilities.some((u) => u.key === p.key)) return "platforms & tools";
+    if (bundle.utilities.some((u) => u.key === p.key))
+      return "platforms & tools";
     if (bundle.mainProjects.some((m) => m.key === p.key)) return "frameworks";
     return "other";
   };
@@ -89,9 +88,7 @@ export function resumeProjectCategoryRows(
 
   const rows: ResumeProjectCategoryRow[] = [];
   for (const key of order) {
-    const match = [...buckets.entries()].find(
-      ([k]) => k.toLowerCase() === key,
-    );
+    const match = [...buckets.entries()].find(([k]) => k.toLowerCase() === key);
     if (!match) continue;
     const [, projects] = match;
     buckets.delete(match[0]);
