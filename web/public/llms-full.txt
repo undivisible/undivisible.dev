@@ -6,16 +6,16 @@ Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrap
 
 ## Markdown (fetch directly)
 
-- [Full bundle](https://example.test/llms-full.txt): Agent guide, profile/current projects, and resume in one Markdown request.
-- [Now status](https://example.test/now.md): Short now line (upstream now.md snapshot).
+- [Full bundle](https://undivisible.dev/llms-full.txt): Agent guide, profile/current projects, and resume in one Markdown request.
+- [Now status](https://undivisible.dev/now.md): Short now line (upstream now.md snapshot).
 - [Project list source](https://raw.githubusercontent.com/undivisible/undivisible/main/README.md): Parsed for portfolio; live site and sync:readme use this README, not now.md.
-- [Resume](https://example.test/resume.md): Experience, skills, contact.
-- [Agent how-to](https://example.test/agent.md): Which URLs to use; static vs Cloudflare-style negotiation.
+- [Resume](https://undivisible.dev/resume.md): Experience, skills, contact.
+- [Agent how-to](https://undivisible.dev/agent.md): Which URLs to use; static vs Cloudflare-style negotiation.
 
 ## Index
 
-- [llms.txt](https://example.test/llms.txt): This file.
-- [Agent page](https://example.test/agent): HTML link list only (no inlined content).
+- [llms.txt](https://undivisible.dev/llms.txt): This file.
+- [Agent page](https://undivisible.dev/agent): HTML link list only (no inlined content).
 
 ## Optional
 
@@ -34,23 +34,23 @@ Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrap
 
 | URL | Content |
 |-----|---------|
-| https://example.test/llms.txt | Curated link index ([llms.txt](https://llmstxt.org/) spec) |
-| https://example.test/llms-full.txt | Full agent-readable bundle: agent guide, now/profile, resume |
-| https://example.test/agent.md | Agent guide and fetch order |
-| https://example.test/now.md | Now status snapshot (upstream now.md; not the project list) |
-| https://example.test/resume.md | Resume / CV |
+| https://undivisible.dev/llms.txt | Curated link index ([llms.txt](https://llmstxt.org/) spec) |
+| https://undivisible.dev/llms-full.txt | Full agent-readable bundle: agent guide, now/profile, resume |
+| https://undivisible.dev/agent.md | Agent guide and fetch order |
+| https://undivisible.dev/now.md | Now status snapshot (upstream now.md; not the project list) |
+| https://undivisible.dev/resume.md | Resume / CV |
 
-Best first request for full context: `curl -sL https://example.test/llms-full.txt`
+Best first request for full context: `curl -sL https://undivisible.dev/llms-full.txt`
 
 ## Not available here
 
 - No `Accept: text/markdown` on HTML routes (unlike Cloudflare markdown for agents on dynamic hosts).
-- Do not scrape `https://example.test/` (WebGL UI); use `.md` paths above.
+- Do not scrape `https://undivisible.dev/` (WebGL UI); use `.md` paths above.
 
 ## Humans
 
-- https://example.test/agent — this index as HTML
-- https://example.test/ — portfolio
+- https://undivisible.dev/agent — this index as HTML
+- https://undivisible.dev/ — portfolio
 
 
 ---

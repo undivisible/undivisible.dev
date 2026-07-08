@@ -28,7 +28,7 @@ export const resumeFromMarkdown = {
     ],
     [
       "Location",
-      "Melbourne / Sydney / Hong Kong"
+      "Melbourne / Hong Kong"
     ]
   ],
   "experience": [
@@ -92,7 +92,7 @@ export const resumeFromMarkdown = {
               "name": "Unthought",
               "href": "https://unthought.arkie.company",
               "meta": "",
-              "desc": "Unthought · Alpha · Business platforming: custom domain, AI-generated site, professional email, Cloudflare edge deploy, Stripe checkout, Stalwart mail provisioning, Tangent integration hooks.",
+              "desc": "Unthought · Alpha · Business platforming: custom domain, AI-generated site, professional email, Cloudflare edge deploy, Stripe checkout, Stalwart mail provisioning (made with my own custom lightened Stalwart crate), Tangent integration hooks.",
               "descSegments": [
                 {
                   "type": "link",
@@ -101,25 +101,25 @@ export const resumeFromMarkdown = {
                 },
                 {
                   "type": "text",
-                  "value": " · Alpha · Business platforming: custom domain, AI-generated site, professional email, Cloudflare edge deploy, Stripe checkout, Stalwart mail provisioning, Tangent integration hooks."
+                  "value": " · Alpha · Business platforming: custom domain, AI-generated site, professional email, Cloudflare edge deploy, Stripe checkout, Stalwart mail provisioning (made with my own custom lightened Stalwart crate), Tangent integration hooks."
                 }
               ],
               "stack": "Next.js 16, TypeScript, Supabase, Cloudflare (OpenNext, D1, R2, Queues), Arkie, Stripe, Porkbun, Bun."
             },
             {
               "name": "Tangent",
-              "href": "https://tangent.undivisible.dev",
+              "href": "https://tangent.arkie.company",
               "meta": "",
-              "desc": "Tangent · Alpha · Discord automation for digital product sellers: Stripe payment webhooks, order fulfillment (keys, roles, content), ticketing, purchase-linked profiles, Gemini RAG support and image verification, event-driven workflows, admin dashboard, MCP tools for store ops.",
+              "desc": "Tangent · Pre-Alpha · Discord automation for digital product sellers: Stripe payment webhooks, order fulfillment (keys, roles, content), ticketing, purchase-linked profiles, Gemini RAG support and image verification, event-driven workflows, admin dashboard, MCP tools for store ops.",
               "descSegments": [
                 {
                   "type": "link",
                   "label": "Tangent",
-                  "href": "https://tangent.undivisible.dev"
+                  "href": "https://tangent.arkie.company"
                 },
                 {
                   "type": "text",
-                  "value": " · Alpha · Discord automation for digital product sellers: Stripe payment webhooks, order fulfillment (keys, roles, content), ticketing, purchase-linked profiles, Gemini RAG support and image verification, event-driven workflows, admin dashboard, MCP tools for store ops."
+                  "value": " · Pre-Alpha · Discord automation for digital product sellers: Stripe payment webhooks, order fulfillment (keys, roles, content), ticketing, purchase-linked profiles, Gemini RAG support and image verification, event-driven workflows, admin dashboard, MCP tools for store ops."
                 }
               ],
               "stack": "Go (discordgo), SQLite/Postgres, Google Gemini, Astro 4, Alpine.js, htmx, UnoCSS, Cloudflare Workers (MCP, D1, Durable Objects)."
@@ -180,11 +180,19 @@ export const resumeFromMarkdown = {
             },
             {
               "name": "Mono",
-              "href": "https://github.com/atechnology-company/mono",
+              "href": "",
               "meta": "Mono",
-              "desc": "Post-web computing infrastructure with an open-source `mono-protocol` spec: object-centric, identity-addressed encrypted replication; mesh gossip, gateway relay, using `unthinkclaw` agent runtime, mono-browser shell (Crepuscularity/GPUI).",
+              "desc": "Designed a distributed identity-addressed replication platform enabling encrypted peer-to-peer data synchronization, agent communication, and persistent session continuity across devices.",
               "descSegments": [],
-              "stack": "Rust (`mono-protocol`, `mono-mesh`, `mono-gateway`, `mono-agent`, `mono-browser`)."
+              "stack": "Rust, C++, Crepuscularity."
+            },
+            {
+              "name": "Cupboard",
+              "href": "",
+              "meta": "",
+              "desc": "Cupboard - Built a local-first device ecosystem enabling seamless LAN-based sync of files, photos, clipboard, browser state, and app sessions across desktop, mobile, and web without accounts or cloud dependencies.",
+              "descSegments": [],
+              "stack": "Rust, Crepuscularity."
             }
           ]
         }
@@ -249,11 +257,11 @@ export const resumeFromMarkdown = {
   "skills": [
     [
       "Languages",
-      "Rust, Swift, TypeScript/JavaScript, Python, Go, V, Zig, C / C#"
+      "Rust, Swift, TypeScript/JavaScript, Python, Go, V, Zig, C, C++, C#, Inauguration"
     ],
     [
       "Frontend",
-      "React, Next.js, SvelteKit, Solid, Tailwind, Astro, WebGL, SwiftUI, Crepuscularity"
+      "React + Native, Next.js, Solid, SvelteKit, Tailwind, SwiftUI, Crepuscularity"
     ],
     [
       "Systems",
@@ -261,16 +269,17 @@ export const resumeFromMarkdown = {
     ],
     [
       "AI / Data",
-      "OpenAI, MCP, RAG, Transformers.js, local models, Hugging Face, Supabase, PostgreSQL, SurrealDB"
+      "OpenAI, MCP, RAG, Transformers.js, Hugging Face, Supabase, PostgreSQL, SQLite, SurrealDB"
     ],
     [
       "Infra",
-      "Cloudflare Workers, Docker, GitHub Actions, CI/CD, SQLite"
+      "Cloudflare, Docker, GCP, Vercel, Netlify, Railway, GitHub Actions, CI/CD"
     ]
   ],
   "education": [
     "Certificate III in Information Technology coursework, Box Hill Institute. Completing unfinished units this year.",
-    "VCE coursework at Eltham High School, including Information Technology, Applied Computing, Politics, Philosophy, Extended Investigation, Linguistics, and Indonesian; left before Year 12 completion to build full time."
+    "VCE coursework at Eltham High School, including Information Technology, Applied Computing, Politics, Philosophy, Extended Investigation, Linguistics, and Indonesian; left before Year 12 completion to build full time.",
+    "Various online cybersecurity courses"
   ],
   "humanLanguages": [
     "Cantonese",
@@ -281,9 +290,10 @@ export const resumeFromMarkdown = {
     "Learning Japanese"
   ],
   "community": [
-    "Volunteer English teacher for Russian speakers online, 2022–present.",
+    "Volunteer English teacher for Russian and other ESL speakers online, 2022–present.",
     "Barbie CTF 2023, Petrozavodsk: 12th place in Russian exploit competition.",
-    "PECAN CTF 2025: 15th nationally, 4th in division."
+    "PECAN CTF 2025: 15th nationally, 4th in division.",
+    "Participated in HackerOne, HackTheBox and related organisations."
   ],
   "interests": [
     "Learning",

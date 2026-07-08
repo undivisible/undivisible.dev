@@ -52,7 +52,37 @@ const LINKED_WITH_DESC =
 const LINKED_NO_URL = /^-\s+\*\*\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)\*\*\s*$/;
 const OTHER_WITH_DESC = /^-\s+\*\*([^*]+)\*\*\s*(?:–|—|-)?\s*(.+?)\s*$/;
 const OTHER_NO_DESC = /^-\s+\*\*([^*]+)\*\*\s*$/;
-const H3_LINK = /^###\s+\[([^\]]+)\]\((https?:\/\/[^)]+)\)\s*$/;
+const H3_LINK =
+  /^###\s+(?:\*\*)?\[([^\]]+)\]\((https?:\/\/[^)]+)\)(?:\*\*)?\s*$/;
+
+function parseH3UtilityHeading(
+  trimmed: string,
+): { name: string; href: string } | null {
+  const linked = trimmed.match(H3_LINK);
+  if (linked) {
+    return { name: linked[1]!, href: linked[2]! };
+  }
+  const plain = trimmed.replace(/^###\s+/, "").trim();
+  if (!plain || plain.toLowerCase() === "other" || plain === "subprojects") {
+    return null;
+  }
+  return { name: plain, href: "#" };
+}
+
+function readFollowingDescription(
+  lines: string[],
+  start: number,
+): [string[], number] {
+  const descLines: string[] = [];
+  let j = start;
+  while (j < lines.length) {
+    const t = lines[j]!.trim();
+    if (t.startsWith("### ") || t.startsWith("## ") || t === "***") break;
+    descLines.push(lines[j]!);
+    j++;
+  }
+  return [descLines, j];
+}
 
 function parseLinkedLine(line: string): ReadmeProject | null {
   const withDesc = line.match(LINKED_WITH_DESC);
@@ -168,16 +198,44 @@ export function parseReadme(md: string): ReadmeBundle {
     const trimmed = line.trim();
 
     if (mode === "framework_body") {
-      if (trimmed === "### subprojects") {
+      if (trimmed.startsWith("## ")) {
         mainHeroQuote = assignFrameworkDescriptions(
           mainProjects,
           frameworkBodyLines,
         );
-        mode = "subprojects";
-        i++;
+        mode = "idle";
         continue;
       }
-      if (trimmed.startsWith("## ")) {
+      if (trimmed.startsWith("### ")) {
+        if (frameworkBodyLines.length > 0) {
+          mainHeroQuote = assignFrameworkDescriptions(
+            mainProjects,
+            frameworkBodyLines,
+          );
+          frameworkBodyLines.length = 0;
+        }
+        if (trimmed === "### subprojects") {
+          mode = "subprojects";
+          i++;
+          continue;
+        }
+        if (trimmed === "### other") {
+          mode = "other";
+          i++;
+          continue;
+        }
+        const h3 = parseH3UtilityHeading(trimmed);
+        if (h3) {
+          const [descLines, j] = readFollowingDescription(lines, i + 1);
+          utilities.push({
+            key: projectKey(h3.name),
+            name: displayName(h3.name),
+            href: h3.href,
+            desc: collapseWs(stripMdLinks(descLines.join("\n"))),
+          });
+          i = j;
+          continue;
+        }
         mode = "idle";
         continue;
       }
@@ -246,8 +304,13 @@ export function parseReadme(md: string): ReadmeBundle {
         i++;
         continue;
       }
-      const other = parseOtherLine(line);
-      if (other) pushUnique(utilities, other);
+      const linked = parseLinkedLine(line);
+      if (linked) {
+        pushUnique(utilities, linked);
+      } else {
+        const other = parseOtherLine(line);
+        if (other) pushUnique(utilities, other);
+      }
       i++;
       continue;
     }
@@ -302,7 +365,11 @@ export function parseReadme(md: string): ReadmeBundle {
       const nm = m[1]!;
       let j = i + 1;
       const descLines: string[] = [];
-      while (j < lines.length && !lines[j]!.trim().startsWith("## ") && !lines[j]!.trim().startsWith("### ")) {
+      while (
+        j < lines.length &&
+        !lines[j]!.trim().startsWith("## ") &&
+        !lines[j]!.trim().startsWith("### ")
+      ) {
         descLines.push(lines[j]!);
         j++;
       }
@@ -347,24 +414,19 @@ export function parseReadme(md: string): ReadmeBundle {
     }
 
     if (trimmed.startsWith("### ")) {
-      const h3Fallback = trimmed.match(H3_LINK);
-      const nm = h3Fallback
-        ? h3Fallback[1]!
-        : trimmed.replace("### ", "").trim();
-      const href = h3Fallback ? h3Fallback[2]! : "#";
-      let j = i + 1;
-      const descLines: string[] = [];
-      while (j < lines.length && !lines[j]!.trim().startsWith("### ") && !lines[j]!.trim().startsWith("## ")) {
-        descLines.push(lines[j]!);
-        j++;
+      const h3 = parseH3UtilityHeading(trimmed);
+      if (h3) {
+        const [descLines, j] = readFollowingDescription(lines, i + 1);
+        utilities.push({
+          key: projectKey(h3.name),
+          name: displayName(h3.name),
+          href: h3.href,
+          desc: collapseWs(stripMdLinks(descLines.join("\n"))),
+        });
+        i = j;
+        continue;
       }
-      utilities.push({
-        key: projectKey(nm),
-        name: displayName(nm),
-        href,
-        desc: collapseWs(stripMdLinks(descLines.join("\n"))),
-      });
-      i = j;
+      i++;
       continue;
     }
 

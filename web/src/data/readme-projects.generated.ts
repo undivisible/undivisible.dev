@@ -13,7 +13,7 @@ export const mainProjectsFromReadme: ReadmeProject[] = [
   {
     "key": "crepuscularity",
     "name": "crepuscularity",
-    "href": "https://crepuscularity.undivisible.dev",
+    "href": "https://crepuscularity.undivisible.dev/",
     "desc": "crepuscularity builds for: desktop apps (gpui), swiftui & jetpack compose mobile, tuis on ratatui, websites, embedded with a custom framebuffer or lvgl and browser extensions."
   }
 ];
@@ -29,9 +29,27 @@ export const utilitiesFromReadme: ReadmeProject[] = [
   {
     "key": "inauguration",
     "name": "inauguration",
-    "href": "https://github.com/tschk/inauguration",
-    "desc": "an ultra-fast, general-purpose compiler pipeline for multiple languages designed around explicit capability management and deterministic execution graphs. it features a native language (inlang) that supports two synchronized syntaxes—a strict, explicit form ideal for tooling, agents, and deterministic builds, and a lightweight, human-friendly form optimized for readability.",
-    "stack": "Rust, V, C, Java, Swift, TypeScript."
+    "href": "https://inauguration.tsc.hk/",
+    "desc": "an ultra-fast, general-purpose compiler pipeline for multiple languages designed around explicit capability management and deterministic execution graphs. it features a native language (inlang) that supports two synchronized syntaxes—a strict, explicit form ideal for tooling, agents, and deterministic builds, and a lightweight, human-friendly form optimized for readability."
+  },
+  {
+    "key": "alpenglow",
+    "name": "alpenglow",
+    "href": "https://alpenglow.tsc.hk/",
+    "desc": "is my distro of linux. the minimal build is smaller than an image taken on a modern day phone, standard is smaller than a 50MP image. boots in under a second and runs completely in RAM. ships with my own custom package manager oil, which has been lightened for this operating system. there is a work in progress desktop environment – alpenglowed built on top of wayland to render the entire desktop environment in crepuscular gpui, and soliloquy, an experimental flavor of this os which is immutable, lightened further solely for its browser-native desktop environment based on rv8."
+  },
+  {
+    "key": "space",
+    "name": "space",
+    "href": "https://space.tsc.hk/",
+    "desc": "is a work in progress (it boots!) ground-up operating system built on top of inauguration. it focuses on having seperate services as distributed components, with the compiler natively sandboxing based on authority scheduling capabilities permissions etc.]"
+  },
+  {
+    "key": "rv8",
+    "name": "rv8",
+    "href": "https://github.com/tschk/rv8",
+    "desc": "a custom browser engine built with servo and v8 with in house optimisations.",
+    "stack": "Rust, WGSL."
   },
   {
     "key": "equilibrium",
@@ -62,40 +80,6 @@ export const utilitiesFromReadme: ReadmeProject[] = [
     "stack": "Rust."
   },
   {
-    "key": "soliloquy",
-    "name": "soliloquy",
-    "href": "https://github.com/tschk/soliloquy",
-    "desc": "an experimental operating system model for the web — immutable, browser-native, built on alpenglow + rv8.",
-    "stack": "Rust, Svelte, TypeScript, CSS, HTML, JavaScript, Shell."
-  },
-  {
-    "key": "rv8",
-    "name": "rv8",
-    "href": "https://github.com/tschk/rv8",
-    "desc": "a custom browser engine built with servo and v8 with in house optimisations.",
-    "stack": "Rust."
-  },
-  {
-    "key": "alpenglow",
-    "name": "alpenglow",
-    "href": "https://github.com/tschk/alpenglow",
-    "desc": "is my distro of linux based on chimera, void, alpine and oasis. the minimal build is smaller than an image taken on a modern day phone, standard is smaller than a 50MP image. boots in under a second and runs completely in RAM. ships with my own custom package manager oil, which has been lightened for this operating system. there is a work in progress desktop environment – alpenglowed built on top of wayland to render the entire desktop environment in crepuscular gpui.",
-    "stack": "Rust, C, Zig, Makefile."
-  },
-  {
-    "key": "space",
-    "name": "space",
-    "href": "https://github.com/tschk/space",
-    "desc": "is a work in progress (it boots!) ground-up operating system built on top of inauguration. it focuses on having seperate services as distributed components, with the compiler natively sandboxing based on authority scheduling capabilities permissions etc.",
-    "stack": "Assembly."
-  },
-  {
-    "key": "experiences",
-    "name": "experiences (shelved)",
-    "href": "#",
-    "desc": "a project exploring a more accessible spatial web, built on unity wasm."
-  },
-  {
     "key": "atmosphere",
     "name": "atmosphere",
     "href": "#",
@@ -114,7 +98,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
   {
     "key": "standpoint",
     "name": "standpoint",
-    "href": "https://standpoint.undivisible.dev",
+    "href": "https://standpoint.undivisible.dev/",
     "desc": "the ultimate opinion based platform for sharing tierlists, voting on polls, and playing spectrum - a party game to guess on a spectrum based on a prompt.",
     "category": "web apps"
   },
@@ -135,23 +119,31 @@ export const miniappsFromReadme: ReadmeProject[] = [
   {
     "key": "alphabets",
     "name": "alphabets",
-    "href": "https://alphabets.undivisible.dev",
+    "href": "https://alphabets.undivisible.dev/",
     "desc": "learn any unicode-supported alphabet through cards, quizzes, and completion tables.",
     "category": "web apps"
   },
   {
     "key": "infrastruct",
     "name": "infrastruct",
-    "href": "https://infrastruct.undivisible.dev",
+    "href": "https://infrastruct.undivisible.dev/",
     "desc": "belief agnostic jurisprudence local ai search engine platform with searx & ddg, transformers.js and browser prompt api.",
     "category": "web apps"
   },
   {
     "key": "akh",
-    "name": "akh (archived)",
-    "href": "https://akh.undivisible.dev",
+    "name": "akh",
+    "href": "https://akh.undivisible.dev/",
     "desc": "islamic uniplatform for when i was previously interested in islam.",
     "category": "web apps"
+  },
+  {
+    "key": "herdr-gui",
+    "name": "herdr-gui",
+    "href": "https://github.com/undivisible/herdr-gui",
+    "desc": "a gui surface for herdr built with crepuscularity and ghostty",
+    "category": "developer tools",
+    "stack": "Rust."
   },
   {
     "key": "incisor",
@@ -160,21 +152,6 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "desc": "a rust + crepuscularity rewrite of balenaetcher to flash os images to sd cards and usbs",
     "category": "developer tools",
     "stack": "Rust."
-  },
-  {
-    "key": "rs_opencodedesktop-shelved-for-now-repo-private",
-    "name": "rs_opencodedesktop (shelved for now, repo private)",
-    "href": "https://github.com/semitechnological/rs_opencodedesktop",
-    "desc": "a (wip) rust + crepuscularity rewrite of opencode desktop that actually runs at 120fps.",
-    "category": "developer tools"
-  },
-  {
-    "key": "bluetooth-terminal",
-    "name": "bluetooth terminal",
-    "href": "https://github.com/undivisible/bluetooth-terminal",
-    "desc": "random bluetooth terminal i made",
-    "category": "developer tools",
-    "stack": "Swift."
   },
   {
     "key": "rs_vimium",
@@ -219,7 +196,7 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "key": "unthinkclaw",
     "name": "unthinkclaw",
     "href": "https://github.com/undivisible/unthinkclaw",
-    "desc": "openclaw + hermes but <1/100 of the size, with a better ux (subjectively), with speed and with the ability to deploy agent swarms.",
+    "desc": "self learning ai agent that lives on your computer. <1/100 of the size of openclaw, with a better ux (subjectively). can deploy agent swarms and is easily extensible.",
     "category": "mobile & desktop",
     "stack": "Rust, Other."
   },
@@ -230,14 +207,6 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "desc": "macos drift screensaver as a live wallpaper on linux, macos, windows. spotify and apple music now playing support.",
     "category": "mobile & desktop",
     "stack": "Rust, WGSL, PowerShell, Shell, Dockerfile."
-  },
-  {
-    "key": "arcanbar",
-    "name": "arcanbar",
-    "href": "https://github.com/undivisible/arcanbar",
-    "desc": "polybar for the arcan compositor.",
-    "category": "mobile & desktop",
-    "stack": "Lua."
   },
   {
     "key": "vro",
@@ -254,37 +223,6 @@ export const miniappsFromReadme: ReadmeProject[] = [
     "desc": "ios controller for ycy yokonex gen 1 and 2 electrostimulation hardware over btle (optional user-owned http/websocket bridge); dual-channel waveforms, presets and programs, safety limits, healthkit and watchos heart-rate adaptive output.",
     "category": "mobile & desktop",
     "stack": "Swift."
-  },
-  {
-    "key": "unelaborate",
-    "name": "unelaborate (shelved)",
-    "href": "https://github.com/undivisible/unelaborate",
-    "desc": "minecraft client in native swiftui with modrinth modpack, shader, and resource pack loading.",
-    "category": "mobile & desktop",
-    "stack": "Swift, Shell."
-  },
-  {
-    "key": "tile",
-    "name": "tile (shelved)",
-    "href": "https://github.com/semitechnological/tile",
-    "desc": "mosaic-style tiling window manager + canvas + multiplexer for macos.",
-    "category": "mobile & desktop",
-    "stack": "Rust."
-  },
-  {
-    "key": "tabyrus",
-    "name": "tabyrus (shelved)",
-    "href": "https://github.com/semitechnological/tabyrus",
-    "desc": "ai-powered autocomplete anywhere on your mac. uses cotabby as a reference but uses a rust backend + mlx.",
-    "category": "mobile & desktop",
-    "stack": "Swift, Rust, C."
-  },
-  {
-    "key": "rover",
-    "name": "rover",
-    "href": "#",
-    "desc": "utilities and plugin system for mac, based on raycast + ghostty.",
-    "category": "mobile & desktop"
   }
 ];
 

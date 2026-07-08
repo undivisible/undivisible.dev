@@ -38,11 +38,39 @@ const LIBRARIES_SNIPPET = `
 - **[svelte-streamdown](https://sveltestreamdown.undivisible.dev/)** - markdown
 `;
 
+const FRAMEWORK_H3_SNIPPET = `
+## [crepuscularity](https://crepuscularity.undivisible.dev) · [aurorality](https://github.com/tschk/aurorality)
+
+> hero quote line
+
+body text
+
+### **[inauguration](https://inauguration.tsc.hk)**
+inauguration desc
+
+### [rv8](https://github.com/tschk/rv8)
+rv8 desc
+
+### other
+- **[wax](https://github.com/plyght/wax)** — package manager
+
+***
+`;
+
 test("parseReadme subprojects and framework headline", () => {
   const b = normalizeReadmeBundle(parseReadme(SUBPROJECTS_SNIPPET));
   expect(b.mainProjects.map((p) => p.key)).toEqual(["crepuscularity"]);
   expect(b.utilities.some((p) => p.key === "aurorality")).toBe(true);
   expect(b.utilities.some((p) => p.key === "inauguration")).toBe(true);
+  expect(b.utilities.some((p) => p.key === "wax")).toBe(true);
+});
+
+test("parseReadme framework h3 utilities without subprojects heading", () => {
+  const b = normalizeReadmeBundle(parseReadme(FRAMEWORK_H3_SNIPPET));
+  expect(b.mainHeroQuote).toContain("hero quote");
+  expect(b.mainProjects.map((p) => p.key)).toEqual(["crepuscularity"]);
+  expect(b.utilities.some((p) => p.key === "inauguration")).toBe(true);
+  expect(b.utilities.some((p) => p.key === "rv8")).toBe(true);
   expect(b.utilities.some((p) => p.key === "wax")).toBe(true);
 });
 
@@ -66,9 +94,7 @@ test("parseReadme libraries section", () => {
 
 test("normalizeReadmeBundle blocks javascript hrefs", () => {
   const b = normalizeReadmeBundle(
-    parseReadme(
-      `## miniapps\n\n- **[evil](javascript:alert(1))** — nope\n`,
-    ),
+    parseReadme(`## miniapps\n\n- **[evil](javascript:alert(1))** — nope\n`),
   );
   expect(b.miniapps[0]?.href).toBe("#");
 });
