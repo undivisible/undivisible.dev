@@ -500,6 +500,32 @@ export function appendEqswiftToUtilities(bundle: ReadmeBundle): ReadmeBundle {
   return { ...bundle, miniapps, utilities };
 }
 
+// ponytail: tsc.hk / non-GitHub hrefs skip Linguist scrape; keep resume/print stacks stable.
+const HARDCODED_PROJECT_STACKS: Record<string, string> = {
+  inauguration: "Rust.",
+  alpenglow: "Rust, Zig.",
+  space: "Inauguration, Assembly.",
+};
+
+function applyHardcodedProjectStacks(
+  projects: ReadmeProject[],
+): ReadmeProject[] {
+  return projects.map((p) => {
+    const stack = HARDCODED_PROJECT_STACKS[p.key];
+    return stack ? { ...p, stack } : p;
+  });
+}
+
+function applyHardcodedStacksToBundle(bundle: ReadmeBundle): ReadmeBundle {
+  return {
+    ...bundle,
+    mainProjects: applyHardcodedProjectStacks(bundle.mainProjects),
+    utilities: applyHardcodedProjectStacks(bundle.utilities),
+    miniapps: applyHardcodedProjectStacks(bundle.miniapps),
+    libraries: applyHardcodedProjectStacks(bundle.libraries),
+  };
+}
+
 function withSafeHrefs(bundle: ReadmeBundle): ReadmeBundle {
   const map = (projects: ReadmeProject[]) =>
     projects.map((p) => ({ ...p, href: safeExternalHref(p.href) }));
@@ -513,7 +539,9 @@ function withSafeHrefs(bundle: ReadmeBundle): ReadmeBundle {
 }
 
 export function normalizeReadmeBundle(bundle: ReadmeBundle): ReadmeBundle {
-  return withSafeHrefs(
-    appendEqswiftToUtilities(promoteAuroralityToUtilities(bundle)),
+  return applyHardcodedStacksToBundle(
+    withSafeHrefs(
+      appendEqswiftToUtilities(promoteAuroralityToUtilities(bundle)),
+    ),
   );
 }

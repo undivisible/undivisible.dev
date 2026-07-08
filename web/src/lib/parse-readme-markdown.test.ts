@@ -99,6 +99,16 @@ test("normalizeReadmeBundle blocks javascript hrefs", () => {
   expect(b.miniapps[0]?.href).toBe("#");
 });
 
+test("normalizeReadmeBundle applies hardcoded linguist stacks", () => {
+  const b = normalizeReadmeBundle(
+    parseReadme(FRAMEWORK_H3_SNIPPET + MINIAPPS_SNIPPET),
+  );
+  expect(b.utilities.find((p) => p.key === "inauguration")?.stack).toBe(
+    "Rust.",
+  );
+  expect(b.utilities.find((p) => p.key === "rv8")?.stack).toBeUndefined();
+});
+
 test("readmeBundleProjectCount", () => {
   const b = normalizeReadmeBundle(
     parseReadme(SUBPROJECTS_SNIPPET + MINIAPPS_SNIPPET),
