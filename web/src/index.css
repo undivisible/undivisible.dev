@@ -113,9 +113,6 @@ body::-webkit-scrollbar {
   html:not([data-print-target="resume"]) .print-layer-resume {
     display: none !important;
   }
-  html:not([data-print-target="brief"]) .print-layer-brief {
-    display: none !important;
-  }
 }
 
 ::-webkit-scrollbar {

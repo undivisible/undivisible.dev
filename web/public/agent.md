@@ -6,20 +6,20 @@
 
 | URL | Content |
 |-----|---------|
-| https://undivisible.dev/llms.txt | Curated link index ([llms.txt](https://llmstxt.org/) spec) |
-| https://undivisible.dev/llms-full.txt | Full agent-readable bundle: agent guide, now/profile, resume |
-| https://undivisible.dev/agent.md | Agent guide and fetch order |
-| https://undivisible.dev/now.md | Now status snapshot (upstream now.md; not the project list) |
-| https://undivisible.dev/resume.md | Resume / CV |
+| https://example.test/llms.txt | Curated link index ([llms.txt](https://llmstxt.org/) spec) |
+| https://example.test/llms-full.txt | Full agent-readable bundle: agent guide, now/profile, resume |
+| https://example.test/agent.md | Agent guide and fetch order |
+| https://example.test/now.md | Now status snapshot (upstream now.md; not the project list) |
+| https://example.test/resume.md | Resume / CV |
 
-Best first request for full context: `curl -sL https://undivisible.dev/llms-full.txt`
+Best first request for full context: `curl -sL https://example.test/llms-full.txt`
 
 ## Not available here
 
 - No `Accept: text/markdown` on HTML routes (unlike Cloudflare markdown for agents on dynamic hosts).
-- Do not scrape `https://undivisible.dev/` (WebGL UI); use `.md` paths above.
+- Do not scrape `https://example.test/` (WebGL UI); use `.md` paths above.
 
 ## Humans
 
-- https://undivisible.dev/agent — this index as HTML
-- https://undivisible.dev/ — portfolio
+- https://example.test/agent — this index as HTML
+- https://example.test/ — portfolio

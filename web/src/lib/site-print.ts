@@ -1,8 +1,7 @@
-export type SitePrintTarget = "resume" | "brief";
+export type SitePrintTarget = "resume";
 
 const LAYER_SELECTOR: Record<SitePrintTarget, string> = {
   resume: ".print-layer-resume .page-wrapper",
-  brief: ".print-layer-brief .page-wrapper",
 };
 
 export async function waitForPrintLayer(

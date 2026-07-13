@@ -6,16 +6,16 @@ Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrap
 
 ## Markdown (fetch directly)
 
-- [Full bundle](https://undivisible.dev/llms-full.txt): Agent guide, profile/current projects, and resume in one Markdown request.
-- [Now status](https://undivisible.dev/now.md): Short now line (upstream now.md snapshot).
+- [Full bundle](https://example.test/llms-full.txt): Agent guide, profile/current projects, and resume in one Markdown request.
+- [Now status](https://example.test/now.md): Short now line (upstream now.md snapshot).
 - [Project list source](https://raw.githubusercontent.com/undivisible/undivisible/main/README.md): Parsed for portfolio; live site and sync:readme use this README, not now.md.
-- [Resume](https://undivisible.dev/resume.md): Experience, skills, contact.
-- [Agent how-to](https://undivisible.dev/agent.md): Which URLs to use; static vs Cloudflare-style negotiation.
+- [Resume](https://example.test/resume.md): Experience, skills, contact.
+- [Agent how-to](https://example.test/agent.md): Which URLs to use; static vs Cloudflare-style negotiation.
 
 ## Index
 
-- [llms.txt](https://undivisible.dev/llms.txt): This file.
-- [Agent page](https://undivisible.dev/agent): HTML link list only (no inlined content).
+- [llms.txt](https://example.test/llms.txt): This file.
+- [Agent page](https://example.test/agent): HTML link list only (no inlined content).
 
 ## Optional
 
