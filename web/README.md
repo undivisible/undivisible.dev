@@ -5,8 +5,9 @@ Production site for undivisible.dev. Built with Next.js 16 (App Router), React 1
 ## User-facing features
 
 - **Home** — Scroll-snap sections, full-viewport Ascii + WebGL backdrop, Last.fm “now playing / last listened” block with links, Hong Kong day/night **Light** shader tied to clock scrubber.
+- **Clock / weather** — Open‑Meteo weather link, HKG / MEL / local clock links, wheel scrub to shift displayed time; **now** opens `now.md` overlay (Escape to close).
 - **Navigation** — `SiteNav`: **agent** link to `/agent`, resume PDF download.
-- **Info slices** — Work grid + readme utilities (`#work`), bio / resume / contact (`#world`, `#contact`).
+- **Info slices** — Hero + social links (`#start`), work grid + readme utilities (`#work`), bio / resume / contact (`#world`, `#contact`).
 - **Print / PDF** — Browser print (`window.print`) from DOM layer: resume (`HomePrintRoot`); not `@react-pdf`.
 - **Profile / projects** — Parsed from **`undivisible/undivisible` `README.md`** (not `now.md`). SSR seed: `getProfileReadmeProjects()` reads build-time `readme-projects.generated.ts`. After load, `useRemoteReadme` refetches README (then `now.md` only if README fails) from GitHub raw URLs and keeps the parse with the most projects. `bun run sync:readme` regenerates the generated file from the same README-first order. Normalizes utilities (e.g. aurorality, eqswift). `PROFILE_README_URL` / `NEXT_PUBLIC_PROFILE_README_URL` override the project-list URL.
 - **Resume** — `fetchResumeMarkdown()` pulls `resume.md` from `undivisible/undivisible`; `bun run sync:resume` parses contact/experience into `resume-from-markdown.generated.ts`. Email and social links on the site come from the resume Contact table. `RESUME_MARKDOWN_URL` overrides the raw URL.
