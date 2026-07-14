@@ -11,6 +11,7 @@ import {
   readmeMiniappTidbits,
 } from "@/components/info/miniapp-tidbits";
 import { TidbitCategory, UtilitiesBlock } from "@/components/info/work-blocks";
+import { PortfolioPillars } from "@/components/site/PortfolioPillars";
 
 export function InfoWorkSection({ readme }: { readme: ReadmeBundle }) {
   const tidbits = useMemo(() => readmeMiniappTidbits(readme), [readme]);
@@ -47,6 +48,7 @@ export function InfoWorkSection({ readme }: { readme: ReadmeBundle }) {
             work
           </h2>
         </motion.div>
+        <PortfolioPillars readme={readme} />
         <UtilitiesBlock readme={readme} excludeKeys={pillarKeys} />
         <div className="mt-16 sm:mt-24">
           <motion.div
