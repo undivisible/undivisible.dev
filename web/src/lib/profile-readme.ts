@@ -1,10 +1,3 @@
-import {
-  librariesFromReadme,
-  mainHeroQuoteFromReadme,
-  mainProjectsFromReadme,
-  miniappsFromReadme,
-  utilitiesFromReadme,
-} from "@/data/readme-projects.generated";
 import { scrapeGithubRepoLanguages, sleep } from "@/lib/github-repo-languages";
 import {
   normalizeReadmeBundle,
@@ -165,12 +158,26 @@ export async function fetchProfileReadmeProjects(options?: {
 }
 
 export function getReadmeBundleFromGenerated(): ReadmeBundle {
+  // eslint-disable-next-line unicorn/no-require-postinstall
+  // @ts-ignore - dynamic require of generated file, exists after prebuild
+  const mod = require("@/data/readme-projects.generated");
   return {
-    mainHeroQuote: mainHeroQuoteFromReadme,
-    mainProjects: mainProjectsFromReadme,
-    utilities: utilitiesFromReadme,
-    miniapps: miniappsFromReadme,
-    libraries: librariesFromReadme,
+    mainHeroQuote:
+      typeof mod.mainHeroQuoteFromReadme === "string"
+        ? mod.mainHeroQuoteFromReadme
+        : "",
+    mainProjects: Array.isArray(mod.mainProjectsFromReadme)
+      ? mod.mainProjectsFromReadme
+      : [],
+    utilities: Array.isArray(mod.utilitiesFromReadme)
+      ? mod.utilitiesFromReadme
+      : [],
+    miniapps: Array.isArray(mod.miniappsFromReadme)
+      ? mod.miniappsFromReadme
+      : [],
+    libraries: Array.isArray(mod.librariesFromReadme)
+      ? mod.librariesFromReadme
+      : [],
   };
 }
 
