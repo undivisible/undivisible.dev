@@ -11,9 +11,9 @@ test("resume markdown does not provide standalone project sections", () => {
 
 test("resume document includes experience dates and B1 product links", () => {
   expect(resumeDoc.experience.map((job) => job.time)).toEqual([
-    "2026–present",
-    "2023–present",
-    "late 2024",
+    "February 2026–July 2026",
+    "2023 – present",
+    "2024 - present",
   ]);
 
   const gizzmo = resumeDoc.experience.find(

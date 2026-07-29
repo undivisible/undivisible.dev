@@ -1,6 +1,5 @@
 import {
   DEFAULT_PROFILE_MARKDOWN_URL,
-  DEFAULT_RESUME_MARKDOWN_URL,
   PROFILE_PROJECT_LIST_MARKDOWN_URL,
 } from "@/lib/parse-readme-markdown";
 
@@ -87,7 +86,7 @@ export async function fetchReadmeMarkdown(options?: {
 
 export function resumeMarkdownCacheUrl(): string {
   return (
-    process.env.NEXT_PUBLIC_RESUME_MARKDOWN_URL ?? DEFAULT_RESUME_MARKDOWN_URL
+    process.env.NEXT_PUBLIC_RESUME_MARKDOWN_URL ?? "/resume.md"
   );
 }
 

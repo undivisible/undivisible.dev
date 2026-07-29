@@ -15,7 +15,7 @@ export function useResumeDocument(): ResumeDocument {
 
   useEffect(() => {
     const ac = new AbortController();
-    void fetchResumeMarkdownCached({ signal: ac.signal }).then((md) => {
+    void fetchResumeMarkdownCached({ signal: ac.signal, forceRefresh: true }).then((md) => {
       if (md) setRaw(md);
     });
     return () => ac.abort();

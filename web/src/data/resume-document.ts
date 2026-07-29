@@ -28,13 +28,6 @@ const EXTRA_SOCIAL_LINKS: ResumeSocialLink[] = [
   { name: "tsc.hk", username: "tsc.hk", href: "https://tsc.hk" },
 ];
 
-export function resumeContactValue(
-  doc: ResumeDocument,
-  label: string,
-): string | undefined {
-  return doc.contact.find(([l]) => l === label)?.[1];
-}
-
 export function resumeSocialLinksFrom(
   doc: ResumeDocument = resumeDoc,
 ): ResumeSocialLink[] {

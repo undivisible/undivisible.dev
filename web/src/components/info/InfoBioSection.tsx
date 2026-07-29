@@ -171,6 +171,51 @@ export function InfoBioSection({
                       <li key={p}>{p}</li>
                     ))}
                   </ul>
+                  {job.subsections.map((sub) => (
+                    <div key={sub.title} className="mt-6">
+                      <h4 className="mb-3 text-[11px] uppercase tracking-[0.2em] text-white/40 font-mono">
+                        {sub.title}
+                      </h4>
+                      <div className="space-y-2.5">
+                        {sub.items.map((item, idx) => (
+                          <div
+                            key={item.name + idx}
+                            className="text-sm leading-relaxed"
+                            style={{ color: "var(--page-text-muted)" }}
+                          >
+                            <span className="font-medium text-white/70">
+                              {item.href ? (
+                                <a
+                                  href={item.href}
+                                  className="underline-offset-2 hover:underline"
+                                  target={
+                                    item.href.startsWith("http")
+                                      ? "_blank"
+                                      : undefined
+                                  }
+                                  rel={
+                                    item.href.startsWith("http")
+                                      ? "noopener noreferrer"
+                                      : undefined
+                                  }
+                                >
+                                  {item.name}
+                                </a>
+                              ) : (
+                                item.name
+                              )}
+                            </span>
+                            {item.desc ? <> — {item.desc}</> : null}
+                            {item.stack ? (
+                              <span className="ml-1 font-mono text-[10px] uppercase tracking-[0.1em] text-white/25">
+                                Built with {item.stack}
+                              </span>
+                            ) : null}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </motion.div>
               ))}
             </div>

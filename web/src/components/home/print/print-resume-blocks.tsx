@@ -26,8 +26,13 @@ function ExpProductLine({ item }: { item: ResumeListItem }) {
     ? item.descSegments
     : parseInlineMdSegments(item.desc);
   const parts: ReactNode[] = [];
-  if (meta && meta.toLowerCase() !== name.toLowerCase()) {
-    parts.push(meta);
+  if (meta) {
+    const afterName = meta.toLowerCase().startsWith(name.toLowerCase())
+      ? meta.slice(name.length).replace(/^[·•,\s]+/, '').trim()
+      : meta;
+    if (afterName && afterName.toLowerCase() !== name.toLowerCase()) {
+      parts.push(afterName);
+    }
   }
   if (item.desc.trim()) {
     if (parts.length) parts.push(" — ");
