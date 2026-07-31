@@ -15,6 +15,7 @@ export type ReadmeBundle = {
   utilities: ReadmeProject[];
   miniapps: ReadmeProject[];
   libraries: ReadmeProject[];
+  tools: ReadmeProject[];
 };
 
 export function projectKey(name: string): string {
@@ -175,6 +176,7 @@ export function parseReadme(md: string): ReadmeBundle {
   const utilities: ReadmeProject[] = [];
   const miniapps: ReadmeProject[] = [];
   const libraries: ReadmeProject[] = [];
+  const tools: ReadmeProject[] = [];
   let mainHeroQuote = "";
 
   let mode:
@@ -185,7 +187,8 @@ export function parseReadme(md: string): ReadmeBundle {
     | "semitech"
     | "semiother"
     | "miniapps"
-    | "libraries" = "idle";
+    | "libraries"
+    | "tools" = "idle";
   let currentCategory = "";
 
   const frameworkBodyLines: string[] = [];
@@ -280,6 +283,17 @@ export function parseReadme(md: string): ReadmeBundle {
       continue;
     }
 
+    if (mode === "tools") {
+      if (trimmed.startsWith("## ")) {
+        mode = "idle";
+        continue;
+      }
+      const linked = parseLinkedLine(trimmed);
+      if (linked) pushUnique(tools, linked);
+      i++;
+      continue;
+    }
+
     if (mode === "semitech") {
       if (trimmed === "***") {
         mode = "idle";
@@ -335,7 +349,8 @@ export function parseReadme(md: string): ReadmeBundle {
       headlineCore.includes("atechnology company") ||
       headlineCore.includes("semitechnological") ||
       trimmed === "## miniapps" ||
-      trimmed.toLowerCase().startsWith("## libraries");
+      trimmed.toLowerCase().startsWith("## libraries") ||
+      trimmed.toLowerCase().startsWith("## tools");
     if (
       trimmed.startsWith("##") &&
       !isExcludedHeadline &&
@@ -413,6 +428,12 @@ export function parseReadme(md: string): ReadmeBundle {
       continue;
     }
 
+    if (trimmed.toLowerCase() === "## tools") {
+      mode = "tools";
+      i++;
+      continue;
+    }
+
     if (trimmed.startsWith("### ")) {
       const h3 = parseH3UtilityHeading(trimmed);
       if (h3) {
@@ -433,7 +454,7 @@ export function parseReadme(md: string): ReadmeBundle {
     i++;
   }
 
-  return { mainHeroQuote, mainProjects, utilities, miniapps, libraries };
+  return { mainHeroQuote, mainProjects, utilities, miniapps, libraries, tools };
 }
 
 /** Upstream now line / article — not the GitHub project list (see PROFILE_PROJECT_LIST_MARKDOWN_URL). */
@@ -452,7 +473,8 @@ export function readmeBundleProjectCount(bundle: ReadmeBundle): number {
     bundle.mainProjects.length +
     bundle.utilities.length +
     bundle.miniapps.length +
-    bundle.libraries.length
+    bundle.libraries.length +
+    bundle.tools.length
   );
 }
 
@@ -523,6 +545,7 @@ function applyHardcodedStacksToBundle(bundle: ReadmeBundle): ReadmeBundle {
     utilities: applyHardcodedProjectStacks(bundle.utilities),
     miniapps: applyHardcodedProjectStacks(bundle.miniapps),
     libraries: applyHardcodedProjectStacks(bundle.libraries),
+    tools: applyHardcodedProjectStacks(bundle.tools),
   };
 }
 
@@ -535,6 +558,7 @@ function withSafeHrefs(bundle: ReadmeBundle): ReadmeBundle {
     utilities: map(bundle.utilities),
     miniapps: map(bundle.miniapps),
     libraries: map(bundle.libraries),
+    tools: map(bundle.tools),
   };
 }
 

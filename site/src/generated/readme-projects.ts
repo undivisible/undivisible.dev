@@ -19,12 +19,6 @@ export const readmeProjects: ReadmeBundle = {
       "desc": "aurorality turns web frontends into native swiftui for macos and ios, accepting swift, js/ts, or rust as your backend. with crepuscularity lite and aurorality-js, you can drop into existing sites or electron apps to connect native frontends to js backends."
     },
     {
-      "key": "moonshine",
-      "name": "moonshine",
-      "href": "https://github.com/tschk/moonshine",
-      "desc": "ground-up Bun-first hybrid web framework with a signal-only kernel and opt-in compiler, routing, rendering, server, and deployment layers."
-    },
-    {
       "key": "inauguration",
       "name": "inauguration",
       "href": "https://inauguration.tsc.hk/",
@@ -46,10 +40,10 @@ export const readmeProjects: ReadmeBundle = {
       "stack": "Inauguration, Assembly."
     },
     {
-      "key": "subspace",
-      "name": "subspace",
-      "href": "https://github.com/tschk/subspace",
-      "desc": "statically composed capability-safe embedded realtime operating system."
+      "key": "rv8https//githubcom/tschk/rv8-roverite",
+      "name": "[rv8](https://github.com/tschk/rv8) (roverite)",
+      "href": "#",
+      "desc": "a custom browser engine built with servo and v8 with in house optimisations."
     },
     {
       "key": "equilibrium",
@@ -64,22 +58,10 @@ export const readmeProjects: ReadmeBundle = {
       "desc": "Rust-to-Swift binding tooling designed to reduce UniFFI boilerplate and make interop practical."
     },
     {
-      "key": "apollo",
-      "name": "apollo",
-      "href": "https://github.com/tschk/apollo",
-      "desc": "local-first rust ai agent runtime. ~14mb binary, 10+ messaging channels, 20+ llm providers, autonomous coding mode, tool guardrails, plugin system."
-    },
-    {
       "key": "telekinesis",
       "name": "telekinesis",
       "href": "https://github.com/semitechnological/telekinesis",
       "desc": "minimal extensible cli and gui host for the rotary agent harness engine. built with rotary and crepuscularity. supports pi plugins and oauth + api key."
-    },
-    {
-      "key": "rv8",
-      "name": "rv8",
-      "href": "https://github.com/tschk/rv8",
-      "desc": "(roverite) - a custom browser engine built with servo and v8 with in house optimisations."
     },
     {
       "key": "rx4",
@@ -88,21 +70,9 @@ export const readmeProjects: ReadmeBundle = {
       "desc": "(rotary) — general-purpose agent harness engine and crate in rust owns the loop, tools, providers, sessions, permissions and computer-use (with rs_peekaboo)."
     },
     {
-      "key": "zkr",
-      "name": "zkr",
-      "href": "https://github.com/tschk/zkr",
-      "desc": "evidence-backed temporal memory engine for personal agents."
-    },
-    {
-      "key": "praefectus",
-      "name": "praefectus",
-      "href": "https://github.com/tschk/praefectus",
-      "desc": "provider-neutral, verified computer-use execution for rust."
-    },
-    {
       "key": "wax",
       "name": "wax",
-      "href": "https://github.com/plyght/wax",
+      "href": "https://github.com/undivisible/wax",
       "desc": "fast homebrew-compatible package manager in rust. uses homebrew's ecosystem (formulae, bottles, casks) without the ruby/git overhead — compiled, async, parallel installs, lockfiles, and experimental winget/scoop/nix-like support."
     },
     {
@@ -110,12 +80,6 @@ export const readmeProjects: ReadmeBundle = {
       "name": "oil",
       "href": "https://github.com/semitechnological/oil",
       "desc": "fast system package manager in rust for all major *nix systems based on wax with linuxbrew support and interop with existing package managers."
-    },
-    {
-      "key": "nexnet",
-      "name": "nexnet",
-      "href": "https://github.com/tschk/nexnet",
-      "desc": "local-first peer-to-peer social chat with wallet identity and encrypted messaging."
     },
     {
       "key": "atmosphere",
@@ -175,6 +139,27 @@ export const readmeProjects: ReadmeBundle = {
       "category": "web apps"
     },
     {
+      "key": "vibemania",
+      "name": "vibemania",
+      "href": "https://github.com/undivisible/vibemania",
+      "desc": "vibe anything.",
+      "category": "web apps"
+    },
+    {
+      "key": "unwasteable",
+      "name": "unwasteable",
+      "href": "https://github.com/undivisible/unwasteable",
+      "desc": "a project to stop food waste.",
+      "category": "web apps"
+    },
+    {
+      "key": "initiative",
+      "name": "initiative",
+      "href": "https://github.com/undivisible/initiative",
+      "desc": "0.05 initiative, a safe space for kids struggling with alcohol addiction.",
+      "category": "web apps"
+    },
+    {
       "key": "herdr-gui",
       "name": "herdr-gui",
       "href": "https://github.com/undivisible/herdr-gui",
@@ -186,6 +171,27 @@ export const readmeProjects: ReadmeBundle = {
       "name": "incisor",
       "href": "https://github.com/undivisible/incisor",
       "desc": "a rust + crepuscularity rewrite of balenaetcher to flash os images to sd cards and usbs",
+      "category": "developer tools"
+    },
+    {
+      "key": "drift-wallpaper",
+      "name": "drift-wallpaper",
+      "href": "https://github.com/undivisible/drift-wallpaper",
+      "desc": "set the macOS drift screensaver as your live wallpaper. spotify and apple music now playing support.",
+      "category": "developer tools"
+    },
+    {
+      "key": "zed-extensions",
+      "name": "zed-extensions",
+      "href": "https://github.com/undivisible/zed-extensions",
+      "desc": "extensions for the Zed editor.",
+      "category": "developer tools"
+    },
+    {
+      "key": "cotabby",
+      "name": "cotabby",
+      "href": "https://github.com/undivisible/cotabby",
+      "desc": "local AI autocomplete for your entire Mac. open source. on device. everywhere you type.",
       "category": "developer tools"
     },
     {
@@ -201,6 +207,27 @@ export const readmeProjects: ReadmeBundle = {
       "href": "https://github.com/undivisible/anywhere",
       "desc": "browser extension that turns ai chat responses into interactive interfaces. renders widgets, panels, forms, charts inside chat via custom response tags, also built with the crepuscularity webextension framework.",
       "category": "browser extensions"
+    },
+    {
+      "key": "crossover",
+      "name": "crossover",
+      "href": "https://github.com/undivisible/crossover",
+      "desc": "a crosshair overlay for any screen.",
+      "category": "browser extensions"
+    },
+    {
+      "key": "omi-v4",
+      "name": "omi-v4",
+      "href": "https://github.com/undivisible/omi-v4",
+      "desc": "a proactive second brain across every device.",
+      "category": "mobile & desktop"
+    },
+    {
+      "key": "omi-desktop",
+      "name": "omi-desktop",
+      "href": "https://github.com/undivisible/omi-desktop",
+      "desc": "local-first desktop AI assistant with BYOK.",
+      "category": "mobile & desktop"
     },
     {
       "key": "unthinkmail",
@@ -224,6 +251,13 @@ export const readmeProjects: ReadmeBundle = {
       "category": "mobile & desktop"
     },
     {
+      "key": "apollo",
+      "name": "apollo",
+      "href": "https://github.com/tschk/apollo",
+      "desc": "self learning ai agent that lives on your computer. <1/100 of the size of openclaw, with a better ux (subjectively). can deploy agent swarms and is easily extensible.",
+      "category": "mobile & desktop"
+    },
+    {
       "key": "drift",
       "name": "drift",
       "href": "https://github.com/undivisible/drift-wallpaper",
@@ -240,8 +274,71 @@ export const readmeProjects: ReadmeBundle = {
     {
       "key": "ycyestim",
       "name": "ycyestim",
-      "href": "https://github.com/undivisible/YCYEStim",
+      "href": "https://github.com/undivisible/ycyestim",
       "desc": "ios controller for ycy yokonex gen 1 and 2 electrostimulation hardware over btle (optional user-owned http/websocket bridge); dual-channel waveforms, presets and programs, safety limits, healthkit and watchos heart-rate adaptive output.",
+      "category": "mobile & desktop"
+    },
+    {
+      "key": "bluetooth-terminal",
+      "name": "bluetooth-terminal",
+      "href": "https://github.com/undivisible/bluetooth-terminal",
+      "desc": "random bluetooth terminal.",
+      "category": "mobile & desktop"
+    },
+    {
+      "key": "scape",
+      "name": "scape",
+      "href": "https://github.com/undivisible/scape",
+      "desc": "the spatial desktop environment for macOS through Vision Pro.",
+      "category": "mobile & desktop"
+    },
+    {
+      "key": "brisk",
+      "name": "brisk",
+      "href": "https://github.com/undivisible/brisk",
+      "desc": "CLI for building native Swift macOS apps.",
+      "category": "mobile & desktop"
+    },
+    {
+      "key": "vuno",
+      "name": "vuno",
+      "href": "https://github.com/undivisible/vuno",
+      "desc": "terminal-style text editor, with people in mind.",
+      "category": "mobile & desktop"
+    },
+    {
+      "key": "imogen",
+      "name": "imogen",
+      "href": "https://github.com/undivisible/imogen",
+      "desc": "wplace client.",
+      "category": "mobile & desktop"
+    },
+    {
+      "key": "tangent",
+      "name": "tangent",
+      "href": "https://github.com/undivisible/tangent",
+      "desc": "Discord automation SaaS foundation for digital product sellers.",
+      "category": "mobile & desktop"
+    },
+    {
+      "key": "helium-chromium",
+      "name": "helium-chromium",
+      "href": "https://github.com/undivisible/helium-chromium",
+      "desc": "internet, but lighter.",
+      "category": "mobile & desktop"
+    },
+    {
+      "key": "flowtoken_flutter",
+      "name": "flowtoken_flutter",
+      "href": "https://github.com/undivisible/flowtoken_flutter",
+      "desc": "flowtoken Flutter implementation.",
+      "category": "mobile & desktop"
+    },
+    {
+      "key": "flowtoken-svelte",
+      "name": "flowtoken-svelte",
+      "href": "https://github.com/undivisible/flowtoken-svelte",
+      "desc": "flowtoken Svelte implementation.",
       "category": "mobile & desktop"
     }
   ],
@@ -253,34 +350,22 @@ export const readmeProjects: ReadmeBundle = {
       "desc": "rust ai sdk for building across cloud and local providers with one async-first api with on-device runtimes through `rs_ai_local` — including gemini nano on android and google chrome (browser prompt api), foundationmodels on macos, and phi silica on windows and microsoft edge (browser prompt api)."
     },
     {
+      "key": "rusty_foundationmodels",
+      "name": "rusty_foundationmodels",
+      "href": "https://github.com/undivisible/rusty_foundationmodels",
+      "desc": "safe Rust bindings for Apple's FoundationModels on-device AI (Apple Intelligence)."
+    },
+    {
       "key": "rs_poke",
       "name": "rs_poke",
       "href": "https://github.com/undivisible/rs_poke",
       "desc": "poke by interaction's sdk in rust."
     },
     {
-      "key": "rs_peekaboo",
-      "name": "rs_peekaboo",
-      "href": "https://github.com/undivisible/rs_peekaboo",
-      "desc": "peter steinberger's peekaboo rewritten in rust with a shell tool and usable as a crate library for embedding into applications."
-    },
-    {
       "key": "rs_gbrain",
       "name": "rs_gbrain",
       "href": "https://github.com/undivisible/rs_gbrain",
       "desc": "garry tan's gbrain for openclaw rewritten in rust."
-    },
-    {
-      "key": "rs_imessage",
-      "name": "rs_imessage",
-      "href": "https://github.com/undivisible/rs_imessage",
-      "desc": "rust imessage crate and cli."
-    },
-    {
-      "key": "rs_facetime",
-      "name": "rs_facetime",
-      "href": "https://github.com/undivisible/rs_facetime",
-      "desc": "rust facetime crate and cli."
     },
     {
       "key": "stalwart-lite",
@@ -299,30 +384,6 @@ export const readmeProjects: ReadmeBundle = {
       "name": "svelte-streamdown",
       "href": "https://sveltestreamdown.undivisible.dev/",
       "desc": "a svelte version of vercel's streamdown for streamable markdown rendering with interactive codeblocks and math rendering."
-    },
-    {
-      "key": "ditherkit_flutter",
-      "name": "ditherkit_flutter",
-      "href": "https://ditherkit-flutter.undivisible.dev/",
-      "desc": "a flutter version of boring software inc's dither kit for data visual representations with dither effects."
-    },
-    {
-      "key": "flowtoken_flutter",
-      "name": "flowtoken_flutter",
-      "href": "https://flowtoken-flutter.undivisible.dev/",
-      "desc": "a flutter version of ephibb's flowtoken for clean streaming animations with blur and opacity transitions."
-    },
-    {
-      "key": "flowtoken-svelte",
-      "name": "flowtoken-svelte",
-      "href": "https://flowtoken-svelte.undivisible.dev/",
-      "desc": "a svelte version of ephibb's flowtoken for clean streaming animations with blur and opacity transitions."
-    },
-    {
-      "key": "flowtoken-swift",
-      "name": "flowtoken-swift",
-      "href": "https://github.com/undivisible/flowtoken-swift/",
-      "desc": "a swiftui version of ephibb's flowtoken for clean streaming animations with blur and opacity transitions."
     },
     {
       "key": "tree-sitter-v",
@@ -347,6 +408,32 @@ export const readmeProjects: ReadmeBundle = {
       "name": "monoprotocol",
       "href": "https://github.com/atechnology-company/monoprotocol",
       "desc": "normative draft sync protocol: wire format, crypto (hkdf, aes256gcm), replicated object model, journals, capabilities; rust reference crate on crates.io with golden conformance vectors (json/cbor)."
+    }
+  ],
+  "tools": [
+    {
+      "key": "rs_peekaboo",
+      "name": "rs_peekaboo",
+      "href": "https://github.com/undivisible/rs_peekaboo",
+      "desc": "peter steinberger's peekaboo rewritten in rust with a shell tool and usable as a crate library for embedding into applications."
+    },
+    {
+      "key": "rs_imessage",
+      "name": "rs_imessage",
+      "href": "https://github.com/undivisible/rs_imessage",
+      "desc": "rust imessage crate and cli."
+    },
+    {
+      "key": "rs_facetime",
+      "name": "rs_facetime",
+      "href": "https://github.com/undivisible/rs_facetime",
+      "desc": "rust facetime crate and cli."
+    },
+    {
+      "key": "rs_ice",
+      "name": "rs_ice",
+      "href": "https://github.com/undivisible/rs_ice",
+      "desc": "rs_ice."
     }
   ]
 } as const;

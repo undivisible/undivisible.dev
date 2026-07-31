@@ -83,6 +83,7 @@ function App() {
           <>
             <ProjectList title="miniapps" items={readmeProjects.miniapps} />
             <ProjectList title="libraries" items={readmeProjects.libraries} />
+            <ProjectList title="tools" items={readmeProjects.tools} />
           </>
         ) : null}
 
