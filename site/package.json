@@ -1,7 +1,7 @@
 {
   "name": "@workspace/undivisible-moonshine",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "sync": "bun run scripts/sync-content.ts",
@@ -14,8 +14,12 @@
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@tschk/moonshine": "file:../../moonshine/packages/core",
-    "@tschk/moonshine-shaders": "file:../../moonshine/packages/shaders",
+    "@tschk/moonshine": "workspace:*",
+    "@tschk/moonshine-framework": "workspace:*",
+    "@tschk/moonshine-react": "workspace:*",
+    "@tschk/moonshine-server": "workspace:*",
+    "@tschk/moonshine-deploy-bun": "workspace:*",
+    "@tschk/moonshine-shaders": "workspace:*",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },

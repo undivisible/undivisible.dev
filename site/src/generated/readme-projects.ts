@@ -22,7 +22,7 @@ export const readmeProjects: ReadmeBundle = {
       "key": "moonshine",
       "name": "moonshine",
       "href": "https://github.com/tschk/moonshine",
-      "desc": "hyperminimal bun-first ui runtime. signals core, import-what-you-need, host adapters for vite, waku, next, astro, remix, nuxt and more."
+      "desc": "ground-up Bun-first hybrid web framework with a signal-only kernel and opt-in compiler, routing, rendering, server, and deployment layers."
     },
     {
       "key": "inauguration",
@@ -317,6 +317,12 @@ export const readmeProjects: ReadmeBundle = {
       "name": "flowtoken-svelte",
       "href": "https://flowtoken-svelte.undivisible.dev/",
       "desc": "a svelte version of ephibb's flowtoken for clean streaming animations with blur and opacity transitions."
+    },
+    {
+      "key": "flowtoken-swift",
+      "name": "flowtoken-swift",
+      "href": "https://github.com/undivisible/flowtoken-swift/",
+      "desc": "a swiftui version of ephibb's flowtoken for clean streaming animations with blur and opacity transitions."
     },
     {
       "key": "tree-sitter-v",
