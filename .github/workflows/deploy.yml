@@ -19,9 +19,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: github-pages
+    defaults:
+      run:
+        working-directory: undivisible.dev
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          path: undivisible.dev
+
+      - name: Checkout moonshine
+        uses: actions/checkout@v4
+        with:
+          repository: tschk/moonshine
+          path: moonshine
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -40,7 +51,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: web/out
+          path: undivisible.dev/web/out
 
   deploy:
     environment:
