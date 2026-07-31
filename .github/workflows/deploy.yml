@@ -28,12 +28,6 @@ jobs:
         with:
           path: undivisible.dev
 
-      - name: Checkout moonshine
-        uses: actions/checkout@v4
-        with:
-          repository: tschk/moonshine
-          path: moonshine
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:

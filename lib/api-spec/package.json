@@ -12,6 +12,6 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "orval": "^8.5.2"
+    "orval": "8.5.3"
   }
 }

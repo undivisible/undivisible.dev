@@ -29,9 +29,7 @@
       "site",
       "lib/*",
       "lib/integrations/*",
-      "scripts",
-      "../moonshine/packages/*",
-      "../moonshine/components"
+      "scripts"
     ],
     "catalog": {
       "@replit/vite-plugin-cartographer": "^0.5.1",

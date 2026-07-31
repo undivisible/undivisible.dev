@@ -14,12 +14,13 @@
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@tschk/moonshine": "workspace:*",
-    "@tschk/moonshine-framework": "workspace:*",
-    "@tschk/moonshine-react": "workspace:*",
-    "@tschk/moonshine-server": "workspace:*",
-    "@tschk/moonshine-deploy-bun": "workspace:*",
-    "@tschk/moonshine-shaders": "workspace:*",
+    "@tschk/moonshine": "^0.3.1",
+    "@tschk/moonshine-framework": "^0.3.1",
+    "@tschk/moonshine-react": "^0.3.1",
+    "@tschk/moonshine-server": "^0.3.1",
+    "@tschk/moonshine-deploy-bun": "^0.3.1",
+    "@tschk/moonshine-adapter-conformance": "^0.3.1",
+    "@tschk/moonshine-shaders": "^0.3.1",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
