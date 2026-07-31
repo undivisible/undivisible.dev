@@ -12,7 +12,13 @@ Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MA
 
 ## Structure
 
-- `web/` - Next.js 16 application (current site); see `web/README.md` for shipped features and env vars
+- `site/` - **moonshine** rewrite (Bun + signals + shaders). Preferred runtime:
+  ```bash
+  bun install
+  bun run dev:moonshine
+  ```
+  Footer credits [moonshine](https://github.com/tschk/moonshine).
+- `web/` - Next.js 16 application (legacy); see `web/README.md` for shipped features and env vars
 - `old/` - Previous versions of the site:
   - `one/` - HTML/CSS site
   - `two/` - HTML/CSS site
