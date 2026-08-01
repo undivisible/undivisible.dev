@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, JetBrains_Mono, Young_Serif } from "next/font/google";
-import "@/index.css";
+import { fontCss } from "@/moonshine/font-google";
 
 const youngSerif = Young_Serif({
   subsets: ["latin"],
@@ -42,19 +42,16 @@ export const metadata: Metadata = {
   },
 };
 
+export const fontVariableCss = fontCss({
+  "--font-young-serif": youngSerif,
+  "--font-jetbrains-mono": jetBrainsMono,
+  "--font-instrument-sans": instrumentSans,
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        suppressHydrationWarning
-        className={`${youngSerif.variable} ${jetBrainsMono.variable} ${instrumentSans.variable}`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+  return <>{children}</>;
 }

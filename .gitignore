@@ -5,10 +5,9 @@ dist
 tmp
 out
 .next/
+.moonshine/
 .turbo/
 out-tsc
-site/public/client.js
-site/public/client.js.map
 *.tsbuildinfo
 .expo
 .expo-shared

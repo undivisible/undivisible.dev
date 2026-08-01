@@ -1,29 +1,33 @@
 {
   "extends": "../tsconfig.base.json",
   "include": [
-    "next-env.d.ts",
-    "app/**/*",
     "src/**/*",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    "scripts/build-static.ts",
+    "scripts/serve-static.ts",
+    "moonshine.config.ts"
   ],
-  "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
+  "exclude": ["node_modules", "build", "dist", "out", "**/*.test.ts"],
   "compilerOptions": {
     "noEmit": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "lib": ["esnext", "dom", "dom.iterable"],
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "moduleResolution": "bundler",
-    "types": ["node"],
+    "types": ["node", "bun"],
     "baseUrl": ".",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "next": ["./src/moonshine/next.ts"],
+      "next/link": ["./src/moonshine/link.tsx"],
+      "next/navigation": [
+        "./node_modules/@tschk/moonshine-next/src/navigation.ts"
+      ],
+      "next/image": ["./node_modules/@tschk/moonshine-next/src/image.ts"],
+      "next/script": ["./node_modules/@tschk/moonshine-next/src/script.ts"],
+      "next/headers": ["./node_modules/@tschk/moonshine-next/src/headers.ts"],
+      "next/dynamic": ["./node_modules/@tschk/moonshine-next/src/dynamic.ts"],
+      "next/font/google": ["./src/moonshine/font-google.ts"]
     }
   },
   "references": [

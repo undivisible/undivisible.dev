@@ -2,23 +2,17 @@
 
 Profile and CV markdown live on [`undivisible/undivisible`](https://github.com/undivisible/undivisible). This repo does not author those files; `web` sync scripts fetch raw GitHub URLs at build time and write deploy copies under `web/public/`.
 
-| Upstream file | Role |
-|---------------|------|
-| [`README.md`](https://github.com/undivisible/undivisible/blob/main/README.md) | **Project list** and portfolio sections parsed into the site (`parseReadme` / `readme-projects.generated.ts`). |
-| [`now.md`](https://github.com/undivisible/undivisible/blob/main/now.md) | **Now status** (short line; optional `---` + article). Clock overlay and `public/now.md` snapshot only—not the project list. |
-| [`resume.md`](https://github.com/undivisible/undivisible/blob/main/resume.md) | CV, contact, experience. |
+| Upstream file                                                                 | Role                                                                                                                         |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| [`README.md`](https://github.com/undivisible/undivisible/blob/main/README.md) | **Project list** and portfolio sections parsed into the site (`parseReadme` / `readme-projects.generated.ts`).               |
+| [`now.md`](https://github.com/undivisible/undivisible/blob/main/now.md)       | **Now status** (short line; optional `---` + article). Clock overlay and `public/now.md` snapshot only—not the project list. |
+| [`resume.md`](https://github.com/undivisible/undivisible/blob/main/resume.md) | CV, contact, experience.                                                                                                     |
 
 Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MARKDOWN_URL` when syncing locally.
 
 ## Structure
 
-- `site/` - **moonshine** rewrite (Bun + signals + shaders). Preferred runtime:
-  ```bash
-  bun install
-  bun run dev:moonshine
-  ```
-  Footer credits [moonshine](https://github.com/tschk/moonshine).
-- `web/` - Next.js 16 application (legacy); see `web/README.md` for shipped features and env vars
+- `web/` - the production site, built on [moonshine](https://github.com/tschk/moonshine) (React renderer, prerendered to static HTML, hydrated islands); see `web/README.md` for shipped features and env vars
 - `old/` - Previous versions of the site:
   - `one/` - HTML/CSS site
   - `two/` - HTML/CSS site

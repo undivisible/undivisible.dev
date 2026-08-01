@@ -1,6 +1,6 @@
-# undivisible (Next.js app)
+# undivisible (moonshine app)
 
-Production site for undivisible.dev. Built with Next.js 16 (App Router), React 19, Tailwind v4, Bun.
+Production site for undivisible.dev. Built on moonshine 0.3 (App Router conventions via `@tschk/moonshine-compiler`, `@tschk/moonshine-next` for the `next/*` API surface), React 19, Tailwind v4, Bun. Every route is prerendered to static HTML at build time; only the interactive subtrees ship JavaScript.
 
 ## User-facing features
 
@@ -19,8 +19,8 @@ Production site for undivisible.dev. Built with Next.js 16 (App Router), React 1
 
 | Command               | Purpose                                                           |
 | --------------------- | ----------------------------------------------------------------- |
-| `bun run dev`         | Next dev server                                                   |
-| `bun run build`       | Sync readme + optional Last.fm snapshot, then `next build`        |
+| `bun run dev`         | Build and serve `out/` locally                                    |
+| `bun run build`       | Sync readme + optional Last.fm snapshot, then prerender to `out/` |
 | `bun run sync:readme` | Regenerate `src/data/readme-projects.generated.ts`                |
 | `bun run sync:lastfm` | Write `public/lastfm-recent.json` (skipped without API key)       |
 | `bun run sync:agent`  | Write agent markdown + `llms.txt`/`llms-full.txt` under `public/` |
