@@ -37,7 +37,7 @@ Measured over the network against the deployed site, not a local build. Bytes
 are uncompressed transfer sizes of the HTML plus every script and stylesheet it
 references.
 
-| Route    | Metric | Next.js            | moonshine   | Change    |
+| Route    | Metric |            Next.js |   moonshine |    Change |
 | -------- | ------ | -----------------: | ----------: | --------: |
 | `/`      | HTML   |             99,931 |      79,899 |      −20% |
 | `/`      | JS     | 894,470 (11 files) | 183,265 (1) |  **−80%** |
