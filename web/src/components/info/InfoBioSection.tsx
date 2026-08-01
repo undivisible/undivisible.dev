@@ -359,6 +359,10 @@ export function InfoBioSection({
                 })}
             </dl>
           </motion.div>
+
+          <p className="pt-2 text-[10px] tracking-[0.12em] text-white/30 font-mono">
+            built with crepuscularity + moonshine
+          </p>
         </div>
       </div>
     </section>
