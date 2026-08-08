@@ -100,12 +100,21 @@ export const LAB_REFS: Record<string, LabRef> = {
   },
   tschk: {
     title: "tsc.hk",
-    kind: "the company i founded at 17",
+    kind: "mine, since 17",
     mark: "tsc",
-    body: "The Semitechnological Company. Twenty-two repositories: a compiler, two operating systems, a browser engine, a Linux distribution, two web frameworks, an agent runtime and the FFI glue underneath. Everything I build that is not a miniapp lives here.",
+    body: "The Semitechnological Company, founded at seventeen and still running. Twenty-two repositories: a compiler, two operating systems, a browser engine, a Linux distribution, two web frameworks, an agent runtime and the FFI glue underneath.",
     source: "github.com/tschk",
     href: "https://tsc.hk",
     stat: "22 repos",
+  },
+  arkie: {
+    title: "The Arkie Company",
+    kind: "founded, then closed",
+    mark: "ak",
+    body: "Technical cofounder. Custom AI automation, client web surfaces and a shelf of SaaS products — Arkie, Pava, Currant, Tangent, Unthought, Waarom. I shut it down after leaving school to work on omi.",
+    source: "feb 2026 – jul 2026",
+    href: "https://undivisible.dev/resume.md",
+    stat: "closed",
   },
   apollo: {
     title: "Apollo",

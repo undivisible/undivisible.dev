@@ -64,11 +64,12 @@ function clientDefine(): Record<string, string> {
 
 type ClientEntry = { name: string; entry: string };
 
-const LAB_LAYOUTS = ["temple", "ledger", "signal"] as const;
+const LAB_LAYOUTS = ["margin", "sentence", "atlas"] as const;
 
 const CLIENT_ENTRIES: ClientEntry[] = [
   { name: "home", entry: join(projectDir, "src/client/home.tsx") },
   { name: "not-found", entry: join(projectDir, "src/client/not-found.tsx") },
+  { name: "lab", entry: join(projectDir, "src/client/lab.tsx") },
   ...LAB_LAYOUTS.map((name) => ({
     name: `lab-${name}`,
     entry: join(projectDir, `src/client/lab-${name}.tsx`),
@@ -196,6 +197,8 @@ async function main(): Promise<void> {
     "not-found": "404.html",
     lab: "lab/index.html",
   };
+
+  entryForRoute.lab = clientBundles.lab;
 
   for (const name of LAB_LAYOUTS) {
     entryForRoute[`lab/${name}`] = clientBundles[`lab-${name}`];
