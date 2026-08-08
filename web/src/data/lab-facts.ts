@@ -22,7 +22,7 @@ export const GHOST_SUFFIXES = [
   "bored",
   "not schizo",
   "rusty",
-  "gay",
+  "on the wrong timezone",
   "employed",
   "cantonese",
   "chronically on github",

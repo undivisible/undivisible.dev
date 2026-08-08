@@ -1,6 +1,7 @@
 "use client";
 
 import Ascii from "@/components/Ascii";
+import { LabAurora } from "@/components/lab/LabAurora";
 import { Light } from "@/components/Light";
 import { useSiteVisualEffects } from "@/hooks/use-site-visual-effects";
 import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
@@ -41,6 +42,7 @@ export function LabBackground({ dayTheme }: { dayTheme: HongKongDayTheme }) {
           />
         )}
       </div>
+      <LabAurora />
     </>
   );
 }

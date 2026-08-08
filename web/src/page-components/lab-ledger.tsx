@@ -3,6 +3,7 @@
 import { GhostTagline } from "@/components/lab/GhostTagline";
 import { LabBackground } from "@/components/lab/LabBackground";
 import { LabClock } from "@/components/lab/LabClock";
+import { LabProjects } from "@/components/lab/LabProjects";
 import { LabSwitch } from "@/components/lab/LabSwitch";
 import { Ref } from "@/components/lab/Ref";
 import {
@@ -49,13 +50,16 @@ export default function LabLedger() {
             <GhostTagline block suffixClassName="lab-ledger-suffix" />
           </h1>
           <p className="lab-ledger-sub">
-            {IDENTITY.role} at <Ref slug="omi">{IDENTITY.org}</Ref>. i work on{" "}
-            {IDENTITY.product} — firmware, backend, and every screen in between.
+            {IDENTITY.role} at <Ref slug="omi">{IDENTITY.org}</Ref>. before
+            that, <Ref slug="tschk">tsc.hk</Ref> — a compiler, two operating
+            systems, a browser engine and a distro.
           </p>
         </div>
 
         <Section title="now" facts={NOW_FACTS} />
         <Section title="why the tagline isn't a bit" facts={FRONTIER_FACTS} />
+        <LabProjects />
+
         <Section title="before seventeen" facts={BEFORE_17_FACTS} />
 
         <section className="lab-ledger-section">
