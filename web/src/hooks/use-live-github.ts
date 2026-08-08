@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { GITHUB_ACTIVITY } from "@/data/github-activity";
 
 export type LiveGithub = {
+  prsTotal: number;
   prsThisYear: number;
   merged: number;
   commitsThisYear: number;
@@ -35,6 +36,7 @@ async function count(query: string, signal: AbortSignal): Promise<number> {
  */
 export function useLiveGithub(): LiveGithub {
   const [state, setState] = useState<LiveGithub>({
+    prsTotal: GITHUB_ACTIVITY.account.pullRequests,
     prsThisYear: GITHUB_ACTIVITY.account.pullRequestsThisYear,
     merged: GITHUB_ACTIVITY.account.merged,
     commitsThisYear: GITHUB_ACTIVITY.account.commitsThisYear,
@@ -64,6 +66,9 @@ export function useLiveGithub(): LiveGithub {
       .catch(() => {});
     void count(`author:${author} is:pr is:merged`, signal)
       .then((merged) => apply({ merged }))
+      .catch(() => {});
+    void count(`author:${author} is:pr`, signal)
+      .then((prsTotal) => apply({ prsTotal }))
       .catch(() => {});
     void count(
       `repo:${GITHUB_ACTIVITY.repo} author:${author} is:pr created:>=${monthStart}`,

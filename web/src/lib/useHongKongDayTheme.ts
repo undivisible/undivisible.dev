@@ -140,6 +140,8 @@ export type HongKongDayTheme = {
   isScrubbing: boolean;
   onScrubWheel: (event: ReactWheelEvent<HTMLElement>) => void;
   onClockWheel: (event: WheelEvent) => void;
+  /** Jump the displayed time to an absolute minute of day — for drag scrubbing. */
+  scrubToMinute: (minute: number) => void;
   resetScrub: () => void;
   getTransportStyle: (baseHex: string) => CSSProperties;
   attributionUrl: string;
@@ -1141,6 +1143,15 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     [bumpMinuteFromWheel],
   );
 
+  const scrubToMinute = useCallback((minute: number) => {
+    if (resetFrameRef.current !== null) {
+      window.cancelAnimationFrame(resetFrameRef.current);
+      resetFrameRef.current = null;
+    }
+    setIsScrubbing(true);
+    setDisplayedMinute(wrapMinutes(minute));
+  }, []);
+
   const resetScrub = () => {
     if (!isScrubbing) {
       return;
@@ -1211,6 +1222,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     isScrubbing,
     onScrubWheel,
     onClockWheel,
+    scrubToMinute,
     resetScrub,
     getTransportStyle,
     attributionUrl: SUNRISE_API_ATTRIBUTION_URL,
