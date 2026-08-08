@@ -128,6 +128,12 @@ export type HongKongDayTheme = {
   showLocalTime: boolean;
   weatherDisplay: string;
   weatherHref: string;
+  /**
+   * The wall-clock instant currently being displayed — live, or shifted while
+   * the clock is being scrubbed. Format it against any zone or fixed UTC
+   * offset to get a clock that follows the scrubber.
+   */
+  displayedDate: Date;
   hkgClockHref: string;
   melClockHref: string;
   localClockHref: string;
@@ -1197,6 +1203,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
       location.timeZone !== HONG_KONG_TIME_ZONE &&
       location.timeZone !== MELBOURNE_TIME_ZONE,
     weatherDisplay: formatWeatherDisplay(weather),
+    displayedDate,
     weatherHref: `https://open-meteo.com/en/forecast?latitude=${HONG_KONG_COORDS.lat}&longitude=${HONG_KONG_COORDS.lng}&current=temperature_2m,weather_code`,
     hkgClockHref: "https://www.timeanddate.com/worldclock/hong-kong/hong-kong",
     melClockHref: "https://www.timeanddate.com/worldclock/australia/melbourne",

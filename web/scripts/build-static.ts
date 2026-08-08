@@ -64,9 +64,15 @@ function clientDefine(): Record<string, string> {
 
 type ClientEntry = { name: string; entry: string };
 
+const LAB_LAYOUTS = ["temple", "ledger", "signal"] as const;
+
 const CLIENT_ENTRIES: ClientEntry[] = [
   { name: "home", entry: join(projectDir, "src/client/home.tsx") },
   { name: "not-found", entry: join(projectDir, "src/client/not-found.tsx") },
+  ...LAB_LAYOUTS.map((name) => ({
+    name: `lab-${name}`,
+    entry: join(projectDir, `src/client/lab-${name}.tsx`),
+  })),
 ];
 
 async function buildClient(): Promise<Record<string, string>> {
@@ -188,7 +194,13 @@ async function main(): Promise<void> {
     index: "index.html",
     agent: "agent.html",
     "not-found": "404.html",
+    lab: "lab/index.html",
   };
+
+  for (const name of LAB_LAYOUTS) {
+    entryForRoute[`lab/${name}`] = clientBundles[`lab-${name}`];
+    outputForRoute[`lab/${name}`] = `lab/${name}/index.html`;
+  }
 
   const routes: RouteArtifact[] = [];
   for (const route of [...discovered, notFoundRoute]) {
