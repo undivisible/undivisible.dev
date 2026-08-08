@@ -205,7 +205,10 @@ export default function Ascii({
     if (!canvas || !container) return;
 
     const gl = canvas.getContext("webgl", {
-      alpha: false,
+      // Translucent so the sky shader shows through: with alpha:false this
+      // canvas composites opaque, and the fluid's 52% ink floor becomes a
+      // grey blanket over any daytime palette. Invisible on black; not now.
+      alpha: true,
       antialias: false,
       premultipliedAlpha: false,
       // Safari clears the default back buffer after compositing; ASCII samples via drawImage.
@@ -291,7 +294,9 @@ export default function Ascii({
 
         vec3 color = palette(fluid);
         float alpha = clamp(0.52 + fluid * 0.9, 0.0, 1.0);
-        gl_FragColor = vec4(color * alpha, 1.0);
+        // rgb stays color*alpha — the ASCII sampler reads brightness from it —
+        // while the alpha channel lets the day shader glow through the field.
+        gl_FragColor = vec4(color * alpha, alpha * 0.5);
       }
     `;
 

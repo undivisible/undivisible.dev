@@ -1,20 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { GHOST_SUFFIXES } from "@/data/lab-facts";
-import { Ref } from "@/components/lab/Ref";
+import { GHOST_SUFFIXES, TERRY_URL } from "@/data/lab-facts";
 
 const CYCLE_MS = 3400;
 const SWAP_MS = 240;
 
 /**
- * "the ghost of terry davis, but ___" — the blank cycles, and clicking it
- * advances by hand. `terry davis` carries a reference card.
+ * "the ghost of terry davis, but ___" — the blank cycles on its own and
+ * clicking it advances by hand. Terry's name is a plain link; no hover card.
  */
 export function GhostTagline({
   className = "",
   suffixClassName = "",
-  /** Renders the suffix on its own line, for the display-scale layouts. */
+  /** Renders the suffix on its own line, for the display-scale settings. */
   block = false,
 }: {
   className?: string;
@@ -54,11 +53,24 @@ export function GhostTagline({
 
   return (
     <span className={className}>
-      the ghost of <Ref slug="terry">terry davis</Ref>,{block ? <br /> : " "}but{" "}
+      the ghost of{" "}
+      <a
+        className="lab-terry"
+        href={TERRY_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(event) => event.stopPropagation()}
+      >
+        terry davis
+      </a>
+      ,{block ? <br /> : " "}but{" "}
       <button
         type="button"
         className={`lab-suffix ${swapping ? "is-swapping" : ""} ${suffixClassName}`}
-        onClick={() => advance(1)}
+        onClick={(event) => {
+          event.stopPropagation();
+          advance(1);
+        }}
         aria-label={`but ${GHOST_SUFFIXES[index]}. Click for the next one.`}
       >
         {GHOST_SUFFIXES[index]}

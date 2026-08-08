@@ -64,16 +64,10 @@ function clientDefine(): Record<string, string> {
 
 type ClientEntry = { name: string; entry: string };
 
-const LAB_LAYOUTS = ["margin", "sentence", "atlas"] as const;
-
 const CLIENT_ENTRIES: ClientEntry[] = [
   { name: "home", entry: join(projectDir, "src/client/home.tsx") },
   { name: "not-found", entry: join(projectDir, "src/client/not-found.tsx") },
   { name: "lab", entry: join(projectDir, "src/client/lab.tsx") },
-  ...LAB_LAYOUTS.map((name) => ({
-    name: `lab-${name}`,
-    entry: join(projectDir, `src/client/lab-${name}.tsx`),
-  })),
 ];
 
 async function buildClient(): Promise<Record<string, string>> {
@@ -199,11 +193,6 @@ async function main(): Promise<void> {
   };
 
   entryForRoute.lab = clientBundles.lab;
-
-  for (const name of LAB_LAYOUTS) {
-    entryForRoute[`lab/${name}`] = clientBundles[`lab-${name}`];
-    outputForRoute[`lab/${name}`] = `lab/${name}/index.html`;
-  }
 
   const routes: RouteArtifact[] = [];
   for (const route of [...discovered, notFoundRoute]) {

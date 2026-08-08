@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Ascii from "@/components/Ascii";
 import { LabAurora } from "@/components/lab/LabAurora";
 import { Light } from "@/components/Light";
@@ -15,6 +16,30 @@ import { useLastFmVisualData } from "@/lib/useLastFmVisualData";
 export function LabBackground({ dayTheme }: { dayTheme: HongKongDayTheme }) {
   const { track, colors, ready, lastFmUsername } = useLastFmVisualData();
   const visualEffects = useSiteVisualEffects();
+
+  // With no album art sampled yet the field's palette is a grey ramp, which
+  // reads as a grey veil over a colourful sky. Until a track paints it, let
+  // the field borrow the sky's own colours — so the ASCII drifts through
+  // sunrise orange and noon blue, and album colours take over when playing.
+  const { shader } = dayTheme;
+  const skyColors = useMemo(
+    () => [
+      shader.beam,
+      shader.accent,
+      shader.beamSecondary,
+      shader.base,
+      shader.shadow,
+    ],
+    [
+      shader.beam,
+      shader.accent,
+      shader.beamSecondary,
+      shader.base,
+      shader.shadow,
+    ],
+  );
+  const usingDefaults = colors[0] === "#ffffff" && colors[4] === "#333333";
+  const fieldColors = usingDefaults ? skyColors : colors;
   const animateWeather =
     visualEffects ||
     dayTheme.shader.weatherKind === "rain" ||
@@ -30,7 +55,7 @@ export function LabBackground({ dayTheme }: { dayTheme: HongKongDayTheme }) {
       <div className="pointer-events-none fixed inset-0 z-[1] overflow-hidden">
         {visualEffects ? (
           <Ascii
-            colors={colors}
+            colors={fieldColors}
             track={track}
             ready={ready}
             lastFmUsername={lastFmUsername}
@@ -42,7 +67,7 @@ export function LabBackground({ dayTheme }: { dayTheme: HongKongDayTheme }) {
           />
         )}
       </div>
-      <LabAurora />
+      <LabAurora daylight={shader.daylightStrength} />
     </>
   );
 }

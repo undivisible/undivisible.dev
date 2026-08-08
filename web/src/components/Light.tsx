@@ -323,10 +323,10 @@ export function Light({
             height * 0.55,
             Math.max(width, height) * 0.8,
           );
-          wash.addColorStop(0, rgba(current.beam, 0.08 + colorStrength * 0.2));
+          wash.addColorStop(0, rgba(current.beam, 0.1 + colorStrength * 0.3));
           wash.addColorStop(
             0.5,
-            rgba(current.beamSecondary, 0.06 + colorStrength * 0.14),
+            rgba(current.beamSecondary, 0.08 + colorStrength * 0.2),
           );
           wash.addColorStop(1, rgba(current.accent, 0));
         }
@@ -342,7 +342,7 @@ export function Light({
             height,
           );
           streakA.addColorStop(0, rgba(current.beamSecondary, 0));
-          streakA.addColorStop(0.5, rgba(current.beam, streakWeight * 0.34));
+          streakA.addColorStop(0.5, rgba(current.beam, streakWeight * 0.44));
           streakA.addColorStop(1, rgba(current.beamSecondary, 0));
 
           streakB = ctx.createLinearGradient(
@@ -352,7 +352,7 @@ export function Light({
             height * 0.9,
           );
           streakB.addColorStop(0, rgba(current.accent, 0));
-          streakB.addColorStop(0.55, rgba(current.accent, streakWeight * 0.26));
+          streakB.addColorStop(0.55, rgba(current.accent, streakWeight * 0.34));
           streakB.addColorStop(1, rgba(current.accent, 0));
 
           twilightBand = ctx.createLinearGradient(0, 0, 0, height);
