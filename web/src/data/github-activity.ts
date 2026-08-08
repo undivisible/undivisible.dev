@@ -13,6 +13,14 @@ export type MergedPr = {
 };
 
 export const GITHUB_ACTIVITY = {
+  /** Whole account, all repositories, GitHub search API. */
+  account: {
+    pullRequests: 1820,
+    merged: 891,
+    pullRequestsThisYear: 1785,
+    commitsThisYear: 10798,
+    repos: 91, // 69 personal + 22 under tschk
+  },
   repo: "BasedHardware/omi",
   author: "undivisible",
   since: "2026-07-20",

@@ -9,10 +9,8 @@ import { LabClock } from "@/components/lab/LabClock";
 import { GITHUB_ACTIVITY } from "@/data/github-activity";
 import {
   COUNTRIES_IN_A_YEAR,
-  EARLY_FACTS,
   IDENTITY,
   LAB_LINKS,
-  OMI_ROLE,
   PLACES,
   WEBRING,
 } from "@/data/lab-facts";
@@ -42,17 +40,21 @@ function hongKongMinute(date: Date): number {
   return Number(hour) * 60 + Number(minute);
 }
 
+const numberFormat = new Intl.NumberFormat("en-US");
+
+/** Footnote marks for the route line, in order of appearance. */
+const MARKS = ["¹", "²", "³"] as const;
+
 /**
- * The site as a daily almanac: sun, weather, what's playing, what shipped,
- * where I am, where I've been. Everything is visible without hovering, and
- * the sun that colours the sky also casts the shadows on the page — scrub
- * the clock and watch them swing.
+ * Bare typography on the sky. One display moment (the tagline), one thin
+ * line where the sun lives, then four sparse rows separated by a lot of
+ * nothing. No panels, no cards, no hover — hairlines and type.
  */
 export default function LabAlmanac() {
   const dayTheme = useHongKongDayTheme();
   const now = useNowMarkdown();
   const hydrated = useHydrated();
-  const { track, colors, ready } = useLastFmVisualData();
+  const { track } = useLastFmVisualData();
 
   const categories = useMemo(
     () =>
@@ -64,274 +66,224 @@ export default function LabAlmanac() {
       ]),
     [],
   );
-  const projectTotal = categories.reduce(
-    (count, category) => count + category.items.length,
-    0,
-  );
 
-  // ── the sun does the lighting ────────────────────────────────────
-  // Shadow direction follows the sun across the day: morning sun throws
-  // shadows left, evening sun throws them right, noon pulls them short.
-  // At night they fade to almost nothing. Scrubbing time sweeps them live.
+  // The sun does the lighting: shadow direction and depth follow it across
+  // the day and vanish at night. Scrubbing the sun line sweeps them live.
   const sun = dayTheme.shader.sunProgress;
   const day = dayTheme.shader.daylightStrength;
   const dayFlat = 1 - Math.pow(1 - day, 3);
   const shadowStyle = {
-    "--sun-x": `${((sun - 0.5) * -44).toFixed(1)}px`,
-    "--sun-y": `${(6 + (1 - dayFlat) * 12).toFixed(1)}px`,
-    "--shade-a": (0.06 + dayFlat * 0.5).toFixed(3),
-    "--ink-a": (0.1 + dayFlat * 0.55).toFixed(3),
+    "--sun-x": `${((sun - 0.5) * -40).toFixed(1)}px`,
+    "--sun-y": `${(5 + (1 - dayFlat) * 10).toFixed(1)}px`,
+    "--ink-a": (0.08 + dayFlat * 0.5).toFixed(3),
   } as CSSProperties;
 
   const minute = hydrated ? hongKongMinute(dayTheme.displayedDate) : 0;
   const sunLeft = (minute / MINUTES_IN_DAY) * 100;
   const moonLeft = (((minute + 720) % MINUTES_IN_DAY) / MINUTES_IN_DAY) * 100;
 
-  const stripRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const strip = stripRef.current;
-    if (!strip) return;
-    strip.addEventListener("wheel", dayTheme.onClockWheel, { passive: false });
-    return () => strip.removeEventListener("wheel", dayTheme.onClockWheel);
+    const line = lineRef.current;
+    if (!line) return;
+    line.addEventListener("wheel", dayTheme.onClockWheel, { passive: false });
+    return () => line.removeEventListener("wheel", dayTheme.onClockWheel);
   }, [dayTheme.onClockWheel]);
 
-  const activity = GITHUB_ACTIVITY;
-  const paletteDots = ready && track ? colors.slice(0, 5) : [];
+  const { account, thisMonth, recentMerged } = GITHUB_ACTIVITY;
+  const lastMerged = recentMerged[0];
+
+  // Route as one line; only three notes earn a footnote.
+  const footnoted = PLACES.filter(
+    (place) => place.code === "HKG" || place.code === "USA" || place.next,
+  );
 
   return (
-    <div className="lab-root lab-almanac" style={shadowStyle}>
+    <div className="lab-root lab-min" style={shadowStyle}>
       <LabBackground dayTheme={dayTheme} />
 
-      <main className="lab-alm-frame">
-        {/* ── masthead ── */}
-        <header className="lab-alm-mast">
+      <main className="min-frame">
+        <header className="min-top">
           <LabClock
             dayTheme={dayTheme}
             location={now.location}
             status={now.status}
           />
-          <div className="lab-alm-mast-mid">
-            <p className="lab-alm-word">almanac</p>
-            <p className="lab-alm-date" suppressHydrationWarning>
-              {hydrated
-                ? new Intl.DateTimeFormat("en-GB", {
-                    timeZone: "Asia/Hong_Kong",
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  }).format(dayTheme.displayedDate)
-                : " "}
-            </p>
-          </div>
-          <div className="lab-alm-mast-right">
-            <p className="lab-alm-name">
-              {IDENTITY.name}
-              <br />
-              <span>{IDENTITY.hanzi}</span>
-            </p>
-            {track ? (
-              <a
-                className="lab-alm-playing"
-                href={track.trackUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span className="lab-alm-playing-dots" aria-hidden>
-                  {paletteDots.map((color, index) => (
-                    <i key={index} style={{ background: color }} />
-                  ))}
-                </span>
-                {track.isNowPlaying ? "playing" : "last played"} · {track.track}{" "}
-                — {track.artist}
-              </a>
-            ) : (
-              <p className="lab-alm-playing lab-alm-playing-idle">
-                the field behind this page is whatever i'm listening to
-              </p>
-            )}
-          </div>
+          <p className="min-name">
+            {IDENTITY.name} · {IDENTITY.hanzi}
+          </p>
         </header>
 
-        {/* ── ephemeris: the day, with the sun on it ── */}
+        {/* ── hero: the tagline and nothing else ── */}
+        <section className="min-hero">
+          <h1 className="min-tagline">
+            <GhostTagline block suffixClassName="min-suffix" />
+          </h1>
+          <p className="min-role">
+            {IDENTITY.role}, {IDENTITY.org}.
+          </p>
+        </section>
+
+        {/* ── the sun, on one line ── */}
         <div
-          ref={stripRef}
-          className="lab-alm-ephemeris"
+          ref={lineRef}
+          className="min-sunline"
           data-time-scrubber="true"
           onMouseLeave={dayTheme.resetScrub}
           aria-label="Time of day in Hong Kong — scroll to scrub"
         >
-          <div className="lab-alm-eph-ticks" aria-hidden>
-            {Array.from({ length: 24 }, (_, index) => (
-              <i
-                key={index}
-                data-major={index % 6 === 0 ? "true" : undefined}
-              />
-            ))}
-          </div>
           <span
-            className="lab-alm-sun"
+            className="min-sun"
             aria-hidden
             style={{
               left: `${sunLeft}%`,
-              bottom: `${18 + dayFlat * 46}%`,
               opacity: hydrated ? 0.35 + dayFlat * 0.65 : 0,
             }}
           />
           <span
-            className="lab-alm-moon"
+            className="min-moon"
             aria-hidden
             style={{
               left: `${moonLeft}%`,
-              opacity: hydrated ? 0.2 + (1 - dayFlat) * 0.6 : 0,
+              opacity: hydrated ? 0.15 + (1 - dayFlat) * 0.5 : 0,
             }}
           />
-          <div className="lab-alm-eph-labels" aria-hidden>
-            <span>00</span>
-            <span>06</span>
-            <span>12</span>
-            <span>18</span>
-            <span>24</span>
-          </div>
-          <p className="lab-alm-eph-hint">
-            scroll here to move the sun — the sky and the shadows follow
-          </p>
+          <span className="min-sunline-hint">scroll — the sky follows</span>
         </div>
 
-        {/* ── hero ── */}
-        <section className="lab-alm-hero">
-          <h1 className="lab-alm-tagline">
-            <GhostTagline block suffixClassName="lab-alm-suffix" />
-          </h1>
-          <p className="lab-alm-sub">
-            {IDENTITY.role} at {IDENTITY.org} — {OMI_ROLE.line}
-          </p>
-        </section>
-
-        {/* ── the log: real numbers, real PR titles ── */}
-        <section className="lab-alm-panel lab-alm-log">
-          <h2 className="lab-alm-h">
-            log <span>· {activity.repo}</span>
-          </h2>
-          <div className="lab-alm-stats">
-            <div>
-              <b>{activity.total.pullRequests}</b>
-              <span>pull requests since jul 20</span>
+        {/* ── 2026, in numbers ── */}
+        <section className="min-row">
+          <h2 className="min-label">2026</h2>
+          <div className="min-body">
+            <div className="min-figures">
+              <div>
+                <b>{numberFormat.format(account.pullRequestsThisYear)}</b>
+                <span>pull requests</span>
+              </div>
+              <div>
+                <b>{numberFormat.format(account.merged)}</b>
+                <span>merged</span>
+              </div>
+              <div>
+                <b>{numberFormat.format(account.commitsThisYear)}</b>
+                <span>commits</span>
+              </div>
+              <div>
+                <b>{account.repos}</b>
+                <span>repositories</span>
+              </div>
             </div>
-            <div>
-              <b>{activity.total.merged}</b>
-              <span>merged</span>
-            </div>
-            <div>
-              <b>{activity.total.commits}</b>
-              <span>commits on main</span>
-            </div>
-            <div>
-              <b>{activity.thisMonth.pullRequests}</b>
-              <span>opened this month</span>
-            </div>
-          </div>
-          <ol className="lab-alm-prs">
-            {activity.recentMerged.map((pr) => (
-              <li key={pr.number}>
+            <p className="min-note">
+              lately{" "}
+              <a
+                href={GITHUB_ACTIVITY.allPrsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {GITHUB_ACTIVITY.repo}
+              </a>
+              {" — "}
+              {thisMonth.pullRequests} pull requests this month. last merged:{" "}
+              {lastMerged ? (
                 <a
-                  href={`https://github.com/${activity.repo}/pull/${pr.number}`}
+                  href={`https://github.com/${GITHUB_ACTIVITY.repo}/pull/${lastMerged.number}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <span className="lab-alm-pr-date">
-                    {pr.mergedAt.slice(5)}
-                  </span>
-                  <span className="lab-alm-pr-title">{pr.title}</span>
-                  <span className="lab-alm-pr-num">#{pr.number}</span>
+                  {lastMerged.title}
                 </a>
-              </li>
-            ))}
-          </ol>
-          <a
-            className="lab-alm-more"
-            href={activity.allPrsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            all {activity.total.pullRequests} →
-          </a>
-        </section>
-
-        {/* ── works: every project, sorted by what it is ── */}
-        <section className="lab-alm-panel">
-          <h2 className="lab-alm-h">
-            works <span>· {projectTotal} projects, sorted automatically</span>
-          </h2>
-          <div className="lab-alm-works">
-            {categories.map((category) => (
-              <div className="lab-alm-cat" key={category.key}>
-                <h3>{category.label}</h3>
-                <p className="lab-alm-cat-blurb">{category.blurb}</p>
-                <p className="lab-alm-cat-names">
-                  {category.items.map((project, index) => (
-                    <span key={project.name}>
-                      {index > 0 ? " · " : null}
-                      {project.href && project.href !== "#" ? (
-                        <a
-                          href={project.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {project.name}
-                        </a>
-                      ) : (
-                        project.name
-                      )}
-                    </span>
-                  ))}
-                </p>
-              </div>
-            ))}
+              ) : null}
+            </p>
           </div>
         </section>
 
-        {/* ── route ── */}
-        <section className="lab-alm-panel">
-          <h2 className="lab-alm-h">
-            route{" "}
-            <span>
-              · {PLACES.filter((place) => !place.next).length} countries,{" "}
-              {COUNTRIES_IN_A_YEAR} of them in one year at sixteen
-            </span>
-          </h2>
-          <ol className="lab-alm-route">
-            {PLACES.map((place) => (
-              <li
-                key={place.code}
-                data-run={place.run ? "true" : undefined}
-                data-next={place.next ? "true" : undefined}
-              >
-                <span className="lab-alm-route-code">{place.code}</span>
-                <span className="lab-alm-route-name">{place.name}</span>
-                <span className="lab-alm-route-note">{place.note}</span>
-              </li>
-            ))}
-          </ol>
+        {/* ── works: an index, not a catalogue ── */}
+        <section className="min-row">
+          <h2 className="min-label">works</h2>
+          <div className="min-body">
+            <dl className="min-index">
+              {categories.map((category) => (
+                <div key={category.key}>
+                  <dt>{category.label}</dt>
+                  <dd>
+                    {category.items.map((project, index) => (
+                      <span key={project.name}>
+                        {index > 0 ? " · " : null}
+                        {project.href && project.href !== "#" ? (
+                          <a
+                            href={project.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {project.name}
+                          </a>
+                        ) : (
+                          project.name
+                        )}
+                      </span>
+                    ))}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </section>
 
-        {/* ── early years ── */}
-        <section className="lab-alm-panel">
-          <h2 className="lab-alm-h">before seventeen</h2>
-          <div className="lab-alm-early">
-            {EARLY_FACTS.map((fact) => (
-              <div key={fact.title}>
-                <h3>{fact.title}</h3>
-                <p className="lab-alm-early-meta">{fact.meta}</p>
-                <p className="lab-alm-early-detail">{fact.detail}</p>
-              </div>
-            ))}
+        {/* ── route: one line, three footnotes ── */}
+        <section className="min-row">
+          <h2 className="min-label">route</h2>
+          <div className="min-body">
+            <p className="min-route">
+              {PLACES.map((place, index) => {
+                const markIndex = footnoted.indexOf(place);
+                return (
+                  <span key={place.code}>
+                    {index > 0 ? <i className="min-route-arrow"> → </i> : null}
+                    <span
+                      className="min-route-code"
+                      data-run={place.run ? "true" : undefined}
+                      data-next={place.next ? "true" : undefined}
+                    >
+                      {place.code}
+                      {markIndex >= 0 ? <sup>{MARKS[markIndex]}</sup> : null}
+                    </span>
+                  </span>
+                );
+              })}
+            </p>
+            <p className="min-note">
+              {COUNTRIES_IN_A_YEAR} of these in one year, at sixteen, alone.
+              <br />¹ first, and family &nbsp; ² secondary inspection, two hours
+              — they didn't believe my age &nbsp; ³ booked
+            </p>
+          </div>
+        </section>
+
+        {/* ── before seventeen ── */}
+        <section className="min-row">
+          <h2 className="min-label">before 17</h2>
+          <div className="min-body">
+            <p className="min-lines">
+              a full-time job paying 100k+ a year — someone else had to sign it.
+              <br />
+              first computer at six. first software at eight.
+              <br />
+              left school at seventeen. founded{" "}
+              <a
+                href="https://tsc.hk"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                tsc.hk
+              </a>{" "}
+              — still open.
+            </p>
           </div>
         </section>
 
         {/* ── foot ── */}
-        <footer className="lab-alm-foot">
-          <nav className="lab-alm-links">
+        <footer className="min-foot">
+          <nav className="min-links">
             <a href={WEBRING.prev} target="_blank" rel="noopener">
               ←
             </a>
@@ -353,24 +305,23 @@ export default function LabAlmanac() {
               →
             </a>
           </nav>
-          <p className="lab-alm-built">
-            built with{" "}
-            <a
-              href="https://github.com/tschk/crepuscularity"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              crepuscularity
-            </a>{" "}
-            +{" "}
-            <a
-              href="https://github.com/tschk/moonshine"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              moonshine
-            </a>{" "}
-            · <Link href="/">current site</Link> · 格物致知
+          <p className="min-colophon">
+            {track ? (
+              <a
+                href={track.trackUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ♪ {track.track} — {track.artist}
+              </a>
+            ) : (
+              <span>
+                the field behind this page is whatever i'm listening to
+              </span>
+            )}
+            {" · "}
+            <Link href="/">current site</Link>
+            {" · 格物致知"}
           </p>
         </footer>
       </main>

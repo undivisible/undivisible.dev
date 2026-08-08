@@ -26,6 +26,13 @@ describe("organiseProjects", () => {
     ],
     ["flowtoken-svelte", "a svelte version of ephibb's flowtoken", "ui"],
     ["bublik", "canvas tool for generating soundscapes", "apps"],
+    ["moonshine", "web framework with a signal-only kernel", "frameworks"],
+    [
+      "incisor",
+      "a rust + crepuscularity rewrite of balenaetcher to flash os images",
+      "apps",
+    ],
+    ["telekinesis", "cli and gui host for the rotary agent harness", "agents"],
   ])("puts %s in %s", (name, desc, expected) => {
     expect(categoryOf(name as string, desc as string)).toBe(expected as string);
   });

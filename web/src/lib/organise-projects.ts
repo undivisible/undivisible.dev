@@ -39,7 +39,7 @@ const RULES: Rule[] = [
     label: "operating systems",
     blurb: "three of them. none of them finished. one of them boots.",
     match:
-      /\boperating system\b|\bkernel\b|\bdistro\b|\bnanokernel\b|\bos\b(?!ition)|^space$|^subspace$|^alpenglow$|^soliloquy$/,
+      /\boperating system\b|\bdistro\b|\bnanokernel\b|\bmicrokernel\b|^space$|^subspace$|^alpenglow$|^soliloquy$/,
   },
   {
     key: "compilers",
@@ -48,22 +48,22 @@ const RULES: Rule[] = [
     match: /\bcompiler\b|\bgrammar\b|tree-sitter|\bparsing\b|\binlang\b/,
   },
   {
-    key: "frameworks",
-    label: "frameworks",
-    blurb: "write it once. i'll deal with the six platforms.",
-    match: /\bframework\b|crepuscularity|aurorality|moonshine|\bruntime host\b/,
-  },
-  {
     key: "extensions",
     label: "browser extensions",
     blurb: "manifest v3 is a punishment and i keep volunteering.",
     match: /\bextension\b|\bmv3\b|vimium/,
   },
   {
+    key: "frameworks",
+    label: "frameworks",
+    blurb: "write it once. i'll deal with the six platforms.",
+    match: /\bframework\b|^crepuscularity$|^aurorality$|^moonshine$/,
+  },
+  {
     key: "engines",
     label: "browser & rendering engines",
     blurb: "at some point you stop picking a browser.",
-    match: /\bbrowser engine\b|\bbrowser\b|\bservo\b|\bv8\b/,
+    match: /\bbrowser engine\b|\bservo\b|\bv8\b/,
   },
   {
     key: "mail",
@@ -144,9 +144,13 @@ export function organiseProjects(
     if (!name || seen.has(name)) continue;
     seen.add(name);
 
+    const nameOnly = name.toLowerCase();
     const haystack =
       `${name} ${project.desc ?? ""} ${project.href ?? ""}`.toLowerCase();
-    const rule = RULES.find((candidate) => candidate.match.test(haystack))!;
+    // The catch-all sits out of the name pass, or it would claim every name.
+    const rule =
+      RULES.slice(0, -1).find((candidate) => candidate.match.test(nameOnly)) ??
+      RULES.find((candidate) => candidate.match.test(haystack))!;
 
     let bucket = buckets.get(rule.key);
     if (!bucket) {

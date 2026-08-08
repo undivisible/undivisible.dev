@@ -43,7 +43,27 @@ async function recentMerged(): Promise<
 }
 
 const base = `repo:${REPO} author:${AUTHOR} is:pr`;
+const wide = `author:${AUTHOR} is:pr`;
 const monthStart = `${new Date().toISOString().slice(0, 8)}01`;
+const yearStart = `${new Date().getUTCFullYear()}-01-01`;
+
+const commitsThisYear = async () => {
+  const res = await fetch(
+    `https://api.github.com/search/commits?q=${encodeURIComponent(
+      `author:${AUTHOR} author-date:>=${yearStart}`,
+    )}&per_page=1`,
+    { headers: { accept: "application/vnd.github.cloak-preview+json" } },
+  );
+  if (!res.ok) throw new Error(`${res.status} for account commits`);
+  return ((await res.json()) as { total_count: number }).total_count;
+};
+
+const [acctTotal, acctMerged, acctYear, acctCommits] = await Promise.all([
+  count(wide),
+  count(`${wide} is:merged`),
+  count(`${wide} created:>=${yearStart}`),
+  commitsThisYear(),
+]);
 
 const [total, merged, monthTotal, monthMerged, commits, recent] =
   await Promise.all([
@@ -82,6 +102,14 @@ export type MergedPr = {
 };
 
 export const GITHUB_ACTIVITY = {
+  /** Whole account, all repositories, GitHub search API. */
+  account: {
+    pullRequests: ${acctTotal},
+    merged: ${acctMerged},
+    pullRequestsThisYear: ${acctYear},
+    commitsThisYear: ${acctCommits},
+    repos: 91, // 69 personal + 22 under tschk
+  },
   repo: ${JSON.stringify(REPO)},
   author: ${JSON.stringify(AUTHOR)},
   since: ${JSON.stringify(SINCE)},
