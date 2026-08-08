@@ -21,6 +21,7 @@ import {
   utilitiesFromReadme,
 } from "@/data/readme-projects.generated";
 import { useHydrated } from "@/hooks/use-hydrated";
+import { useLiveGithub } from "@/hooks/use-live-github";
 import { useNowMarkdown } from "@/hooks/use-remote-content";
 import { organiseProjects } from "@/lib/organise-projects";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
@@ -90,8 +91,7 @@ export default function LabAlmanac() {
     return () => line.removeEventListener("wheel", dayTheme.onClockWheel);
   }, [dayTheme.onClockWheel]);
 
-  const { account, thisMonth, recentMerged } = GITHUB_ACTIVITY;
-  const lastMerged = recentMerged[0];
+  const github = useLiveGithub();
 
   // Route as one line; only three notes earn a footnote.
   const footnoted = PLACES.filter(
@@ -109,18 +109,28 @@ export default function LabAlmanac() {
             location={now.location}
             status={now.status}
           />
-          <p className="min-name">
-            {IDENTITY.name} · {IDENTITY.hanzi}
-          </p>
+          {track ? (
+            <a
+              className="min-playing"
+              href={track.trackUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              ♪ {track.track} — {track.artist}
+            </a>
+          ) : null}
         </header>
 
-        {/* ── hero: the tagline and nothing else ── */}
+        {/* ── hero: the name, then the joke, then the job ── */}
         <section className="min-hero">
-          <h1 className="min-tagline">
-            <GhostTagline block suffixClassName="min-suffix" />
+          <h1 className="min-name-hero">
+            {IDENTITY.name} <span className="min-hanzi">{IDENTITY.hanzi}</span>
           </h1>
+          <p className="min-tagline">
+            <GhostTagline suffixClassName="min-suffix" />
+          </p>
           <p className="min-role">
-            {IDENTITY.role}, {IDENTITY.org}.
+            {IDENTITY.role} at {IDENTITY.org}.
           </p>
         </section>
 
@@ -151,47 +161,52 @@ export default function LabAlmanac() {
           <span className="min-sunline-hint">scroll — the sky follows</span>
         </div>
 
-        {/* ── 2026, in numbers ── */}
+        {/* ── 2026, live from the github api ── */}
         <section className="min-row">
-          <h2 className="min-label">2026</h2>
+          <h2 className="min-label">
+            2026{github.live ? <i className="min-live" title="live" /> : null}
+          </h2>
           <div className="min-body">
             <div className="min-figures">
               <div>
-                <b>{numberFormat.format(account.pullRequestsThisYear)}</b>
+                <b>{numberFormat.format(github.prsThisYear)}</b>
                 <span>pull requests</span>
               </div>
               <div>
-                <b>{numberFormat.format(account.merged)}</b>
+                <b>{numberFormat.format(github.merged)}</b>
                 <span>merged</span>
               </div>
               <div>
-                <b>{numberFormat.format(account.commitsThisYear)}</b>
+                <b>{numberFormat.format(github.commitsThisYear)}</b>
                 <span>commits</span>
               </div>
               <div>
-                <b>{account.repos}</b>
+                <b>{github.repos}</b>
                 <span>repositories</span>
               </div>
             </div>
             <p className="min-note">
-              lately{" "}
+              {github.omiThisMonth} prs on{" "}
               <a
                 href={GITHUB_ACTIVITY.allPrsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 {GITHUB_ACTIVITY.repo}
-              </a>
-              {" — "}
-              {thisMonth.pullRequests} pull requests this month. last merged:{" "}
-              {lastMerged ? (
-                <a
-                  href={`https://github.com/${GITHUB_ACTIVITY.repo}/pull/${lastMerged.number}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {lastMerged.title}
-                </a>
+              </a>{" "}
+              this month
+              {github.lastMerged ? (
+                <>
+                  {" "}
+                  · last merged:{" "}
+                  <a
+                    href={github.lastMerged.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {github.lastMerged.title}
+                  </a>
+                </>
               ) : null}
             </p>
           </div>
@@ -264,7 +279,7 @@ export default function LabAlmanac() {
           <h2 className="min-label">before 17</h2>
           <div className="min-body">
             <p className="min-lines">
-              a full-time job paying 100k+ a year — someone else had to sign it.
+              a full-time job paying 100k+ a year.
               <br />
               first computer at six. first software at eight.
               <br />
@@ -275,8 +290,8 @@ export default function LabAlmanac() {
                 rel="noopener noreferrer"
               >
                 tsc.hk
-              </a>{" "}
-              — still open.
+              </a>
+              .
             </p>
           </div>
         </section>

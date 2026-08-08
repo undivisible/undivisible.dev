@@ -411,38 +411,73 @@ a:hover {
   justify-content: space-between;
   gap: 24px;
 }
-.min-name {
-  margin: 0;
+.min-playing {
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.72);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  max-width: 32ch;
+  text-align: right;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.2s ease;
+}
+.min-playing:hover {
+  color: #fff;
+}
+.min-live {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: var(--lab-accent);
+  vertical-align: 0.14em;
+  animation: min-live-pulse 2.4s ease-in-out infinite;
+}
+@keyframes min-live-pulse {
+  50% {
+    opacity: 0.35;
+  }
 }
 
-/* ── hero ── */
+/* ── hero: the name is the site ── */
 .min-hero {
-  min-height: min(72vh, 720px);
+  min-height: min(74vh, 760px);
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
-.min-tagline {
+.min-name-hero {
   margin: 0;
-  font-size: clamp(2.4rem, 7.4vw, 5.8rem);
+  font-size: clamp(3.2rem, 10.4vw, 8.4rem);
   font-weight: 600;
-  line-height: 0.98;
-  letter-spacing: -0.045em;
+  line-height: 0.94;
+  letter-spacing: -0.05em;
   text-wrap: balance;
   text-shadow: var(--ink-shadow);
+}
+.min-hanzi {
+  display: block;
+  margin-top: 0.08em;
+  font-size: 0.5em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.6);
+}
+.min-tagline {
+  margin: 30px 0 0;
+  font-size: clamp(1.1rem, 2.3vw, 1.55rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.9);
 }
 .min-suffix {
   color: var(--lab-accent);
 }
 .min-role {
-  margin: 28px 0 0;
-  font-size: clamp(0.95rem, 1.6vw, 1.05rem);
-  color: rgba(255, 255, 255, 0.72);
+  margin: 10px 0 0;
+  font-size: clamp(0.92rem, 1.5vw, 1.02rem);
+  color: rgba(255, 255, 255, 0.62);
 }
 
 /* ── the sun, on one line ── */
