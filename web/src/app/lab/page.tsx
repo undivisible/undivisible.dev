@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import LabAlmanac from "@/page-components/lab-almanac";
+import OsRoot from "@/components/os/OsRoot";
 
 export const metadata: Metadata = {
-  title: "almanac · undivisible.dev redesign",
+  title: "alpenglow · undivisible.dev",
   description:
-    "The redesign proposal: the site as a daily almanac — sun, weather, music, shipped work, and the route so far.",
+    "The site as the operating system it keeps talking about — alpenglow underneath, alpenglowed on top, everything preinstalled.",
 };
 
 export default function Page() {
-  return <LabAlmanac />;
+  return <OsRoot />;
 }
