@@ -1,0 +1,18 @@
+
+  [1;37mmax carter[0m  (qi ming si — the vga console cannot draw 祁明思)
+
+  the ghost of terry davis, but asian.
+  (the blank rotates: worse · autistic · bored · not schizo · rusty …)
+
+  founding engineer at based hardware — on omi: the
+  platform underneath and the product on top. not the firmware.
+
+  links
+    github     https://github.com/undivisible
+    twitter    https://twitter.com/makethings4ppl
+    instagram  https://instagram.com/undivisible.dev
+    email      mailto:max@tsc.hk
+    resume     /resume.md
+
+  this machine is a real i686 linux, emulated on your cpu by v86,
+  booting the real alpenglow browser image. the whole site is inside it.

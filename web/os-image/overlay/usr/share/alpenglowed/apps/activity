@@ -1,0 +1,7 @@
+#!/bin/sh
+# activity
+# github, snapshotted into the image
+clear
+cat /usr/share/alpenglowed/content/activity.txt
+printf '\n  \033[90m[enter to go back]\033[0m '
+read -r _

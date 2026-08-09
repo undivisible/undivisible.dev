@@ -1,0 +1,13 @@
+#!/bin/sh
+# sites
+# my deployed software; enter opens it on the host browser
+clear
+cat /usr/share/alpenglowed/content/sites.txt
+printf '\n  \033[90mtype a number to open it in a real tab (the app tells the host over ttyS0), or enter to go back\033[0m\n  > '
+read -r pick
+url=$(sed -n "s/^ *${pick}) .*\(https:[^ \x1b]*\).*/\1/p" /usr/share/alpenglowed/content/sites.txt | head -1)
+if [ -n "$url" ]; then
+  printf '@@open %s\n' "$url" > /dev/ttyS0
+  printf '  \033[96masked the host to open %s\033[0m\n  \033[90m[enter]\033[0m ' "$url"
+  read -r _
+fi

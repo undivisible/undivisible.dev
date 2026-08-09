@@ -1,0 +1,45 @@
+#!/bin/sh
+# Alpenglow browser init, desktop edition: serial shell stays on ttyS0
+# exactly as upstream; tty1 (fbcon) gets alpenglowed — the bar and the
+# launcher as real processes on the real console.
+export PATH=/bin:/usr/bin:/usr/local/bin
+export HOME=/
+export TERM=linux
+/bin/mount -t proc proc /proc 2>/dev/null
+/bin/mount -t sysfs sysfs /sys 2>/dev/null
+/bin/mount -t devtmpfs devtmpfs /dev 2>/dev/null || {
+  /bin/mkdir -p /dev 2>/dev/null
+  /bin/mknod /dev/console c 5 1 2>/dev/null
+  /bin/mknod /dev/tty1 c 4 1 2>/dev/null
+  /bin/mknod /dev/ttyS0 c 4 64 2>/dev/null
+  /bin/mknod /dev/null c 1 3 2>/dev/null
+}
+/bin/mount -t tmpfs tmpfs /run 2>/dev/null
+/bin/hostname alpenglow 2>/dev/null
+cd /
+
+# The serial line keeps the upstream experience: banner, fastfetch, bash.
+if [ -c /dev/ttyS0 ]; then
+  {
+    /bin/echo "Alpenglow"
+    /bin/echo
+    /bin/echo "This serial line is the debug console; the screen is the desktop."
+    /bin/echo "Docs: cat readme.md   Try: fastfetch   wax info vro"
+    /bin/echo
+  } >/dev/ttyS0 2>&1
+  /bin/stty -F /dev/ttyS0 sane 2>/dev/null
+  export ENV=/etc/profile
+  /bin/setsid -c /bin/bash --login -i </dev/ttyS0 >/dev/ttyS0 2>&1 &
+fi
+
+# The screen: sky palette, the bar, the launcher. Respawn if it ever dies.
+if [ -c /dev/tty1 ]; then
+  /usr/bin/alpenbar &
+  while :; do
+    /bin/setsid -c /usr/bin/alpenglowed </dev/tty1 >/dev/tty1 2>&1
+    /bin/sleep 1
+  done
+fi
+
+# No tty1 (serial-only kernel): behave exactly like upstream.
+exec /bin/setsid -c /bin/sh -i </dev/console >/dev/console 2>&1

@@ -1,17 +1,19 @@
 "use client";
 
 /**
- * The one real machine on the page.
+ * The machine that is the page.
  *
- * v86 emulating an i686 PC in wasm, booting the actual Alpenglow browser
- * build out of /public/v86 — the same kernel bzImage (Linux 7.1.3, built
- * from tschk/alpenglow's v86-i686 config) and the same initramfs (busybox
- * branded Alpenglow, bash, fastfetch, oil/wax, vro, the docs) that
- * alpenglow.tsc.hk boots. Serial console on ttyS0; the kernel config has no
- * VT and no framebuffer, so the terminal IS the machine.
+ * v86 emulating an i686 PC in wasm. The kernel is Linux 7.1.3 built from
+ * tschk/alpenglow's v86-i686 config with the console turned back on — VT,
+ * fbcon, VESA, PS/2 keyboard — because this build has a screen to draw on.
+ * The initramfs is alpenglow's real browser image (busybox branded
+ * Alpenglow, bash, fastfetch, oil/wax, vro, the docs) overlaid with
+ * alpenglowed-sh: the bar, the sky palette, the launcher and the apps, all
+ * ordinary executables running on the real kernel.
  *
- * One VM per page. Windows attach to it and detach from it; closing the
- * window doesn't power anything off.
+ * tty1 is the desktop. ttyS0 stays a bash debug console, and also carries
+ * `@@open <url>` lines — how an app inside the machine asks the host
+ * browser to open a real tab.
  */
 
 type Progress = { message: string; percent: number | null; ready: boolean };
@@ -19,20 +21,17 @@ type Progress = { message: string; percent: number | null; ready: boolean };
 type V86Emulator = {
   add_listener(name: string, handler: (arg: unknown) => void): void;
   serial0_send(text: string): void;
+  keyboard_send_text(text: string): void;
   destroy(): void;
 };
-
-const SERIAL_BUFFER_MAX = 262_144;
 
 class VmManager {
   private emulator: V86Emulator | null = null;
   private starting = false;
-  private buffer = "";
-  private serialListeners = new Set<(chunk: string) => void>();
+  private serialLine = "";
   private progressListeners = new Set<(progress: Progress) => void>();
   private progress: Progress = { message: "cold", percent: null, ready: false };
-  cols = 100;
-  rows = 28;
+  private openListener: ((url: string) => void) | null = null;
 
   get running(): boolean {
     return this.emulator !== null;
@@ -41,16 +40,12 @@ class VmManager {
     return this.progress.ready;
   }
 
-  /** Boot, once. Later calls are free. */
-  async start(cols?: number, rows?: number): Promise<void> {
+  /** Power on, rendering into `screen` (a div holding a text div + canvas). */
+  async start(screen: HTMLElement): Promise<void> {
     if (this.emulator || this.starting || typeof window === "undefined") return;
     this.starting = true;
-    if (cols) this.cols = cols;
-    if (rows) this.rows = rows;
 
     try {
-      // The library stays an asset, imported at runtime like the alpenglow
-      // site does it, so the bundler never sees 350 KB of emulator.
       const libUrl = "/v86/libv86.mjs";
       const { V86 } = (await import(/* @vite-ignore */ libUrl)) as {
         V86: new (options: Record<string, unknown>) => V86Emulator;
@@ -60,22 +55,30 @@ class VmManager {
 
       const emulator = new V86({
         wasm_path: "/v86/v86.wasm",
-        screen_container: null,
+        screen_container: screen,
         bios: { url: "/v86/seabios.bin" },
         vga_bios: { url: "/v86/vgabios.bin" },
-        bzimage: { url: "/v86/alpenglow-v86-vmlinuz" },
-        initrd: { url: "/v86/alpenglow-v86-initrd.cpio.gz" },
-        cmdline: `console=ttyS0 rdinit=/init quiet loglevel=2 alpenglow.cols=${this.cols} alpenglow.rows=${this.rows}`,
+        bzimage: { url: "/v86/alpenglowed-vmlinuz" },
+        initrd: { url: "/v86/alpenglowed-initrd.cpio.gz" },
+        cmdline: "console=ttyS0 console=tty1 rdinit=/init loglevel=4 vga=0x344",
         memory_size: 256 * 1024 * 1024,
+        vga_memory_size: 8 * 1024 * 1024,
         autostart: true,
       });
       this.emulator = emulator;
 
+      // The serial line is the machine's voice to the host: watch for
+      // @@open lines from the sites app; everything else is debug.
       emulator.add_listener("serial0-output-byte", (byte) => {
-        if (byte === 0xff) return;
         const ch = String.fromCharCode(byte as number);
-        this.buffer = (this.buffer + ch).slice(-SERIAL_BUFFER_MAX);
-        for (const listener of this.serialListeners) listener(ch);
+        if (ch === "\n") {
+          const line = this.serialLine;
+          this.serialLine = "";
+          const match = line.match(/@@open (\S+)/);
+          if (match?.[1]) this.openListener?.(match[1]);
+          return;
+        }
+        this.serialLine = (this.serialLine + ch).slice(-500);
       });
 
       emulator.add_listener("download-progress", (event) => {
@@ -100,7 +103,8 @@ class VmManager {
 
       emulator.add_listener("download-error", () => {
         this.emit({
-          message: "download failed — the machine needs the real site",
+          message:
+            "the kernel and initrd could not be fetched — this frame blocks requests. it boots on the site.",
           percent: this.progress.percent,
           ready: false,
         });
@@ -120,15 +124,13 @@ class VmManager {
     }
   }
 
-  send(text: string): void {
-    this.emulator?.serial0_send(text);
+  /** Types into the machine's PS/2 keyboard — for touch keyboards. */
+  typeText(text: string): void {
+    this.emulator?.keyboard_send_text(text);
   }
 
-  /** Attach a terminal: replay what happened, then follow along. */
-  attachSerial(listener: (chunk: string) => void): () => void {
-    if (this.buffer) listener(this.buffer);
-    this.serialListeners.add(listener);
-    return () => this.serialListeners.delete(listener);
+  onOpenRequest(listener: (url: string) => void): void {
+    this.openListener = listener;
   }
 
   attachProgress(listener: (progress: Progress) => void): () => void {
@@ -143,6 +145,5 @@ class VmManager {
   }
 }
 
-/** Module-level: the machine outlives every component that looks at it. */
 export const vm = new VmManager();
 export type { Progress as VmProgress };
