@@ -395,8 +395,14 @@ a:hover {
    sparse rows. The shadows are the shader's: --sun-x/--sun-y/--ink-a
    follow the sun, so scrubbing time sweeps the light. ──────────── */
 .lab-min {
-  --ink-shadow: calc(var(--sun-x) / 2.5) calc(var(--sun-y) / 2) 14px
-    rgb(8 14 26 / var(--ink-a));
+  /* the sun's shadow, die-cut: zero blur, offset follows the hour */
+  --ink-shadow: calc(var(--sun-x) / 2.5) calc(var(--sun-y) / 2) 0
+    rgb(5 8 16 / var(--ink-a));
+  --rule-hard: 2px solid rgba(255, 255, 255, 0.88);
+  --rule-soft: 1px solid rgba(255, 255, 255, 0.28);
+}
+.lab-min * {
+  border-radius: 0 !important;
 }
 .min-frame {
   position: relative;
@@ -406,10 +412,37 @@ a:hover {
   padding: clamp(22px, 3vw, 44px) clamp(20px, 5vw, 56px) 96px;
 }
 .min-top {
+  position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
+  padding-bottom: 16px;
+  border-bottom: var(--rule-hard);
+}
+.min-top::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 5px;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--lab-accent) 0 10px,
+    transparent 10px 22px
+  );
+  opacity: 0.85;
+}
+.min-meta {
+  margin: 0;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: right;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.55);
 }
 .min-playing {
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
@@ -426,13 +459,12 @@ a:hover {
 }
 .min-live {
   display: inline-block;
-  width: 5px;
-  height: 5px;
-  margin-left: 8px;
-  border-radius: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: 10px;
   background: var(--lab-accent);
-  vertical-align: 0.14em;
-  animation: min-live-pulse 2.4s ease-in-out infinite;
+  vertical-align: 0.1em;
+  animation: min-live-pulse 2.4s steps(1) infinite;
 }
 @keyframes min-live-pulse {
   50% {
@@ -450,10 +482,11 @@ a:hover {
 .min-name-hero {
   margin: 0;
   cursor: default;
-  font-size: clamp(3.2rem, 10.4vw, 8.4rem);
-  font-weight: 600;
-  line-height: 0.94;
-  letter-spacing: -0.05em;
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
   text-wrap: balance;
   text-shadow: var(--ink-shadow);
 }
@@ -497,6 +530,10 @@ a:hover {
 /* ── the day dial ── */
 .min-dial-wrap {
   margin-top: 8px;
+  border: var(--rule-hard);
+  padding: 16px 18px 34px;
+  box-shadow: var(--sun-x) var(--sun-y) 0 rgb(5 8 16 / var(--ink-a));
+  background: rgb(8 10 16 / 0.28);
 }
 .min-dial-head {
   display: flex;
@@ -568,7 +605,7 @@ a:hover {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -16px;
+  bottom: -18px;
   display: flex;
   justify-content: space-between;
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
@@ -589,9 +626,22 @@ a:hover {
   pointer-events: none;
 }
 .min-dial-cap {
-  margin: 30px 0 0;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.45);
+  margin: 32px 0 0;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+.min-needle {
+  position: absolute;
+  top: 0;
+  bottom: 8px;
+  width: 1px;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.65);
+  pointer-events: none;
+  transition: left 0.3s linear;
 }
 .min-sunline {
   position: relative;
@@ -644,19 +694,26 @@ a:hover {
 /* ── rows: small-caps label left, air everywhere else ── */
 .min-row {
   display: grid;
-  grid-template-columns: 9rem minmax(0, 1fr);
+  grid-template-columns: 13rem minmax(0, 1fr);
   gap: 24px;
-  margin-top: clamp(96px, 18vh, 180px);
+  margin-top: clamp(72px, 12vh, 130px);
+  padding-top: 20px;
+  border-top: var(--rule-hard);
 }
 .min-label {
   margin: 0;
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
-  font-size: 10px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
-  padding-top: 0.6em;
+  color: rgba(255, 255, 255, 0.88);
+  padding-top: 0.2em;
+}
+.min-idx {
+  font-style: normal;
+  color: var(--lab-accent);
+  margin-right: 10px;
 }
 .min-body {
   min-width: 0;
@@ -685,9 +742,16 @@ a:hover {
 
 /* 2026 figures — numbers and air, no boxes */
 .min-figures {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 28px clamp(32px, 6vw, 84px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  border: var(--rule-soft);
+}
+.min-figure {
+  padding: 16px 18px 14px;
+  border-right: var(--rule-soft);
+}
+.min-figure:last-child {
+  border-right: 0;
 }
 .min-figure {
   outline: none;
@@ -725,8 +789,8 @@ a:hover {
 .min-figures b {
   display: block;
   font-size: clamp(2rem, 4.6vw, 3.4rem);
-  font-weight: 600;
-  letter-spacing: -0.035em;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
   text-shadow: var(--ink-shadow);
@@ -749,16 +813,18 @@ a:hover {
 }
 .min-index > div {
   display: grid;
-  grid-template-columns: 11rem minmax(0, 1fr);
+  grid-template-columns: 13rem minmax(0, 1fr);
   gap: 18px;
   align-items: baseline;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 12px;
+  border-top: var(--rule-soft);
 }
 .min-index dt {
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   color: rgba(255, 255, 255, 0.85);
 }
 .min-index dd {
@@ -821,24 +887,19 @@ a:hover {
   left: 0;
   top: 0;
   z-index: 95;
-  max-width: 40ch;
-  padding: 8px 12px;
-  border-radius: 10px;
+  max-width: 42ch;
+  padding: 9px 12px;
   pointer-events: none;
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
   font-size: 10px;
   letter-spacing: 0.04em;
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(10, 9, 14, 0.82);
-  backdrop-filter: blur(18px) saturate(1.3);
-  -webkit-backdrop-filter: blur(18px) saturate(1.3);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 252, 236, 0.14),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
-    0 14px 34px -14px rgba(0, 0, 0, 0.9);
+  color: #fff;
+  background: #0a0a0d;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 4px 4px 0 var(--lab-accent);
   opacity: 0;
-  transition: opacity 0.16s ease;
+  transition: opacity 0.14s ease;
 }
 .min-tip.is-on {
   opacity: 1;
@@ -857,11 +918,48 @@ a[data-tip] {
   color: var(--lab-accent);
 }
 
+/* the merged ticker */
+.min-ticker {
+  margin-top: clamp(72px, 12vh, 130px);
+  border-top: var(--rule-hard);
+  border-bottom: var(--rule-hard);
+  padding: 9px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.min-ticker-track {
+  display: inline-block;
+  animation: min-ticker-roll 60s linear infinite;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.66);
+}
+.min-ticker:hover .min-ticker-track {
+  animation-play-state: paused;
+}
+.min-ticker-track b {
+  color: var(--lab-accent);
+  font-weight: 500;
+  padding: 0 6px;
+}
+@keyframes min-ticker-roll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .min-ticker-track {
+    animation: none;
+  }
+}
+
 /* foot */
 .min-foot {
-  margin-top: clamp(96px, 18vh, 180px);
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  margin-top: 26px;
+  padding-top: 0;
+  border-top: 0;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -874,15 +972,28 @@ a[data-tip] {
 }
 .min-links {
   display: flex;
-  gap: 18px;
+  gap: 8px;
   flex-wrap: wrap;
 }
-.min-links a,
+.min-links a {
+  display: inline-block;
+  padding: 7px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.85);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+.min-links a:hover {
+  background: var(--lab-accent);
+  border-color: var(--lab-accent);
+  color: #0a0a0d;
+}
 .min-colophon a {
   color: rgba(255, 255, 255, 0.68);
   transition: color 0.2s ease;
 }
-.min-links a:hover,
 .min-colophon a:hover {
   color: var(--lab-accent);
 }

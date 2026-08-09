@@ -236,6 +236,11 @@ export default function LabAlmanac() {
             location={now.location}
             status={now.status}
           />
+          <p className="min-meta">
+            22.3193°N 114.1694°E
+            <br />
+            undivisible.dev · 格物致知
+          </p>
           {track ? (
             <a
               className="min-playing"
@@ -279,7 +284,9 @@ export default function LabAlmanac() {
         {/* ── the day dial ── */}
         <section className="min-dial-wrap">
           <div className="min-dial-head">
-            <h2 className="min-label">the day in hong kong</h2>
+            <h2 className="min-label">
+              <i className="min-idx">00</i> time control — hong kong
+            </h2>
             <span className="min-dial-time" suppressHydrationWarning>
               {hydrated ? clockLabel(minute) : "--:--"}
               {dayTheme.isScrubbing ? " · scrubbed" : ""}
@@ -351,6 +358,11 @@ export default function LabAlmanac() {
               </span>
             ) : null}
             <span
+              className="min-needle"
+              aria-hidden
+              style={{ left: `${sunLeft}%`, opacity: hydrated ? 1 : 0 }}
+            />
+            <span
               className="min-sun"
               aria-hidden
               style={{
@@ -376,7 +388,8 @@ export default function LabAlmanac() {
         {/* ── 2026, live from the github api ── */}
         <section className="min-row">
           <h2 className="min-label">
-            2026{github.live ? <i className="min-live" title="live" /> : null}
+            <i className="min-idx">01</i> 2026
+            {github.live ? <i className="min-live" title="live" /> : null}
           </h2>
           <div className="min-body">
             <div className="min-figures">
@@ -419,7 +432,9 @@ export default function LabAlmanac() {
 
         {/* ── works: hover a name for what it is ── */}
         <section className="min-row">
-          <h2 className="min-label">works</h2>
+          <h2 className="min-label">
+            <i className="min-idx">02</i> works
+          </h2>
           <div className="min-body">
             <dl className="min-index">
               {categories.map((category) => (
@@ -454,7 +469,9 @@ export default function LabAlmanac() {
 
         {/* ── route ── */}
         <section className="min-row">
-          <h2 className="min-label">route</h2>
+          <h2 className="min-label">
+            <i className="min-idx">03</i> route
+          </h2>
           <div className="min-body">
             <p className="min-route">
               {PLACES.map((place, index) => {
@@ -488,7 +505,9 @@ export default function LabAlmanac() {
 
         {/* ── before seventeen ── */}
         <section className="min-row">
-          <h2 className="min-label">before 17</h2>
+          <h2 className="min-label">
+            <i className="min-idx">04</i> before 17
+          </h2>
           <div className="min-body">
             <p className="min-lines">
               a full-time job paying 100k+ a year.
@@ -508,6 +527,21 @@ export default function LabAlmanac() {
             </p>
           </div>
         </section>
+
+        {/* ── ticker: the last merged, on a loop ── */}
+        <div className="min-ticker" aria-hidden>
+          <div className="min-ticker-track">
+            {[
+              ...GITHUB_ACTIVITY.recentMerged,
+              ...GITHUB_ACTIVITY.recentMerged,
+            ].map((pr, index) => (
+              <span key={`${pr.number}-${index}`}>
+                merged {pr.mergedAt.slice(5)} · {pr.title}
+                <b> #{pr.number} /// </b>
+              </span>
+            ))}
+          </div>
+        </div>
 
         {/* ── foot ── */}
         <footer className="min-foot">
@@ -546,7 +580,6 @@ export default function LabAlmanac() {
           </nav>
           <p className="min-colophon">
             <Link href="/">current site</Link>
-            {" · 格物致知"}
           </p>
         </footer>
       </main>
