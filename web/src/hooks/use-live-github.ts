@@ -16,6 +16,8 @@ export type LiveGithub = {
   merged: number;
   /** Merged into repositories that are neither mine nor tsc.hk's. */
   mergedElsewhere: number;
+  /** Closed without merging — nearly all of them closed by me, not rejected. */
+  closedUnmerged: number;
   commitsThisYear: number;
   repos: number;
   omiThisMonth: number;
@@ -58,6 +60,7 @@ export function useLiveGithub(): LiveGithub {
     prsThisYear: GITHUB_ACTIVITY.account.pullRequestsThisYear,
     merged: GITHUB_ACTIVITY.account.merged,
     mergedElsewhere: GITHUB_ACTIVITY.account.mergedElsewhere,
+    closedUnmerged: GITHUB_ACTIVITY.account.closedUnmerged,
     commitsThisYear: GITHUB_ACTIVITY.account.commitsThisYear,
     repos: GITHUB_ACTIVITY.account.repos,
     omiThisMonth: GITHUB_ACTIVITY.thisMonth.pullRequests,
@@ -95,6 +98,11 @@ export function useLiveGithub(): LiveGithub {
         signal,
       )
         .then((mergedElsewhere) => apply({ mergedElsewhere }))
+        .catch(() => {});
+      // Closed without merging. Shown only alongside the sentence saying who
+      // did the closing, never on its own where it would read as rejections.
+      void count(`author:${author} is:pr is:closed is:unmerged`, signal)
+        .then((closedUnmerged) => apply({ closedUnmerged }))
         .catch(() => {});
       void count(
         `repo:${GITHUB_ACTIVITY.repo} author:${author} is:pr created:>=${monthStart}`,

@@ -12,13 +12,13 @@ const SWAP_MS = 300;
 const HOLD_MS = 1900;
 
 /**
- * The hanzi is the hover target: hold it and the same name walks through the
- * other scripts it gets written in — russian, japanese, arabic, hebrew — then
- * settles back to 祁明思 when you let go.
+ * The hanzi is the hover target. Hold it and the same name appears underneath
+ * in the other scripts it gets written in — russian, japanese, arabic, hebrew
+ * — one at a time. 祁明思 itself never moves.
  */
 export function NameCycle() {
   const [script, setScript] = useState<string | null>(null);
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const swap = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -40,17 +40,17 @@ export function NameCycle() {
         index += 1;
       }, SWAP_MS);
     };
-    step();
+    // The first one lands immediately; there is nothing to fade out of yet.
+    setScript(OTHER_SCRIPTS[0] ?? null);
+    setVisible(true);
+    index = 1;
     timer.current = setInterval(step, HOLD_MS);
   }, []);
 
   const stop = useCallback(() => {
     stopTimers();
     setVisible(false);
-    swap.current = setTimeout(() => {
-      setScript(null);
-      setVisible(true);
-    }, SWAP_MS);
+    swap.current = setTimeout(() => setScript(null), SWAP_MS);
   }, [stopTimers]);
 
   useEffect(() => stopTimers, [stopTimers]);
@@ -61,7 +61,7 @@ export function NameCycle() {
         {IDENTITY.name}
       </RandomizedText>{" "}
       <span
-        className={`min-hanzi ${script ? "is-foreign" : ""}`}
+        className="min-hanzi"
         onMouseEnter={start}
         onMouseLeave={stop}
         onFocus={start}
@@ -70,8 +70,13 @@ export function NameCycle() {
         role="button"
         aria-label={`${IDENTITY.hanzi} — hold to read the name in other scripts`}
       >
-        <span className="min-hanzi-word" style={{ opacity: visible ? 1 : 0 }}>
-          {script ?? IDENTITY.hanzi}
+        {IDENTITY.hanzi}
+      </span>
+      {/* The other scripts get their own line under the name, with the room
+          reserved so nothing below moves when one appears. */}
+      <span className="min-scripts" aria-hidden>
+        <span className="min-script" style={{ opacity: visible ? 1 : 0 }}>
+          {script ?? " "}
         </span>
       </span>
     </span>

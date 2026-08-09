@@ -73,7 +73,7 @@ export function Milestones() {
         />
         {MILESTONES.map((milestone, position) => (
           <button
-            key={milestone.age}
+            key={`${milestone.age}-${position}`}
             type="button"
             role="tab"
             aria-selected={position === index}
@@ -96,7 +96,7 @@ export function Milestones() {
         ))}
       </div>
 
-      <div className="min-ages-copy" key={active.age}>
+      <div className="min-ages-copy" key={index}>
         <p className="min-ages-title">
           <RandomizedText delay={0.02}>{active.title}</RandomizedText>
         </p>

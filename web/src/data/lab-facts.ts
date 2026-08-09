@@ -25,7 +25,7 @@ export const GHOST_SUFFIXES: GhostSuffix[] = [
   },
   {
     word: "worse",
-    note: "if i was an nba player i would be like dillon brooks but worse.",
+    note: "if i was an nba player i would be like dillon brooks but worse. — peggy, “i scream this in the mirror before i interact with anyone”, i lay down my life for you.",
   },
   {
     word: "autistic",
@@ -76,7 +76,7 @@ export const GHOST_SUFFIXES: GhostSuffix[] = [
 /** Why the line is built the way it is. */
 export const GHOST_SOURCE = {
   title: "the ghost of ___",
-  body: "peggy got here first — the ghost~pop tape in 2017, the ghost of emmett till on veteran, the ghost of ranking dread on all my heroes are cornballs.",
+  body: "peggy got here first — the ghost~pop tape in 2017, the ghost of ranking dread on all my heroes are cornballs, the ghost of emmett till on experimental rap 2026.",
   note: "the construction is borrowed. the ghost is not.",
   link: "https://en.wikipedia.org/wiki/JPEGMafia",
 } as const;
@@ -148,6 +148,13 @@ export const HEADLINE_WORKS: HeadlineWork[] = [
     stat: "renders this",
   },
   {
+    name: "rotary · apollo",
+    href: "https://github.com/tschk/rotary",
+    what: "agent stack",
+    line: "rotary owns the loop — tools, providers, sessions, permissions, computer-use. apollo is the runtime on top: 14 mb, 20+ llm providers, 10+ messaging channels. zkr remembers, praefectus verifies, darash searches.",
+    stat: "all rust",
+  },
+  {
     name: "rv8",
     href: "https://github.com/tschk/rv8",
     what: "browser engine",
@@ -167,16 +174,28 @@ export type Stop = {
   next?: boolean;
 };
 
+/** In order flown, not alphabetised. */
 export const STOPS_THIS_YEAR: Stop[] = [
-  { code: "HND", city: "tokyo haneda", note: "still learning the language" },
-  { code: "HKG", city: "hong kong", note: "family. 祁明思" },
-  { code: "SIN", city: "singapore", note: "" },
+  { code: "HKG", city: "hong kong", note: "march. family. 祁明思" },
+  { code: "HND", city: "tokyo haneda", note: "april" },
+  { code: "HKG", city: "hong kong", note: "back again" },
+  { code: "MEL", city: "melbourne", note: "july. where i'm from" },
+  { code: "LGA", city: "new york laguardia", note: "" },
+  { code: "JFK", city: "new york kennedy", note: "" },
   { code: "BAH", city: "bahrain", note: "" },
+  { code: "SIN", city: "singapore", note: "" },
   { code: "KUL", city: "kuala lumpur", note: "" },
-  { code: "SGN", city: "ho chi minh city", note: "booked", next: true },
+  { code: "HKG", city: "hong kong", note: "here now" },
+  {
+    code: "CKG",
+    city: "chongqing",
+    note: "next, with shanghai, chengdu and shenzhen",
+    next: true,
+  },
+  { code: "SGN", city: "ho chi minh city", note: "after that", next: true },
 ];
 
-/** Ten countries so far; seven of them inside one year, at sixteen. */
+/** Ten countries so far; seven of them inside one year, at seventeen. */
 export const COUNTRIES = [
   "australia",
   "hong kong",
@@ -231,15 +250,15 @@ export const MILESTONES: Milestone[] = [
   },
   {
     age: "16",
-    title: "seven countries in twelve months, and a job paying 100k+",
+    title: "became muslim, for a year and a half",
     detail:
-      "hong kong, china, malaysia, singapore, bahrain, the united states and japan — working the whole way through.",
+      "read into it properly, converted, and left again eighteen months later. built akh and infrastruct while i was in it. i don't regret either direction.",
   },
   {
     age: "17",
-    title: "left school, founded tsc.hk",
+    title: "left school, seven countries, a job paying 100k+",
     detail:
-      "also founded the arkie company that year and closed it after leaving. tsc.hk is the one that stayed open.",
+      "hong kong, china, malaysia, singapore, bahrain, the united states and japan in twelve months, working the whole way through. founded tsc.hk, and the arkie company — which i closed after leaving school. tsc.hk stayed open.",
   },
 ];
 

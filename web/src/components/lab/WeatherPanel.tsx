@@ -11,11 +11,23 @@ import {
  * next twelve hours, drawn as a polyline so the shape of the day is the thing
  * you read first, with rain probability as bars underneath it.
  */
-export function WeatherPanel({ forecast }: { forecast: Forecast | null }) {
+export function WeatherPanel({
+  forecast,
+  settled = true,
+  failed = false,
+}: {
+  forecast: Forecast | null;
+  settled?: boolean;
+  failed?: boolean;
+}) {
   if (!forecast || forecast.hours.length < 2) {
     return (
-      <div className="wx-panel" role="tooltip">
-        <p className="wx-loading">reading the sky…</p>
+      <div className="wx-panel">
+        <p className="wx-loading">
+          {failed || settled
+            ? "open-meteo didn't answer. the temperature above is still real."
+            : "reading the sky…"}
+        </p>
       </div>
     );
   }
@@ -37,7 +49,7 @@ export function WeatherPanel({ forecast }: { forecast: Forecast | null }) {
     .join(" ");
 
   return (
-    <div className="wx-panel" role="tooltip">
+    <div className="wx-panel">
       <div className="wx-head">
         <span className="wx-now">{Math.round(forecast.temperatureC)}°</span>
         <span className="wx-head-copy">

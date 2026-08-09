@@ -22,6 +22,12 @@ export const GITHUB_ACTIVITY = {
     repos: 91, // 69 personal + 22 under tschk
     /** Merged into repositories owned by neither me nor tsc.hk. */
     mergedElsewhere: 165,
+    /**
+     * Closed without merging. Nearly all of these I closed myself — a PR
+     * superseded, rebased away, or replaced by a better idea — so this is not
+     * a rejection count and the site must not present it as one.
+     */
+    closedUnmerged: 150,
   },
   repo: "BasedHardware/omi",
   author: "undivisible",

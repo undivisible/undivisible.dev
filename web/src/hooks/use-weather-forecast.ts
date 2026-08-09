@@ -76,15 +76,27 @@ function hourLabel(iso: string): string {
   return iso.slice(11, 13);
 }
 
+export type ForecastState = {
+  forecast: Forecast | null;
+  /** True once the request has come back one way or the other. */
+  settled: boolean;
+  failed: boolean;
+};
+
 /**
- * The next twelve hours, plus today's shape — fetched once, only when
- * something on the page actually asks to see it.
+ * The next twelve hours, plus today's shape.
+ *
+ * Fetched once on mount rather than on hover — one small request, and the
+ * panel is already full the first time it opens instead of spending its first
+ * second saying so. If the request fails the panel says that too; it never
+ * sits on a loading line forever.
  */
-export function useWeatherForecast(enabled: boolean): Forecast | null {
+export function useWeatherForecast(): ForecastState {
   const [forecast, setForecast] = useState<Forecast | null>(null);
+  const [settled, setSettled] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    if (!enabled || forecast) return;
     const controller = new AbortController();
 
     const url = new URL(FORECAST_URL);
@@ -112,17 +124,21 @@ export function useWeatherForecast(enabled: boolean): Forecast | null {
         const temps = payload.hourly?.temperature_2m;
         const codes = payload.hourly?.weather_code;
         const current = payload.current;
-        if (!times || !temps || !codes || !current) return;
+        if (!times || !temps || !codes || !current) {
+          setFailed(true);
+          setSettled(true);
+          return;
+        }
 
-        // Open-Meteo returns local wall-clock strings; find the one we're in.
-        const nowLocal = new Date().toLocaleString("sv-SE", {
-          timeZone: TIME_ZONE,
-        });
-        const nowKey = nowLocal.slice(0, 13);
-        const start = Math.max(
-          0,
-          times.findIndex((time) => time.slice(0, 13) >= nowKey),
-        );
+        // Open-Meteo returns local wall-clock strings ("2026-08-09T11:00").
+        // sv-SE gives the same field order with a space instead of the T, so
+        // normalise before comparing or every string compare is off.
+        const nowKey = new Date()
+          .toLocaleString("sv-SE", { timeZone: TIME_ZONE })
+          .replace(" ", "T")
+          .slice(0, 13);
+        const found = times.findIndex((time) => time.slice(0, 13) >= nowKey);
+        const start = found === -1 ? 0 : found;
 
         const hours: ForecastHour[] = times
           .slice(start, start + 12)
@@ -147,11 +163,16 @@ export function useWeatherForecast(enabled: boolean): Forecast | null {
           sunset: payload.daily?.sunset?.[0]?.slice(11, 16) ?? "--:--",
           hours,
         });
+        setSettled(true);
       })
-      .catch(() => {});
+      .catch((error: unknown) => {
+        if ((error as Error)?.name === "AbortError") return;
+        setFailed(true);
+        setSettled(true);
+      });
 
     return () => controller.abort();
-  }, [enabled, forecast]);
+  }, []);
 
-  return forecast;
+  return { forecast, settled, failed };
 }

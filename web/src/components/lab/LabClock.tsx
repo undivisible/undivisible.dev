@@ -44,9 +44,7 @@ export function LabClock({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const hydrated = useHydrated();
-  // The forecast is only worth a request once someone asks to see it.
-  const [wantForecast, setWantForecast] = useState(false);
-  const forecast = useWeatherForecast(wantForecast);
+  const weatherState = useWeatherForecast();
 
   useEffect(() => {
     const node = ref.current;
@@ -74,7 +72,6 @@ export function LabClock({
         className="wx-hc"
         align="start"
         side="bottom"
-        onOpen={() => setWantForecast(true)}
         trigger={
           <a
             className="lab-clock-weather"
@@ -86,7 +83,11 @@ export function LabClock({
           </a>
         }
       >
-        <WeatherPanel forecast={forecast} />
+        <WeatherPanel
+          forecast={weatherState.forecast}
+          settled={weatherState.settled}
+          failed={weatherState.failed}
+        />
       </HoverCard>
       <div className="lab-clock-row">
         <span className="lab-clock-place">{location.label}</span>

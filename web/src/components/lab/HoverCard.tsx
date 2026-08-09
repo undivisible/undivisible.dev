@@ -4,12 +4,9 @@ import { useCallback, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 /**
- * The hover shell every card on this page uses.
- *
- * No border and no hard edge: the panel is a radial wash behind a heavy
- * backdrop blur, and a radial mask eats the blur along with the fill so the
- * whole thing dissolves into the sky at the sides rather than sitting on top
- * of it in a box.
+ * The hover shell every card on this page uses: a hairline border and a solid
+ * surface over backdrop blur, in the weights the rest of the site already
+ * uses.
  *
  * The card stays mounted and only its visibility moves, so it reads before
  * hydration and to anything that doesn't have a pointer.

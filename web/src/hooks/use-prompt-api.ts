@@ -66,7 +66,11 @@ async function readAvailability(api: LanguageModelApi): Promise<Availability> {
 
 export type PromptApiState =
   | "checking"
-  | "unsupported"
+  /** No `LanguageModel` on the global at all. */
+  | "absent"
+  /** The API is here but says it can't serve this page — usually a
+   *  cross-origin frame, where permissions policy blocks it. */
+  | "blocked"
   | "downloadable"
   | "downloading"
   | "ready"
@@ -77,6 +81,8 @@ export type PromptApi = {
   state: PromptApiState;
   /** 0–1 while the model downloads, otherwise null. */
   progress: number | null;
+  /** The API object exists, whatever availability() claims about it. */
+  present: boolean;
   /** True when a first token could arrive without a download. */
   supported: boolean;
   /**
@@ -96,10 +102,12 @@ export function usePromptApi(system: string): PromptApi {
   const systemRef = useRef(system);
   systemRef.current = system;
 
+  const present = getApi() !== null;
+
   useEffect(() => {
     const api = getApi();
     if (!api) {
-      setState("unsupported");
+      setState("absent");
       return;
     }
     let cancelled = false;
@@ -107,11 +115,16 @@ export function usePromptApi(system: string): PromptApi {
       .then((availability) => {
         if (cancelled) return;
         if (availability === "available") setState("ready");
-        else if (availability === "unavailable") setState("unsupported");
-        else setState(availability === "downloading" ? "downloading" : "downloadable");
+        // The object exists but won't serve — almost always a cross-origin
+        // frame where permissions policy blocks it, not a missing model.
+        else if (availability === "unavailable") setState("blocked");
+        else
+          setState(
+            availability === "downloading" ? "downloading" : "downloadable",
+          );
       })
       .catch(() => {
-        if (!cancelled) setState("unsupported");
+        if (!cancelled) setState("blocked");
       });
     return () => {
       cancelled = true;
@@ -124,7 +137,7 @@ export function usePromptApi(system: string): PromptApi {
     async (prompt: string, onToken: (text: string) => void) => {
       const api = getApi();
       if (!api) {
-        setState("unsupported");
+        setState("absent");
         return null;
       }
       try {
@@ -167,6 +180,7 @@ export function usePromptApi(system: string): PromptApi {
   return {
     state,
     progress,
+    present,
     supported: state === "ready" || state === "running",
     run,
   };

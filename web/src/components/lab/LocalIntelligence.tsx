@@ -102,12 +102,36 @@ export function LocalIntelligence({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api.state, ready]);
 
-  const label =
-    source === "model"
-      ? "written on your machine by your browser's model"
-      : api.state === "downloadable"
-        ? "your browser has the model but hasn't downloaded it"
-        : "your browser has no on-device model — this one is assembled locally";
+  const ask = () => {
+    setSource(null);
+    setText("");
+    void api.run(prompt, setText).then((final) => {
+      if (final && final.trim()) setSource("model");
+      else {
+        setText(localSentence(facts));
+        setSource("local");
+      }
+    });
+  };
+
+  // Say what is actually true. "no model" is only correct when the API isn't
+  // on the global at all — when it is there and still says no, the usual
+  // cause is a cross-origin frame, not a missing model.
+  const label = (() => {
+    if (source === "model") return "written on your machine by your browser's model";
+    if (api.state === "running") return "your browser is writing this";
+    if (api.state === "downloading") return "your browser is downloading its model";
+    if (api.state === "downloadable")
+      return "your browser has a model but hasn't downloaded it yet";
+    if (api.state === "blocked")
+      return "your browser has the api but this frame can't use it — open the page directly";
+    if (api.state === "failed") return "your browser's model refused. assembled locally instead";
+    return "your browser has no on-device model — this one is assembled locally";
+  })();
+
+  // If the API object exists at all, offer the gesture: create() behind a
+  // click often succeeds where availability() was pessimistic.
+  const canRetry = api.present && source !== "model" && api.state !== "running";
 
   return (
     <div className="min-nano">
@@ -122,22 +146,8 @@ export function LocalIntelligence({
           aria-hidden
         />
         {label}
-        {api.state === "downloadable" ? (
-          <button
-            type="button"
-            className="min-nano-run"
-            onClick={() => {
-              setSource(null);
-              setText("");
-              void api.run(prompt, setText).then((final) => {
-                if (final && final.trim()) setSource("model");
-                else {
-                  setText(localSentence(facts));
-                  setSource("local");
-                }
-              });
-            }}
-          >
+        {canRetry ? (
+          <button type="button" className="min-nano-run" onClick={ask}>
             run it anyway
           </button>
         ) : null}

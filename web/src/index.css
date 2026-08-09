@@ -515,18 +515,33 @@ a:hover {
   opacity: 0.35;
   transform: scaleX(1);
 }
-.min-hanzi.is-foreign {
-  font-size: 0.62em;
-  letter-spacing: -0.01em;
+/* The other scripts get their own line under the name, not the hanzi's place.
+   The row keeps its height whether or not one is showing, so nothing below
+   it jumps when you hover. */
+.min-name {
+  display: block;
 }
-.min-hanzi-word {
-  display: inline-block;
+.min-scripts {
+  display: block;
+  height: 1.6rem;
+  margin-top: 0.16em;
+  pointer-events: none;
+}
+.min-script {
+  display: block;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  line-height: 1.6rem;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.62);
   transition:
     opacity 0.34s var(--ease),
     filter 0.34s var(--ease);
 }
-.min-hanzi-word[style*="opacity: 0"] {
-  filter: blur(7px);
+.min-script[style*="opacity: 0"] {
+  filter: blur(5px);
 }
 .min-tagline {
   margin: 26px 0 0;
@@ -568,25 +583,33 @@ a:hover {
     gap: 12px;
   }
 }
-button.min-pill {
-  width: 100%;
-  cursor: pointer;
-  font: inherit;
-  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
-}
+/* One rule for both the anchors and the resume button — a <button> resets
+   font, width and box-sizing differently, so they are stated here. */
 .min-pill {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
   height: 48px;
+  padding: 0;
+  margin: 0;
   border-radius: 999px;
   border: 1px solid var(--hair);
   background: color-mix(in srgb, var(--page-surface, #191919) 94%, black);
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
   font-size: 12px;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1;
+  text-align: center;
+  text-transform: none;
   color: rgba(255, 255, 255, 0.86);
+  cursor: pointer;
   overflow: hidden;
+  -webkit-appearance: none;
+  appearance: none;
   transition:
     border-color 0.3s var(--ease),
     filter 0.3s var(--ease);
@@ -1006,10 +1029,9 @@ a[data-tip] {
 }
 
 /* ══ hover cards ════════════════════════════════════════════════
-   Borderless on purpose. There is no edge and no box — a radial wash
-   sits behind a heavy backdrop blur, and a radial mask eats the blur
-   and the fill together so the panel dissolves into the sky at the
-   sides instead of landing on top of it. ─────────────────────── */
+   One card component, used everywhere: a hairline border and a solid
+   surface over backdrop blur, at the weights the live site already
+   uses. Nothing dissolves. ──────────────────────────────────────── */
 .hc {
   position: relative;
   display: inline-block;
@@ -1020,44 +1042,13 @@ a[data-tip] {
   display: block;
   width: max-content;
   max-width: min(24rem, 82vw);
-  /* The padding is the fade zone — text never reaches the dissolving rim. */
-  padding: 38px 38px 44px;
-  /* The wash: solid enough to read on under the middle, gone by the rim. */
-  background:
-    radial-gradient(
-      closest-side ellipse at 50% 14%,
-      rgba(255, 255, 255, 0.14) 0%,
-      rgba(255, 255, 255, 0.05) 50%,
-      rgba(255, 255, 255, 0) 92%
-    ),
-    radial-gradient(
-      closest-side ellipse at 50% 50%,
-      color-mix(in srgb, var(--page-surface, #191919) 97%, black) 0%,
-      color-mix(in srgb, var(--page-surface, #191919) 95%, black) 56%,
-      color-mix(in srgb, var(--page-surface, #191919) 58%, transparent) 82%,
-      transparent 100%
-    );
-  backdrop-filter: blur(30px) saturate(1.35);
-  -webkit-backdrop-filter: blur(30px) saturate(1.35);
-  /* The mask is what removes the edge — it takes the blur with it.
-     `closest-side` puts the transparent stop exactly on each edge, so the
-     panel has no rim at all: it just stops being there. */
-  -webkit-mask-image: radial-gradient(
-    closest-side ellipse at 50% 50%,
-    #000 0%,
-    #000 62%,
-    rgba(0, 0, 0, 0.88) 76%,
-    rgba(0, 0, 0, 0.4) 90%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    closest-side ellipse at 50% 50%,
-    #000 0%,
-    #000 62%,
-    rgba(0, 0, 0, 0.88) 76%,
-    rgba(0, 0, 0, 0.4) 90%,
-    transparent 100%
-  );
+  padding: 15px 17px 16px;
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--page-surface, #191919) 90%, black);
+  backdrop-filter: blur(26px) saturate(1.3);
+  -webkit-backdrop-filter: blur(26px) saturate(1.3);
+  box-shadow: 0 24px 56px -26px rgba(0, 0, 0, 0.85);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1073,12 +1064,12 @@ a[data-tip] {
   white-space: normal;
 }
 .hc[data-side="top"] .hc-card {
-  bottom: calc(100% + 4px);
-  transform: translateY(12px) scale(0.975);
+  bottom: calc(100% + 12px);
+  transform: translateY(10px) scale(0.975);
 }
 .hc[data-side="bottom"] .hc-card {
-  top: calc(100% + 4px);
-  transform: translateY(-12px) scale(0.975);
+  top: calc(100% + 12px);
+  transform: translateY(-10px) scale(0.975);
 }
 .hc[data-align="center"] .hc-card {
   left: 50%;
@@ -1173,13 +1164,7 @@ a[data-tip] {
   object-fit: cover;
   border-radius: 6px;
   filter: grayscale(1) contrast(1.05);
-  opacity: 0.84;
-  -webkit-mask-image: radial-gradient(
-    88% 88% at 50% 46%,
-    #000 58%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(88% 88% at 50% 46%, #000 58%, transparent 100%);
+  opacity: 0.86;
 }
 .min-role-what,
 .terry-name {
@@ -1297,11 +1282,13 @@ a[data-tip] {
 }
 .wx-loading {
   margin: 0;
+  max-width: 30ch;
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
-  font-size: 9.5px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.36);
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.44);
 }
 .wx-head {
   display: flex;

@@ -476,6 +476,11 @@ export default function LabAlmanac() {
                   {GITHUB_ACTIVITY.repo}
                 </a>{" "}
                 this month.
+                <br />
+                {numberFormat.format(github.closedUnmerged)} were closed without
+                merging — <em>i</em> closed nearly all of those. superseded,
+                rebased away, or a better idea turned up. they are not
+                rejections.
               </p>
             </Reveal>
           </div>
@@ -596,7 +601,7 @@ export default function LabAlmanac() {
                 ))}
               </p>
               <p className="min-note">
-                {COUNTRIES_IN_A_YEAR} countries inside one year, at sixteen —{" "}
+                {COUNTRIES_IN_A_YEAR} countries inside one year, at seventeen —{" "}
                 <span data-tip={COUNTRIES.join(" · ")}>
                   {COUNTRIES.length} of them so far
                 </span>
