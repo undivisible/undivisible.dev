@@ -1,23 +1,23 @@
 
-  [1;37mheadline works[0m — all under tsc.hk, the software company of hong kong
+  [1;37mheadline works[0m -- all under tsc.hk, the software company of hong kong
 
-  [96minauguration[0m  [90mcompiler · no llvm[0m
+  [96minauguration[0m  [90mcompiler | no llvm[0m
     forty languages through one import graph. self-hosts in under two seconds into a 9 mb binary.
 
-  [96mspace[0m  [90moperating system · no posix[0m
-    built from the compiler up, five layers deep. the compiler defines authority, objects and scheduling — not just machine code.
+  [96mspace[0m  [90moperating system | no posix[0m
+    built from the compiler up, five layers deep. the compiler defines authority, objects and scheduling -- not just machine code.
 
-  [96mcrepuscularity[0m  [90mframework · 29 ★[0m
+  [96mcrepuscularity[0m  [90mframework | 29 *[0m
     write react, get gpui desktop, swiftui, jetpack compose, ratatui and embedded. write rust, get browser extensions.
 
-  [96malpenglow[0m  [90mlinux · own package manager[0m
+  [96malpenglow[0m  [90mlinux | own package manager[0m
     diskless. the minimal build is smaller than a photo from a modern phone, and it boots in under a second.
 
-  [96mmoonshine[0m  [90mweb framework · renders this[0m
+  [96mmoonshine[0m  [90mweb framework | renders this[0m
     bun-first, signal-only kernel, opt-in compiler. this page is rendered by it.
 
-  [96mrotary · apollo[0m  [90magent stack · all rust[0m
-    rotary owns the loop — tools, providers, sessions, permissions, computer-use. apollo is the runtime on top: 14 mb, 20+ llm providers, 10+ messaging channels. zkr remembers, praefectus verifies, darash searches.
+  [96mrotary | apollo[0m  [90magent stack | all rust[0m
+    rotary owns the loop -- tools, providers, sessions, permissions, computer-use. apollo is the runtime on top: 14 mb, 20+ llm providers, 10+ messaging channels. zkr remembers, praefectus verifies, darash searches.
 
-  [96mrv8[0m  [90mbrowser engine · servo + v8[0m
+  [96mrv8[0m  [90mbrowser engine | servo + v8[0m
     servo for rendering, v8 for javascript, rust holding it together.

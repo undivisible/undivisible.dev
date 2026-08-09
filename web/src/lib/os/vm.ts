@@ -22,6 +22,7 @@ type V86Emulator = {
   add_listener(name: string, handler: (arg: unknown) => void): void;
   serial0_send(text: string): void;
   keyboard_send_text(text: string): void;
+  lock_mouse(): void;
   destroy(): void;
 };
 
@@ -127,6 +128,11 @@ class VmManager {
   /** Types into the machine's PS/2 keyboard — for touch keyboards. */
   typeText(text: string): void {
     this.emulator?.keyboard_send_text(text);
+  }
+
+  /** Capture the pointer for the machine's PS/2 mouse. Esc releases it. */
+  lockMouse(): void {
+    this.emulator?.lock_mouse();
   }
 
   onOpenRequest(listener: (url: string) => void): void {

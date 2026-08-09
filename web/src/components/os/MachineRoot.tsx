@@ -64,7 +64,12 @@ export default function MachineRoot() {
       <div className="machine-frame">
         {/* v86 renders here: the text layer for VGA text mode, the canvas
             for graphical modes. Structure is what libv86 expects. */}
-        <div className="machine-screen" ref={screenRef}>
+        <div
+          className="machine-screen"
+          ref={screenRef}
+          onClick={() => vm.lockMouse()}
+          title="click to give the machine your mouse — esc gives it back"
+        >
           <div className="machine-text" style={{ whiteSpace: "pre" }} />
           <canvas style={{ display: "none" }} />
         </div>
@@ -136,8 +141,8 @@ export default function MachineRoot() {
           </a>
         </span>
         <span className="machine-foot-hint">
-          type a name to launch · `sites` opens the software · `sh` is a real
-          shell
+          click the screen to hand it your mouse (esc takes it back) · type to
+          launch · drag the widgets · `sh` is the real console
         </span>
       </footer>
     </div>

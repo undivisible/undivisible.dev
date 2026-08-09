@@ -20,13 +20,29 @@ import {
 const OUT = join(import.meta.dir, "../os-image/overlay/usr/share/alpenglowed/content");
 await mkdir(OUT, { recursive: true });
 
+/** The console font is CP437; bake pure ASCII so nothing renders as mojibake. */
+const asciify = (text: string) =>
+  text
+    .replaceAll("\u2014", "--")
+    .replaceAll("\u2013", "-")
+    .replaceAll("\u00b7", "|")
+    .replaceAll("\u2018", "'")
+    .replaceAll("\u2019", "'")
+    .replaceAll("\u201c", '"')
+    .replaceAll("\u201d", '"')
+    .replaceAll("\u2192", "->")
+    .replaceAll("\u2605", "*")
+    .replaceAll("\u2606", "*")
+    // Anything else non-ascii (hanzi included) becomes '?', stated nearby.
+    .replace(/[^\x00-\x7f]/g, "?");
+
 const write = (name: string, text: string) =>
-  Bun.write(join(OUT, name), text.trimEnd() + "\n");
+  Bun.write(join(OUT, name), asciify(text).trimEnd() + "\n");
 
 await write(
   "about.txt",
   `
-  \x1b[1;37m${IDENTITY.name}\x1b[0m  (qi ming si — the vga console cannot draw 祁明思)
+  \x1b[1;37m${IDENTITY.name}\x1b[0m  (qi ming si; the console font cannot draw the hanzi)
 
   the ghost of terry davis, but ${GHOST_SUFFIXES[0]?.word ?? "asian"}.
   (the blank rotates: ${GHOST_SUFFIXES.slice(1, 6).map((s) => s.word).join(" · ")} …)
@@ -117,3 +133,8 @@ ${SITES.map(([label, url], index) => `  ${String(index + 1).padStart(2)}) ${labe
 `,
 );
 console.log("baked", OUT);
+
+await write(
+  "taglines.txt",
+  GHOST_SUFFIXES.map((suffix) => suffix.word).join("\n"),
+);

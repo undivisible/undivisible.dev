@@ -2,11 +2,11 @@
   [1;37m2026, on github[0m  [90m(snapshot baked 2026-08-08; the live numbers are on github.com/undivisible)[0m
 
     1,785 pull requests this year
-    891 merged — 165 into repositories that aren't mine
+    891 merged -- 165 into repositories that aren't mine
     10,798 commits this year
     91 repositories
 
-    150 closed without merging — nearly all by me. not rejections.
+    150 closed without merging -- nearly all by me. not rejections.
 
   recent merged on BasedHardware/omi:
     2026-08-04  feat(chat): route managed desktop chat through GPT-5.6 Luna

@@ -1,10 +1,10 @@
 
-  [1;37mmax carter[0m  (qi ming si — the vga console cannot draw 祁明思)
+  [1;37mmax carter[0m  (qi ming si; the console font cannot draw the hanzi)
 
   the ghost of terry davis, but asian.
-  (the blank rotates: worse · autistic · bored · not schizo · rusty …)
+  (the blank rotates: worse | autistic | bored | not schizo | rusty ?)
 
-  founding engineer at based hardware — on omi: the
+  founding engineer at based hardware -- on omi: the
   platform underneath and the product on top. not the firmware.
 
   links

@@ -32,7 +32,29 @@ if [ -c /dev/ttyS0 ]; then
   /bin/setsid -c /bin/bash --login -i </dev/ttyS0 >/dev/ttyS0 2>&1 &
 fi
 
-# The screen: sky palette, the bar, the launcher. Respawn if it ever dies.
+# The screen. bochs-drm probes async — give /dev/fb0 a moment to appear.
+tries=0
+while [ ! -e /dev/fb0 ] && [ "$tries" -lt 40 ]; do
+  /bin/sleep 0.1
+  tries=$((tries + 1))
+done
+
+if [ -e /dev/fb0 ] && [ -x /usr/bin/alpenglowed-fb ] && [ -c /dev/tty1 ]; then
+  # The graphical desktop: wallpaper, widgets, mouse — one real program.
+  # Exit 42 means "give me the console": run bash on tty1, then come back.
+  while :; do
+    /bin/setsid -c /usr/bin/alpenglowed-fb </dev/tty1 >/dev/tty1 2>&1
+    code=$?
+    if [ "$code" = 42 ]; then
+      /bin/echo "alpenglow console — exit returns to the desktop" >/dev/tty1
+      /bin/setsid -c /bin/bash --login -i </dev/tty1 >/dev/tty1 2>&1
+    else
+      /bin/sleep 1
+    fi
+  done
+fi
+
+# No framebuffer: the sh edition (bar + text launcher) on the VT.
 if [ -c /dev/tty1 ]; then
   /usr/bin/alpenbar &
   while :; do

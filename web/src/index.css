@@ -1895,3 +1895,12 @@ a[data-tip] {
   cursor: pointer;
 }
 .machine-ask button:hover { color: #fff; }
+
+/* Graphical mode: the machine's 1024x768 canvas, pixel-crisp. */
+.machine-screen canvas {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100dvh - 120px);
+  image-rendering: pixelated;
+  cursor: none;
+}

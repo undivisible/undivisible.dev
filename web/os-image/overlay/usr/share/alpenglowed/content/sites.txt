@@ -1,12 +1,12 @@
 
   [1;37mthe software, deployed[0m
 
-   1) tsc.hk — the software company of hong kong  [90mhttps://tsc.hk[0m
-   2) crepuscularity — one codebase, every platform  [90mhttps://crepuscularity.undivisible.dev[0m
-   3) moonshine — renders the host site  [90mhttps://moonshine.tsc.hk[0m
-   4) inauguration — forty languages, no llvm  [90mhttps://inauguration.tsc.hk[0m
-   5) alpenglow — this machine, natively  [90mhttps://alpenglow.tsc.hk[0m
-   6) space — the os the compiler grew  [90mhttps://space.tsc.hk[0m
+   1) tsc.hk -- the software company of hong kong  [90mhttps://tsc.hk[0m
+   2) crepuscularity -- one codebase, every platform  [90mhttps://crepuscularity.undivisible.dev[0m
+   3) moonshine -- renders the host site  [90mhttps://moonshine.tsc.hk[0m
+   4) inauguration -- forty languages, no llvm  [90mhttps://inauguration.tsc.hk[0m
+   5) alpenglow -- this machine, natively  [90mhttps://alpenglow.tsc.hk[0m
+   6) space -- the os the compiler grew  [90mhttps://space.tsc.hk[0m
    7) notes  [90mhttps://notes.undivisible.dev[0m
    8) standpoint  [90mhttps://standpoint.undivisible.dev[0m
    9) alphabets  [90mhttps://alphabets.undivisible.dev[0m
