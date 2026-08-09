@@ -20,6 +20,8 @@ export const GITHUB_ACTIVITY = {
     pullRequestsThisYear: 1785,
     commitsThisYear: 10798,
     repos: 91, // 69 personal + 22 under tschk
+    /** Merged into repositories owned by neither me nor tsc.hk. */
+    mergedElsewhere: 165,
   },
   repo: "BasedHardware/omi",
   author: "undivisible",

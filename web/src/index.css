@@ -335,7 +335,12 @@ a:hover {
   letter-spacing: 0;
   font-size: 10px;
   line-height: 1.5;
-  max-width: 22ch;
+  max-width: 26ch;
+  /* now.md is a whole document; the clock only has room for the top of it. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   color: rgba(255, 255, 255, 0.62);
 }
 .lab-clock-hint {
@@ -347,8 +352,14 @@ a:hover {
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-.lab-clock:hover .lab-clock-hint {
+.lab-clock:hover .lab-clock-hint,
+.lab-clock.is-arriving .lab-clock-hint {
   opacity: 1;
+}
+/* The place name changes under you once, on the way in — say so quietly. */
+.lab-clock.is-arriving .lab-clock-place,
+.lab-clock.is-arriving .lab-clock-zone {
+  color: rgba(255, 255, 255, 0.55);
 }
 
 /* ── the rotating "but ___" ─────────────────────────────────────── */
@@ -465,19 +476,57 @@ a:hover {
   text-wrap: balance;
   text-shadow: var(--ink-shadow);
 }
-.min-name-word {
+.min-name-latin {
   display: inline-block;
-  min-width: 5.6em;
-  transition:
-    opacity 0.4s var(--ease),
-    filter 0.4s var(--ease);
 }
-.min-name-word[style*="opacity: 0"] {
-  filter: blur(8px);
-}
+
+/* ── the hanzi is the hover: hold it and the name changes script ── */
 .min-hanzi {
+  position: relative;
+  display: inline-block;
+  min-width: 3.2em;
   color: rgba(255, 255, 255, 0.42);
   letter-spacing: 0.02em;
+  cursor: help;
+  transition: color 0.4s var(--ease);
+}
+.min-hanzi::after {
+  content: "";
+  position: absolute;
+  left: 0.04em;
+  right: 0.04em;
+  bottom: 0.1em;
+  height: 1px;
+  background: currentColor;
+  opacity: 0;
+  transform: scaleX(0.2);
+  transform-origin: left;
+  transition:
+    opacity 0.4s var(--ease),
+    transform 0.5s var(--ease);
+}
+.min-hanzi:hover,
+.min-hanzi:focus-visible {
+  color: rgba(255, 255, 255, 0.9);
+  outline: none;
+}
+.min-hanzi:hover::after,
+.min-hanzi:focus-visible::after {
+  opacity: 0.35;
+  transform: scaleX(1);
+}
+.min-hanzi.is-foreign {
+  font-size: 0.62em;
+  letter-spacing: -0.01em;
+}
+.min-hanzi-word {
+  display: inline-block;
+  transition:
+    opacity 0.34s var(--ease),
+    filter 0.34s var(--ease);
+}
+.min-hanzi-word[style*="opacity: 0"] {
+  filter: blur(7px);
 }
 .min-tagline {
   margin: 26px 0 0;
@@ -518,6 +567,12 @@ a:hover {
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 12px;
   }
+}
+button.min-pill {
+  width: 100%;
+  cursor: pointer;
+  font: inherit;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 .min-pill {
   position: relative;
@@ -808,7 +863,7 @@ a:hover {
 }
 .min-merged a {
   display: grid;
-  grid-template-columns: 3.2rem minmax(0, 1fr);
+  grid-template-columns: 3.2rem minmax(0, 1fr) auto;
   gap: 16px;
   align-items: baseline;
   padding: 11px 0;
@@ -820,11 +875,16 @@ a:hover {
 .min-merged a:hover {
   color: #fff;
 }
-.min-merged time {
+.min-merged time,
+.min-merged-repo {
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
   font-size: 9.5px;
+  font-style: normal;
   letter-spacing: 0.14em;
   color: rgba(255, 255, 255, 0.32);
+}
+.min-merged-repo {
+  white-space: nowrap;
 }
 
 /* ── works index ── */
@@ -945,6 +1005,650 @@ a[data-tip] {
   cursor: pointer;
 }
 
+/* ══ hover cards ════════════════════════════════════════════════
+   Borderless on purpose. There is no edge and no box — a radial wash
+   sits behind a heavy backdrop blur, and a radial mask eats the blur
+   and the fill together so the panel dissolves into the sky at the
+   sides instead of landing on top of it. ─────────────────────── */
+.hc {
+  position: relative;
+  display: inline-block;
+}
+.hc-card {
+  position: absolute;
+  z-index: 60;
+  display: block;
+  width: max-content;
+  max-width: min(24rem, 82vw);
+  /* The padding is the fade zone — text never reaches the dissolving rim. */
+  padding: 38px 38px 44px;
+  /* The wash: solid enough to read on under the middle, gone by the rim. */
+  background:
+    radial-gradient(
+      closest-side ellipse at 50% 14%,
+      rgba(255, 255, 255, 0.14) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0) 92%
+    ),
+    radial-gradient(
+      closest-side ellipse at 50% 50%,
+      color-mix(in srgb, var(--page-surface, #191919) 97%, black) 0%,
+      color-mix(in srgb, var(--page-surface, #191919) 95%, black) 56%,
+      color-mix(in srgb, var(--page-surface, #191919) 58%, transparent) 82%,
+      transparent 100%
+    );
+  backdrop-filter: blur(30px) saturate(1.35);
+  -webkit-backdrop-filter: blur(30px) saturate(1.35);
+  /* The mask is what removes the edge — it takes the blur with it.
+     `closest-side` puts the transparent stop exactly on each edge, so the
+     panel has no rim at all: it just stops being there. */
+  -webkit-mask-image: radial-gradient(
+    closest-side ellipse at 50% 50%,
+    #000 0%,
+    #000 62%,
+    rgba(0, 0, 0, 0.88) 76%,
+    rgba(0, 0, 0, 0.4) 90%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    closest-side ellipse at 50% 50%,
+    #000 0%,
+    #000 62%,
+    rgba(0, 0, 0, 0.88) 76%,
+    rgba(0, 0, 0, 0.4) 90%,
+    transparent 100%
+  );
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.34s var(--ease),
+    transform 0.46s var(--ease),
+    visibility 0s linear 0.34s;
+  font-family: var(--font-instrument-sans), system-ui, sans-serif;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: normal;
+  text-align: left;
+  white-space: normal;
+}
+.hc[data-side="top"] .hc-card {
+  bottom: calc(100% + 4px);
+  transform: translateY(12px) scale(0.975);
+}
+.hc[data-side="bottom"] .hc-card {
+  top: calc(100% + 4px);
+  transform: translateY(-12px) scale(0.975);
+}
+.hc[data-align="center"] .hc-card {
+  left: 50%;
+  margin-left: -50%;
+  translate: 50% 0;
+}
+.hc[data-align="start"] .hc-card {
+  left: -14px;
+}
+.hc.is-open .hc-card {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  transition-delay: 0s, 0s, 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hc-card {
+    transition-duration: 0.01s;
+  }
+}
+
+.hc-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: #fff;
+}
+.hc-title em {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 9.5px;
+  font-style: normal;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.42);
+}
+.hc-body {
+  display: block;
+  margin-top: 8px;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.66);
+}
+.hc-note {
+  display: block;
+  margin-top: 9px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.4);
+}
+.hc-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin-top: 12px;
+}
+.hc-stats > span {
+  display: block;
+}
+.hc-stats b {
+  display: block;
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.hc-stats i {
+  display: block;
+  margin-top: 1px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 8.5px;
+  font-style: normal;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.34);
+}
+
+/* ── terry ── */
+.terry-inner {
+  display: flex;
+  gap: 14px;
+}
+.terry-copy {
+  display: block;
+  min-width: 0;
+}
+.terry-photo {
+  width: 74px;
+  height: 92px;
+  flex: none;
+  object-fit: cover;
+  border-radius: 6px;
+  filter: grayscale(1) contrast(1.05);
+  opacity: 0.84;
+  -webkit-mask-image: radial-gradient(
+    88% 88% at 50% 46%,
+    #000 58%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(88% 88% at 50% 46%, #000 58%, transparent 100%);
+}
+.min-role-what,
+.terry-name {
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+  cursor: help;
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.34),
+    rgba(255, 255, 255, 0.34)
+  );
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 0.4s var(--ease);
+}
+.terry:hover .terry-name {
+  background-size: 100% 1px;
+  color: #fff;
+}
+
+/* ══ numbers arriving ═══════════════════════════════════════════
+   Each column decelerates onto its digit and stops there. Nothing
+   springs and nothing settles back — the curve only slows down. ─ */
+.odo {
+  display: inline-flex;
+  align-items: baseline;
+  line-height: 1;
+}
+.odo-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.odo-col {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  /* Tabular figures keep the columns from twitching as digits change. */
+  font-variant-numeric: tabular-nums;
+}
+.odo-strip {
+  display: block;
+  will-change: transform;
+  transition: transform 1.5s cubic-bezier(0.12, 0.72, 0.16, 1);
+}
+.odo-strip > span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+.odo-sep {
+  display: inline-block;
+}
+@media (prefers-reduced-motion: reduce) {
+  .odo-strip {
+    transition-duration: 0.01s;
+  }
+}
+
+/* ── the tagline's two other hovers ── */
+.ghost-src-word {
+  cursor: help;
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.2)
+  );
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition:
+    color 0.35s var(--ease),
+    background-image 0.35s var(--ease);
+}
+.ghost-src:hover .ghost-src-word {
+  color: #fff;
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0.5)
+  );
+}
+.ghost-src .hc-card,
+.ghost-blank .hc-card {
+  width: 19rem;
+  max-width: 82vw;
+}
+.ghost-blank .hc-body {
+  margin-top: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* ── the pills, each one saying what is behind it ── */
+.pill-hc {
+  display: block;
+}
+.pill-hc .hc-card {
+  width: 17rem;
+  max-width: 82vw;
+}
+
+/* ── weather: the whole day under one line ── */
+.wx-hc {
+  display: block;
+}
+.wx-hc .hc-card {
+  width: 21rem;
+  max-width: 86vw;
+  padding: 20px 24px 22px;
+}
+.wx-loading {
+  margin: 0;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.36);
+}
+.wx-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.wx-now {
+  font-size: 2.5rem;
+  font-weight: 200;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  color: #fff;
+}
+.wx-head-copy {
+  flex: 1;
+  min-width: 0;
+  padding-top: 3px;
+}
+.wx-head-copy b {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.86);
+}
+.wx-head-copy i {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 9px;
+  font-style: normal;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.36);
+}
+.wx-range {
+  display: grid;
+  gap: 2px;
+  text-align: right;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* The shape of the day: a temperature curve with rain chance beneath it. */
+.wx-chart {
+  position: relative;
+  margin: 18px 0 2px;
+  height: 40px;
+}
+.wx-chart svg {
+  width: 100%;
+  height: 28px;
+  overflow: visible;
+}
+.wx-chart polyline {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.72);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.wx-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+  margin-top: 2px;
+}
+.wx-bars i {
+  flex: 1;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.14);
+}
+.wx-bars i[data-wet] {
+  background: rgba(255, 255, 255, 0.44);
+}
+.wx-hours {
+  display: flex;
+  gap: 2px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.wx-hours li {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  justify-items: center;
+  padding: 5px 0;
+  border-radius: 5px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 8.5px;
+  color: rgba(255, 255, 255, 0.34);
+}
+.wx-hours li[data-now] {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.82);
+}
+.wx-hour-t {
+  font-size: 9.5px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.wx-hours li[data-now] .wx-hour-t {
+  color: #fff;
+}
+.wx-hour-g {
+  font-size: 8px;
+  opacity: 0.6;
+}
+.wx-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 14px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+/* ── headline works ── */
+.min-works {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--hair);
+}
+.min-work {
+  border-bottom: 1px solid var(--hair);
+}
+.min-work-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  padding: 18px 2px;
+  transition:
+    padding-left 0.45s var(--ease),
+    background 0.45s var(--ease);
+}
+@media (min-width: 760px) {
+  .min-work-link {
+    grid-template-columns: 12rem minmax(0, 1fr) 8rem;
+    align-items: baseline;
+    gap: 24px;
+  }
+}
+.min-work-link:hover {
+  padding-left: 14px;
+  background: linear-gradient(
+    90deg,
+    var(--glass) 0%,
+    rgba(255, 255, 255, 0) 65%
+  );
+}
+.min-work-head b {
+  font-size: 1.06rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.92);
+}
+.min-work-head i {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 9.5px;
+  font-style: normal;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+}
+.min-work-line {
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.4s var(--ease);
+}
+.min-work-link:hover .min-work-line {
+  color: rgba(255, 255, 255, 0.76);
+}
+.min-work-stat {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.34);
+}
+@media (min-width: 760px) {
+  .min-work-stat {
+    text-align: right;
+  }
+}
+
+/* ── before 17: a dial that moves on its own until you take it ── */
+.min-ages {
+  display: grid;
+  gap: 18px;
+}
+.min-ages-scale {
+  position: relative;
+  display: flex;
+  gap: 4px;
+  padding: 10px 0 14px;
+  border-bottom: 1px solid var(--hair);
+}
+.min-ages-bar {
+  position: absolute;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0),
+    #fff 50%,
+    rgba(255, 255, 255, 0)
+  );
+  transition: left 0.6s var(--ease);
+}
+.min-age {
+  flex: 1 1 0;
+  padding: 6px 0;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition:
+    color 0.45s var(--ease),
+    transform 0.45s var(--ease);
+}
+.min-age:hover {
+  color: rgba(255, 255, 255, 0.62);
+}
+.min-age[aria-selected="true"] {
+  color: #fff;
+  transform: translateY(-2px);
+}
+.min-ages-copy {
+  min-height: 4.4rem;
+  animation: min-fade-up 0.5s var(--ease);
+}
+@keyframes min-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(4px);
+  }
+}
+.min-ages-title {
+  margin: 0;
+  font-size: clamp(1.05rem, 2.4vw, 1.5rem);
+  font-weight: 300;
+  letter-spacing: -0.022em;
+  color: rgba(255, 255, 255, 0.94);
+}
+.min-ages-detail {
+  margin: 7px 0 0;
+  max-width: 56ch;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.46);
+}
+.min-ages-hint {
+  margin: 0;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.26);
+}
+.min-ages.is-held .min-ages-hint {
+  color: rgba(255, 255, 255, 0.5);
+}
+@media (prefers-reduced-motion: reduce) {
+  .min-ages-copy {
+    animation: none;
+  }
+}
+
+/* ── the line your own browser writes ── */
+.min-nano {
+  flex: 1 1 24rem;
+  min-width: 0;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.min-nano-line {
+  margin: 0;
+  max-width: 54ch;
+  font-family: var(--font-instrument-sans), system-ui, sans-serif;
+  font-size: 0.94rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+.min-nano-caret {
+  display: inline-block;
+  width: 0.44em;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.12em;
+  background: rgba(255, 255, 255, 0.6);
+  animation: min-caret 1s steps(2) infinite;
+}
+@keyframes min-caret {
+  50% {
+    opacity: 0;
+  }
+}
+.min-nano-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.26);
+}
+.min-nano-dot {
+  width: 5px;
+  height: 5px;
+  flex: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+}
+.min-nano-dot[data-on] {
+  background: #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+  animation: min-live-pulse 2.6s ease-in-out infinite;
+}
+.min-nano-run {
+  font: inherit;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 0.3s var(--ease);
+}
+.min-nano-run:hover {
+  color: #fff;
+}
+
 /* ── foot ── */
 .min-foot {
   margin-top: clamp(84px, 15vh, 150px);
@@ -953,7 +1657,7 @@ a[data-tip] {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 14px 28px;
+  gap: 26px 28px;
   flex-wrap: wrap;
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
   font-size: 10px;
@@ -966,11 +1670,15 @@ a[data-tip] {
   flex-wrap: wrap;
 }
 .min-links a,
+.min-links button,
 .min-colophon a {
+  font: inherit;
+  cursor: pointer;
   color: rgba(255, 255, 255, 0.5);
   transition: color 0.3s var(--ease);
 }
 .min-links a:hover,
+.min-links button:hover,
 .min-colophon a:hover {
   color: #fff;
 }

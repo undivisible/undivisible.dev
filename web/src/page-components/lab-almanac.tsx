@@ -7,17 +7,28 @@ import type {
   ReactNode,
 } from "react";
 import { motion } from "motion/react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { GhostTagline } from "@/components/lab/GhostTagline";
 import { LabBackground } from "@/components/lab/LabBackground";
 import { LabClock } from "@/components/lab/LabClock";
-import { REVEAL_EASE, hoverNames } from "@/components/info/constants";
+import { LinkPills } from "@/components/lab/LinkPills";
+import { LocalIntelligence } from "@/components/lab/LocalIntelligence";
+import { Milestones } from "@/components/lab/Milestones";
+import { NameCycle } from "@/components/lab/NameCycle";
+import { Odometer } from "@/components/lab/Odometer";
+import { RandomizedText } from "@/components/lab/RandomizedText";
+import { REVEAL_EASE } from "@/components/info/constants";
 import { GITHUB_ACTIVITY } from "@/data/github-activity";
 import {
+  COUNTRIES,
   COUNTRIES_IN_A_YEAR,
+  HEADLINE_WORKS,
   IDENTITY,
   LAB_LINKS,
-  PLACES,
+  OMI_ROLE,
+  STOPS_THIS_YEAR,
+  TSCHK,
   WEBRING,
 } from "@/data/lab-facts";
 import {
@@ -29,9 +40,18 @@ import {
 import { useHydrated } from "@/hooks/use-hydrated";
 import { useLiveGithub } from "@/hooks/use-live-github";
 import { useNowMarkdown } from "@/hooks/use-remote-content";
+import { useTimeArrival } from "@/hooks/use-time-arrival";
 import { organiseProjects } from "@/lib/organise-projects";
+import { fetchResumeMarkdownCached } from "@/lib/remote-markdown";
+import { clearSitePrintTarget, printSitePdf } from "@/lib/site-print";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { useLastFmVisualData } from "@/lib/useLastFmVisualData";
+
+const HomePrintRoot = dynamic(
+  () =>
+    import("@/components/home/print/HomePrintRoot").then((m) => m.HomePrintRoot),
+  { ssr: false },
+);
 
 const MINUTES_IN_DAY = 1440;
 
@@ -55,7 +75,6 @@ function clockLabel(minute: number): string {
 }
 
 const numberFormat = new Intl.NumberFormat("en-US");
-const MARKS = ["¹", "²", "³"] as const;
 
 function dayOfYear(): number {
   const now = new Date();
@@ -98,6 +117,16 @@ export default function LabAlmanac() {
   const hydrated = useHydrated();
   const { track } = useLastFmVisualData();
   const github = useLiveGithub();
+  // The sky opens on the visitor's hour and travels to his.
+  const arrivingFrom = useTimeArrival(dayTheme);
+  const [suffix, setSuffix] = useState("asian");
+  // Give the live numbers a moment to land before the footer line is written
+  // about them — but never wait on a request that may not come back.
+  const [settled, setSettled] = useState(false);
+  useEffect(() => {
+    const id = setTimeout(() => setSettled(true), 2500);
+    return () => clearTimeout(id);
+  }, []);
 
   const categories = useMemo(
     () =>
@@ -144,45 +173,6 @@ export default function LabAlmanac() {
     return ratio * (MINUTES_IN_DAY - 1);
   }, []);
 
-  // ── the name cycles aliases under the cursor, as the live site does ──
-  const [alias, setAlias] = useState<string | null>(null);
-  const [aliasVisible, setAliasVisible] = useState(true);
-  const aliasTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const startAliases = useCallback(() => {
-    if (aliasTimer.current) return;
-    let index = 0;
-    const swap = () => {
-      setAliasVisible(false);
-      setTimeout(() => {
-        setAlias(hoverNames[index % hoverNames.length] ?? null);
-        setAliasVisible(true);
-        index += 1;
-      }, 300);
-    };
-    swap();
-    aliasTimer.current = setInterval(swap, 2100);
-  }, []);
-
-  const stopAliases = useCallback(() => {
-    if (aliasTimer.current) {
-      clearInterval(aliasTimer.current);
-      aliasTimer.current = null;
-    }
-    setAliasVisible(false);
-    setTimeout(() => {
-      setAlias(null);
-      setAliasVisible(true);
-    }, 300);
-  }, []);
-
-  useEffect(
-    () => () => {
-      if (aliasTimer.current) clearInterval(aliasTimer.current);
-    },
-    [],
-  );
-
   // ── one glass tooltip, fed by data-tip ──
   const [tip, setTip] = useState<string | null>(null);
   const tipRef = useRef<HTMLDivElement>(null);
@@ -200,13 +190,25 @@ export default function LabAlmanac() {
     }
   }, []);
 
+  // ── the resume, printed from the same layer the live site uses ──
+  const [printMounted, setPrintMounted] = useState(false);
+  useEffect(() => {
+    void import("@/components/home/print/HomePrintRoot");
+    setPrintMounted(true);
+    const onAfterPrint = () => clearSitePrintTarget();
+    window.addEventListener("afterprint", onAfterPrint);
+    return () => window.removeEventListener("afterprint", onAfterPrint);
+  }, []);
+
+  const printResume = useCallback(async () => {
+    await fetchResumeMarkdownCached({ forceRefresh: true }).catch(() => null);
+    setPrintMounted(true);
+    await printSitePdf("resume");
+  }, []);
+
   const doy = dayOfYear();
   const perDay = Math.round(github.commitsThisYear / doy);
   const perWeek = Math.round((github.prsThisYear / doy) * 7);
-  const mergedShare =
-    github.prsTotal > 0
-      ? Math.round((github.merged / github.prsTotal) * 100)
-      : null;
 
   const figures = [
     {
@@ -217,8 +219,7 @@ export default function LabAlmanac() {
     {
       value: numberFormat.format(github.merged),
       label: "merged",
-      detail:
-        mergedShare === null ? "all time" : `${mergedShare}% of all of them`,
+      detail: `${numberFormat.format(github.mergedElsewhere)} by someone else`,
     },
     {
       value: numberFormat.format(github.commitsThisYear),
@@ -232,9 +233,16 @@ export default function LabAlmanac() {
     },
   ];
 
-  const footnoted = PLACES.filter(
-    (place) => place.code === "HKG" || place.code === "USA" || place.next,
-  );
+  const moment = {
+    clock: clockLabel(minute),
+    place: now.location.label,
+    weather: hydrated ? dayTheme.weatherDisplay : "clear",
+    track: track ? `${track.track} by ${track.artist}` : null,
+    prsThisYear: github.prsThisYear,
+    commitsThisYear: github.commitsThisYear,
+    mergedElsewhere: github.mergedElsewhere,
+    suffix,
+  };
 
   return (
     <div
@@ -245,6 +253,12 @@ export default function LabAlmanac() {
     >
       <LabBackground dayTheme={dayTheme} />
 
+      {printMounted ? (
+        <div className="print-only print-layer-resume" aria-hidden>
+          <HomePrintRoot />
+        </div>
+      ) : null}
+
       <div ref={tipRef} className={`min-tip ${tip ? "is-on" : ""}`} aria-hidden>
         {tip}
       </div>
@@ -254,8 +268,10 @@ export default function LabAlmanac() {
         <header className="min-top">
           <LabClock
             dayTheme={dayTheme}
-            location={now.location}
-            status={now.status}
+            location={arrivingFrom ?? now.location}
+            timeOffsetMinutes={now.location.utcOffsetMinutes}
+            status={arrivingFrom ? null : now.status}
+            arriving={Boolean(arrivingFrom)}
           />
           <div>
             <p className="min-meta">undivisible.dev</p>
@@ -279,44 +295,26 @@ export default function LabAlmanac() {
 
         <section className="min-hero">
           <Reveal>
-            <h1
-              className="min-name-hero"
-              onMouseEnter={startAliases}
-              onMouseLeave={stopAliases}
-            >
-              <span
-                className="min-name-word"
-                style={{ opacity: aliasVisible ? 1 : 0 }}
-              >
-                {alias ?? IDENTITY.name}
-              </span>{" "}
-              <span className="min-hanzi">{IDENTITY.hanzi}</span>
+            <h1 className="min-name-hero">
+              <NameCycle />
             </h1>
             <p className="min-tagline">
-              <GhostTagline suffixClassName="min-suffix" />
+              <GhostTagline
+                suffixClassName="min-suffix"
+                onSuffixChange={setSuffix}
+              />
             </p>
             <p className="min-role">
-              {IDENTITY.role} at {IDENTITY.org}.
+              <RandomizedText delay={0.55}>
+                {`${IDENTITY.role} at ${IDENTITY.org}.`}
+              </RandomizedText>{" "}
+              <span className="min-role-what" data-tip={OMI_ROLE.line}>
+                {IDENTITY.product}
+              </span>
+              .
             </p>
 
-            <nav className="min-pills">
-              {LAB_LINKS.map((link) => (
-                <a
-                  key={link.name}
-                  className="min-pill"
-                  href={link.href}
-                  target={link.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    link.href.startsWith("http")
-                      ? "noopener noreferrer"
-                      : undefined
-                  }
-                >
-                  <span>{link.name}</span>
-                  <span className="min-pill-handle">{link.handle}</span>
-                </a>
-              ))}
-            </nav>
+            <LinkPills github={github} onResume={printResume} />
           </Reveal>
         </section>
 
@@ -412,9 +410,11 @@ export default function LabAlmanac() {
             />
           </div>
           <p className="min-dial-cap">
-            drag the sun to move the hour. the sky behind this page, its colours
-            and the shadows under the type all follow it — let go and it settles
-            back to now.
+            <RandomizedText inView>
+              drag the sun to move the hour. the sky behind this page, its
+              colours and the shadows under the type all follow it — let go and
+              it settles back to now.
+            </RandomizedText>
           </p>
         </Reveal>
 
@@ -423,7 +423,12 @@ export default function LabAlmanac() {
           <Reveal>
             <h2 className="min-label">
               <i className="min-idx">01</i>2026
-              {github.live ? <i className="min-live" title="live" /> : null}
+              {github.live ? (
+                <i
+                  className="min-live"
+                  data-tip="these come from the github api on every load and refresh while the tab is open"
+                />
+              ) : null}
             </h2>
           </Reveal>
           <div className="min-body">
@@ -431,7 +436,9 @@ export default function LabAlmanac() {
               <div className="min-figures">
                 {figures.map((figure) => (
                   <div className="min-figure" key={figure.label} tabIndex={0}>
-                    <b>{figure.value}</b>
+                    <b>
+                      <Odometer value={figure.value} />
+                    </b>
                     <span className="min-figure-label">
                       <span>{figure.label}</span>
                       <span className="min-figure-detail">{figure.detail}</span>
@@ -442,16 +449,19 @@ export default function LabAlmanac() {
             </Reveal>
             <Reveal delay={0.08}>
               <ul className="min-merged">
-                {GITHUB_ACTIVITY.recentMerged.slice(0, 3).map((pr) => (
-                  <li key={pr.number}>
+                {github.recent.slice(0, 4).map((pr) => (
+                  <li key={pr.url}>
                     <a
-                      href={`https://github.com/${GITHUB_ACTIVITY.repo}/pull/${pr.number}`}
+                      href={pr.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      data-tip={`merged into ${GITHUB_ACTIVITY.repo} · #${pr.number}`}
+                      data-tip={`merged into ${pr.repo}`}
                     >
                       <time>{pr.mergedAt.slice(5)}</time>
                       <span>{pr.title}</span>
+                      <i className="min-merged-repo">
+                        {pr.repo.split("/")[1] ?? pr.repo}
+                      </i>
                     </a>
                   </li>
                 ))}
@@ -471,11 +481,59 @@ export default function LabAlmanac() {
           </div>
         </section>
 
-        {/* ── works ── */}
+        {/* ── headline works ── */}
         <section className="min-row">
           <Reveal>
             <h2 className="min-label">
-              <i className="min-idx">02</i>works
+              <i className="min-idx">02</i>headline works
+            </h2>
+          </Reveal>
+          <div className="min-body">
+            <ol className="min-works">
+              {HEADLINE_WORKS.map((work, index) => (
+                <Reveal key={work.name} delay={index * 0.04}>
+                  <li className="min-work">
+                    <a
+                      className="min-work-link"
+                      href={work.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span className="min-work-head">
+                        <b>{work.name}</b>
+                        <i>{work.what}</i>
+                      </span>
+                      <span className="min-work-line">
+                        <RandomizedText inView>{work.line}</RandomizedText>
+                      </span>
+                      <span className="min-work-stat">{work.stat}</span>
+                    </a>
+                  </li>
+                </Reveal>
+              ))}
+            </ol>
+            <Reveal>
+              <p className="min-note">
+                all of it under{" "}
+                <a
+                  href={TSCHK.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-tip={TSCHK.blurb}
+                >
+                  {TSCHK.name}
+                </a>
+                , {TSCHK.full}.
+              </p>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ── the rest of it ── */}
+        <section className="min-row">
+          <Reveal>
+            <h2 className="min-label">
+              <i className="min-idx">03</i>everything else
             </h2>
           </Reveal>
           <div className="min-body">
@@ -516,40 +574,33 @@ export default function LabAlmanac() {
         <section className="min-row">
           <Reveal>
             <h2 className="min-label">
-              <i className="min-idx">03</i>route
+              <i className="min-idx">04</i>this year
             </h2>
           </Reveal>
           <div className="min-body">
             <Reveal>
               <p className="min-route">
-                {PLACES.map((place, index) => {
-                  const markIndex = footnoted.indexOf(place);
-                  return (
-                    <span key={place.code}>
-                      {index > 0 ? (
-                        <i className="min-route-arrow"> → </i>
-                      ) : null}
-                      <span
-                        className="min-route-code"
-                        data-run={place.run ? "true" : undefined}
-                        data-next={place.next ? "true" : undefined}
-                        data-tip={
-                          place.note
-                            ? `${place.name} — ${place.note}`
-                            : place.name
-                        }
-                      >
-                        {place.code}
-                        {markIndex >= 0 ? <sup>{MARKS[markIndex]}</sup> : null}
-                      </span>
+                {STOPS_THIS_YEAR.map((stop, index) => (
+                  <span key={stop.code}>
+                    {index > 0 ? <i className="min-route-arrow"> → </i> : null}
+                    <span
+                      className="min-route-code"
+                      data-next={stop.next ? "true" : undefined}
+                      data-tip={
+                        stop.note ? `${stop.city} — ${stop.note}` : stop.city
+                      }
+                    >
+                      {stop.code}
                     </span>
-                  );
-                })}
+                  </span>
+                ))}
               </p>
               <p className="min-note">
-                {COUNTRIES_IN_A_YEAR} of these in one year, at sixteen.
-                <br />¹ first &nbsp; ² two hours in secondary inspection &nbsp;
-                ³ next
+                {COUNTRIES_IN_A_YEAR} countries inside one year, at sixteen —{" "}
+                <span data-tip={COUNTRIES.join(" · ")}>
+                  {COUNTRIES.length} of them so far
+                </span>
+                . the last one is booked.
               </p>
             </Reveal>
           </div>
@@ -559,32 +610,23 @@ export default function LabAlmanac() {
         <section className="min-row">
           <Reveal>
             <h2 className="min-label">
-              <i className="min-idx">04</i>before 17
+              <i className="min-idx">05</i>before 17
             </h2>
           </Reveal>
           <div className="min-body">
             <Reveal>
-              <p className="min-lines">
-                a full-time job paying 100k+ a year.
-                <br />
-                first computer at six. first software at eight.
-                <br />
-                left school at seventeen. founded{" "}
-                <a
-                  href="https://tsc.hk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-tip="the semitechnological company — 22 repos: a compiler, two operating systems, a browser engine, a linux distro, two web frameworks"
-                >
-                  tsc.hk
-                </a>
-                .
-              </p>
+              <Milestones />
             </Reveal>
           </div>
         </section>
 
         <footer className="min-foot">
+          <Reveal>
+            <LocalIntelligence
+              facts={moment}
+              ready={hydrated && (github.live || settled)}
+            />
+          </Reveal>
           <nav className="min-links">
             <a
               href={WEBRING.prev}
@@ -594,20 +636,26 @@ export default function LabAlmanac() {
             >
               ←
             </a>
-            {LAB_LINKS.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                target={link.href.startsWith("http") ? "_blank" : undefined}
-                rel={
-                  link.href.startsWith("http")
-                    ? "noopener noreferrer"
-                    : undefined
-                }
-              >
-                {link.name}
-              </a>
-            ))}
+            {LAB_LINKS.map((link) =>
+              link.name === "resume" ? (
+                <button key={link.name} type="button" onClick={printResume}>
+                  resume
+                </button>
+              ) : (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  target={link.href.startsWith("http") ? "_blank" : undefined}
+                  rel={
+                    link.href.startsWith("http")
+                      ? "noopener noreferrer"
+                      : undefined
+                  }
+                >
+                  {link.name}
+                </a>
+              ),
+            )}
             <a
               href={WEBRING.next}
               target="_blank"

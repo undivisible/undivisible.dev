@@ -18,7 +18,7 @@ export type NowContent = {
  */
 export const DEFAULT_NOW_LOCATION: NowLocation = {
   label: "hong kong",
-  utcOffsetMinutes: 180,
+  utcOffsetMinutes: 480,
 };
 
 /**

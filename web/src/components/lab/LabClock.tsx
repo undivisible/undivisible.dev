@@ -1,7 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { HoverCard } from "@/components/lab/HoverCard";
+import { WeatherPanel } from "@/components/lab/WeatherPanel";
 import { useHydrated } from "@/hooks/use-hydrated";
+import { useWeatherForecast } from "@/hooks/use-weather-forecast";
 import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { formatUtcOffset, type NowLocation } from "@/lib/parse-now-markdown";
 
@@ -23,14 +26,27 @@ export function LabClock({
   location,
   status,
   className = "",
+  /**
+   * What the clock reads. Defaults to the location's own offset; during the
+   * arrival the label belongs to the visitor while the digits still come out
+   * of the scrubbed shader, so the two are separable.
+   */
+  timeOffsetMinutes,
+  /** True while the sky is travelling from the visitor's hour to his. */
+  arriving = false,
 }: {
   dayTheme: HongKongDayTheme;
   location: NowLocation;
   status?: string | null;
   className?: string;
+  timeOffsetMinutes?: number;
+  arriving?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const hydrated = useHydrated();
+  // The forecast is only worth a request once someone asks to see it.
+  const [wantForecast, setWantForecast] = useState(false);
+  const forecast = useWeatherForecast(wantForecast);
 
   useEffect(() => {
     const node = ref.current;
@@ -40,7 +56,10 @@ export function LabClock({
   }, [dayTheme.onClockWheel]);
 
   const time = hydrated
-    ? formatForOffset(dayTheme.displayedDate, location.utcOffsetMinutes)
+    ? formatForOffset(
+        dayTheme.displayedDate,
+        timeOffsetMinutes ?? location.utcOffsetMinutes,
+      )
     : "--:--:--";
   const weather = hydrated ? dayTheme.weatherDisplay : "--°C --";
 
@@ -48,17 +67,27 @@ export function LabClock({
     <div
       ref={ref}
       data-time-scrubber="true"
-      className={`lab-clock ${className}`}
+      className={`lab-clock ${arriving ? "is-arriving" : ""} ${className}`}
       onMouseLeave={dayTheme.resetScrub}
     >
-      <a
-        className="lab-clock-weather"
-        href={dayTheme.weatherHref}
-        target="_blank"
-        rel="noopener noreferrer"
+      <HoverCard
+        className="wx-hc"
+        align="start"
+        side="bottom"
+        onOpen={() => setWantForecast(true)}
+        trigger={
+          <a
+            className="lab-clock-weather"
+            href={dayTheme.weatherHref}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {weather}
+          </a>
+        }
       >
-        {weather}
-      </a>
+        <WeatherPanel forecast={forecast} />
+      </HoverCard>
       <div className="lab-clock-row">
         <span className="lab-clock-place">{location.label}</span>
         <span className="lab-clock-time" suppressHydrationWarning>
@@ -69,7 +98,9 @@ export function LabClock({
         </span>
       </div>
       {status ? <div className="lab-clock-status">{status}</div> : null}
-      <div className="lab-clock-hint">scroll to change time</div>
+      <div className="lab-clock-hint">
+        {arriving ? "where you are" : "scroll to change time"}
+      </div>
     </div>
   );
 }

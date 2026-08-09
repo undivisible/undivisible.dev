@@ -1,27 +1,36 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { GHOST_SUFFIXES, TERRY_URL } from "@/data/lab-facts";
+import { GHOST_SOURCE, GHOST_SUFFIXES } from "@/data/lab-facts";
+import { HoverCard } from "@/components/lab/HoverCard";
+import { TerryCard } from "@/components/lab/TerryCard";
 
 const CYCLE_MS = 3400;
 const SWAP_MS = 240;
 
 /**
- * "the ghost of terry davis, but ___" — the blank cycles on its own and
- * clicking it advances by hand. Terry's name is a plain link; no hover card.
+ * "the ghost of terry davis, but ___".
+ *
+ * Three things open here. "the ghost of" says where the construction came
+ * from, terry's name says who he was, and the blank says the other half of
+ * its own joke — which is why the cycle stops while you're holding it.
  */
 export function GhostTagline({
   className = "",
   suffixClassName = "",
   /** Renders the suffix on its own line, for the display-scale settings. */
   block = false,
+  /** Lets the page read the blank that is currently showing. */
+  onSuffixChange,
 }: {
   className?: string;
   suffixClassName?: string;
   block?: boolean;
+  onSuffixChange?: (suffix: string) => void;
 }) {
   const [index, setIndex] = useState(0);
   const [swapping, setSwapping] = useState(false);
+  const [held, setHeld] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const advance = useCallback((step = 1) => {
@@ -34,6 +43,7 @@ export function GhostTagline({
   }, []);
 
   useEffect(() => {
+    if (held) return undefined;
     if (
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -42,7 +52,7 @@ export function GhostTagline({
     }
     const id = setInterval(() => advance(1), CYCLE_MS);
     return () => clearInterval(id);
-  }, [advance]);
+  }, [advance, held]);
 
   useEffect(
     () => () => {
@@ -51,30 +61,44 @@ export function GhostTagline({
     [],
   );
 
+  const current = GHOST_SUFFIXES[index] ?? GHOST_SUFFIXES[0]!;
+
+  useEffect(() => {
+    onSuffixChange?.(current.word);
+  }, [current.word, onSuffixChange]);
+
   return (
     <span className={className}>
-      the ghost of{" "}
-      <a
-        className="lab-terry"
-        href={TERRY_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={(event) => event.stopPropagation()}
+      <HoverCard
+        className="ghost-src"
+        align="start"
+        trigger={<span className="ghost-src-word">the ghost of</span>}
       >
-        terry davis
-      </a>
-      ,{block ? <br /> : " "}but{" "}
-      <button
-        type="button"
-        className={`lab-suffix ${swapping ? "is-swapping" : ""} ${suffixClassName}`}
-        onClick={(event) => {
-          event.stopPropagation();
-          advance(1);
-        }}
-        aria-label={`but ${GHOST_SUFFIXES[index]}. Click for the next one.`}
+        <span className="hc-title">{GHOST_SOURCE.title}</span>
+        <span className="hc-body">{GHOST_SOURCE.body}</span>
+        <span className="hc-note">{GHOST_SOURCE.note}</span>
+      </HoverCard>{" "}
+      <TerryCard>terry davis</TerryCard>,{block ? <br /> : " "}but{" "}
+      <HoverCard
+        className="ghost-blank"
+        onOpen={() => setHeld(true)}
+        onClose={() => setHeld(false)}
+        trigger={
+          <button
+            type="button"
+            className={`lab-suffix ${swapping ? "is-swapping" : ""} ${suffixClassName}`}
+            onClick={(event) => {
+              event.stopPropagation();
+              advance(1);
+            }}
+            aria-label={`but ${current.word}. Click for the next one.`}
+          >
+            {current.word}
+          </button>
+        }
       >
-        {GHOST_SUFFIXES[index]}
-      </button>
+        <span className="hc-body">{current.note}</span>
+      </HoverCard>
     </span>
   );
 }
