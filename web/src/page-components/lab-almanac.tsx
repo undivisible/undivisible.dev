@@ -13,9 +13,11 @@ import { GhostTagline } from "@/components/lab/GhostTagline";
 import { LabBackground } from "@/components/lab/LabBackground";
 import { LabClock } from "@/components/lab/LabClock";
 import { LinkPills } from "@/components/lab/LinkPills";
+import { MergedPrList } from "@/components/lab/MergedPrList";
 import { LocalIntelligence } from "@/components/lab/LocalIntelligence";
 import { Milestones } from "@/components/lab/Milestones";
 import { NameCycle } from "@/components/lab/NameCycle";
+import { OmiCard } from "@/components/lab/OmiCard";
 import { Odometer } from "@/components/lab/Odometer";
 import { RandomizedText } from "@/components/lab/RandomizedText";
 import { REVEAL_EASE } from "@/components/info/constants";
@@ -26,7 +28,6 @@ import {
   HEADLINE_WORKS,
   IDENTITY,
   LAB_LINKS,
-  OMI_ROLE,
   STOPS_THIS_YEAR,
   TSCHK,
   WEBRING,
@@ -150,28 +151,6 @@ export default function LabAlmanac() {
   } as CSSProperties;
 
   const minute = hydrated ? hongKongMinute(dayTheme.displayedDate) : 0;
-  const sunLeft = (minute / MINUTES_IN_DAY) * 100;
-  const moonLeft = (((minute + 720) % MINUTES_IN_DAY) / MINUTES_IN_DAY) * 100;
-
-  // ── the day dial ──
-  const dialRef = useRef<HTMLDivElement>(null);
-  const draggingRef = useRef(false);
-  const [dialCursor, setDialCursor] = useState<number | null>(null);
-
-  useEffect(() => {
-    const dial = dialRef.current;
-    if (!dial) return;
-    dial.addEventListener("wheel", dayTheme.onClockWheel, { passive: false });
-    return () => dial.removeEventListener("wheel", dayTheme.onClockWheel);
-  }, [dayTheme.onClockWheel]);
-
-  const minuteAtPointer = useCallback((clientX: number) => {
-    const dial = dialRef.current;
-    if (!dial) return 0;
-    const rect = dial.getBoundingClientRect();
-    const ratio = Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
-    return ratio * (MINUTES_IN_DAY - 1);
-  }, []);
 
   // ── one glass tooltip, fed by data-tip ──
   const [tip, setTip] = useState<string | null>(null);
@@ -308,115 +287,13 @@ export default function LabAlmanac() {
               <RandomizedText delay={0.55}>
                 {`${IDENTITY.role} at ${IDENTITY.org}.`}
               </RandomizedText>{" "}
-              <span className="min-role-what" data-tip={OMI_ROLE.line}>
-                {IDENTITY.product}
-              </span>
+              <OmiCard github={github}>{IDENTITY.product}</OmiCard>
               .
             </p>
 
             <LinkPills github={github} onResume={printResume} />
           </Reveal>
         </section>
-
-        {/* ── the day ── */}
-        <Reveal className="min-dial-wrap">
-          <div className="min-dial-head">
-            <h2 className="min-label">the day, in hong kong</h2>
-            <span className="min-dial-time" suppressHydrationWarning>
-              {hydrated ? clockLabel(minute) : "--:--"}
-              {dayTheme.isScrubbing ? " · scrubbed" : ""}
-            </span>
-          </div>
-          <div
-            ref={dialRef}
-            className="min-dial"
-            role="slider"
-            tabIndex={0}
-            aria-label="Time of day in Hong Kong"
-            aria-valuemin={0}
-            aria-valuemax={MINUTES_IN_DAY - 1}
-            aria-valuenow={Math.floor(minute)}
-            aria-valuetext={`${clockLabel(minute)} in Hong Kong`}
-            onPointerDown={(event) => {
-              draggingRef.current = true;
-              event.currentTarget.setPointerCapture(event.pointerId);
-              dayTheme.scrubToMinute(minuteAtPointer(event.clientX));
-            }}
-            onPointerMove={(event) => {
-              setDialCursor(minuteAtPointer(event.clientX));
-              if (draggingRef.current) {
-                dayTheme.scrubToMinute(minuteAtPointer(event.clientX));
-              }
-            }}
-            onPointerUp={() => {
-              draggingRef.current = false;
-            }}
-            onMouseLeave={() => {
-              draggingRef.current = false;
-              setDialCursor(null);
-              dayTheme.resetScrub();
-            }}
-            onKeyDown={(event) => {
-              const step = event.shiftKey ? 60 : 15;
-              if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
-                event.preventDefault();
-                dayTheme.scrubToMinute(
-                  minute + (event.key === "ArrowRight" ? step : -step),
-                );
-              }
-              if (event.key === "Escape") dayTheme.resetScrub();
-            }}
-          >
-            <div className="min-dial-track" aria-hidden />
-            <div className="min-dial-hours" aria-hidden>
-              {Array.from({ length: 25 }, (_, index) => (
-                <i
-                  key={index}
-                  data-major={index % 6 === 0 ? "true" : undefined}
-                />
-              ))}
-            </div>
-            <div className="min-dial-labels" aria-hidden>
-              <span>00</span>
-              <span>06</span>
-              <span>12</span>
-              <span>18</span>
-              <span>24</span>
-            </div>
-            {dialCursor !== null ? (
-              <span
-                className="min-dial-ghost"
-                aria-hidden
-                style={{ left: `${(dialCursor / MINUTES_IN_DAY) * 100}%` }}
-              >
-                {clockLabel(dialCursor)}
-              </span>
-            ) : null}
-            <span
-              className="min-sun"
-              aria-hidden
-              style={{
-                left: `${sunLeft}%`,
-                opacity: hydrated ? 0.4 + dayFlat * 0.6 : 0,
-              }}
-            />
-            <span
-              className="min-moon"
-              aria-hidden
-              style={{
-                left: `${moonLeft}%`,
-                opacity: hydrated ? 0.15 + (1 - dayFlat) * 0.55 : 0,
-              }}
-            />
-          </div>
-          <p className="min-dial-cap">
-            <RandomizedText inView>
-              drag the sun to move the hour. the sky behind this page, its
-              colours and the shadows under the type all follow it — let go and
-              it settles back to now.
-            </RandomizedText>
-          </p>
-        </Reveal>
 
         {/* ── 2026 ── */}
         <section className="min-row">
@@ -448,24 +325,7 @@ export default function LabAlmanac() {
               </div>
             </Reveal>
             <Reveal delay={0.08}>
-              <ul className="min-merged">
-                {github.recent.slice(0, 4).map((pr) => (
-                  <li key={pr.url}>
-                    <a
-                      href={pr.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      data-tip={`merged into ${pr.repo}`}
-                    >
-                      <time>{pr.mergedAt.slice(5)}</time>
-                      <span>{pr.title}</span>
-                      <i className="min-merged-repo">
-                        {pr.repo.split("/")[1] ?? pr.repo}
-                      </i>
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <MergedPrList items={github.recent.slice(0, 4)} />
               <p className="min-note">
                 {github.omiThisMonth} pull requests on{" "}
                 <a

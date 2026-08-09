@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { GHOST_SOURCE, GHOST_SUFFIXES } from "@/data/lab-facts";
 import { HoverCard } from "@/components/lab/HoverCard";
+import { RandomizedText } from "@/components/lab/RandomizedText";
 import { TerryCard } from "@/components/lab/TerryCard";
 
 const CYCLE_MS = 3400;
@@ -74,9 +75,17 @@ export function GhostTagline({
         align="start"
         trigger={<span className="ghost-src-word">the ghost of</span>}
       >
-        <span className="hc-title">{GHOST_SOURCE.title}</span>
-        <span className="hc-body">{GHOST_SOURCE.body}</span>
-        <span className="hc-note">{GHOST_SOURCE.note}</span>
+        {(open) => (
+          <span key={open}>
+            <span className="hc-title">{GHOST_SOURCE.title}</span>
+            <span className="hc-body">
+              <RandomizedText delay={0.05}>{GHOST_SOURCE.body}</RandomizedText>
+            </span>
+            <span className="hc-note">
+              <RandomizedText delay={0.2}>{GHOST_SOURCE.note}</RandomizedText>
+            </span>
+          </span>
+        )}
       </HoverCard>{" "}
       <TerryCard>terry davis</TerryCard>,{block ? <br /> : " "}but{" "}
       <HoverCard
@@ -97,7 +106,11 @@ export function GhostTagline({
           </button>
         }
       >
-        <span className="hc-body">{current.note}</span>
+        {(open) => (
+          <span className="hc-body" key={`${open}-${current.word}`}>
+            <RandomizedText delay={0.03}>{current.note}</RandomizedText>
+          </span>
+        )}
       </HoverCard>
     </span>
   );

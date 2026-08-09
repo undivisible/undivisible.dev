@@ -1,6 +1,7 @@
 "use client";
 
 import { HoverCard } from "@/components/lab/HoverCard";
+import { RandomizedText } from "@/components/lab/RandomizedText";
 import { LAB_LINKS } from "@/data/lab-facts";
 import type { LiveGithub } from "@/hooks/use-live-github";
 
@@ -91,16 +92,22 @@ export function LinkPills({
               )
             }
           >
-            <span className="hc-title">{detail.title}</span>
-            <span className="hc-body">{detail.body}</span>
-            <span className="hc-stats">
-              {detail.stats.map(([label, value]) => (
-                <span key={label}>
-                  <b>{value}</b>
-                  <i>{label}</i>
+            {(open) => (
+              <span key={open}>
+                <span className="hc-title">{detail.title}</span>
+                <span className="hc-body">
+                  <RandomizedText delay={0.05}>{detail.body}</RandomizedText>
                 </span>
-              ))}
-            </span>
+                <span className="hc-stats">
+                  {detail.stats.map(([label, value]) => (
+                    <span key={label}>
+                      <b>{value}</b>
+                      <i>{label}</i>
+                    </span>
+                  ))}
+                </span>
+              </span>
+            )}
           </HoverCard>
         );
       })}

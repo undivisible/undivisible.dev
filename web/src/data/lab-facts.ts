@@ -95,11 +95,17 @@ export const TERRY = {
 } as const;
 
 /**
- * What I actually do at Based Hardware: the platform under omi and the
- * product on top of it — not the firmware.
+ * omi, written out properly — the same treatment Terry gets, because "omi"
+ * on its own tells a reader nothing. What it is, then what of it is mine.
  */
-export const OMI_ROLE = {
-  line: "the platform under omi and the product on top of it — backend, llm gateway, knowledge graph, device sdks, and the desktop apps.",
+export const OMI = {
+  name: "omi",
+  meta: "based hardware · open source",
+  body: "A wearable that listens to your day and a system that remembers it — conversations transcribed, turned into memories and action items, and answerable later. Open source, with apps on iOS, Android, macOS and Windows.",
+  /** What of it is mine. */
+  mine: "i'm a founding engineer on it: the platform underneath — backend, llm gateway, knowledge graph, device sdks — and the product on top, including the desktop apps. not the firmware.",
+  link: "https://github.com/BasedHardware/omi",
+  linkLabel: "github.com/BasedHardware/omi",
 } as const;
 
 /** The projects worth leading with, ahead of the full index. */

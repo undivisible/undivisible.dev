@@ -4,12 +4,16 @@ import { useCallback, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 /**
- * The hover shell every card on this page uses: a hairline border and a solid
- * surface over backdrop blur, in the weights the rest of the site already
- * uses.
+ * The hover shell every card on this page uses.
+ *
+ * Three layers: a heavily blurred, saturated wash of whatever is behind the
+ * card, the surface over it, and the content. The wash is a separate element
+ * rather than a background on the card so it can be blurred and tinted
+ * without touching the text sitting on top of it.
  *
  * The card stays mounted and only its visibility moves, so it reads before
- * hydration and to anything that doesn't have a pointer.
+ * hydration and to anything that doesn't have a pointer. `openCount` bumps
+ * on every open so the contents can re-run their reveal each time.
  */
 export function HoverCard({
   trigger,
@@ -21,7 +25,8 @@ export function HoverCard({
   onClose,
 }: {
   trigger: ReactNode;
-  children: ReactNode;
+  /** Given the open count, so a card can re-randomise on each open. */
+  children: ReactNode | ((openCount: number) => ReactNode);
   align?: "start" | "center";
   side?: "top" | "bottom";
   className?: string;
@@ -29,11 +34,15 @@ export function HoverCard({
   onClose?: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [openCount, setOpenCount] = useState(0);
   const close = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const show = useCallback(() => {
     if (close.current) clearTimeout(close.current);
-    setOpen(true);
+    setOpen((wasOpen) => {
+      if (!wasOpen) setOpenCount((count) => count + 1);
+      return true;
+    });
     onOpen?.();
   }, [onOpen]);
 
@@ -58,7 +67,10 @@ export function HoverCard({
     >
       {trigger}
       <span className="hc-card" role="tooltip" aria-hidden={!open}>
-        {children}
+        <span className="hc-blur" aria-hidden />
+        <span className="hc-body-wrap">
+          {typeof children === "function" ? children(openCount) : children}
+        </span>
       </span>
     </span>
   );

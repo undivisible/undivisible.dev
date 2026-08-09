@@ -1,10 +1,12 @@
 "use client";
 
+import { RandomizedText } from "@/components/lab/RandomizedText";
 import {
   conditionFromCode,
   glyphFromCode,
   type Forecast,
 } from "@/hooks/use-weather-forecast";
+import { isFramed } from "@/lib/sandboxed-frame";
 
 /**
  * The full day, under the one weather line. A temperature curve across the
@@ -21,12 +23,15 @@ export function WeatherPanel({
   failed?: boolean;
 }) {
   if (!forecast || forecast.hours.length < 2) {
+    const done = failed || settled;
     return (
       <div className="wx-panel">
         <p className="wx-loading">
-          {failed || settled
-            ? "open-meteo didn't answer. the temperature above is still real."
-            : "reading the sky…"}
+          {!done
+            ? "reading the sky…"
+            : isFramed()
+              ? "this preview frame blocks outside requests, so the forecast can't load here. it works on the site."
+              : "open-meteo didn't answer. the temperature above is still real."}
         </p>
       </div>
     );
@@ -53,7 +58,11 @@ export function WeatherPanel({
       <div className="wx-head">
         <span className="wx-now">{Math.round(forecast.temperatureC)}°</span>
         <span className="wx-head-copy">
-          <b>{conditionFromCode(forecast.code)}</b>
+          <b>
+            <RandomizedText delay={0.04}>
+              {conditionFromCode(forecast.code)}
+            </RandomizedText>
+          </b>
           <i>feels {Math.round(forecast.feelsLikeC)}°</i>
         </span>
         <span className="wx-range">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { DayLine } from "@/components/lab/DayLine";
 import { HoverCard } from "@/components/lab/HoverCard";
 import { WeatherPanel } from "@/components/lab/WeatherPanel";
 import { useHydrated } from "@/hooks/use-hydrated";
@@ -98,10 +99,10 @@ export function LabClock({
           {formatUtcOffset(location.utcOffsetMinutes)}
         </span>
       </div>
+      {/* The whole day, as one line, right under the time it belongs to. */}
+      <DayLine dayTheme={dayTheme} />
       {status ? <div className="lab-clock-status">{status}</div> : null}
-      <div className="lab-clock-hint">
-        {arriving ? "where you are" : "scroll to change time"}
-      </div>
+      {arriving ? <div className="lab-clock-hint">where you are</div> : null}
     </div>
   );
 }
