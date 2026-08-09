@@ -132,5 +132,8 @@
     "@rollup/rollup-darwin-arm64": "4.59.0",
     "@tailwindcss/oxide-darwin-arm64": "4.2.1",
     "lightningcss-darwin-arm64": "1.31.1"
+  },
+  "dependencies": {
+    "ghostty-web": "0.4.0"
   }
 }

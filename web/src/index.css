@@ -2329,3 +2329,46 @@ a[data-tip] {
   .tk-main { grid-template-columns: 1fr; }
   .tk-right { display: none; }
 }
+
+/* ── the real machine ── */
+.vm {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #000;
+}
+.vm-status {
+  padding: 8px 14px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.vm-status.is-failed { color: rgba(255, 170, 150, 0.85); }
+.vm-host {
+  flex: 1;
+  min-height: 0;
+  padding: 6px 8px 0;
+  overflow: hidden;
+}
+.vm-host > div { height: 100%; }
+.vm-foot {
+  padding: 6px 14px 8px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+.vm-foot a { color: rgba(255, 255, 255, 0.5); }
+.vm-foot a:hover { color: #fff; }
+.vm-foot b { font-weight: 400; color: rgba(255, 255, 255, 0.55); }
+
+.os-boot-head { color: rgba(255, 255, 255, 0.9); margin-bottom: 10px; }
+.os-boot-serial {
+  margin-top: 12px;
+  color: rgba(255, 220, 150, 0.75);
+  max-height: 50vh;
+  overflow: hidden;
+}

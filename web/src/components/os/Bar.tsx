@@ -132,9 +132,8 @@ export function Bar({
       out.push({
         key: "shell",
         title: line ? `run ${line}` : "run …",
-        subtitle: "alpenglow sh",
+        subtitle: "alpenglow (the real one)",
         run: () => {
-          os.open("terminal");
           if (line) onTerminalCommand(line);
         },
       });

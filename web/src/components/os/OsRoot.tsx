@@ -15,10 +15,12 @@ import {
 } from "@/components/os/Panels";
 import { TelekinesisApp } from "@/components/os/TelekinesisApp";
 import { TerminalApp } from "@/components/os/TerminalApp";
+import { VmApp } from "@/components/os/VmApp";
 import { WindowFrame } from "@/components/os/WindowFrame";
 import { useLiveGithub } from "@/hooks/use-live-github";
 import { PREOPENED } from "@/lib/os/apps";
 import { useOsState, type OsWindow } from "@/lib/os/use-os-state";
+import { vm } from "@/lib/os/vm";
 import { fetchResumeMarkdownCached } from "@/lib/remote-markdown";
 import { clearSitePrintTarget, printSitePdf } from "@/lib/site-print";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
@@ -115,9 +117,19 @@ export default function OsRoot() {
     await printSitePdf("resume");
   }, []);
 
-  const queueTerminal = useCallback((line: string) => {
-    terminalQueue.current.push(line);
-  }, []);
+  const queueTerminal = useCallback(
+    (line: string) => {
+      // The launcher's shell goes to the real machine when it's up; the web
+      // bit only catches commands while the VM is still cold.
+      if (vm.ready) {
+        os.open("vm");
+        vm.send(`${line}\r`);
+        return;
+      }
+      terminalQueue.current.push(line);
+    },
+    [os],
+  );
 
   const visible = os.windows.filter((win) => !win.minimized);
 
@@ -153,6 +165,8 @@ export default function OsRoot() {
         return <RoutePanel />;
       case "before17":
         return <Before17Panel />;
+      case "vm":
+        return <VmApp />;
       case "terminal":
         return (
           <TerminalApp

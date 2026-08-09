@@ -67,12 +67,21 @@ export const OS_APPS: OsApp[] = [
     rect: { x: 8, y: 46, w: 40, h: 44 },
   },
   {
-    id: "terminal",
-    title: "terminal",
-    subtitle: "alpenglow sh",
+    id: "vm",
+    title: "alpenglow",
+    subtitle: "real kernel, emulated cpu",
     kind: "panel",
-    keywords: ["shell", "sh", "console", "bash"],
-    rect: { x: 30, y: 30, w: 44, h: 52 },
+    github: "https://github.com/tschk/alpenglow",
+    keywords: ["vm", "v86", "linux", "kernel", "shell", "console", "terminal", "bash"],
+    rect: { x: 28, y: 14, w: 52, h: 66 },
+  },
+  {
+    id: "terminal",
+    title: "sh (web)",
+    subtitle: "the bit, not the machine",
+    kind: "panel",
+    keywords: ["shell", "easter", "fake"],
+    rect: { x: 34, y: 34, w: 44, h: 52 },
   },
   {
     id: "telekinesis",
@@ -201,4 +210,4 @@ export function findApp(id: string): OsApp | undefined {
 }
 
 /** What the desktop opens by itself after boot — the site's own content. */
-export const PREOPENED: string[] = ["about", "activity", "works"];
+export const PREOPENED: string[] = ["about", "vm", "activity"];

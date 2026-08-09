@@ -1,68 +1,79 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { vm } from "@/lib/os/vm";
 
 /**
- * The boot. The real alpenglow gets to a shell in under a second, so a long
- * cinematic loader would be lying about the brand — this one plays a fast
- * kernel log, says how long it took, and any key, tap or the button skips
- * straight past it. It only plays on the first visit per session.
+ * The boot screen is not an animation. It powers on the real VM the moment
+ * it mounts, shows the real download progress and the first real serial
+ * bytes out of the kernel, and gets out of the way when a shell prompt
+ * appears — or the moment you press anything, because the desktop doesn't
+ * need the machine to be up before it's usable. The VM keeps booting
+ * behind it either way.
  */
-const LOG: Array<[number, string]> = [
-  [0, "alpenglow-web 0.1.0 booting…"],
-  [90, "[ ok ] mounted /dev/sky (shader, read-only)"],
-  [180, "[ ok ] started weather.service (open-meteo)"],
-  [280, "[ ok ] started lastfm.service (the field listens)"],
-  [370, "[ ok ] mounted /home/max (10 countries, no lease)"],
-  [460, "[ ok ] loaded 91 packages from github"],
-  [560, "[warn] holyc.ko tainted: blessed"],
-  [640, "[ ok ] reached target graphical — starting alpenglowed"],
-];
-
 export function Boot({ onDone }: { onDone: () => void }) {
-  const [lines, setLines] = useState<string[]>([]);
-  const [ms, setMs] = useState(0);
-  const started = useRef(Date.now());
+  const [message, setMessage] = useState("powering on");
+  const [percent, setPercent] = useState<number | null>(null);
+  const [serial, setSerial] = useState("");
   const finished = useRef(false);
 
   useEffect(() => {
-    const timers = LOG.map(([at, text]) =>
-      setTimeout(() => setLines((current) => [...current, text]), at),
-    );
-    const tick = setInterval(() => setMs(Date.now() - started.current), 50);
-    const done = setTimeout(() => {
-      if (!finished.current) {
-        finished.current = true;
-        onDone();
-      }
-    }, 1050);
+    void vm.start();
 
-    const skip = () => {
+    const finish = () => {
       if (!finished.current) {
         finished.current = true;
         onDone();
       }
     };
+
+    const detachProgress = vm.attachProgress((progress) => {
+      setMessage(progress.message);
+      setPercent(progress.percent);
+    });
+    const detachSerial = vm.attachSerial((chunk) => {
+      setSerial((current) => (current + chunk).slice(-4000));
+      // A prompt means a shell; the machine is someone's now.
+      if (chunk.includes("#")) setTimeout(finish, 450);
+    });
+
+    // Never hold the desk hostage: whatever the network is doing, the
+    // desktop appears after a few seconds and the boot continues behind it.
+    const deadline = setTimeout(finish, 6000);
+    const skip = () => finish();
     window.addEventListener("keydown", skip);
     window.addEventListener("pointerdown", skip);
     return () => {
-      timers.forEach(clearTimeout);
-      clearTimeout(done);
-      clearInterval(tick);
+      clearTimeout(deadline);
+      detachProgress();
+      detachSerial();
       window.removeEventListener("keydown", skip);
       window.removeEventListener("pointerdown", skip);
     };
   }, [onDone]);
 
+  const shownSerial = serial
+    .replace(/\x1b\[[0-9;?]*[a-zA-Z]/g, "")
+    .split("\n")
+    .slice(-14)
+    .join("\n");
+
   return (
-    <div className="os-boot" role="status" aria-label="booting">
+    <div className="os-boot" role="status" aria-label="booting alpenglow">
       <div className="os-boot-log">
-        {lines.map((line, index) => (
-          <pre key={index}>{line}</pre>
-        ))}
+        <pre className="os-boot-head">alpenglow — real kernel, emulated cpu</pre>
+        {percent !== null ? (
+          <pre>
+            [{"#".repeat(Math.round((percent / 100) * 24)).padEnd(24, "·")}]{" "}
+            {message}
+          </pre>
+        ) : (
+          <pre>{message}</pre>
+        )}
+        {shownSerial ? <pre className="os-boot-serial">{shownSerial}</pre> : null}
       </div>
       <div className="os-boot-foot">
-        <span>{(ms / 1000).toFixed(2)}s · the real one is faster</span>
+        <span>linux 7.1.3 i686 via v86 · any key skips, the machine keeps booting</span>
         <button type="button" onClick={onDone}>
           skip
         </button>
