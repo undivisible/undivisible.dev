@@ -39,11 +39,12 @@ while [ ! -e /dev/fb0 ] && [ "$tries" -lt 40 ]; do
   tries=$((tries + 1))
 done
 
-if [ -e /dev/fb0 ] && [ -x /usr/bin/alpenglowed-fb ] && [ -c /dev/tty1 ]; then
-  # The graphical desktop: wallpaper, widgets, mouse — one real program.
+if [ -e /dev/fb0 ] && [ -x /usr/bin/alpenglowd ] && [ -c /dev/tty1 ]; then
+  # The compositor and the bar. The clock, the machine monitor and the name
+  # card are separate programs it starts as clients — see wire.h.
   # Exit 42 means "give me the console": run bash on tty1, then come back.
   while :; do
-    /bin/setsid -c /usr/bin/alpenglowed-fb </dev/tty1 >/dev/tty1 2>&1
+    /bin/setsid -c /usr/bin/alpenglowd </dev/tty1 >/dev/tty1 2>&1
     code=$?
     if [ "$code" = 42 ]; then
       /bin/echo "alpenglow console — exit returns to the desktop" >/dev/tty1
