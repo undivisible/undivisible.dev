@@ -1866,6 +1866,25 @@ a[data-tip] {
   .machine-text { font-size: 21px; line-height: 21px; }
 }
 
+/* Hidden tabs clamp v86's timers; the machine stops until you come back. */
+.machine-resumed {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  margin: 0;
+  padding: 7px 14px;
+  max-width: min(520px, 84%);
+  border-radius: 999px;
+  background: rgba(12, 18, 30, 0.82);
+  color: rgba(235, 242, 255, 0.9);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  pointer-events: none;
+}
+
 /* A tab request from inside the machine, surfaced for a real click. */
 .machine-ask {
   position: fixed;

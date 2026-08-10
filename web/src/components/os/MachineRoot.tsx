@@ -28,6 +28,7 @@ export default function MachineRoot() {
   const [mobileLine, setMobileLine] = useState("");
   const [coarse, setCoarse] = useState(false);
   const [askedUrl, setAskedUrl] = useState<string | null>(null);
+  const [resumed, setResumed] = useState(false);
 
   useEffect(() => {
     setCoarse(window.matchMedia("(pointer: coarse)").matches);
@@ -54,7 +55,27 @@ export default function MachineRoot() {
       // content, drawn by the kernel itself.
       if (next.ready) setCovered(false);
     });
-    return detach;
+    // A hidden tab has its timers clamped, so the machine stops dead —
+    // usually mid-boot, which reads as a hang. Say so when it comes back.
+    let hiddenAt = 0;
+    let clear: ReturnType<typeof setTimeout> | undefined;
+    const onVisibility = () => {
+      if (document.hidden) {
+        hiddenAt = Date.now();
+        return;
+      }
+      if (!hiddenAt || Date.now() - hiddenAt < 2000) return;
+      hiddenAt = 0;
+      setResumed(true);
+      clearTimeout(clear);
+      clear = setTimeout(() => setResumed(false), 5000);
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      clearTimeout(clear);
+      detach();
+    };
   }, []);
 
   return (
@@ -73,6 +94,13 @@ export default function MachineRoot() {
           <div className="machine-text" style={{ whiteSpace: "pre" }} />
           <canvas style={{ display: "none" }} />
         </div>
+
+        {resumed ? (
+          <p className="machine-resumed">
+            the machine was paused while this tab was in the background —
+            it picks up where it stopped
+          </p>
+        ) : null}
 
         {covered ? (
           <div className="machine-cover">
