@@ -1910,12 +1910,17 @@ a[data-tip] {
 }
 .machine-ask button:hover { color: #fff; }
 
-/* Graphical mode: the machine's 1024x768 canvas, pixel-crisp. */
+/* Graphical mode: the machine's 1024x768 canvas. Smooth-scaled rather than
+   nearest-neighbour, so upscaling to a big display reads as soft type
+   instead of blocky pixels. */
 .machine-screen canvas {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  image-rendering: pixelated;
+  image-rendering: auto;
+  cursor: none;
+}
+.machine-screen {
   cursor: none;
 }

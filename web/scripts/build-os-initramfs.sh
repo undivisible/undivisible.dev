@@ -21,6 +21,17 @@ if [ -d "$DIR/out" ]; then
     [ -e "$DIR/out/$f" ] && cp "$DIR/out/$f" "$SITE/" || true
   done
   [ -d "$DIR/out/refs" ] && cp -a "$DIR/out/refs" "$SITE/" || true
+  # The stylesheet and its images too, so netsurf's CSS engine has the real
+  # site's CSS to lay out — index.html links /assets/site-*.css. The JS
+  # bundle is prerendered content; netsurf's duktape can't run the SPA, so
+  # the styled static markup is what a visitor actually sees.
+  if [ -d "$DIR/out/assets" ]; then
+    mkdir -p "$SITE/assets"
+    for a in "$DIR/out/assets/"*.css; do [ -e "$a" ] && cp "$a" "$SITE/assets/"; done
+  fi
+  for f in favicon.svg banner.png opengraph.jpg; do
+    [ -e "$DIR/out/$f" ] && cp "$DIR/out/$f" "$SITE/" || true
+  done
   cat > "$SITE/start.html" <<'HTML'
 <!doctype html>
 <meta charset="utf-8">
