@@ -1733,69 +1733,22 @@ a[data-tip] {
   display: flex;
   flex-direction: column;
 }
-.machine-top {
-  position: relative;
-  z-index: 12;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 22px clamp(18px, 4vw, 44px) 0;
-}
-.machine-top-name {
-  text-align: right;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-.machine-name {
-  margin: 0;
-  font-size: clamp(20px, 2.6vw, 30px);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.machine-tagline {
-  margin: 0;
-  font-size: 13px;
-  opacity: 0.75;
-}
 .machine-frame {
   position: relative;
   z-index: 10;
   flex: 1;
   min-height: 0;
   display: grid;
-  place-items: center;
-  padding: clamp(8px, 2vh, 22px) clamp(12px, 3vw, 36px);
-}
-.machine-shell {
-  position: relative;
-  max-width: 100%;
-  max-height: 100%;
+  place-items: stretch;
+  padding: 0;
 }
 .machine-screen {
   position: relative;
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background: #000;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 10px;
-  box-shadow:
-    0 40px 120px -40px rgba(0, 0, 0, 0.9),
-    0 0 80px -30px rgba(120, 160, 220, 0.25);
   scrollbar-width: none;
-}
-@media (max-width: 760px) {
-  .machine-top {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .machine-top-name {
-    align-items: flex-start;
-    text-align: left;
-  }
 }
 .machine-screen::-webkit-scrollbar { display: none; }
 .machine-screen > div {
@@ -1960,8 +1913,9 @@ a[data-tip] {
 /* Graphical mode: the machine's 1024x768 canvas, pixel-crisp. */
 .machine-screen canvas {
   display: block;
-  max-width: 100%;
-  max-height: calc(100dvh - 220px);
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   image-rendering: pixelated;
   cursor: none;
 }
