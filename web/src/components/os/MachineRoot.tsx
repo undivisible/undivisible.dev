@@ -1,20 +1,28 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { GhostTagline } from "@/components/lab/GhostTagline";
+import { LabBackground } from "@/components/lab/LabBackground";
+import { LabClock } from "@/components/lab/LabClock";
+import { LinkPills } from "@/components/lab/LinkPills";
+import { NameCycle } from "@/components/lab/NameCycle";
+import { useLiveGithub } from "@/hooks/use-live-github";
+import { useNowMarkdown } from "@/hooks/use-remote-content";
 import { vm, type VmProgress } from "@/lib/os/vm";
+import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
 
 /**
- * The page is the machine.
+ * The machine, back in the almanac's room.
  *
- * No DOM windows, no web desktop — a real i686 PC (v86) boots the real
- * alpenglow image and its screen is the site, edge to edge. Even the sky
- * is a program in there now — alpenwall holds a background surface the
- * compositor blits under everything else.
- *
- * The boot log you see is the kernel's own. The cover only reports asset
- * download; it can be skipped and never blocks the screen behind it.
+ * The PC is still real — v86 booting the real alpenglow image — but the
+ * page around it is the original site again: the sky shader, the weather
+ * clock, the name, the pills. The web widgets are the room; the machine's
+ * screen is the machine's.
  */
 export default function MachineRoot() {
+  const dayTheme = useHongKongDayTheme();
+  const now = useNowMarkdown();
+  const github = useLiveGithub();
   const screenRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState<VmProgress>({
     message: "cold",
@@ -77,44 +85,66 @@ export default function MachineRoot() {
 
   return (
     <div className="lab-root machine-root">
-      <div className="machine-frame">
-        {/* v86 renders here: the text layer for VGA text mode, the canvas
-            for graphical modes. Structure is what libv86 expects. */}
-        <div
-          className="machine-screen"
-          ref={screenRef}
-          onClick={() => vm.lockMouse()}
-          title="click to give the machine your mouse — esc gives it back"
-        >
-          <div className="machine-text" style={{ whiteSpace: "pre" }} />
-          <canvas style={{ display: "none" }} />
-        </div>
+      <LabBackground dayTheme={dayTheme} />
 
-        {resumed ? (
-          <p className="machine-resumed">
-            the machine was paused while this tab was in the background —
-            it picks up where it stopped
+      <header className="machine-top">
+        <LabClock
+          dayTheme={dayTheme}
+          location={now.location}
+          timeOffsetMinutes={now.location.utcOffsetMinutes}
+          status={now.status}
+        />
+        <div className="machine-top-name">
+          <h1 className="machine-name">
+            <NameCycle />
+          </h1>
+          <p className="machine-tagline">
+            <GhostTagline suffixClassName="min-suffix" />
           </p>
-        ) : null}
+          <LinkPills github={github} onResume={() => window.open("/resume.md", "_blank")} />
+        </div>
+      </header>
 
-        {covered ? (
-          <div className="machine-cover">
-            <p className="machine-cover-title">alpenglow</p>
-            <p className="machine-cover-line">
-              {progress.percent !== null
-                ? `[${"#".repeat(Math.round(((progress.percent ?? 0) / 100) * 26)).padEnd(26, "·")}]`
-                : null}{" "}
-              {progress.message}
-            </p>
-            <p className="machine-cover-fine">
-              a real i686 pc, emulated on your cpu. the kernel you're about to
-              watch boot is linux 7.1.3, built from tschk/alpenglow.
-            </p>
-            <button type="button" onClick={() => setCovered(false)}>
-              skip
-            </button>
+      <div className="machine-frame">
+        <div className="machine-shell">
+          {/* v86 renders here: the text layer for VGA text mode, the canvas
+              for graphical modes. Structure is what libv86 expects. */}
+          <div
+            className="machine-screen"
+            ref={screenRef}
+            onClick={() => vm.lockMouse()}
+            title="click to give the machine your mouse — esc gives it back"
+          >
+            <div className="machine-text" style={{ whiteSpace: "pre" }} />
+            <canvas style={{ display: "none" }} />
           </div>
-        ) : null}
+
+          {resumed ? (
+            <p className="machine-resumed">
+              the machine was paused while this tab was in the background —
+              it picks up where it stopped
+            </p>
+          ) : null}
+
+          {covered ? (
+            <div className="machine-cover">
+              <p className="machine-cover-title">alpenglow</p>
+              <p className="machine-cover-line">
+                {progress.percent !== null
+                  ? `[${"#".repeat(Math.round(((progress.percent ?? 0) / 100) * 26)).padEnd(26, "·")}]`
+                  : null}{" "}
+                {progress.message}
+              </p>
+              <p className="machine-cover-fine">
+                a real i686 pc, emulated on your cpu. the kernel you're about
+                to watch boot is linux 7.1.3, built from tschk/alpenglow.
+              </p>
+              <button type="button" onClick={() => setCovered(false)}>
+                skip
+              </button>
+            </div>
+          ) : null}
+        </div>
       </div>
 
       {coarse ? (
