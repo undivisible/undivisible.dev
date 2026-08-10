@@ -127,7 +127,8 @@ static const char *builtin_desc(const char *n) {
   if (!strcmp(n, "activity")) return "github, baked into the image";
   if (!strcmp(n, "sites")) return "the software; click to open a tab";
   if (!strcmp(n, "docs")) return "alpenglow's own documentation";
-  if (!strcmp(n, "web")) return "a real browser, the site offline";
+  if (!strcmp(n, "web")) return "netsurf, the site with real css";
+  if (!strcmp(n, "links")) return "links, the small fallback browser";
   if (!strcmp(n, "fetch")) return "fastfetch, the real one";
   if (!strcmp(n, "sh")) return "the real console (exit returns)";
   return "";
@@ -146,7 +147,7 @@ static void add_app(const char *name, const char *desc, int builtin) {
 static void scan_apps(void) {
   static const char *names[] = {"about", "works", "route",  "before17",
                                 "activity", "sites", "docs",   "web",
-                                "fetch",    "sh"};
+                                "links",    "fetch", "sh"};
   for (unsigned i = 0; i < sizeof names / sizeof *names; i++)
     add_app(names[i], builtin_desc(names[i]), 1);
 
@@ -376,6 +377,9 @@ static void launch(int app_index) {
   /* links draws to /dev/fb0 itself, so it needs the screen to itself —
      same handover the console apps get. */
   if (!strcmp(a->name, "web"))
+    hand_over("netsurf-fb -f linux -w 1024 -h 768 "
+              "file:///usr/share/alpenglowed/web/start.html");
+  if (!strcmp(a->name, "links"))
     hand_over("links -g -driver fb "
               "file:///usr/share/alpenglowed/web/start.html");
   if (a->builtin) spawn("/usr/bin/alpenpanel", a->name);
