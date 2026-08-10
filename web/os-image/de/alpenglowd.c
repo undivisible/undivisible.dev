@@ -54,6 +54,7 @@ typedef struct {
   unsigned int *px;
   char title[80];
   int alive;
+  int bg;
 } Surface;
 
 static Surface surf[MAXSURF];
@@ -174,12 +175,21 @@ static int fuzzy(const char *hay, const char *needle) {
   return 0;
 }
 
+/* Rank exact over prefix over subsequence, builtins ahead of PATH, so
+   typing `vro` doesn't put `pivot_root` above it. */
+static int rank(const App *a) {
+  if (!qlen) return a->builtin ? 0 : 4;
+  if (!strcmp(a->name, query)) return 0;
+  if (!strncmp(a->name, query, (size_t)qlen)) return a->builtin ? 1 : 2;
+  if (fuzzy(a->name, query)) return a->builtin ? 3 : 5;
+  return -1;
+}
+
 static void refilter(void) {
   nmatch = 0;
-  for (int i = 0; i < napp && nmatch < 9; i++)
-    if (apps[i].builtin && fuzzy(apps[i].name, query)) matches[nmatch++] = i;
-  for (int i = 0; i < napp && nmatch < 9; i++)
-    if (!apps[i].builtin && fuzzy(apps[i].name, query)) matches[nmatch++] = i;
+  for (int tier = 0; tier <= 5 && nmatch < 9; tier++)
+    for (int i = 0; i < napp && nmatch < 9; i++)
+      if (rank(&apps[i]) == tier) matches[nmatch++] = i;
   if (sel >= nmatch) sel = nmatch ? nmatch - 1 : 0;
 }
 
@@ -256,9 +266,16 @@ static void composite(int x, int y, int w, int h) {
   dx1 = x + w > W ? W : x + w;
   dy1 = y + h > H ? H : y + h;
   if (dx0 >= dx1 || dy0 >= dy1) return;
-  wallpaper();
+  /* The sky is a client too. Only draw it here if that client isn't up —
+     during boot, or if it died. */
+  int have_bg = 0;
   for (int i = 0; i < nsurf; i++)
-    if (surf[i].alive && surf[i].px) blit_surface(&surf[i]);
+    if (surf[i].alive && surf[i].px && surf[i].bg) have_bg = 1;
+  if (!have_bg) wallpaper();
+  for (int i = 0; i < nsurf; i++)
+    if (surf[i].alive && surf[i].px && surf[i].bg) blit_surface(&surf[i]);
+  for (int i = 0; i < nsurf; i++)
+    if (surf[i].alive && surf[i].px && !surf[i].bg) blit_surface(&surf[i]);
   draw_bar();
   draw_cursor();
   for (int j = dy0; j < dy1; j++)
@@ -293,6 +310,7 @@ static int send_msg(int fd, const AwMsg *m) {
 
 static void handle_hello(Surface *s, const AwMsg *m) {
   int w = m->a, h = m->b;
+  if (m->type == AW_HELLO_BG) { w = W; h = H; }
   if (w < 8 || h < 8 || w > MAXW || h > MAXH) { s->alive = 0; return; }
   char path[128];
   snprintf(path, sizeof path, "%s/s%d", AW_DIR, s->id);
@@ -305,9 +323,15 @@ static void handle_hello(Surface *s, const AwMsg *m) {
   s->px = (unsigned int *)px;
   s->w = w;
   s->h = h;
-  s->x = m->c == AW_CENTER ? (W - w) / 2 : (m->c < 0 ? W + m->c - w : m->c);
-  s->y = m->d == AW_CENTER ? (H - h) / 2 : (m->d < 0 ? H + m->d - h : m->d);
-  s->alpha = 215;
+  s->bg = m->type == AW_HELLO_BG;
+  if (s->bg) {
+    s->x = 0;
+    s->y = 0;
+  } else {
+    s->x = m->c == AW_CENTER ? (W - w) / 2 : (m->c < 0 ? W + m->c - w : m->c);
+    s->y = m->d == AW_CENTER ? (H - h) / 2 : (m->d < 0 ? H + m->d - h : m->d);
+  }
+  s->alpha = s->bg ? 255 : 215;
   snprintf(s->title, sizeof s->title, "%s", m->s);
 
   AwMsg r;
@@ -425,6 +449,7 @@ int main(void) {
   composite_all();
 
   /* The widgets are not part of this program; they are its clients. */
+  spawn("/usr/bin/alpenwall", 0);
   spawn("/usr/bin/alpenclock", 0);
   spawn("/usr/bin/alpenmachine", 0);
   spawn("/usr/bin/alpenname", 0);
@@ -470,7 +495,7 @@ int main(void) {
       AwMsg m;
       long n = read(surf[i].fd, &m, sizeof m);
       if (n != (long)sizeof m) { drop_surface(i); continue; }
-      if (m.type == AW_HELLO) {
+      if (m.type == AW_HELLO || m.type == AW_HELLO_BG) {
         handle_hello(&surf[i], &m);
         if (!surf[i].alive) { drop_surface(i); continue; }
         damage_surface(&surf[i]);
@@ -572,7 +597,7 @@ int main(void) {
           } else {
             int hit = -1;
             for (int i = nsurf - 1; i >= 0; i--)
-              if (surf[i].alive && surf[i].px && mx >= surf[i].x &&
+              if (surf[i].alive && surf[i].px && !surf[i].bg && mx >= surf[i].x &&
                   mx < surf[i].x + surf[i].w && my >= surf[i].y &&
                   my < surf[i].y + surf[i].h) { hit = i; break; }
             if (hit < 0) {

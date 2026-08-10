@@ -42,8 +42,8 @@ static int aw_recv(int fd, AwMsg *m) {
   return 0;
 }
 
-static int aw_open(AwClient *c, const char *title, int w, int h, int x, int y,
-                   int flags) {
+static int aw_open_as(AwClient *c, unsigned int hello, const char *title, int w,
+                      int h, int x, int y, int flags) {
   struct sockaddr_un addr;
   c->fd = socket(AF_UNIX, SOCK_STREAM, 0);
   if (c->fd < 0) return -1;
@@ -54,7 +54,7 @@ static int aw_open(AwClient *c, const char *title, int w, int h, int x, int y,
 
   AwMsg m;
   memset(&m, 0, sizeof m);
-  m.type = AW_HELLO;
+  m.type = hello;
   m.a = w;
   m.b = h;
   m.c = x;
@@ -76,6 +76,15 @@ static int aw_open(AwClient *c, const char *title, int w, int h, int x, int y,
   c->buf.h = r.b;
   (void)flags;
   return 0;
+}
+
+static int aw_open(AwClient *c, const char *title, int w, int h, int x, int y,
+                   int flags) {
+  return aw_open_as(c, AW_HELLO, title, w, h, x, y, flags);
+}
+
+static int aw_open_bg(AwClient *c, const char *title) {
+  return aw_open_as(c, AW_HELLO_BG, title, 0, 0, 0, 0, 0);
 }
 
 static void aw_commit(AwClient *c) {

@@ -22,7 +22,11 @@ enum {
   AW_MOVE,
   AW_INPUT,
   AW_CLOSE,
-  AW_RAISE
+  AW_RAISE,
+  /* Same as AW_HELLO, but the surface is the wallpaper: full screen, at
+     the bottom, never focused, never dragged. Ask for 0x0 and the
+     compositor answers with the real screen size. */
+  AW_HELLO_BG
 };
 
 enum { AW_IN_MOTION = 1, AW_IN_PRESS, AW_IN_RELEASE, AW_IN_KEY };

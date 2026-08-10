@@ -1,23 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { LabBackground } from "@/components/lab/LabBackground";
 import { vm, type VmProgress } from "@/lib/os/vm";
-import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
 
 /**
  * The page is the machine.
  *
  * No DOM windows, no web desktop — a real i686 PC (v86) boots the real
- * alpenglow image and its screen is the site. The sky shader stays as the
- * room the machine sits in; everything on the screen — the bar, the sky
- * palette, the launcher, the content — is a process on the real kernel.
+ * alpenglow image and its screen is the site, edge to edge. Even the sky
+ * is a program in there now — alpenwall holds a background surface the
+ * compositor blits under everything else.
  *
  * The boot log you see is the kernel's own. The cover only reports asset
  * download; it can be skipped and never blocks the screen behind it.
  */
 export default function MachineRoot() {
-  const dayTheme = useHongKongDayTheme();
   const screenRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState<VmProgress>({
     message: "cold",
@@ -80,8 +77,6 @@ export default function MachineRoot() {
 
   return (
     <div className="lab-root machine-root">
-      <LabBackground dayTheme={dayTheme} />
-
       <div className="machine-frame">
         {/* v86 renders here: the text layer for VGA text mode, the canvas
             for graphical modes. Structure is what libv86 expects. */}
