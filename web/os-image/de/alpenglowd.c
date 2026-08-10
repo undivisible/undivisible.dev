@@ -195,10 +195,18 @@ static void draw_bar(void) {
   aw_fill(&back, bar_x + bar_w - 1, bar_y, 1, h, 0x1f2432);
 
   aw_text(&back, bar_x + 12, bar_y + 10, ">", 0x7ec8e8, 2);
-  aw_text(&back, bar_x + 34, bar_y + 10, qlen ? query : "type to launch",
-          qlen ? 0xffffff : 0x596074, 2);
-  if ((int)(time(0) & 1))
-    aw_fill(&back, bar_x + 36 + qlen * 16, bar_y + 10, 2, 26, 0xffffff);
+  /* Long queries drop to one-up so a pasted command still fits the bar. */
+  int room = bar_w - 46;
+  int scale = qlen * 16 > room ? 1 : 2;
+  int shown = room / (8 * scale);
+  const char *q = query;
+  if (qlen > shown) q = query + (qlen - shown);
+  aw_text(&back, bar_x + 34, bar_y + (scale == 2 ? 10 : 18),
+          qlen ? q : "type to launch", qlen ? 0xffffff : 0x596074, scale);
+  if ((int)(time(0) & 1)) {
+    int used = (qlen > shown ? shown : qlen) * 8 * scale;
+    aw_fill(&back, bar_x + 36 + used, bar_y + 10, 2, 26, 0xffffff);
+  }
 
   for (int m = 0; m < nmatch; m++) {
     App *a = &apps[matches[m]];
@@ -323,14 +331,17 @@ static void spawn(const char *prog, const char *arg) {
   _exit(127);
 }
 
-static void run_shell(const char *cmd) {
-  pid_t p = fork();
-  if (p != 0) return;
-  setsid();
-  int devnull = open("/dev/null", O_RDWR);
-  if (devnull >= 0) { dup2(devnull, 0); dup2(devnull, 1); dup2(devnull, 2); }
-  execl("/bin/sh", "sh", "-c", cmd, (char *)0);
-  _exit(127);
+/* A console program can't share the screen with a compositor that owns the
+   framebuffer, so it takes the whole tty: exit 43 and init runs it, then
+   starts us again. Same trade the `sh` app has always made. */
+static void hand_over(const char *cmd) {
+  char path[128];
+  snprintf(path, sizeof path, "%s/exec", AW_DIR);
+  FILE *f = fopen(path, "w");
+  if (!f) return;
+  fprintf(f, "%s\n", cmd);
+  fclose(f);
+  exit(43);
 }
 
 static void launch(int app_index) {
@@ -340,7 +351,7 @@ static void launch(int app_index) {
   else {
     char path[288];
     snprintf(path, sizeof path, "%s/%s", a->desc, a->name);
-    spawn(path, 0);
+    hand_over(path);
   }
   qlen = 0;
   query[0] = 0;
@@ -518,7 +529,7 @@ int main(void) {
           composite_all();
         }
       } else if (k == '\r' || k == '\n') {
-        if (qlen > 1 && query[0] == '>') run_shell(query + 1);
+        if (qlen > 1 && query[0] == '>') hand_over(query + 1);
         else if (nmatch) launch(matches[sel]);
       } else if (k == 127 || k == 8) {
         if (qlen) {

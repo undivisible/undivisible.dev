@@ -49,6 +49,14 @@ if [ -e /dev/fb0 ] && [ -x /usr/bin/alpenglowd ] && [ -c /dev/tty1 ]; then
     if [ "$code" = 42 ]; then
       /bin/echo "alpenglow console — exit returns to the desktop" >/dev/tty1
       /bin/setsid -c /bin/bash --login -i </dev/tty1 >/dev/tty1 2>&1
+    elif [ "$code" = 43 ] && [ -s /run/alpenglowed/exec ]; then
+      # A console program from the launcher. It gets the real tty1, raw
+      # keyboard and all, and the desktop comes back when it exits.
+      cmd="$(/bin/cat /run/alpenglowed/exec)"
+      /bin/rm -f /run/alpenglowed/exec
+      /usr/bin/clear >/dev/tty1 2>/dev/null
+      /bin/setsid -c /bin/sh -c "$cmd" </dev/tty1 >/dev/tty1 2>&1
+      /bin/echo "" >/dev/tty1
     else
       /bin/sleep 1
     fi
