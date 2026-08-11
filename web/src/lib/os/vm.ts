@@ -18,6 +18,19 @@
 
 type Progress = { message: string; percent: number | null; ready: boolean };
 
+/** The guest mode to match the element it renders into. Width is a multiple
+ *  of 8 (VBE convention); both axes are clamped to the compositor's MAXW/MAXH
+ *  and stay within the 32 MB of emulated VRAM. */
+function screenResolution(el: HTMLElement): string {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = el.getBoundingClientRect();
+  const cap = (v: number, lo: number, hi: number) =>
+    Math.max(lo, Math.min(hi, v));
+  const w = cap(Math.round((rect.width * dpr) / 8) * 8, 1024, 1920);
+  const h = cap(Math.round(rect.height * dpr), 700, 1200);
+  return `${w}x${h}`;
+}
+
 type V86Emulator = {
   add_listener(name: string, handler: (arg: unknown) => void): void;
   serial0_send(text: string): void;
@@ -62,12 +75,12 @@ class VmManager {
         bzimage: { url: "/v86/alpenglowed-vmlinuz" },
         initrd: { url: "/v86/alpenglowed-initrd.cpio.gz" },
         // video= asks bochs-drm for a real mode (vga= is ignored under v86's
-        // fast bzImage loader); 1440x900 renders enough native pixels that a
-        // modern display isn't upscaling a 1024x768 image into blocks.
-        cmdline:
-          "console=ttyS0 console=tty1 rdinit=/init loglevel=4 video=1440x900",
+        // fast bzImage loader). Match the machine to the window it's shown
+        // in, so it renders native pixels instead of upscaling a fixed
+        // image into blocks — clamped to the compositor's max and the VRAM.
+        cmdline: `console=ttyS0 console=tty1 rdinit=/init loglevel=4 video=${screenResolution(screen)}`,
         // 512 MB so a browser and the desktop have real headroom; 32 MB of
-        // VRAM so the larger framebuffer fits (1440x900x32 is ~5.2 MB).
+        // VRAM so a large framebuffer fits (1920x1200x32 is ~9.2 MB).
         memory_size: 512 * 1024 * 1024,
         vga_memory_size: 32 * 1024 * 1024,
         autostart: true,
