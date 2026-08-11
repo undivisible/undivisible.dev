@@ -27,13 +27,25 @@ static unsigned int aw_mix(unsigned int a, unsigned int b, int t) {
          ((ab + ((int)(bl - ab) * t >> 8)) & 255);
 }
 
+/* Every pixel a widget draws carries 0xff in the top byte; the compositor
+   treats a zero top byte as transparent and skips it, so a widget can leave
+   parts of its surface see-through (a floating card over the wallpaper)
+   without a dark box. aw_clear resets a surface to fully transparent. */
+#define AW_OPAQUE 0xff000000u
+
+static void aw_clear(AwBuf *b) {
+  memset(b->px, 0, (size_t)b->w * b->h * 4);
+}
+
 static void aw_px(AwBuf *b, int x, int y, unsigned int c) {
-  if (x >= 0 && x < b->w && y >= 0 && y < b->h) b->px[y * b->w + x] = c;
+  if (x >= 0 && x < b->w && y >= 0 && y < b->h)
+    b->px[y * b->w + x] = AW_OPAQUE | (c & 0xffffff);
 }
 
 static void aw_fill(AwBuf *b, int x, int y, int w, int h, unsigned int c) {
   int x0 = x < 0 ? 0 : x, y0 = y < 0 ? 0 : y;
   int x1 = x + w > b->w ? b->w : x + w, y1 = y + h > b->h ? b->h : y + h;
+  c = AW_OPAQUE | (c & 0xffffff);
   for (int j = y0; j < y1; j++)
     for (int i = x0; i < x1; i++) b->px[j * b->w + i] = c;
 }
@@ -44,7 +56,8 @@ static void aw_blend(AwBuf *b, int x, int y, int w, int h, unsigned int c,
   int x1 = x + w > b->w ? b->w : x + w, y1 = y + h > b->h ? b->h : y + h;
   for (int j = y0; j < y1; j++)
     for (int i = x0; i < x1; i++)
-      b->px[j * b->w + i] = aw_mix(b->px[j * b->w + i], c, a);
+      b->px[j * b->w + i] =
+          AW_OPAQUE | (aw_mix(b->px[j * b->w + i] & 0xffffff, c, a) & 0xffffff);
 }
 
 /* Alpha-blend a coverage glyph over whatever is already there, so edges are

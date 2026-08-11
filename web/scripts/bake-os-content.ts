@@ -8,12 +8,14 @@ import { join } from "node:path";
 import { GITHUB_ACTIVITY } from "../src/data/github-activity";
 import {
   COUNTRIES,
+  GHOST_SOURCE,
   GHOST_SUFFIXES,
   HEADLINE_WORKS,
   IDENTITY,
   LAB_LINKS,
   MILESTONES,
   STOPS_THIS_YEAR,
+  TERRY,
   TSCHK,
 } from "../src/data/lab-facts";
 
@@ -137,4 +139,18 @@ console.log("baked", OUT);
 await write(
   "taglines.txt",
   GHOST_SUFFIXES.map((suffix) => suffix.word).join("\n"),
+);
+
+// The hover cards: one record per line, `word\ttitle\tbody`, so the name
+// widget can pop the same wikipedia-style note the almanac shows when you
+// hover a tagline. `terry` and `omi` are the two proper-noun cards; the
+// rest are the rotating suffixes.
+const hover = [
+  ["terry", TERRY.name, `${TERRY.years}. ${TERRY.body} ${TERRY.mine}`],
+  ["ghost", GHOST_SOURCE.title, `${GHOST_SOURCE.body} ${GHOST_SOURCE.note}`],
+  ...GHOST_SUFFIXES.map((s) => [s.word, `but ${s.word}`, s.note]),
+];
+await write(
+  "hovers.txt",
+  hover.map(([w, t, b]) => `${w}\t${t}\t${b}`).join("\n"),
 );

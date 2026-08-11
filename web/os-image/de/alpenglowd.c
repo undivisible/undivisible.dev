@@ -58,7 +58,7 @@ typedef struct {
 } Surface;
 
 static Surface surf[MAXSURF];
-static int nsurf = 0, next_id = 1, focus = -1;
+static int nsurf = 0, next_id = 1, focus = -1, hovered_id = -1;
 
 /* ── the wallpaper: the sky, from the machine's own clock ── */
 static int hk_hour(void) { return (int)((time(0) / 3600 + 8) % 24); }
@@ -256,6 +256,10 @@ static void blit_surface(Surface *s) {
   for (int j = y0; j < y1; j++)
     for (int i = x0; i < x1; i++) {
       unsigned int c = s->px[(j - s->y) * s->w + (i - s->x)];
+      // The wallpaper is always opaque even though it writes raw pixels;
+      // only real windows carry the per-pixel alpha that lets a card float.
+      if (!s->bg && !(c & 0xff000000)) continue;
+      c &= 0xffffff;
       back.px[j * W + i] = s->alpha >= 255
                                ? c
                                : aw_mix(back.px[j * W + i], c, s->alpha);
@@ -684,6 +688,39 @@ int main(void) {
               sel = row;
               composite(bar_x, bar_y, bar_w, bar_h() + 8);
             }
+          }
+          // Hover motion to the topmost real window under the cursor, so a
+          // widget can pop a card (the name card's wikipedia-style notes).
+          // A leave is a motion with b = -1.
+          int hs = -1;
+          for (int i = nsurf - 1; i >= 0; i--)
+            if (surf[i].alive && surf[i].px && !surf[i].bg && mx >= surf[i].x &&
+                mx < surf[i].x + surf[i].w && my >= surf[i].y &&
+                my < surf[i].y + surf[i].h) {
+              hs = i;
+              break;
+            }
+          int hid = hs >= 0 ? surf[hs].id : -1;
+          if (hovered_id != -1 && hovered_id != hid)
+            for (int i = 0; i < nsurf; i++)
+              if (surf[i].id == hovered_id) {
+                AwMsg e;
+                memset(&e, 0, sizeof e);
+                e.type = AW_INPUT;
+                e.a = AW_IN_MOTION;
+                e.b = -1;
+                send_msg(surf[i].fd, &e);
+              }
+          hovered_id = hid;
+          if (hs >= 0) {
+            AwMsg e;
+            memset(&e, 0, sizeof e);
+            e.type = AW_INPUT;
+            e.a = AW_IN_MOTION;
+            e.b = mx - surf[hs].x;
+            e.c = my - surf[hs].y;
+            snprintf(e.s, sizeof e.s, "%d %d", surf[hs].x, surf[hs].y);
+            send_msg(surf[hs].fd, &e);
           }
           int ux = (oldx < mx ? oldx : mx) - 2, uy = (oldy < my ? oldy : my) - 2;
           int uw = (oldx > mx ? oldx : mx) - ux + 16;
