@@ -1,0 +1,22 @@
+.{
+    .name = .alpenglowed,
+    .version = "0.1.0",
+    .fingerprint = 0xabba40d57631980a,
+    .minimum_zig_version = "0.16.0",
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "wire.zig",
+        "draw.zig",
+        "awidget.zig",
+        "alpenglowd.zig",
+        "alpenwall.zig",
+        "alpenclock.zig",
+        "alpenmachine.zig",
+        "alpenname.zig",
+        "alpenpanel.zig",
+        "font_small.bin",
+        "font_large.bin",
+    },
+    .dependencies = .{},
+}
