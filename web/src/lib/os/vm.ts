@@ -34,6 +34,7 @@ function screenResolution(el: HTMLElement): string {
 type V86Emulator = {
   add_listener(name: string, handler: (arg: unknown) => void): void;
   serial0_send(text: string): void;
+  serial_send_bytes(port: number, bytes: Uint8Array): void;
   keyboard_send_text(text: string): void;
   lock_mouse(): void;
   destroy(): void;
@@ -46,6 +47,8 @@ class VmManager {
   private progressListeners = new Set<(progress: Progress) => void>();
   private progress: Progress = { message: "cold", percent: null, ready: false };
   private openListener: ((url: string) => void) | null = null;
+  private resizeObserver: ResizeObserver | null = null;
+  private resizeTimer: ReturnType<typeof setTimeout> | null = null;
 
   get running(): boolean {
     return this.emulator !== null;
@@ -75,17 +78,23 @@ class VmManager {
         bzimage: { url: "/v86/alpenglowed-vmlinuz" },
         initrd: { url: "/v86/alpenglowed-initrd.cpio.gz" },
         // video= asks bochs-drm for a real mode (vga= is ignored under v86's
-        // fast bzImage loader). Match the machine to the window it's shown
-        // in, so it renders native pixels instead of upscaling a fixed
-        // image into blocks — clamped to the compositor's max and the VRAM.
-        cmdline: `console=ttyS0 console=tty1 rdinit=/init loglevel=4 video=${screenResolution(screen)}`,
+        // fast bzImage loader). Boot fb0 at the max (1920x1200) so the GEM
+        // buffer stays large enough for any later resize; the visible mode
+        // is driven to the actual window size over the ttyS1 resize channel
+        // right after boot — see attachResize.
+        cmdline: `console=ttyS0 console=tty1 rdinit=/init loglevel=4 video=1920x1200`,
         // 512 MB so a browser and the desktop have real headroom; 32 MB of
         // VRAM so a large framebuffer fits (1920x1200x32 is ~9.2 MB).
         memory_size: 512 * 1024 * 1024,
         vga_memory_size: 32 * 1024 * 1024,
+        // A second UART (ttyS1 in the guest) is the host→guest resize
+        // channel: @@resize W H\n, sent on window resize, read by
+        // alpenresize which forwards it to the compositor's SETCRTC path.
+        uart1: true,
         autostart: true,
       });
       this.emulator = emulator;
+      this.attachResize(screen);
 
       // The serial line is the machine's voice to the host: watch for
       // @@open lines from the sites app; everything else is debug.
@@ -132,6 +141,7 @@ class VmManager {
 
       emulator.add_listener("emulator-ready", () => {
         this.emit({ message: "booting", percent: 100, ready: true });
+        this.sendResize(screen);
       });
     } catch (error) {
       this.emit({
@@ -142,6 +152,28 @@ class VmManager {
     } finally {
       this.starting = false;
     }
+  }
+
+  /** On host window resize, tell the guest to re-mode the screen so the
+   *  desktop reflows instead of being letterboxed. Debounced ~250ms; the
+   *  guest's alpenresize daemon reads `@@resize W H\n` off ttyS1. */
+  private attachResize(screen: HTMLElement): void {
+    if (typeof ResizeObserver === "undefined") return;
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.resizeTimer) clearTimeout(this.resizeTimer);
+      this.resizeTimer = setTimeout(() => {
+        this.resizeTimer = null;
+        if (this.emulator && this.progress.ready) this.sendResize(screen);
+      }, 250);
+    });
+    this.resizeObserver.observe(screen);
+  }
+
+  private sendResize(screen: HTMLElement): void {
+    const res = screenResolution(screen);
+    const [w, h] = res.split("x").map(Number);
+    const line = `@@resize ${w} ${h}\n`;
+    this.emulator?.serial_send_bytes(1, new TextEncoder().encode(line));
   }
 
   /** Types into the machine's PS/2 keyboard — for touch keyboards. */

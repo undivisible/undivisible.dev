@@ -9,6 +9,8 @@ OUT="$DIR/os-image/overlay/usr/bin"
 
 cd "$SRC"
 zig build
+zig cc -target x86-linux-musl -static -O2 -s -I. -o "$OUT/alpenresize" alpenresize.c
+echo "built alpenresize"
 for prog in alpenglowd alpenwall alpenclock alpenmachine alpenname alpenpanel; do
   cp "zig-out/bin/$prog" "$OUT/$prog"
   echo "built $prog"

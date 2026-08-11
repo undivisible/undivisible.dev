@@ -74,6 +74,8 @@ const Surface = struct {
     y: i32 = 0,
     w: i32 = 0,
     h: i32 = 0,
+    ac: i32 = 0,
+    ad: i32 = 0,
     alpha: i32 = 0,
     px: [*]u32 = undefined,
     has_px: bool = false,
@@ -91,6 +93,8 @@ var back: draw.AwBuf = .{ .px = undefined, .w = 0, .h = 0 };
 var W: i32 = 0;
 var H: i32 = 0;
 var stride: i32 = 0;
+var back_size: usize = 0;
+var resize_pending: bool = false;
 var saved_tio: linux.termios = undefined;
 
 var surf: [MAXSURF]Surface = [_]Surface{.{}} ** MAXSURF;
@@ -474,6 +478,8 @@ fn handleHello(s: *Surface, m: *const wire.AwMsg) void {
         s.x = if (m.c == wire.AW_CENTER) @divTrunc(W - w, 2) else (if (m.c < 0) W + m.c - w else m.c);
         s.y = if (m.d == wire.AW_CENTER) @divTrunc(H - h, 2) else (if (m.d < 0) H + m.d - h else m.d);
     }
+    s.ac = m.c;
+    s.ad = m.d;
     s.alpha = if (s.bg) 255 else 215;
     s.resizable = (m.e & wire.AW_F_RESIZE) != 0;
     copyStr(&s.title, std.mem.sliceTo(&m.s, 0));
@@ -594,6 +600,85 @@ fn reap(_: c_int) callconv(.c) void {
     }
 }
 
+fn onWinch(_: c_int) callconv(.c) void {
+    resize_pending = true;
+}
+
+fn relayout() void {
+    var i: usize = 0;
+    while (i < nsurf) : (i += 1) {
+        const s = &surf[i];
+        if (!s.alive) continue;
+        if (s.bg) {
+            _ = resizeSurface(s, W, H);
+            s.x = 0;
+            s.y = 0;
+        } else {
+            s.x = if (s.ac == wire.AW_CENTER) @divTrunc(W - s.w, 2) else (if (s.ac < 0) W + s.ac - s.w else s.ac);
+            s.y = if (s.ad == wire.AW_CENTER) @divTrunc(H - s.h, 2) else (if (s.ad < 0) H + s.ad - s.h else s.ad);
+        }
+    }
+}
+
+fn readResizeFile() ?struct { w: i32, h: i32 } {
+    var path: [128]u8 = std.mem.zeroes([128]u8);
+    _ = std.fmt.bufPrint(&path, "{s}/resize", .{wire.DIR}) catch return null;
+    const f_raw = linux.open(@ptrCast(&path), .{ .ACCMODE = .RDONLY }, 0);
+    if (linux.errno(f_raw) != .SUCCESS) return null;
+    const f: i32 = @intCast(f_raw);
+    defer _ = linux.close(f);
+    var buf: [32]u8 = undefined;
+    const n = linux.read(f, &buf, buf.len);
+    if (linux.errno(n) != .SUCCESS or n == 0) return null;
+    const data = buf[0..n];
+    var i: usize = 0;
+    var w: i32 = 0;
+    var h: i32 = 0;
+    while (i < data.len and (data[i] < '0' or data[i] > '9')) i += 1;
+    var gotw = false;
+    while (i < data.len and data[i] >= '0' and data[i] <= '9') : (i += 1) {
+        w = w * 10 + @as(i32, data[i] - '0');
+        gotw = true;
+    }
+    while (i < data.len and (data[i] < '0' or data[i] > '9')) i += 1;
+    var goth = false;
+    while (i < data.len and data[i] >= '0' and data[i] <= '9') : (i += 1) {
+        h = h * 10 + @as(i32, data[i] - '0');
+        goth = true;
+    }
+    if (!gotw or !goth) return null;
+    return .{ .w = w, .h = h };
+}
+
+fn doResize() void {
+    const r = readResizeFile() orelse return;
+    var nw = r.w;
+    var nh = r.h;
+    if (nw < 1024) nw = 1024;
+    if (nw > MAXW) nw = MAXW;
+    if (nh < 700) nh = 700;
+    if (nh > MAXH) nh = MAXH;
+    nw = nw & ~@as(i32, 7);
+    if (nw < 1024) nw = 1024;
+    if (nw == W and nh == H) return;
+    const new_size: usize = @as(usize, @intCast(nw)) * @as(usize, @intCast(nh)) * 4;
+    const new_back_raw = linux.mmap(null, new_size, .{ .READ = true, .WRITE = true }, .{ .TYPE = .PRIVATE, .ANONYMOUS = true }, -1, 0);
+    if (linux.errno(new_back_raw) != .SUCCESS) return;
+    _ = linux.munmap(@ptrCast(back.px), back_size);
+    back.px = @ptrFromInt(new_back_raw);
+    back.w = nw;
+    back.h = nh;
+    back_size = new_size;
+    W = nw;
+    H = nh;
+    stride = nw;
+    if (mx > W - 2) mx = W - 2;
+    if (my > H - 2) my = H - 2;
+    bar_x = @divTrunc(W, 2) - @divTrunc(bar_w, 2);
+    relayout();
+    compositeAll();
+}
+
 pub fn main() void {
     const fbfd_raw = linux.open("/dev/fb0", .{ .ACCMODE = .RDWR }, 0);
     if (linux.errno(fbfd_raw) != .SUCCESS) linux.exit(1);
@@ -606,9 +691,9 @@ pub fn main() void {
     if (vi.bits_per_pixel != 32) linux.exit(1);
     W = @intCast(vi.xres);
     H = @intCast(vi.yres);
-    stride = @intCast(@divTrunc(fi.line_length, 4));
+    stride = W;
     if (W > MAXW or H > MAXH) linux.exit(1);
-    const fb_raw = linux.mmap(null, @as(usize, @intCast(fi.line_length)) * @as(usize, @intCast(H)), .{ .READ = true, .WRITE = true }, .{ .TYPE = .SHARED }, fbfd, 0);
+    const fb_raw = linux.mmap(null, fi.smem_len, .{ .READ = true, .WRITE = true }, .{ .TYPE = .SHARED }, fbfd, 0);
     if (linux.errno(fb_raw) != .SUCCESS) linux.exit(1);
     fb = @ptrFromInt(fb_raw);
     const back_raw = linux.mmap(null, @as(usize, @intCast(W * H * 4)), .{ .READ = true, .WRITE = true }, .{ .TYPE = .PRIVATE, .ANONYMOUS = true }, -1, 0);
@@ -616,6 +701,7 @@ pub fn main() void {
     back.px = @ptrFromInt(back_raw);
     back.w = W;
     back.h = H;
+    back_size = @as(usize, @intCast(W * H * 4));
 
     var sa: linux.Sigaction = .{
         .handler = .{ .handler = @ptrCast(&reap) },
@@ -625,8 +711,22 @@ pub fn main() void {
     _ = linux.sigaction(.CHLD, &sa, null);
     sa.handler = .{ .handler = linux.SIG.IGN };
     _ = linux.sigaction(.PIPE, &sa, null);
+    sa.handler = .{ .handler = @ptrCast(&onWinch) };
+    _ = linux.sigaction(.WINCH, &sa, null);
 
     _ = linux.mkdir(wire.DIR, 0o755);
+    {
+        var pidpath: [128]u8 = std.mem.zeroes([128]u8);
+        _ = std.fmt.bufPrint(&pidpath, "{s}/pid", .{wire.DIR}) catch unreachable;
+        const pf_raw = linux.open(@ptrCast(&pidpath), .{ .ACCMODE = .WRONLY, .CREAT = true, .TRUNC = true }, 0o600);
+        if (linux.errno(pf_raw) == .SUCCESS) {
+            const pf: i32 = @intCast(pf_raw);
+            var pidbuf: [16]u8 = std.mem.zeroes([16]u8);
+            const pid_s = std.fmt.bufPrint(&pidbuf, "{d}\n", .{linux.getpid()}) catch unreachable;
+            _ = linux.write(pf, &pidbuf, pid_s.len);
+            _ = linux.close(pf);
+        }
+    }
     _ = linux.unlink(wire.SOCK);
     const ls = linux.socket(linux.AF.UNIX, linux.SOCK.STREAM, 0);
     if (linux.errno(ls) != .SUCCESS) linux.exit(1);
@@ -689,6 +789,11 @@ pub fn main() void {
             nfds += 1;
         }
         _ = linux.poll(&fds, nfds, 250);
+
+        if (resize_pending) {
+            resize_pending = false;
+            doResize();
+        }
 
         if (fds[1].revents & linux.POLL.IN != 0) {
             const cfd = linux.accept(lfd, null, null);

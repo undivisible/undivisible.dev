@@ -96,6 +96,12 @@ pub fn main() void {
     while (true) {
         var in: wire.AwMsg = undefined;
         if (awidget.poll(&c, &in, 1000) < 0) linux.exit(0);
+        if (in.type == wire.AW_SURFACE) {
+            paint(&c.buf);
+            awidget.commit(&c);
+            last = nowSec();
+            continue;
+        }
         const now = nowSec();
         if (now - last < 60) continue;
         last = now;
