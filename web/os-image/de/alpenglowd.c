@@ -55,6 +55,7 @@ typedef struct {
   char title[80];
   int alive;
   int bg;
+  int resizable;
 } Surface;
 
 static Surface surf[MAXSURF];
@@ -338,6 +339,7 @@ static void handle_hello(Surface *s, const AwMsg *m) {
     s->y = m->d == AW_CENTER ? (H - h) / 2 : (m->d < 0 ? H + m->d - h : m->d);
   }
   s->alpha = s->bg ? 255 : 215;
+  s->resizable = (m->e & AW_F_RESIZE) != 0;
   snprintf(s->title, sizeof s->title, "%s", m->s);
 
   AwMsg r;
@@ -348,6 +350,38 @@ static void handle_hello(Surface *s, const AwMsg *m) {
   r.c = s->id;
   snprintf(r.s, sizeof r.s, "%s", path);
   if (send_msg(s->fd, &r) < 0) s->alive = 0;
+}
+
+/* Grow/shrink a resizable window's shared buffer and tell the client to
+   re-map. Returns 0 on success. */
+static int resize_surface(Surface *s, int w, int h) {
+  if (w < AW_MIN_W) w = AW_MIN_W;
+  if (h < AW_MIN_H) h = AW_MIN_H;
+  if (w > MAXW) w = MAXW;
+  if (h > MAXH) h = MAXH;
+  if (w == s->w && h == s->h) return 0;
+  char path[128];
+  snprintf(path, sizeof path, "%s/s%d", AW_DIR, s->id);
+  int f = open(path, O_RDWR, 0600);
+  if (f < 0) return -1;
+  if (ftruncate(f, (long)w * h * 4) < 0) { close(f); return -1; }
+  void *px = mmap(0, (size_t)w * h * 4, PROT_READ | PROT_WRITE, MAP_SHARED, f, 0);
+  close(f);
+  if (px == MAP_FAILED) return -1;
+  munmap(s->px, (size_t)s->w * s->h * 4);
+  s->px = (unsigned int *)px;
+  s->w = w;
+  s->h = h;
+
+  AwMsg r;
+  memset(&r, 0, sizeof r);
+  r.type = AW_SURFACE;
+  r.a = w;
+  r.b = h;
+  r.c = s->id;
+  snprintf(r.s, sizeof r.s, "%s", path);
+  if (send_msg(s->fd, &r) < 0) s->alive = 0;
+  return 0;
 }
 
 static void spawn(const char *prog, const char *arg) {
@@ -468,7 +502,7 @@ int main(void) {
   spawn("/usr/bin/alpenmachine", 0);
   spawn("/usr/bin/alpenname", 0);
 
-  int dragging = -1, drag_dx = 0, drag_dy = 0;
+  int dragging = -1, resizing = -1, drag_dx = 0, drag_dy = 0;
   time_t last_tick = 0;
 
   for (;;) {
@@ -624,8 +658,15 @@ int main(void) {
                 surf[nsurf - 1] = top;
                 hit = nsurf - 1;
               }
-              /* The top strip is the handle; the rest belongs to the app. */
-              if (my < surf[hit].y + 20) {
+              /* The bottom-right corner resizes a resizable window; the top
+                 strip drags; the rest belongs to the app. */
+              if (surf[hit].resizable &&
+                  mx >= surf[hit].x + surf[hit].w - 18 &&
+                  my >= surf[hit].y + surf[hit].h - 18) {
+                resizing = hit;
+                drag_dx = surf[hit].x + surf[hit].w - mx;
+                drag_dy = surf[hit].y + surf[hit].h - my;
+              } else if (my < surf[hit].y + 20) {
                 dragging = hit;
                 drag_dx = mx - surf[hit].x;
                 drag_dy = my - surf[hit].y;
@@ -654,11 +695,23 @@ int main(void) {
               send_msg(surf[i].fd, &e);
             }
         }
-        if (!btn) dragging = -1;
+        if (!btn) { dragging = -1; resizing = -1; }
         mbtn = btn;
       }
       if (moved) {
-        if (dragging >= 0) {
+        if (resizing >= 0) {
+          Surface old = surf[resizing];
+          int nw = mx + drag_dx - surf[resizing].x;
+          int nh = my + drag_dy - surf[resizing].y;
+          resize_surface(&surf[resizing], nw, nh);
+          int ux1 = old.x + old.w > surf[resizing].x + surf[resizing].w
+                        ? old.x + old.w
+                        : surf[resizing].x + surf[resizing].w;
+          int uy1 = old.y + old.h > surf[resizing].y + surf[resizing].h
+                        ? old.y + old.h
+                        : surf[resizing].y + surf[resizing].h;
+          composite(old.x - 6, old.y - 6, ux1 - old.x + 18, uy1 - old.y + 20);
+        } else if (dragging >= 0) {
           Surface old = surf[dragging];
           surf[dragging].x = mx - drag_dx;
           surf[dragging].y = my - drag_dy;

@@ -42,9 +42,12 @@ static int aw_recv(int fd, AwMsg *m) {
   return 0;
 }
 
+static int aw_map(AwClient *c, const AwMsg *r);
+
 static int aw_open_as(AwClient *c, unsigned int hello, const char *title, int w,
                       int h, int x, int y, int flags) {
   struct sockaddr_un addr;
+  c->buf.px = 0;
   c->fd = socket(AF_UNIX, SOCK_STREAM, 0);
   if (c->fd < 0) return -1;
   memset(&addr, 0, sizeof addr);
@@ -59,22 +62,29 @@ static int aw_open_as(AwClient *c, unsigned int hello, const char *title, int w,
   m.b = h;
   m.c = x;
   m.d = y;
+  m.e = flags;
   snprintf(m.s, sizeof m.s, "%s", title);
   if (aw_send(c->fd, &m) < 0) return -1;
 
   AwMsg r;
   if (aw_recv(c->fd, &r) < 0 || r.type != AW_SURFACE) return -1;
-  int sfd = open(r.s, O_RDWR);
+  return aw_map(c, &r);
+}
+
+/* (Re)map the shared surface a compositor just handed us — used both at
+   open and when the compositor grows the surface on a resize. */
+static int aw_map(AwClient *c, const AwMsg *r) {
+  int sfd = open(r->s, O_RDWR);
   if (sfd < 0) return -1;
-  void *px = mmap(0, (size_t)r.a * r.b * 4, PROT_READ | PROT_WRITE, MAP_SHARED,
-                  sfd, 0);
+  void *px = mmap(0, (size_t)r->a * r->b * 4, PROT_READ | PROT_WRITE,
+                  MAP_SHARED, sfd, 0);
   close(sfd);
   if (px == MAP_FAILED) return -1;
-  c->id = r.c;
+  if (c->buf.px) munmap(c->buf.px, (size_t)c->buf.w * c->buf.h * 4);
+  c->id = r->c;
   c->buf.px = (unsigned int *)px;
-  c->buf.w = r.a;
-  c->buf.h = r.b;
-  (void)flags;
+  c->buf.w = r->a;
+  c->buf.h = r->b;
   return 0;
 }
 
@@ -101,6 +111,9 @@ static int aw_poll(AwClient *c, AwMsg *out, int ms) {
   int n = poll(&p, 1, ms);
   if (n <= 0) return 0;
   if (aw_recv(c->fd, out) < 0) return -1;
+  /* A fresh AW_SURFACE mid-run is a resize: re-map before the caller sees
+     it, so a client just redraws at c->buf's new w/h. */
+  if (out->type == AW_SURFACE && aw_map(c, out) < 0) return -1;
   return 1;
 }
 

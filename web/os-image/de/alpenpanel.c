@@ -117,6 +117,9 @@ static void draw(AwClient *c, const char *title) {
     snprintf(pos, sizeof pos, "%d/%d  arrows scroll", scroll_row + 1, nlines);
     aw_text(&c->buf, c->buf.w - 200, c->buf.h - 20, pos, 0x596074, 1);
   }
+  /* the resize grip: three ticks in the bottom-right corner */
+  for (int i = 0; i < 3; i++)
+    aw_fill(&c->buf, c->buf.w - 6 - i * 5, c->buf.h - 6, 3, 3, 0x596074);
   aw_commit(c);
 }
 
@@ -132,15 +135,22 @@ int main(int argc, char **argv) {
   }
 
   AwClient c;
-  if (aw_open(&c, name, 800, 540, AW_CENTER, 110, 0) < 0) return 1;
+  if (aw_open(&c, name, 800, 540, AW_CENTER, 110, AW_F_RESIZE) < 0) return 1;
   draw(&c, name);
 
-  int rows = (c.buf.h - 40) / 18;
   for (;;) {
     AwMsg in;
     int r = aw_poll(&c, &in, 400);
     if (r < 0) return 0;
     if (r == 0) continue;
+    int rows = (c.buf.h - 40) / 18;
+    // A resize hands back a bigger/smaller surface; redraw to fit it.
+    if (in.type == AW_SURFACE) {
+      if (scroll_row > nlines - 1) scroll_row = nlines - 1;
+      if (scroll_row < 0) scroll_row = 0;
+      draw(&c, name);
+      continue;
+    }
     if (in.type != AW_INPUT) continue;
 
     if (in.a == AW_IN_KEY) {

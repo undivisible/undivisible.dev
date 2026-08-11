@@ -31,14 +31,19 @@ enum {
 
 enum { AW_IN_MOTION = 1, AW_IN_PRESS, AW_IN_RELEASE, AW_IN_KEY };
 
-enum { AW_F_PINNED = 1, AW_F_KEYBOARD = 2 };
+enum { AW_F_PINNED = 1, AW_F_KEYBOARD = 2, AW_F_RESIZE = 4 };
 
 /* Placement: negative x/y anchor to the far edge, AW_CENTER centres. */
 #define AW_CENTER (-100000)
 
+/* A resizable window can't shrink below this, so the chrome stays usable. */
+#define AW_MIN_W 240
+#define AW_MIN_H 160
+
 typedef struct {
   unsigned int type;
   int a, b, c, d;
+  int e; /* HELLO: flags. */
   char s[80];
 } AwMsg;
 
