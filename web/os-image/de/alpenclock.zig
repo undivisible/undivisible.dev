@@ -50,9 +50,9 @@ pub fn main() void {
 
         draw.frame(&c.buf, "hong kong");
         var buf: [64]u8 = undefined;
-        const time_str = std.fmt.bufPrint(&buf, "{d:0>2}:{d:0>2}:{d:0>2}", .{ hour, min, sec }) catch unreachable;
+        const time_str = std.fmt.bufPrint(&buf, "{d:0>2}:{d:0>2}:{d:0>2}", .{ @as(u32, @intCast(hour)), @as(u32, @intCast(min)), @as(u32, @intCast(sec)) }) catch unreachable;
         _ = draw.textLg(&c.buf, 12, 22, time_str, 0xffffff);
-        const date_str = std.fmt.bufPrint(&buf, "{s} {d:0>2} {s}  gmt+8", .{ dows[@intCast(wday)], civil.day, mons[@intCast(civil.month - 1)] }) catch unreachable;
+        const date_str = std.fmt.bufPrint(&buf, "{s} {d:0>2} {s}  gmt+8", .{ dows[@intCast(wday)], @as(u32, @intCast(civil.day)), mons[@intCast(civil.month - 1)] }) catch unreachable;
         _ = draw.text(&c.buf, 12, 62, date_str, 0x8890a0, 1);
         awidget.commit(&c);
     }

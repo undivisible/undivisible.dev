@@ -59,7 +59,7 @@ pub fn main() void {
 
         draw.frame(&c.buf, "machine");
         var buf: [96]u8 = undefined;
-        const s1 = std.fmt.bufPrint(&buf, "up {d: >3}s   load {d:.2}", .{ @as(i32, @intFromFloat(up)), load }) catch unreachable;
+        const s1 = std.fmt.bufPrint(&buf, "up {d: >3}s   load {d:.2}", .{ @as(u32, @intFromFloat(up)), load }) catch unreachable;
         _ = draw.text(&c.buf, 12, 26, s1, 0xd8dbe2, 1);
         const s2 = std.fmt.bufPrint(&buf, "mem {d}/{d}M", .{ @divTrunc(mt - ma, 1024), @divTrunc(mt, 1024) }) catch unreachable;
         _ = draw.text(&c.buf, 12, 44, s2, 0xd8dbe2, 1);
