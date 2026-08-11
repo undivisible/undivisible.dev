@@ -61,9 +61,15 @@ class VmManager {
         vga_bios: { url: "/v86/vgabios.bin" },
         bzimage: { url: "/v86/alpenglowed-vmlinuz" },
         initrd: { url: "/v86/alpenglowed-initrd.cpio.gz" },
-        cmdline: "console=ttyS0 console=tty1 rdinit=/init loglevel=4 vga=0x344",
-        memory_size: 256 * 1024 * 1024,
-        vga_memory_size: 8 * 1024 * 1024,
+        // video= asks bochs-drm for a real mode (vga= is ignored under v86's
+        // fast bzImage loader); 1440x900 renders enough native pixels that a
+        // modern display isn't upscaling a 1024x768 image into blocks.
+        cmdline:
+          "console=ttyS0 console=tty1 rdinit=/init loglevel=4 video=1440x900",
+        // 512 MB so a browser and the desktop have real headroom; 32 MB of
+        // VRAM so the larger framebuffer fits (1440x900x32 is ~5.2 MB).
+        memory_size: 512 * 1024 * 1024,
+        vga_memory_size: 32 * 1024 * 1024,
         autostart: true,
       });
       this.emulator = emulator;

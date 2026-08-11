@@ -35,8 +35,8 @@
 #include "draw.h"
 #include "wire.h"
 
-#define MAXW 1280
-#define MAXH 800
+#define MAXW 1920
+#define MAXH 1200
 #define MAXSURF 24
 #define MAXAPP 512
 
@@ -196,7 +196,7 @@ static void refilter(void) {
   if (sel >= nmatch) sel = nmatch ? nmatch - 1 : 0;
 }
 
-static int bar_h(void) { return 46 + (nmatch ? nmatch * 24 + 8 : 0); }
+static int bar_h(void) { return 52 + (nmatch ? nmatch * 24 + 8 : 0); }
 
 static void draw_bar(void) {
   int h = bar_h();
@@ -207,23 +207,22 @@ static void draw_bar(void) {
   aw_fill(&back, bar_x, bar_y, 1, h, 0x1f2432);
   aw_fill(&back, bar_x + bar_w - 1, bar_y, 1, h, 0x1f2432);
 
-  aw_text(&back, bar_x + 12, bar_y + 10, ">", 0x7ec8e8, 2);
-  /* Long queries drop to one-up so a pasted command still fits the bar. */
+  aw_text_lg(&back, bar_x + 12, bar_y + 8, ">", 0x7ec8e8);
+  /* Long queries scroll left so a pasted command still fits the bar. */
   int room = bar_w - 46;
-  int scale = qlen * 16 > room ? 1 : 2;
-  int shown = room / (8 * scale);
+  int shown = room / 16;
   const char *q = query;
   if (qlen > shown) q = query + (qlen - shown);
-  aw_text(&back, bar_x + 34, bar_y + (scale == 2 ? 10 : 18),
-          qlen ? q : "type to launch", qlen ? 0xffffff : 0x596074, scale);
+  aw_text_lg(&back, bar_x + 34, bar_y + 8,
+             qlen ? q : "type to launch", qlen ? 0xffffff : 0x596074);
   if ((int)(time(0) & 1)) {
-    int used = (qlen > shown ? shown : qlen) * 8 * scale;
+    int used = (qlen > shown ? shown : qlen) * 16;
     aw_fill(&back, bar_x + 36 + used, bar_y + 10, 2, 26, 0xffffff);
   }
 
   for (int m = 0; m < nmatch; m++) {
     App *a = &apps[matches[m]];
-    int ry = bar_y + 46 + m * 24;
+    int ry = bar_y + 52 + m * 24;
     if (m == sel) aw_blend(&back, bar_x + 6, ry - 3, bar_w - 12, 22, 0xffffff, 26);
     aw_text(&back, bar_x + 16, ry, a->name, m == sel ? 0xffffff : 0xc4cad6, 1);
     aw_text(&back, bar_x + 180, ry, a->desc, 0x767e92, 1);
@@ -377,11 +376,11 @@ static void launch(int app_index) {
   /* links draws to /dev/fb0 itself, so it needs the screen to itself —
      same handover the console apps get. */
   if (!strcmp(a->name, "web"))
-    hand_over("netsurf-fb -f linux -w 1024 -h 768 "
-              "file:///usr/share/alpenglowed/web/start.html");
+    hand_over("netsurf-fb -f linux -w 1440 -h 900 "
+              "file:///usr/share/alpenglowed/web/index.html");
   if (!strcmp(a->name, "links"))
     hand_over("links -g -driver fb "
-              "file:///usr/share/alpenglowed/web/start.html");
+              "file:///usr/share/alpenglowed/web/index.html");
   if (a->builtin) spawn("/usr/bin/alpenpanel", a->name);
   else {
     char path[288];
@@ -601,8 +600,8 @@ int main(void) {
           if (mx >= bar_x && mx < bar_x + bar_w && my >= bar_y &&
               my < bar_y + bh) {
             focus = -1;
-            if (my > bar_y + 43 && nmatch) {
-              int row = (my - bar_y - 43) / 24;
+            if (my > bar_y + 49 && nmatch) {
+              int row = (my - bar_y - 49) / 24;
               if (row >= 0 && row < nmatch) { sel = row; launch(matches[sel]); }
             }
           } else {
@@ -675,6 +674,17 @@ int main(void) {
                         : surf[dragging].y + surf[dragging].h;
           composite(ux - 6, uy - 6, ux1 - ux + 18, uy1 - uy + 20);
         } else {
+          // Hover: the row under the pointer becomes the selection, so the
+          // bar highlights what you're about to click, not just what the
+          // arrows last landed on.
+          if (nmatch && mx >= bar_x && mx < bar_x + bar_w &&
+              my > bar_y + 49 && my < bar_y + 49 + nmatch * 24) {
+            int row = (my - bar_y - 49) / 24;
+            if (row >= 0 && row < nmatch && row != sel) {
+              sel = row;
+              composite(bar_x, bar_y, bar_w, bar_h() + 8);
+            }
+          }
           int ux = (oldx < mx ? oldx : mx) - 2, uy = (oldy < my ? oldy : my) - 2;
           int uw = (oldx > mx ? oldx : mx) - ux + 16;
           int uh = (oldy > my ? oldy : my) - uy + 22;

@@ -11,7 +11,8 @@
 
 #include <string.h>
 
-#include "font8x16.h"
+#include "font_small.h"
+#include "font_large.h"
 
 typedef struct {
   unsigned int *px;
@@ -46,23 +47,47 @@ static void aw_blend(AwBuf *b, int x, int y, int w, int h, unsigned int c,
       b->px[j * b->w + i] = aw_mix(b->px[j * b->w + i], c, a);
 }
 
+/* Alpha-blend a coverage glyph over whatever is already there, so edges are
+   smooth. scale is kept for callers but only 1 is used now. */
+static void aw_blend_glyph(AwBuf *b, int x, int y, const unsigned char *g,
+                           int gw, int gh, unsigned int c) {
+  for (int r = 0; r < gh; r++)
+    for (int i = 0; i < gw; i++) {
+      int a = g[r * gw + i];
+      if (!a) continue;
+      int px = x + i, py = y + r;
+      if (px < 0 || px >= b->w || py < 0 || py >= b->h) continue;
+      unsigned int *d = &b->px[py * b->w + px];
+      *d = aw_mix(*d, c, a);
+    }
+}
+
 static void aw_glyph(AwBuf *b, int x, int y, unsigned char ch, unsigned int c,
                      int scale) {
-  const unsigned char *g = &font8x16[ch * 16];
-  for (int r = 0; r < 16; r++)
-    for (int i = 0; i < 8; i++)
-      if (g[r] & (0x80 >> i)) {
-        if (scale == 1) aw_px(b, x + i, y + r, c);
-        else aw_fill(b, x + i * scale, y + r * scale, scale, scale, c);
-      }
+  (void)scale;
+  aw_blend_glyph(b, x, y, &font_small[ch * (FONT_SMALL_W * FONT_SMALL_H)],
+                 FONT_SMALL_W, FONT_SMALL_H, c);
 }
 
 static int aw_text(AwBuf *b, int x, int y, const char *s, unsigned int c,
                    int scale) {
+  (void)scale;
   int ox = x;
   for (; *s; s++) {
-    aw_glyph(b, x, y, (unsigned char)*s, c, scale);
-    x += 8 * scale;
+    aw_glyph(b, x, y, (unsigned char)*s, c, 1);
+    x += FONT_SMALL_W;
+  }
+  return x - ox;
+}
+
+/* The display face: Geist Mono at 16x32, anti-aliased. */
+static int aw_text_lg(AwBuf *b, int x, int y, const char *s, unsigned int c) {
+  int ox = x;
+  for (; *s; s++) {
+    aw_blend_glyph(b, x, y,
+                   &font_large[(unsigned char)*s * (FONT_LARGE_W * FONT_LARGE_H)],
+                   FONT_LARGE_W, FONT_LARGE_H, c);
+    x += FONT_LARGE_W;
   }
   return x - ox;
 }

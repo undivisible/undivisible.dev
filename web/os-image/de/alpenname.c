@@ -34,7 +34,7 @@ int main(void) {
     last = now;
 
     aw_frame(&c.buf, 0);
-    aw_text(&c.buf, 14, 12, "max carter", 0xffffff, 2);
+    aw_text_lg(&c.buf, 14, 10, "max carter", 0xffffff);
     char tag[128];
     snprintf(tag, sizeof tag, "the ghost of terry davis, but %s",
              ntag ? tags[i++ % ntag] : "asian");

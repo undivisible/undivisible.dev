@@ -29,7 +29,7 @@ int main(void) {
     aw_frame(&c.buf, "hong kong");
     char buf[64];
     snprintf(buf, sizeof buf, "%02d:%02d:%02d", g.tm_hour, g.tm_min, g.tm_sec);
-    aw_text(&c.buf, 12, 26, buf, 0xffffff, 2);
+    aw_text_lg(&c.buf, 12, 22, buf, 0xffffff);
     snprintf(buf, sizeof buf, "%s %02d %s  gmt+8", dows[g.tm_wday], g.tm_mday,
              mons[g.tm_mon]);
     aw_text(&c.buf, 12, 62, buf, 0x8890a0, 1);
