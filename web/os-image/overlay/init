@@ -32,14 +32,22 @@ if [ -c /dev/ttyS0 ]; then
   /bin/setsid -c /bin/bash --login -i </dev/ttyS0 >/dev/ttyS0 2>&1 &
 fi
 
-# The screen. bochs-drm probes async — give /dev/fb0 a moment to appear.
+# The screen. bochs-drm probes async — give /dev/fb0 and /dev/dri/card0 a
+# moment to appear. The compositor renders through fb0 (the VRAM-backed
+# scanout) and uses /dev/dri/card0 only for runtime modeset; alpenresize
+# bridges host resize requests from ttyS1 to the compositor.
 tries=0
-while [ ! -e /dev/fb0 ] && [ "$tries" -lt 40 ]; do
+while { [ ! -e /dev/fb0 ] || [ ! -e /dev/dri/card0 ]; } && [ "$tries" -lt 80 ]; do
   /bin/sleep 0.1
   tries=$((tries + 1))
 done
 
-if [ -e /dev/fb0 ] && [ -x /usr/bin/alpenglowd ] && [ -c /dev/tty1 ]; then
+if [ -e /dev/dri/card0 ] && [ -e /dev/fb0 ] && [ -x /usr/bin/alpenglowd ] && [ -c /dev/tty1 ]; then
+  # Host resize requests arrive on ttyS1; forward them to the compositor.
+  # Started once, before the desktop loop, and left running across handovers.
+  if [ -x /usr/bin/alpenresize ] && [ -c /dev/ttyS1 ]; then
+    /usr/bin/alpenresize &
+  fi
   # The compositor and the bar. The clock, the machine monitor and the name
   # card are separate programs it starts as clients — see wire.h.
   # Exit 42 means "give me the console": run bash on tty1, then come back.

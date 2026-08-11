@@ -67,8 +67,13 @@ int main(void) {
   time_t last = time(0);
   for (;;) {
     AwMsg in;
-    if (aw_poll(&c, &in, 1000) < 0) return 0;
+    int got = aw_poll(&c, &in, 1000);
+    if (got < 0) return 0;
     time_t now = time(0);
+    /* A message during a desktop resize is a fresh AW_SURFACE (a new
+       buffer at the new size): repaint right away so the sky follows the
+       mode change instead of waiting up to a minute. */
+    if (got == 1) { paint(&c.buf); aw_commit(&c); last = now; continue; }
     if (now - last < 60) continue;
     last = now;
     paint(&c.buf);

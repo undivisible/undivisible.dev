@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <linux/fb.h>
+#include <linux/kd.h>
 #include <poll.h>
 #include <signal.h>
 #include <stdio.h>
@@ -33,6 +34,7 @@
 #include <unistd.h>
 
 #include "draw.h"
+#include "kms.h"
 #include "wire.h"
 
 #define MAXW 1920
@@ -45,11 +47,15 @@ static unsigned int *fb;
 static AwBuf back;
 static int W, H, stride;
 static struct termios saved_tio;
+static Kms kms;
+static volatile sig_atomic_t resize_pending = 0;
 
 typedef struct {
   int fd;
   int id;
   int x, y, w, h;
+  int ac, ad; /* the original anchor the client asked for, so a resize can
+                 reposition edge-anchored widgets without asking it again */
   int alpha;
   unsigned int *px;
   char title[80];
@@ -103,6 +109,40 @@ static void wallpaper(void) {
       int x = (k * 977 + 131) % W, y = ((k * 613 + 47) % (H * 2 / 3));
       if (x < dx0 || x >= dx1 || y < dy0 || y >= dy1) continue;
       back.px[y * W + x] = k % 3 ? 0x556077 : 0x8a94aa;
+    }
+}
+
+/* The sky painted into an arbitrary buffer at its own w/h — used to fill the
+   bg surface freshly mapped on a resize, so the screen never shows a
+   garbage-stretched sky while the wallpaper client catches up. */
+static void sky_full(AwBuf *b) {
+  unsigned int top, bot;
+  int hour = hk_hour();
+  int w = b->w, h = b->h;
+  sky_stops(hour, &top, &bot);
+  for (int y = 0; y < h; y++) {
+    unsigned int c = aw_mix(top, bot, y * 255 / h);
+    for (int x = 0; x < w; x++)
+      b->px[y * w + x] = ((x ^ y) & 3) == 0 ? aw_mix(c, bot, 8) : c;
+  }
+  int day = hour >= 6 && hour < 19;
+  int t = ((hour + 24 - 6) % 24) * 60 + hk_min();
+  int sx = 60 + (long)(w - 120) * (day ? t : t - 780) / 780;
+  int sy = h / 5 + (abs(sx - w / 2) * abs(sx - w / 2)) / (w * 2);
+  unsigned int sun = day ? 0xfff2cc : 0xc9cfdd;
+  for (int j = -14; j <= 14; j++)
+    for (int i = -14; i <= 14; i++) {
+      if (i * i + j * j > 14 * 14) continue;
+      int x = sx + i, y = sy + j;
+      if (x < 0 || x >= w || y < 0 || y >= h) continue;
+      b->px[y * w + x] =
+          i * i + j * j > 12 * 12 ? aw_mix(sun, b->px[y * w + x], 128) : sun;
+    }
+  if (!day)
+    for (int k = 0; k < 90; k++) {
+      int x = (k * 977 + 131) % w, y = ((k * 613 + 47) % (h * 2 / 3));
+      if (x < 0 || x >= w || y < 0 || y >= h) continue;
+      b->px[y * w + x] = k % 3 ? 0x556077 : 0x8a94aa;
     }
 }
 
@@ -331,6 +371,8 @@ static void handle_hello(Surface *s, const AwMsg *m) {
   s->w = w;
   s->h = h;
   s->bg = m->type == AW_HELLO_BG;
+  s->ac = m->c;
+  s->ad = m->d;
   if (s->bg) {
     s->x = 0;
     s->y = 0;
@@ -434,12 +476,68 @@ static void launch(int app_index) {
 
 static void restore_tty(void) {
   tcsetattr(0, TCSANOW, &saved_tio);
+  ioctl(0, KDSETMODE, KD_TEXT);
   printf("\033[?25h");
 }
 
 static void reap(int sig) {
   (void)sig;
   while (waitpid(-1, 0, WNOHANG) > 0) {}
+}
+
+static void on_winch(int sig) {
+  (void)sig;
+  resize_pending = 1;
+}
+
+/* Recompute every surface's x/y from the anchor it was created with, so a
+   new W/H moves edge-anchored widgets (top-right clock, bottom-left card)
+   and re-centers the panel. The wallpaper surface is resized to the new
+   full screen and freshly painted with the sky so the seconds before the
+   wallpaper client catches up still show a real sky, not a stretched
+   buffer. */
+static void reposition_surfaces(void) {
+  for (int i = 0; i < nsurf; i++) {
+    Surface *s = &surf[i];
+    if (!s->alive || !s->px) continue;
+    if (s->bg) {
+      if (s->w != W || s->h != H) resize_surface(s, W, H);
+      s->x = 0; s->y = 0;
+      AwBuf b = {s->px, s->w, s->h};
+      sky_full(&b);
+      continue;
+    }
+    s->x = s->ac == AW_CENTER ? (W - s->w) / 2
+                              : (s->ac < 0 ? W + s->ac - s->w : s->ac);
+    s->y = s->ad == AW_CENTER ? (H - s->h) / 2
+                              : (s->ad < 0 ? H + s->ad - s->h : s->ad);
+    if (s->x < 0) s->x = 0;
+    if (s->y < 0) s->y = 0;
+    if (s->x + s->w > W) s->x = W - s->w;
+    if (s->y + s->h > H) s->y = H - s->h;
+  }
+  bar_x = W / 2 - bar_w / 2;
+}
+
+/* A live resize: SETCRTC to the new mode (same fb0 framebuffer, so the
+   mmap stays valid), update the geometry, reallocate the back buffer,
+   reposition widgets + the centered bar, and full-composite the desktop.
+   Bad size → ignore, keep the current mode (crash-safe). */
+static void do_resize(int nw, int nh) {
+  if (nw < 1024 || nw > MAXW || nh < 700 || nh > MAXH) return;
+  if (nw == W && nh == H) return;
+  if (kms_modeset(&kms, nw, nh) < 0) return;
+  W = nw;
+  H = nh;
+  unsigned int *nb = realloc(back.px, (size_t)W * H * 4);
+  if (!nb) return;
+  back.px = nb;
+  back.w = W;
+  back.h = H;
+  if (mx > W - 2) mx = W - 2;
+  if (my > H - 2) my = H - 2;
+  reposition_surfaces();
+  composite_all();
 }
 
 int main(void) {
@@ -464,8 +562,15 @@ int main(void) {
 
   signal(SIGCHLD, reap);
   signal(SIGPIPE, SIG_IGN);
+  signal(SIGWINCH, on_winch);
 
   mkdir(AW_DIR, 0755);
+  {
+    char pidpath[128];
+    snprintf(pidpath, sizeof pidpath, "%s/pid", AW_DIR);
+    FILE *pf = fopen(pidpath, "w");
+    if (pf) { fprintf(pf, "%d\n", (int)getpid()); fclose(pf); }
+  }
   unlink(AW_SOCK);
   lfd = socket(AF_UNIX, SOCK_STREAM, 0);
   struct sockaddr_un addr;
@@ -484,6 +589,14 @@ int main(void) {
   tcsetattr(0, TCSANOW, &tio);
   printf("\033[?25l");
   fflush(stdout);
+  /* Tell fbcon this VT is in graphics mode, so it stops writing the boot
+     log into its fbdev buffer and re-SETCRTC-ing it back over our scanout.
+     We own the CRTC now; restore_tty puts the VT back to text on exit. */
+  ioctl(0, KDSETMODE, KD_GRAPHICS);
+
+  /* Open the DRM device and become master so we can SETCRTC at runtime.
+     The fb0 mmap stays the rendering target — KMS is only for modeset. */
+  if (kms_open(&kms) < 0) kms.fd = -1;
 
   mousefd = open("/dev/input/mice", O_RDONLY | O_NONBLOCK);
   mx = W / 2;
@@ -522,6 +635,16 @@ int main(void) {
       fds[nfds++].revents = 0;
     }
     poll(fds, nfds, 250);
+
+    if (resize_pending) {
+      resize_pending = 0;
+      FILE *rf = fopen("/run/alpenglowed/resize", "r");
+      if (rf) {
+        int rw = 0, rh = 0;
+        if (fscanf(rf, "%d %d", &rw, &rh) == 2) do_resize(rw, rh);
+        fclose(rf);
+      }
+    }
 
     if (fds[1].revents & POLLIN) {
       int cfd = accept(lfd, 0, 0);

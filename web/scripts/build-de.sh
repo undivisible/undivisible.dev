@@ -9,7 +9,7 @@ OUT="$DIR/os-image/overlay/usr/bin"
 CC="${CC:-zig cc}"
 TARGET=x86-linux-musl
 
-for prog in alpenglowd alpenwall alpenclock alpenmachine alpenname alpenpanel; do
+for prog in alpenglowd alpenwall alpenclock alpenmachine alpenname alpenpanel alpenresize; do
   $CC -target "$TARGET" -static -O2 -s -o "$OUT/$prog" "$SRC/$prog.c"
   echo "built $prog"
 done

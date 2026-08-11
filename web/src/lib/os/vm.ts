@@ -34,6 +34,7 @@ function screenResolution(el: HTMLElement): string {
 type V86Emulator = {
   add_listener(name: string, handler: (arg: unknown) => void): void;
   serial0_send(text: string): void;
+  serial_send_bytes(port: number, bytes: Uint8Array): void;
   keyboard_send_text(text: string): void;
   lock_mouse(): void;
   destroy(): void;
@@ -46,6 +47,8 @@ class VmManager {
   private progressListeners = new Set<(progress: Progress) => void>();
   private progress: Progress = { message: "cold", percent: null, ready: false };
   private openListener: ((url: string) => void) | null = null;
+  private resizeObserver: ResizeObserver | null = null;
+  private resizeTimer: ReturnType<typeof setTimeout> | null = null;
 
   get running(): boolean {
     return this.emulator !== null;
@@ -83,9 +86,14 @@ class VmManager {
         // VRAM so a large framebuffer fits (1920x1200x32 is ~9.2 MB).
         memory_size: 512 * 1024 * 1024,
         vga_memory_size: 32 * 1024 * 1024,
+        // A second UART (ttyS1 in the guest) is the host→guest resize
+        // channel: @@resize W H\n, sent on window resize, read by
+        // alpenresize which forwards it to the compositor's SETCRTC path.
+        uart1: true,
         autostart: true,
       });
       this.emulator = emulator;
+      this.attachResize(screen);
 
       // The serial line is the machine's voice to the host: watch for
       // @@open lines from the sites app; everything else is debug.
@@ -142,6 +150,27 @@ class VmManager {
     } finally {
       this.starting = false;
     }
+  }
+
+  /** On host window resize, tell the guest to re-mode the screen so the
+   *  desktop reflows instead of being letterboxed. Debounced ~250ms; the
+   *  guest's alpenresize daemon reads `@@resize W H\n` off ttyS1. */
+  private attachResize(screen: HTMLElement): void {
+    if (typeof ResizeObserver === "undefined") return;
+    const send = () => {
+      const res = screenResolution(screen);
+      const [w, h] = res.split("x").map(Number);
+      const line = `@@resize ${w} ${h}\n`;
+      this.emulator?.serial_send_bytes(1, new TextEncoder().encode(line));
+    };
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.resizeTimer) clearTimeout(this.resizeTimer);
+      this.resizeTimer = setTimeout(() => {
+        this.resizeTimer = null;
+        if (this.emulator && this.progress.ready) send();
+      }, 250);
+    });
+    this.resizeObserver.observe(screen);
   }
 
   /** Types into the machine's PS/2 keyboard — for touch keyboards. */
