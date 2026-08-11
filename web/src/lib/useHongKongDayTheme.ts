@@ -128,12 +128,20 @@ export type HongKongDayTheme = {
   showLocalTime: boolean;
   weatherDisplay: string;
   weatherHref: string;
+  /**
+   * The wall-clock instant currently being displayed — live, or shifted while
+   * the clock is being scrubbed. Format it against any zone or fixed UTC
+   * offset to get a clock that follows the scrubber.
+   */
+  displayedDate: Date;
   hkgClockHref: string;
   melClockHref: string;
   localClockHref: string;
   isScrubbing: boolean;
   onScrubWheel: (event: ReactWheelEvent<HTMLElement>) => void;
   onClockWheel: (event: WheelEvent) => void;
+  /** Jump the displayed time to an absolute minute of day — for drag scrubbing. */
+  scrubToMinute: (minute: number) => void;
   resetScrub: () => void;
   getTransportStyle: (baseHex: string) => CSSProperties;
   attributionUrl: string;
@@ -505,65 +513,65 @@ function buildThemeStops(solarTimes: SolarTimes): ThemeStop[] {
     {
       minute: solarTimes.sunrise,
       palette: {
-        background: "#667ea5",
-        text: "#f7f9ff",
-        muted: "#dce4f5",
-        soft: "#b6c2d9",
-        surface: "#758bb0",
-        surfaceHover: "#879cc2",
-        beam: "#ffce9d",
-        beamSecondary: "#f19ab5",
-        shadow: "#4c6185",
-        accent: "#b6d2ff",
-        transportText: "#f4f8ff",
+        background: "#5c7bb0",
+        text: "#fff8f2",
+        muted: "#ffe3cf",
+        soft: "#d9b8ad",
+        surface: "#6d87b8",
+        surfaceHover: "#7f98c8",
+        beam: "#ffb56b",
+        beamSecondary: "#ff7fae",
+        shadow: "#3d5583",
+        accent: "#ffc89a",
+        transportText: "#fff6ee",
       },
     },
     {
       minute: solarTimes.solarNoon,
       palette: {
-        background: "#c8d8ed",
+        background: "#79b0e6",
         text: "#ffffff",
-        muted: "#ecf3ff",
-        soft: "#d1def2",
-        surface: "#97afcf",
-        surfaceHover: "#abc1de",
-        beam: "#e7f2ff",
-        beamSecondary: "#c6ddfb",
-        shadow: "#6d87ab",
-        accent: "#e5f0ff",
+        muted: "#eaf4ff",
+        soft: "#cfe4fa",
+        surface: "#5d97d4",
+        surfaceHover: "#6ea6e0",
+        beam: "#fff3c4",
+        beamSecondary: "#9ed4ff",
+        shadow: "#33639c",
+        accent: "#cfeaff",
         transportText: "#ffffff",
       },
     },
     {
       minute: lateAfternoon,
       palette: {
-        background: "#93aac8",
-        text: "#ffffff",
-        muted: "#dde8f9",
-        soft: "#c2d3ea",
-        surface: "#738cac",
-        surfaceHover: "#819cbf",
-        beam: "#e7d4c7",
-        beamSecondary: "#a6bad7",
-        shadow: "#556b8a",
-        accent: "#d5e4f8",
-        transportText: "#ffffff",
+        background: "#7f9cc4",
+        text: "#fffdf6",
+        muted: "#ffe9c9",
+        soft: "#e0c9ab",
+        surface: "#6a88b2",
+        surfaceHover: "#7997c1",
+        beam: "#ffd489",
+        beamSecondary: "#f0a56e",
+        shadow: "#44608c",
+        accent: "#ffe3ae",
+        transportText: "#fffaf0",
       },
     },
     {
       minute: solarTimes.sunset,
       palette: {
-        background: "#3f3f56",
-        text: "#f5f0fb",
-        muted: "#d2ccdd",
-        soft: "#a8a3b8",
-        surface: "#4c4d66",
-        surfaceHover: "#5b5d79",
-        beam: "#ff9c76",
-        beamSecondary: "#cc80b1",
-        shadow: "#26293a",
-        accent: "#9fb5d8",
-        transportText: "#f3f5ff",
+        background: "#4a3c63",
+        text: "#fbf2fb",
+        muted: "#e6c9d8",
+        soft: "#b39cbb",
+        surface: "#584a75",
+        surfaceHover: "#675788",
+        beam: "#ff8a55",
+        beamSecondary: "#e06fa8",
+        shadow: "#2b2342",
+        accent: "#c9a3e8",
+        transportText: "#faf1ff",
       },
     },
     {
@@ -1135,6 +1143,15 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     [bumpMinuteFromWheel],
   );
 
+  const scrubToMinute = useCallback((minute: number) => {
+    if (resetFrameRef.current !== null) {
+      window.cancelAnimationFrame(resetFrameRef.current);
+      resetFrameRef.current = null;
+    }
+    setIsScrubbing(true);
+    setDisplayedMinute(wrapMinutes(minute));
+  }, []);
+
   const resetScrub = () => {
     if (!isScrubbing) {
       return;
@@ -1197,6 +1214,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
       location.timeZone !== HONG_KONG_TIME_ZONE &&
       location.timeZone !== MELBOURNE_TIME_ZONE,
     weatherDisplay: formatWeatherDisplay(weather),
+    displayedDate,
     weatherHref: `https://open-meteo.com/en/forecast?latitude=${HONG_KONG_COORDS.lat}&longitude=${HONG_KONG_COORDS.lng}&current=temperature_2m,weather_code`,
     hkgClockHref: "https://www.timeanddate.com/worldclock/hong-kong/hong-kong",
     melClockHref: "https://www.timeanddate.com/worldclock/australia/melbourne",
@@ -1204,6 +1222,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     isScrubbing,
     onScrubWheel,
     onClockWheel,
+    scrubToMinute,
     resetScrub,
     getTransportStyle,
     attributionUrl: SUNRISE_API_ATTRIBUTION_URL,

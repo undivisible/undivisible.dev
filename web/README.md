@@ -14,6 +14,7 @@ Production site for undivisible.dev. Built on moonshine 0.3 (App Router conventi
 - **Last.fm** — Client fetch + optional `public/lastfm-recent.json` from `bun run sync:lastfm` when `NEXT_PUBLIC_LASTFM_API_KEY` is set.
 - **Now status** — `useNowMarkdown` fetches upstream **`now.md`** (status line / article). Deploy snapshot: `public/now.md` and `now-markdown.generated.ts` via `sync:now` / `sync:agent`.
 - **Agent mode** — `/agent` lists direct URLs; `public/llms.txt`, `llms-full.txt`, `agent.md`, `now.md`, `resume.md`, `robots.txt` are **prebuild snapshots** only (`bun run sync:agent`). Live home UI: **README** for projects, **now.md** for status, **resume.md** for CV (localStorage cache on raw fetches).
+- **The machine (`/lab`)** — the page is a real i686 PC. `MachineRoot` (`src/components/os/`, `src/lib/os/vm.ts`) boots [v86](https://github.com/copy/v86) on the real [alpenglow](https://github.com/tschk/alpenglow) image (Linux 7.1.3, rebuilt with bochs-drm/fbcon/PS-2 for a framebuffer), 512 MB, at the window's native resolution. Its screen is a hand-written **Zig 0.16** desktop, `alpenglowed` (`os-image/de/`): a compositor + everything-bar, draggable widgets (Hong Kong clock, `/proc` machine monitor, name card with the almanac's wikipedia-style hover cards) as separate client programs over a `/run/alpenglowed/wm.sock` protocol, anti-aliased Geist Mono, resizable panels, content baked from `src/data/lab-facts.ts`, and a `sites` app that opens host tabs via `@@open` on ttyS0. `web` launches **NetSurf** (framebuffer, real CSS, `/dev/input/mice`) rendering the site offline; `links` is the small fallback; `sh` hands over the real console. Build the desktop with `scripts/build-de.sh` (`zig build`, static i686); repack the initramfs with `scripts/build-os-initramfs.sh`. VM assets are vendored under `public/v86/` with immutable caching (`public/_headers`).
 
 ## Commands
 
@@ -25,6 +26,8 @@ Production site for undivisible.dev. Built on moonshine 0.3 (App Router conventi
 | `bun run sync:lastfm` | Write `public/lastfm-recent.json` (skipped without API key)       |
 | `bun run sync:agent`  | Write agent markdown + `llms.txt`/`llms-full.txt` under `public/` |
 | `bun run typecheck`   | `tsc --noEmit`                                                    |
+
+The `/lab` machine has its own build (see the machine feature above): `sh scripts/build-de.sh` (Zig desktop, static i686) then `sh scripts/build-os-initramfs.sh` (repack the alpenglow initramfs with the overlay). Both output committed artifacts, so the site build never needs Zig or cpio.
 
 ## Env (public)
 

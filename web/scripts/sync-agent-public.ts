@@ -4,25 +4,24 @@ import { fetchResumeMarkdown } from "./fetch-resume-markdown.ts";
 const PUBLIC_DIR = new URL("../public/", import.meta.url);
 const SITE = process.env.SITE_URL ?? "https://undivisible.dev";
 
+/**
+ * now.md only.
+ *
+ * There is deliberately no README fallback here: the README is a different
+ * document, and falling back to it silently replaced the now line with the
+ * whole project list. If now.md can't be fetched we write nothing and keep
+ * whatever is already committed.
+ */
 async function fetchNow(): Promise<string | null> {
-  const urls = process.env.PROFILE_README_URL
-    ? [process.env.PROFILE_README_URL]
-    : [
-        DEFAULT_PROFILE_MARKDOWN_URL,
-        "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md",
-      ];
-  for (const url of urls) {
-    try {
-      const res = await fetch(url);
-      if (res.ok) {
-        const raw = (await res.text()).trim();
-        if (raw.length > 0) return raw;
-      }
-    } catch {
-      /* try next */
-    }
+  const url = process.env.NOW_MARKDOWN_URL ?? DEFAULT_PROFILE_MARKDOWN_URL;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const raw = (await res.text()).trim();
+    return raw.length > 0 ? raw : null;
+  } catch {
+    return null;
   }
-  return null;
 }
 
 const now = await fetchNow();
