@@ -25,6 +25,7 @@ Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MA
   - `seven/` - Rust/Leptos WASM site
   - `eight/` - Next.js site
   - `nine/` - Next.js 16 source snapshot only (`src/`, `app/`, configs); no `public/` bundle
+- `web/os-image/` - the `/lab` machine: the alpenglowed desktop (`de/`, Zig) and the initramfs overlay baked onto the real alpenglow v86 image
 
 ## Next.js to moonshine
 
@@ -44,11 +45,27 @@ references.
 | `/`      | CSS                 |             53,509 |      41,166 |      −23% |
 | `/agent` | HTML                |             13,195 |       3,923 |      −70% |
 | `/agent` | JS                  | 654,653 (10 files) |       **0** | **−100%** |
-| build    | compile + prerender |             3.06 s |      0.29 s |  **−91%** |
+| build    | compile + prerender |             3.06 s |      0.46 s |  **−85%** |
 
 Build timing is the median of five local production builds on Bun 1.3.14 and
 Apple arm64, with remote content-sync hooks omitted; it measures framework
-compiler and prerender work, not browser loading.
+compiler and prerender work, not browser loading. (The moonshine build was
+0.29 s at migration; it is 0.46 s now that the redesign added `/lab` and its
+components — still an order of magnitude under Next.js.)
+
+### Since the migration: the machine (`/lab`)
+
+The site is now also a computer. `/lab` boots a real 32-bit i686 Linux in the
+browser under [v86](https://github.com/copy/v86) — the real
+[alpenglow](https://github.com/tschk/alpenglow) image — and its screen is the
+page: a hand-written **Zig 0.16** framebuffer desktop (compositor, bar,
+draggable widgets with wikipedia-style hover cards, resizable panels) plus a
+real browser ([NetSurf](https://www.netsurf-browser.org/), framebuffer, real
+CSS) rendering the site offline. It adds one 5.3 KB page (`/lab`); the site CSS
+grew to ~70 KB with the desktop's host-side styles; the ~27 MB of v86
+kernel/initrd/wasm are vendored static assets loaded at runtime, cached
+immutably, and are not part of any page bundle. See `web/README.md` for the
+machine's internals.
 
 `/agent` ships no JavaScript because nothing on it is interactive; under
 Next.js it still received the framework runtime. The interactive parts of `/`
