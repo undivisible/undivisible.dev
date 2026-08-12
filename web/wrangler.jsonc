@@ -1,7 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "undivisible-dev",
+  "name": "undivisible-next",
   "compatibility_date": "2026-08-10",
+  "routes": [
+    { "pattern": "next.undivisible.dev", "custom_domain": true },
+  ],
   "assets": {
     "directory": "./out",
     "not_found_handling": "404-page",
