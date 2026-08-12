@@ -177,6 +177,16 @@ var sel: usize = 0;
 var bar_x: i32 = 0;
 var bar_y: i32 = 0;
 var bar_w: i32 = 0;
+// The launcher can get out of the way: esc hides it, the corner chip (or
+// just typing) brings it back, and launching a panel hides it so the app
+// isn't born underneath it.
+var bar_on: bool = true;
+const CHIP_W: i32 = 46;
+const CHIP_H: i32 = 36;
+
+fn chipHit(x: i32, y: i32) bool {
+    return x >= 10 and x < 10 + CHIP_W and y >= H - CHIP_H - 10 and y < H - 10;
+}
 
 const App = struct {
     name: [64]u8 = std.mem.zeroes([64]u8),
@@ -302,6 +312,19 @@ fn barH() i32 {
 }
 
 fn drawBar() void {
+    if (!bar_on) {
+        // The start chip: a quiet corner button that reopens the launcher.
+        const cx: i32 = 10;
+        const cy: i32 = H - CHIP_H - 10;
+        draw.blend(&back, cx + 3, cy + 4, CHIP_W, CHIP_H, 0x000000, 90);
+        draw.blend(&back, cx, cy, CHIP_W, CHIP_H, 0x10131c, 235);
+        draw.fill(&back, cx, cy, CHIP_W, 1, 0x2a3040);
+        draw.fill(&back, cx, cy + CHIP_H - 1, CHIP_W, 1, 0x1a1e2a);
+        draw.fill(&back, cx, cy, 1, CHIP_H, 0x1f2432);
+        draw.fill(&back, cx + CHIP_W - 1, cy, 1, CHIP_H, 0x1f2432);
+        _ = draw.textLg(&back, cx + 15, cy + 2, ">", 0x7ec8e8);
+        return;
+    }
     const h = barH();
     draw.blend(&back, bar_x + 4, bar_y + 6, bar_w, h, 0x000000, 90);
     draw.blend(&back, bar_x, bar_y, bar_w, h, 0x10131c, 215);
@@ -579,6 +602,8 @@ fn launch(app_index: usize) void {
         var name_z: [64]u8 = std.mem.zeroes([64]u8);
         @memcpy(name_z[0..an.len], an);
         spawn("/usr/bin/unpanel", @ptrCast(&name_z));
+        // Get out of the app's way — the chip brings the launcher back.
+        bar_on = false;
     } else {
         var path: [288]u8 = std.mem.zeroes([288]u8);
         const desc = std.mem.sliceTo(&a.desc, 0);
@@ -782,15 +807,22 @@ pub fn main() void {
                 if (linux.read(0, @ptrCast(&k2), 1) == 1 and k2 == '[' and linux.read(0, @ptrCast(&k3), 1) == 1) {
                     if (k3 == 'A' and sel > 0) sel -= 1;
                     if (k3 == 'B' and sel < nmatch - 1) sel += 1;
-                    composite(bar_x, bar_y, bar_w, barH() + 8);
+                    if (bar_on) composite(bar_x, bar_y, bar_w, barH() + 8);
                 } else if (qlen > 0) {
                     qlen = 0;
                     query[0] = 0;
                     refilter();
                     compositeAll();
+                } else {
+                    // Bare esc: the launcher gets out of the way (and back).
+                    bar_on = !bar_on;
+                    compositeAll();
                 }
             } else if (k == '\r' or k == '\n') {
-                if (qlen > 1 and query[0] == '>') {
+                if (!bar_on) {
+                    bar_on = true;
+                    compositeAll();
+                } else if (qlen > 1 and query[0] == '>') {
                     handOver(query[1..qlen]);
                 } else if (nmatch > 0) {
                     launch(matches[sel]);
@@ -803,6 +835,7 @@ pub fn main() void {
                     compositeAll();
                 }
             } else if (k >= 32 and k < 127 and qlen < 70) {
+                bar_on = true;
                 query[qlen] = k;
                 qlen += 1;
                 query[qlen] = 0;
@@ -830,7 +863,10 @@ pub fn main() void {
                 const btn: i32 = pkt[0] & 1;
                 if (btn != 0 and mbtn == 0) {
                     const bh = barH();
-                    if (mx >= bar_x and mx < bar_x + bar_w and my >= bar_y and my < bar_y + bh) {
+                    if (!bar_on and chipHit(mx, my)) {
+                        bar_on = true;
+                        compositeAll();
+                    } else if (bar_on and mx >= bar_x and mx < bar_x + bar_w and my >= bar_y and my < bar_y + bh) {
                         focus = -1;
                         if (my > bar_y + 49 and nmatch > 0) {
                             const row: usize = @intCast(@divTrunc(my - bar_y - 49, 24));
@@ -916,7 +952,7 @@ pub fn main() void {
                     const uy1: i32 = if (old.y + old.h > s.y + s.h) old.y + old.h else s.y + s.h;
                     composite(ux - 6, uy - 6, ux1 - ux + 18, uy1 - uy + 20);
                 } else {
-                    if (nmatch > 0 and mx >= bar_x and mx < bar_x + bar_w and my > bar_y + 49 and my < bar_y + 49 + @as(i32, @intCast(nmatch)) * 24) {
+                    if (bar_on and nmatch > 0 and mx >= bar_x and mx < bar_x + bar_w and my > bar_y + 49 and my < bar_y + 49 + @as(i32, @intCast(nmatch)) * 24) {
                         const row: usize = @intCast(@divTrunc(my - bar_y - 49, 24));
                         if (row < nmatch and row != sel) {
                             sel = row;
@@ -967,7 +1003,9 @@ pub fn main() void {
         const now = nowSec();
         if (now != last_tick) {
             last_tick = now;
-            composite(bar_x, bar_y, bar_w, 44);
+            // The caret blink only needs the bar strip; when the launcher is
+            // hidden nothing on screen blinks, so skip the copy entirely.
+            if (bar_on) composite(bar_x, bar_y, bar_w, 44);
             if (@mod(now, 60) == 0) compositeAll();
         }
     }
