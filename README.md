@@ -13,27 +13,24 @@ Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MA
 ## Structure
 
 - `web/` - the production site, built on [moonshine](https://github.com/tschk/moonshine) (React renderer, prerendered to static HTML, hydrated islands); see `web/README.md` for shipped features and env vars
-- `old/` - Previous versions of the site:
-  - `one/` - HTML/CSS site
-  - `two/` - HTML/CSS site
-  - `three/` - HTML/CSS site
-  - `four/` - HTML/CSS site
-  - `five/` - HTML/CSS site
-  - `six/` - HTML/CSS site
-  - `six.five/r1/` - Svelte site
-  - `six.five/r2/` - Imba site
-  - `seven/` - Rust/Leptos WASM site
-  - `eight/` - Next.js site
-  - `nine/` - Next.js 16 source snapshot only (`src/`, `app/`, configs); no `public/` bundle
-  - `9.1/` - moonshine site source as it shipped at v9.1, before the machine redesign (`src/`, `scripts/`, configs)
+- `old/` - every previous version of the site, numbered (linguist-vendored):
+  - `1/`-`6/` - the static HTML/CSS originals; these are also baked into the
+    `/lab` machine's initramfs and browsable in-OS via the `history` app
+  - `6.5/r1/` - Svelte site; `6.5/r2/` - Imba site
+  - `7/` - Rust/Leptos WASM site
+  - `8/` - Next.js site
+  - `9/` - Next.js 16 source snapshot only (`src/`, `app/`, configs); no `public/` bundle
+  - `9.1/` - the moonshine site as it shipped before the machine redesign —
+    still buildable (workspace member `@workspace/undivisible-9-1`) and
+    **live on [undivisible.dev](https://undivisible.dev)**
 - `web/os-image/` - the `/lab` machine: **undesk** (`de/`, Zig — my framebuffer compositor, not tschk/alpenglowed) and the initramfs overlay baked onto the real alpenglow v86 image
 
 ## Next.js to moonshine
 
 `web/` ran on Next.js 15 (App Router, static export) before moving to
 moonshine. Same three routes, same 60 source files, same rendered output —
-only the framework changed, and both were served from GitHub Pages, so the
-hosting is identical.
+only the framework changed, and both were served from the same static host,
+so the hosting is identical.
 
 Measured over the network against the deployed site, not a local build. Bytes
 are uncompressed transfer sizes of the HTML plus every script and stylesheet it
@@ -68,6 +65,19 @@ kernel/initrd/wasm are vendored static assets loaded at runtime
 (GitHub Pages serves them with ETag revalidation) and are not part of any
 page bundle. See `web/README.md` for the
 machine's internals.
+
+## Deployment
+
+Both sites are Cloudflare Workers static-asset deploys (`bunx wrangler
+deploy`); GitHub Pages is retired and its workflow removed.
+
+| Site | Worker | Config | Serves |
+| --- | --- | --- | --- |
+| [undivisible.dev](https://undivisible.dev) | `undivisible` | `old/9.1/wrangler.jsonc` | v9.1, the pre-machine design (zone route over the apex) |
+| [next.undivisible.dev](https://next.undivisible.dev) | `undivisible-next` | `web/wrangler.jsonc` | v10, the machine redesign (custom domain) |
+
+The v86 kernel/initrd revalidate on every load (`max-age=0, must-revalidate`
+via `web/public/_headers`); the wasm/BIOS assets are immutable.
 
 `/agent` ships no JavaScript because nothing on it is interactive; under
 Next.js it still received the framework runtime. The interactive parts of `/`
