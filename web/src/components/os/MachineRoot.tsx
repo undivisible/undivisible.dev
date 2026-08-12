@@ -26,6 +26,7 @@ export default function MachineRoot() {
   const [coarse, setCoarse] = useState(false);
   const [askedUrl, setAskedUrl] = useState<string | null>(null);
   const [resumed, setResumed] = useState(false);
+  const [dots, setDots] = useState("");
 
   useEffect(() => {
     setCoarse(window.matchMedia("(pointer: coarse)").matches);
@@ -68,9 +69,16 @@ export default function MachineRoot() {
       clear = setTimeout(() => setResumed(false), 5000);
     };
     document.addEventListener("visibilitychange", onVisibility);
+    // A quiet ellipsis while the machine boots, so the wait doesn't read as a
+    // hang once the download bar hits 100%.
+    const dotsTimer = setInterval(
+      () => setDots((d) => (d.length >= 3 ? "" : d + ".")),
+      450,
+    );
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
       clearTimeout(clear);
+      clearInterval(dotsTimer);
       detach();
     };
   }, []);
@@ -101,17 +109,16 @@ export default function MachineRoot() {
           <div className="machine-cover">
             <p className="machine-cover-title">alpenglow</p>
             <p className="machine-cover-line">
-              {progress.percent !== null
-                ? `[${"#".repeat(Math.round(((progress.percent ?? 0) / 100) * 26)).padEnd(26, "·")}]`
-                : null}{" "}
-              {progress.message}
+              {progress.percent !== null && progress.percent < 100
+                ? `[${"#".repeat(Math.round(((progress.percent ?? 0) / 100) * 26)).padEnd(26, "·")}] ${progress.message}`
+                : `${progress.message}${dots}`}
             </p>
             <p className="machine-cover-fine">
-              a real i686 pc, emulated on your cpu. the kernel you're about to
-              watch boot is linux 7.1.3, built from tschk/alpenglow.
+              a real i686 pc, emulated on your cpu — linux 7.1.3, built from
+              tschk/alpenglow. the desktop appears when it finishes booting.
             </p>
             <button type="button" onClick={() => setCovered(false)}>
-              skip
+              watch it boot →
             </button>
           </div>
         ) : null}

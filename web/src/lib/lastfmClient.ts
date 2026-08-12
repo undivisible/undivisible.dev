@@ -143,7 +143,9 @@ function snapshotUrl(): string {
   if (typeof window === "undefined") {
     return "/lastfm-recent.json";
   }
-  return new URL("./lastfm-recent.json", window.location.href).toString();
+  // Root-absolute: the snapshot lives at the site root, so a nested route
+  // like /lab must not resolve it relative to itself.
+  return new URL("/lastfm-recent.json", window.location.origin).toString();
 }
 
 async function fetchSnapshotTrack(): Promise<LastFmRecentPayload["track"]> {

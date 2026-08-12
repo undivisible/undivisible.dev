@@ -658,6 +658,15 @@ pub fn main() void {
     bar_y = 150;
     compositeAll();
 
+    // Tell the host the desktop is drawn, so it can drop its cover instead
+    // of flashing the kernel boot log behind it.
+    const ser_raw = linux.open("/dev/ttyS0", .{ .ACCMODE = .WRONLY }, 0);
+    if (linux.errno(ser_raw) == .SUCCESS) {
+        const ser: i32 = @intCast(ser_raw);
+        _ = linux.write(ser, "@@desktop\n", 10);
+        _ = linux.close(ser);
+    }
+
     spawn("/usr/bin/unwall", null);
     spawn("/usr/bin/unclock", null);
     spawn("/usr/bin/unmachine", null);

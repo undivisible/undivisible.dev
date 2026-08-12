@@ -96,6 +96,11 @@ class VmManager {
           this.serialLine = "";
           const match = line.match(/@@open (\S+)/);
           if (match?.[1]) this.openListener?.(match[1]);
+          // The desktop drew its first frame — now it's ready, not merely
+          // when the emulator started (that still shows the boot log).
+          if (line.includes("@@desktop")) {
+            this.emit({ message: "ready", percent: 100, ready: true });
+          }
           return;
         }
         this.serialLine = (this.serialLine + ch).slice(-500);
@@ -131,7 +136,9 @@ class VmManager {
       });
 
       emulator.add_listener("emulator-ready", () => {
-        this.emit({ message: "booting", percent: 100, ready: true });
+        // Downloaded and started — but keep `ready` false so the cover holds
+        // over the kernel boot log until the desktop signals @@desktop.
+        this.emit({ message: "booting the machine", percent: 100, ready: false });
       });
     } catch (error) {
       this.emit({
