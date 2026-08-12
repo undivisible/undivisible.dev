@@ -93,10 +93,11 @@ class VmManager {
           controller.enqueue(chunk);
         },
       });
+      const gunzip = new DecompressionStream(
+        "gzip",
+      ) as unknown as ReadableWritablePair<Uint8Array, Uint8Array>;
       const initrdBuffer = await new Response(
-        initrdRes.body
-          .pipeThrough(counted)
-          .pipeThrough(new DecompressionStream("gzip")),
+        initrdRes.body.pipeThrough(counted).pipeThrough(gunzip),
       ).arrayBuffer();
 
       const emulator = new V86({
