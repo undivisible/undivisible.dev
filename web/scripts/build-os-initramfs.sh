@@ -1,7 +1,7 @@
 #!/bin/sh
 # Repacks the pristine upstream alpenglow v86 initrd with the undesk
 # desktop overlay (bar, launcher, apps, baked site content, init).
-# Output: public/v86/undesk-initrd.cpio — committed, so the site
+# Output: public/v86/undesk-initrd.cpio.gz — committed, so the site
 # build never needs cpio.
 set -eu
 DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
@@ -86,9 +86,9 @@ HTML
 (cd "$DIR/os-image/overlay" && find . -type f) | while read -r f; do
   chmod 755 "$WORK/${f#./}"
 done
-# Uncompressed on purpose: the guest unpacks a plain cpio at memcpy speed,
-# while a .gz cost the emulated cpu a real gunzip of the whole archive at
-# every boot. The wire is still compressed -- cloudflare gzips in transit.
-(cd "$WORK" && find . | cpio -o -H newc 2>/dev/null) > "$DIR/public/v86/undesk-initrd.cpio"
-rm -f "$DIR/public/v86/undesk-initrd.cpio.gz"
-ls -lh "$DIR/public/v86/undesk-initrd.cpio"
+# Gzip for the wire only: the host decompresses natively (vm.ts,
+# DecompressionStream) and hands v86 the raw cpio, so the emulated cpu
+# never pays for the gunzip and the download stays ~10 MB.
+(cd "$WORK" && find . | cpio -o -H newc 2>/dev/null | gzip -9) > "$DIR/public/v86/undesk-initrd.cpio.gz"
+rm -f "$DIR/public/v86/undesk-initrd.cpio"
+ls -lh "$DIR/public/v86/undesk-initrd.cpio.gz"

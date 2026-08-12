@@ -2,7 +2,7 @@
 # must NOT be immutable — revalidate each load (304 when unchanged, full
 # download only when the build actually changed). This is the fix for a
 # stale machine surviving a redeploy.
-/v86/undesk-initrd.cpio
+/v86/undesk-initrd.cpio.gz
   Cache-Control: public, max-age=0, must-revalidate
 /v86/undesk-vmlinuz
   Cache-Control: public, max-age=0, must-revalidate

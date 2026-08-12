@@ -70,13 +70,42 @@ class VmManager {
 
       this.emit({ message: "loading the machine", percent: 0, ready: false });
 
+      // Fetch the initrd ourselves and gunzip it on the host — native speed —
+      // so the emulated cpu never pays for decompressing a 10 MB archive.
+      // The wire stays gzip; v86 gets the raw cpio buffer.
+      const initrdRes = await fetch("/v86/undesk-initrd.cpio.gz");
+      if (!initrdRes.ok || !initrdRes.body) {
+        throw new Error(`initrd fetch failed (${initrdRes.status})`);
+      }
+      const total = Number(initrdRes.headers.get("content-length")) || 0;
+      let seen = 0;
+      const counted = new TransformStream<Uint8Array, Uint8Array>({
+        transform: (chunk, controller) => {
+          seen += chunk.byteLength;
+          if (total > 0) {
+            const percent = (seen / total) * 60;
+            this.emit({
+              message: `loading alpenglow ${Math.round(percent)}%`,
+              percent,
+              ready: false,
+            });
+          }
+          controller.enqueue(chunk);
+        },
+      });
+      const initrdBuffer = await new Response(
+        initrdRes.body
+          .pipeThrough(counted)
+          .pipeThrough(new DecompressionStream("gzip")),
+      ).arrayBuffer();
+
       const emulator = new V86({
         wasm_path: "/v86/v86.wasm",
         screen_container: screen,
         bios: { url: "/v86/seabios.bin" },
         vga_bios: { url: "/v86/vgabios.bin" },
         bzimage: { url: "/v86/undesk-vmlinuz" },
-        initrd: { url: "/v86/undesk-initrd.cpio" },
+        initrd: { buffer: initrdBuffer },
         // video= asks bochs-drm for a real mode (vga= is ignored under v86's
         // fast bzImage loader). Match the machine to the window it's shown
         // in, so it renders native pixels instead of upscaling a fixed
