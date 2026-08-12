@@ -38,6 +38,19 @@ const asciify = (text: string) =>
     // Anything else non-ascii (hanzi included) becomes '?', stated nearby.
     .replace(/[^\x00-\x7f]/g, "?");
 
+/** Panels don't word-wrap; fold long copy at bake time. */
+const wrap = (text: string, width = 88, indent = "      ") => {
+  const words = text.split(/\s+/);
+  const rows: string[] = [];
+  let row = "";
+  for (const w of words) {
+    if (row && row.length + 1 + w.length > width) { rows.push(row); row = w; }
+    else row = row ? `${row} ${w}` : w;
+  }
+  if (row) rows.push(row);
+  return rows.join(`\x1b[0m\n${indent}\x1b[90m`);
+};
+
 const write = (name: string, text: string) =>
   Bun.write(join(OUT, name), asciify(text).trimEnd() + "\n");
 
@@ -66,7 +79,7 @@ await write(
   \x1b[1;37mheadline works\x1b[0m — all under ${TSCHK.name}, ${TSCHK.full}
 
 ${HEADLINE_WORKS.map(
-    (w) => `  \x1b[96m${w.name}\x1b[0m  \x1b[90m${w.what} · ${w.stat}\x1b[0m
+    (w) => `  \x1b[96m${w.name}\x1b[0m  \x1b[90m${w.what} ·\x1b[0m \x1b[93m${w.stat}\x1b[0m
     ${w.line}
 `,
   ).join("\n")}`,
@@ -77,11 +90,11 @@ await write(
   `
   \x1b[1;37mthis year, at seventeen\x1b[0m
 
-  ${STOPS_THIS_YEAR.map((s) => s.code).join(" -> ")}
+  ${STOPS_THIS_YEAR.map((s) => `\x1b[93m${s.code}\x1b[0m`).join(" \x1b[90m->\x1b[0m ")}
 
-${STOPS_THIS_YEAR.filter((s) => s.note).map((s) => `    ${s.code}  ${s.city} — ${s.note}`).join("\n")}
+${STOPS_THIS_YEAR.filter((s) => s.note).map((s) => `    \x1b[93m${s.code}\x1b[0m  ${s.city} — \x1b[90m${s.note}\x1b[0m`).join("\n")}
 
-  ${COUNTRIES.length} countries so far; seven of them inside one year.
+  \x1b[93m${COUNTRIES.length}\x1b[0m countries so far; seven of them inside one year.
 `,
 );
 
@@ -90,8 +103,8 @@ await write(
   `
   \x1b[1;37mbefore seventeen\x1b[0m
 
-${MILESTONES.map((m) => `  \x1b[96m${m.age.padStart(2)}\x1b[0m  ${m.title}
-      \x1b[90m${m.detail}\x1b[0m
+${MILESTONES.map((m) => `  \x1b[93m${m.age.padStart(2)}\x1b[0m  \x1b[96m${m.title}\x1b[0m
+      \x1b[90m${wrap(m.detail)}\x1b[0m
 `).join("\n")}`,
 );
 
@@ -100,15 +113,15 @@ await write(
   `
   \x1b[1;37m2026, on github\x1b[0m  \x1b[90m(snapshot baked ${GITHUB_ACTIVITY.verifiedAt}; the live numbers are on github.com/${GITHUB_ACTIVITY.author})\x1b[0m
 
-    ${GITHUB_ACTIVITY.account.pullRequestsThisYear.toLocaleString("en-US")} pull requests this year
-    ${GITHUB_ACTIVITY.account.merged.toLocaleString("en-US")} merged — ${GITHUB_ACTIVITY.account.mergedElsewhere} into repositories that aren't mine
-    ${GITHUB_ACTIVITY.account.commitsThisYear.toLocaleString("en-US")} commits this year
-    ${GITHUB_ACTIVITY.account.repos} repositories
+    \x1b[93m${GITHUB_ACTIVITY.account.pullRequestsThisYear.toLocaleString("en-US")}\x1b[0m pull requests this year
+    \x1b[92m${GITHUB_ACTIVITY.account.merged.toLocaleString("en-US")}\x1b[0m merged — \x1b[92m${GITHUB_ACTIVITY.account.mergedElsewhere}\x1b[0m into repositories that aren't mine
+    \x1b[93m${GITHUB_ACTIVITY.account.commitsThisYear.toLocaleString("en-US")}\x1b[0m commits this year
+    \x1b[93m${GITHUB_ACTIVITY.account.repos}\x1b[0m repositories
 
     ${GITHUB_ACTIVITY.account.closedUnmerged} closed without merging — nearly all by me. not rejections.
 
   recent merged on ${GITHUB_ACTIVITY.repo}:
-${GITHUB_ACTIVITY.recentMerged.slice(0, 5).map((pr) => `    ${pr.mergedAt}  ${pr.title}`).join("\n")}
+${GITHUB_ACTIVITY.recentMerged.slice(0, 5).map((pr) => `    \x1b[90m${pr.mergedAt}\x1b[0m  ${pr.title}`).join("\n")}
 `,
 );
 
@@ -131,7 +144,7 @@ await write(
   `
   \x1b[1;37mthe software, deployed\x1b[0m
 
-${SITES.map(([label, url], index) => `  ${String(index + 1).padStart(2)}) ${label}  \x1b[90m${url}\x1b[0m`).join("\n")}
+${SITES.map(([label, url], index) => `  \x1b[93m${String(index + 1).padStart(2)})\x1b[0m \x1b[96m${label.split(" — ")[0]}\x1b[0m${label.includes(" — ") ? ` — ${label.split(" — ")[1]}` : ""}  \x1b[90m${url}\x1b[0m`).join("\n")}
 `,
 );
 console.log("baked", OUT);

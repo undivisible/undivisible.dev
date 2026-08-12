@@ -1,14 +1,14 @@
 
   [1;37mthis year, at seventeen[0m
 
-  HKG -> HND -> HKG -> MEL -> LGA -> JFK -> BAH -> SIN -> KUL -> HKG -> CKG -> SGN
+  [93mHKG[0m [90m->[0m [93mHND[0m [90m->[0m [93mHKG[0m [90m->[0m [93mMEL[0m [90m->[0m [93mLGA[0m [90m->[0m [93mJFK[0m [90m->[0m [93mBAH[0m [90m->[0m [93mSIN[0m [90m->[0m [93mKUL[0m [90m->[0m [93mHKG[0m [90m->[0m [93mCKG[0m [90m->[0m [93mSGN[0m
 
-    HKG  hong kong -- march. family. ???
-    HND  tokyo haneda -- april
-    HKG  hong kong -- back again
-    MEL  melbourne -- july. where i'm from
-    HKG  hong kong -- here now
-    CKG  chongqing -- next, with shanghai, chengdu and shenzhen
-    SGN  ho chi minh city -- after that
+    [93mHKG[0m  hong kong -- [90mmarch. family. ???[0m
+    [93mHND[0m  tokyo haneda -- [90mapril[0m
+    [93mHKG[0m  hong kong -- [90mback again[0m
+    [93mMEL[0m  melbourne -- [90mjuly. where i'm from[0m
+    [93mHKG[0m  hong kong -- [90mhere now[0m
+    [93mCKG[0m  chongqing -- [90mnext, with shanghai, chengdu and shenzhen[0m
+    [93mSGN[0m  ho chi minh city -- [90mafter that[0m
 
-  10 countries so far; seven of them inside one year.
+  [93m10[0m countries so far; seven of them inside one year.

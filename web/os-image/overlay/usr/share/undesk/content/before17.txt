@@ -1,23 +1,28 @@
 
   [1;37mbefore seventeen[0m
 
-  [96m 6[0m  built a computer, put ubuntu on it
+  [93m 6[0m  [96mbuilt a computer, put ubuntu on it[0m
       [90mthe terminal was the interesting part. i have not really stopped since.[0m
 
-  [96m 8[0m  started shipping software
+  [93m 8[0m  [96mstarted shipping software[0m
       [90msmall programs, badly. the loop was the point.[0m
 
-  [96m10[0m  networking, pentesting, exploit labs
-      [90mhackerone and hackthebox. later: 12th at barbie ctf 2023 in petrozavodsk, 15th nationally and 4th in division at pecan 2025.[0m
+  [93m10[0m  [96mnetworking, pentesting, exploit labs[0m
+      [90mhackerone and hackthebox. later: 12th at barbie ctf 2023 in petrozavodsk, 15th[0m
+      [90mnationally and 4th in division at pecan 2025.[0m
 
-  [96m11[0m  mining crypto, first money online
-      [90mthen keyboards at twelve, cloud lights at thirteen, marketplace arbitrage at fourteen. none of it was a plan.[0m
+  [93m11[0m  [96mmining crypto, first money online[0m
+      [90mthen keyboards at twelve, cloud lights at thirteen, marketplace arbitrage at fourteen.[0m
+      [90mnone of it was a plan.[0m
 
-  [96m12[0m  started teaching english
+  [93m12[0m  [96mstarted teaching english[0m
       [90mvolunteer tutor for russian and other esl speakers, online, from 2022 and still going.[0m
 
-  [96m16[0m  became muslim, for a year and a half
-      [90mread into it properly, converted, and left again eighteen months later. built akh and infrastruct while i was in it. i don't regret either direction.[0m
+  [93m16[0m  [96mbecame muslim, for a year and a half[0m
+      [90mread into it properly, converted, and left again eighteen months later. built akh and[0m
+      [90minfrastruct while i was in it. i don't regret either direction.[0m
 
-  [96m17[0m  left school, seven countries, a job paying 100k+
-      [90mhong kong, china, malaysia, singapore, bahrain, the united states and japan in twelve months, working the whole way through. founded tsc.hk, and the arkie company -- which i closed after leaving school. tsc.hk stayed open.[0m
+  [93m17[0m  [96mleft school, seven countries, a job paying 100k+[0m
+      [90mhong kong, china, malaysia, singapore, bahrain, the united states and japan in twelve[0m
+      [90mmonths, working the whole way through. founded tsc.hk, and the arkie company -- which i[0m
+      [90mclosed after leaving school. tsc.hk stayed open.[0m
