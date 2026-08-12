@@ -63,14 +63,5 @@ if [ -e /dev/fb0 ] && [ -x /usr/bin/undeskd ] && [ -c /dev/tty1 ]; then
   done
 fi
 
-# No framebuffer: the sh edition (bar + text launcher) on the VT.
-if [ -c /dev/tty1 ]; then
-  /usr/bin/unbar &
-  while :; do
-    /bin/setsid -c /usr/bin/undesk </dev/tty1 >/dev/tty1 2>&1
-    /bin/sleep 1
-  done
-fi
-
-# No tty1 (serial-only kernel): behave exactly like upstream.
+# No framebuffer or no tty1: behave exactly like upstream — a serial shell.
 exec /bin/setsid -c /bin/sh -i </dev/console >/dev/console 2>&1
