@@ -9,6 +9,13 @@ const MAXLINE: usize = 400;
 var lines: [MAXLINE][200]u8 = std.mem.zeroes([MAXLINE][200]u8);
 var llen: [MAXLINE]usize = [_]usize{0} ** MAXLINE;
 var line_color: [MAXLINE]u32 = [_]u32{0} ** MAXLINE;
+// A line can change color mid-way (ages amber, titles cyan): each ANSI code
+// opens a span at the offset it appeared. line_color keeps the first span's
+// color for the rows that never split.
+const MAXSPAN: usize = 8;
+var span_at: [MAXLINE][MAXSPAN]u16 = std.mem.zeroes([MAXLINE][MAXSPAN]u16);
+var span_color: [MAXLINE][MAXSPAN]u32 = std.mem.zeroes([MAXLINE][MAXSPAN]u32);
+var span_n: [MAXLINE]usize = [_]usize{0} ** MAXLINE;
 var nlines: usize = 0;
 var site_urls: [24][160]u8 = std.mem.zeroes([24][160]u8);
 var site_ulen: [24]usize = [_]usize{0} ** 24;
@@ -52,16 +59,26 @@ fn loadText(path: [*:0]const u8) void {
     }
     const fd: i32 = @intCast(fd_raw);
     defer _ = linux.close(fd);
-    var raw: [512]u8 = undefined;
-    while (nlines < MAXLINE) {
-        const n = linux.read(fd, &raw, raw.len);
+    // Whole file first, one parse: chunked parsing split lines (and even
+    // escape codes) at every 512-byte read boundary.
+    const S = struct {
+        var raw: [131072]u8 = undefined;
+    };
+    var total: usize = 0;
+    while (total < S.raw.len) {
+        const n = linux.read(fd, S.raw[total..].ptr, S.raw.len - total);
         if (linux.errno(n) != .SUCCESS or n == 0) break;
-        const data = raw[0..n];
+        total += n;
+    }
+    {
+        const data = S.raw[0..total];
         var p: usize = 0;
         while (p < data.len and nlines < MAXLINE) {
-            var color: u32 = 0xd8dbe2;
             var out: [200]u8 = std.mem.zeroes([200]u8);
             var ol: usize = 0;
+            var sp_at: [MAXSPAN]u16 = std.mem.zeroes([MAXSPAN]u16);
+            var sp_color: [MAXSPAN]u32 = std.mem.zeroes([MAXSPAN]u32);
+            var sp_n: usize = 0;
             while (p < data.len and data[p] != '\n' and ol < 198) {
                 if (data[p] == 27) {
                     p += 1;
@@ -75,11 +92,19 @@ fn loadText(path: [*:0]const u8) void {
                         }
                         if (p < data.len and data[p] == 'm') {
                             const c = code[0..cl];
+                            var color: u32 = 0xd8dbe2;
                             if (std.mem.eql(u8, c, "90")) color = 0x8890a0
                             else if (std.mem.eql(u8, c, "96")) color = 0x7ec8e8
                             else if (std.mem.eql(u8, c, "91")) color = 0xff8888
-                            else if (std.mem.eql(u8, c, "1;37")) color = 0xffffff
-                            else color = 0xd8dbe2;
+                            else if (std.mem.eql(u8, c, "92")) color = 0xa8d68a
+                            else if (std.mem.eql(u8, c, "93")) color = 0xf0c674
+                            else if (std.mem.eql(u8, c, "95")) color = 0xd8a8e8
+                            else if (std.mem.eql(u8, c, "1;37")) color = 0xffffff;
+                            if (sp_n < MAXSPAN) {
+                                sp_at[sp_n] = @intCast(ol);
+                                sp_color[sp_n] = color;
+                                sp_n += 1;
+                            }
                             p += 1;
                         }
                     } else if (p < data.len and data[p] == ']') {
@@ -94,7 +119,14 @@ fn loadText(path: [*:0]const u8) void {
                 p += 1;
             }
             if (p < data.len and data[p] == '\n') p += 1;
-            appendLine(color, out[0..ol]);
+            const first: u32 = if (sp_n > 0) sp_color[0] else 0xd8dbe2;
+            const idx = nlines;
+            appendLine(first, out[0..ol]);
+            if (nlines > idx) {
+                span_at[idx] = sp_at;
+                span_color[idx] = sp_color;
+                span_n[idx] = sp_n;
+            }
         }
     }
 }
@@ -113,11 +145,17 @@ fn loadCmd(cmd: [*:0]const u8) void {
         linux.exit(127);
     }
     _ = linux.close(pfd[1]);
-    var raw: [512]u8 = undefined;
-    while (nlines < MAXLINE) {
-        const n = linux.read(pfd[0], &raw, raw.len);
+    const S = struct {
+        var raw: [131072]u8 = undefined;
+    };
+    var total: usize = 0;
+    while (total < S.raw.len) {
+        const n = linux.read(pfd[0], S.raw[total..].ptr, S.raw.len - total);
         if (linux.errno(n) != .SUCCESS or n == 0) break;
-        const data = raw[0..n];
+        total += n;
+    }
+    {
+        const data = S.raw[0..total];
         var p: usize = 0;
         while (p < data.len and nlines < MAXLINE) {
             var out: [200]u8 = std.mem.zeroes([200]u8);
@@ -151,7 +189,30 @@ fn drawAll(c: *awidget.AwClient, title: []const u8) void {
         const li: i32 = scroll_row + i;
         if (li >= @as(i32, @intCast(nlines))) break;
         const idx: usize = @intCast(li);
-        _ = draw.text(&c.buf, 16, 28 + i * 18, lines[idx][0..llen[idx]], line_color[idx], 1);
+        const y = 28 + i * 18;
+        if (span_n[idx] == 0) {
+            _ = draw.text(&c.buf, 16, y, lines[idx][0..llen[idx]], line_color[idx], 1);
+        } else {
+            var x: i32 = 16;
+            var from: usize = 0;
+            var col: u32 = 0xd8dbe2;
+            var sidx: usize = 0;
+            while (from < llen[idx]) {
+                var to: usize = llen[idx];
+                if (sidx < span_n[idx]) {
+                    const at: usize = @min(@as(usize, span_at[idx][sidx]), llen[idx]);
+                    if (at > from) {
+                        to = at;
+                    } else {
+                        col = span_color[idx][sidx];
+                        sidx += 1;
+                        continue;
+                    }
+                }
+                x += draw.text(&c.buf, x, y, lines[idx][from..to], col, 1);
+                from = to;
+            }
+        }
     }
     if (@as(i32, @intCast(nlines)) > rows) {
         var pos: [48]u8 = undefined;
