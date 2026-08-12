@@ -1,0 +1,15 @@
+{
+  "$schema": "../../web/node_modules/wrangler/config-schema.json",
+  "name": "undivisible",
+  "compatibility_date": "2026-08-10",
+  "routes": [
+    // The apex still carries the old GitHub Pages A records and this token
+    // can't edit DNS, so this is a route over the proxied records rather
+    // than a custom domain.
+    { "pattern": "undivisible.dev/*", "zone_name": "undivisible.dev" },
+  ],
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page",
+  },
+}

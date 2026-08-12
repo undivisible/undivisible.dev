@@ -23,6 +23,7 @@
   "workspaces": {
     "packages": [
       "web",
+      "old/9.1",
       "lib/*",
       "lib/integrations/*",
       "scripts"
