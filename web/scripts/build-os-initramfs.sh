@@ -1,7 +1,7 @@
 #!/bin/sh
-# Repacks the pristine upstream alpenglow v86 initrd with the alpenglowed
+# Repacks the pristine upstream alpenglow v86 initrd with the undesk
 # desktop overlay (bar, launcher, apps, baked site content, init).
-# Output: public/v86/alpenglowed-initrd.cpio.gz — committed, so the site
+# Output: public/v86/undesk-initrd.cpio.gz — committed, so the site
 # build never needs cpio.
 set -eu
 DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
@@ -14,7 +14,7 @@ cp -a "$DIR/os-image/overlay/." "$WORK/"
 # network, so the site travels with it: the pages the static build just
 # produced go in as file:// content. Nothing is committed twice — these
 # come from out/, which is generated.
-SITE="$WORK/usr/share/alpenglowed/web"
+SITE="$WORK/usr/share/undesk/web"
 if [ -d "$DIR/out" ]; then
   mkdir -p "$SITE"
   for f in index.html agent.html 404.html resume.md agent.md llms.txt now.md favicon.svg banner.png opengraph.jpg; do
@@ -55,5 +55,5 @@ fi
 (cd "$DIR/os-image/overlay" && find . -type f) | while read -r f; do
   chmod 755 "$WORK/${f#./}"
 done
-(cd "$WORK" && find . | cpio -o -H newc 2>/dev/null | gzip -9) > "$DIR/public/v86/alpenglowed-initrd.cpio.gz"
-ls -lh "$DIR/public/v86/alpenglowed-initrd.cpio.gz"
+(cd "$WORK" && find . | cpio -o -H newc 2>/dev/null | gzip -9) > "$DIR/public/v86/undesk-initrd.cpio.gz"
+ls -lh "$DIR/public/v86/undesk-initrd.cpio.gz"

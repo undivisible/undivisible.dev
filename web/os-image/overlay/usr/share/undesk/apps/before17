@@ -1,0 +1,7 @@
+#!/bin/sh
+# before17
+# the dial, in plain text
+clear
+cat /usr/share/alpenglowed/content/before17.txt
+printf '\n  \033[90m[enter to go back]\033[0m '
+read -r _

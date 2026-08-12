@@ -1,6 +1,6 @@
 #!/bin/sh
 # Alpenglow browser init, desktop edition: serial shell stays on ttyS0
-# exactly as upstream; tty1 (fbcon) gets alpenglowed — the bar and the
+# exactly as upstream; tty1 (fbcon) gets undesk — the bar and the
 # launcher as real processes on the real console.
 export PATH=/bin:/usr/bin:/usr/local/bin
 export HOME=/
@@ -39,21 +39,21 @@ while [ ! -e /dev/fb0 ] && [ "$tries" -lt 40 ]; do
   tries=$((tries + 1))
 done
 
-if [ -e /dev/fb0 ] && [ -x /usr/bin/alpenglowd ] && [ -c /dev/tty1 ]; then
+if [ -e /dev/fb0 ] && [ -x /usr/bin/undeskd ] && [ -c /dev/tty1 ]; then
   # The compositor and the bar. The clock, the machine monitor and the name
   # card are separate programs it starts as clients — see wire.h.
   # Exit 42 means "give me the console": run bash on tty1, then come back.
   while :; do
-    /bin/setsid -c /usr/bin/alpenglowd </dev/tty1 >/dev/tty1 2>&1
+    /bin/setsid -c /usr/bin/undeskd </dev/tty1 >/dev/tty1 2>&1
     code=$?
     if [ "$code" = 42 ]; then
       /bin/echo "alpenglow console — exit returns to the desktop" >/dev/tty1
       /bin/setsid -c /bin/bash --login -i </dev/tty1 >/dev/tty1 2>&1
-    elif [ "$code" = 43 ] && [ -s /run/alpenglowed/exec ]; then
+    elif [ "$code" = 43 ] && [ -s /run/undesk/exec ]; then
       # A console program from the launcher. It gets the real tty1, raw
       # keyboard and all, and the desktop comes back when it exits.
-      cmd="$(/bin/cat /run/alpenglowed/exec)"
-      /bin/rm -f /run/alpenglowed/exec
+      cmd="$(/bin/cat /run/undesk/exec)"
+      /bin/rm -f /run/undesk/exec
       /usr/bin/clear >/dev/tty1 2>/dev/null
       /bin/setsid -c /bin/sh -c "$cmd" </dev/tty1 >/dev/tty1 2>&1
       /bin/echo "" >/dev/tty1
@@ -65,9 +65,9 @@ fi
 
 # No framebuffer: the sh edition (bar + text launcher) on the VT.
 if [ -c /dev/tty1 ]; then
-  /usr/bin/alpenbar &
+  /usr/bin/unbar &
   while :; do
-    /bin/setsid -c /usr/bin/alpenglowed </dev/tty1 >/dev/tty1 2>&1
+    /bin/setsid -c /usr/bin/undesk </dev/tty1 >/dev/tty1 2>&1
     /bin/sleep 1
   done
 fi

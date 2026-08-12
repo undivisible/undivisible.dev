@@ -8,7 +8,7 @@
  * fbcon, VESA, PS/2 keyboard — because this build has a screen to draw on.
  * The initramfs is alpenglow's real browser image (busybox branded
  * Alpenglow, bash, fastfetch, oil/wax, vro, the docs) overlaid with
- * alpenglowed-sh: the bar, the sky palette, the launcher and the apps, all
+ * undesk: the bar, the sky palette, the launcher and the apps, all
  * ordinary executables running on the real kernel.
  *
  * tty1 is the desktop. ttyS0 stays a bash debug console, and also carries
@@ -72,8 +72,8 @@ class VmManager {
         screen_container: screen,
         bios: { url: "/v86/seabios.bin" },
         vga_bios: { url: "/v86/vgabios.bin" },
-        bzimage: { url: "/v86/alpenglowed-vmlinuz" },
-        initrd: { url: "/v86/alpenglowed-initrd.cpio.gz" },
+        bzimage: { url: "/v86/undesk-vmlinuz" },
+        initrd: { url: "/v86/undesk-initrd.cpio.gz" },
         // video= asks bochs-drm for a real mode (vga= is ignored under v86's
         // fast bzImage loader). Match the machine to the window it's shown
         // in, so it renders native pixels instead of upscaling a fixed

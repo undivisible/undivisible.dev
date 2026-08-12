@@ -1,5 +1,5 @@
-pub const SOCK = "/run/alpenglowed/wm.sock";
-pub const DIR = "/run/alpenglowed";
+pub const SOCK = "/run/undesk/wm.sock";
+pub const DIR = "/run/undesk";
 
 pub const AW_HELLO: u32 = 1;
 pub const AW_SURFACE: u32 = 2;

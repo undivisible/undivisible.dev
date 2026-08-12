@@ -1,7 +1,0 @@
-#!/bin/sh
-# about
-# who this machine belongs to
-clear
-cat /usr/share/alpenglowed/content/about.txt
-printf '\n  \033[90m[enter to go back]\033[0m '
-read -r _

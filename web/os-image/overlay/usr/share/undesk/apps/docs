@@ -1,0 +1,11 @@
+#!/bin/sh
+# docs
+# alpenglow's own documentation, in the image
+clear
+printf '\n'
+ls -1 /*.md | sed 's/^\//   /'
+printf '\n  which one? (name, or enter to go back)\n  > '
+read -r doc
+[ -z "$doc" ] && exit 0
+case "$doc" in *.md) ;; *) doc="$doc.md" ;; esac
+[ -f "/$doc" ] && less "/$doc"

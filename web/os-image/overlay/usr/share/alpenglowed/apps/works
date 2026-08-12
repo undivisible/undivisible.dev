@@ -1,7 +1,0 @@
-#!/bin/sh
-# works
-# the headline projects + the index
-clear
-cat /usr/share/alpenglowed/content/works.txt
-printf '\n  \033[90m[enter to go back]\033[0m '
-read -r _

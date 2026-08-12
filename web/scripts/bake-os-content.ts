@@ -1,5 +1,5 @@
 /**
- * Bakes the site's copy into the alpenglowed image as plain text, so the
+ * Bakes the site's copy into the undesk image as plain text, so the
  * apps inside the VM read the same facts the web pages do. Run before
  * build-os-initramfs.sh; outputs are committed with the overlay.
  */
@@ -19,7 +19,7 @@ import {
   TSCHK,
 } from "../src/data/lab-facts";
 
-const OUT = join(import.meta.dir, "../os-image/overlay/usr/share/alpenglowed/content");
+const OUT = join(import.meta.dir, "../os-image/overlay/usr/share/undesk/content");
 await mkdir(OUT, { recursive: true });
 
 /** The console font is CP437; bake pure ASCII so nothing renders as mojibake. */

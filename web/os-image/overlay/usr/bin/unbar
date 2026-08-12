@@ -1,0 +1,17 @@
+#!/bin/sh
+# unbar — the sh-edition bar is a real program.
+# A separate process, like polybar: once a second it repaints row one of
+# tty1 with pills read from the real kernel — clock (RTC via date), uptime,
+# free memory from /proc/meminfo, load from /proc/loadavg.
+T=/dev/tty1
+while :; do
+  h=$(date -u +%H); m=$(date -u +%M); s=$(date -u +%S)
+  hk=$(( ( ${h#0} + 8 ) % 24 ))
+  up=$(cut -d. -f1 /proc/uptime 2>/dev/null)
+  memk=$(awk '/MemAvailable/{a=$2}/MemTotal/{t=$2}END{printf "%d/%dM",(t-a)/1024,t/1024}' /proc/meminfo 2>/dev/null)
+  load=$(cut -d' ' -f1 /proc/loadavg 2>/dev/null)
+  cols=$(stty -F "$T" size 2>/dev/null | cut -d' ' -f2); [ -n "$cols" ] || cols=100
+  left=$(printf ' alpenglow  %02d:%s:%s hkg  up %ss  %s  load %s ' "$hk" "$m" "$s" "$up" "$memk" "$load")
+  printf '\0337\033[1;1H\033[30;46m%-*s\033[0m\0338' "$cols" "$left" > "$T" 2>/dev/null
+  sleep 1
+done
