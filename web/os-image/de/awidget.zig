@@ -42,6 +42,10 @@ pub fn recv(fd: i32, m: *AwMsg) bool {
     return true;
 }
 
+pub fn remap(c: *AwClient, r: *const AwMsg) bool {
+    return mapSurface(c, r);
+}
+
 fn mapSurface(c: *AwClient, r: *const AwMsg) bool {
     const path: [*:0]const u8 = @ptrCast(&r.s);
     const sfd_raw = linux.open(path, .{ .ACCMODE = .RDWR }, 0);

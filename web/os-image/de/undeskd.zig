@@ -208,6 +208,7 @@ fn builtinDesc(n: []const u8) []const u8 {
     if (std.mem.eql(u8, n, "sites")) return "the software; click to open a tab";
     if (std.mem.eql(u8, n, "docs")) return "alpenglow's own documentation";
     if (std.mem.eql(u8, n, "web")) return "netsurf, the site with real css";
+    if (std.mem.eql(u8, n, "term")) return "bash, in a window";
     if (std.mem.eql(u8, n, "history")) return "every old undivisible.dev, v1-v6";
     if (std.mem.eql(u8, n, "links")) return "links, the small fallback browser";
     if (std.mem.eql(u8, n, "fetch")) return "fastfetch, the real one";
@@ -263,7 +264,7 @@ fn scanDir(dir: []const u8) void {
 }
 
 fn scanApps() void {
-    const names = [_][]const u8{ "about", "works", "route", "before17", "activity", "sites", "docs", "web", "history", "links", "fetch", "sh" };
+    const names = [_][]const u8{ "about", "works", "route", "before17", "activity", "sites", "docs", "web", "history", "links", "term", "fetch", "sh" };
     for (names) |n| addApp(n, builtinDesc(n), true);
     scanDir("/bin");
     scanDir("/usr/bin");
@@ -503,6 +504,9 @@ fn handleHello(s: *Surface, m: *const wire.AwMsg) void {
     // the glass feel without killing contrast.
     s.alpha = if (s.bg) 255 else 246;
     s.resizable = (m.e & wire.AW_F_RESIZE) != 0;
+    // A window that asked for the keyboard gets focus at birth — a terminal
+    // is useless if its first keystrokes land in the launcher instead.
+    if (!s.bg and (m.e & wire.AW_F_KEYBOARD) != 0) focus = s.id;
     copyStr(&s.title, std.mem.sliceTo(&m.s, 0));
 
     var r: wire.AwMsg = std.mem.zeroes(wire.AwMsg);
@@ -592,6 +596,16 @@ fn launch(app_index: usize) void {
     const a = &apps[app_index];
     const an = std.mem.sliceTo(&a.name, 0);
     if (std.mem.eql(u8, an, "sh")) linux.exit(42);
+    if (std.mem.eql(u8, an, "term")) {
+        spawn("/usr/bin/unterm", null);
+        bar_on = false;
+        qlen = 0;
+        query[0] = 0;
+        sel = 0;
+        refilter();
+        compositeAll();
+        return;
+    }
     if (std.mem.eql(u8, an, "web"))
         handOver("netsurf-fb -f linux -w 1440 -h 900 file:///usr/share/undesk/web/index.html");
     if (std.mem.eql(u8, an, "history"))

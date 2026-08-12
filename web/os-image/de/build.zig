@@ -15,6 +15,7 @@ pub fn build(b: *std.Build) void {
         "unmachine",
         "uncard",
         "unpanel",
+        "unterm",
     };
 
     for (progs) |name| {

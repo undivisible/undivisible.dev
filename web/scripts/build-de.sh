@@ -9,7 +9,7 @@ OUT="$DIR/os-image/overlay/usr/bin"
 
 cd "$SRC"
 zig build
-for prog in undeskd unwall unclock unmachine uncard unpanel; do
+for prog in undeskd unwall unclock unmachine uncard unpanel unterm; do
   cp "zig-out/bin/$prog" "$OUT/$prog"
   echo "built $prog"
 done
