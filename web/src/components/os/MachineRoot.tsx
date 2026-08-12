@@ -173,7 +173,15 @@ export default function MachineRoot() {
         <span className="machine-foot-hint">
           click the screen to hand it your mouse (esc takes it back) · type to
           launch · esc or the corner chip hides the launcher · drag the
-          widgets · `sh` is the real console
+          widgets · `sh` is the real console ·{" "}
+          <button
+            type="button"
+            className="machine-foot-escape"
+            onClick={() => vm.exitBrowser()}
+            title="netsurf and links have no quit key — this kills them and the desktop comes back"
+          >
+            stuck in the browser? click here
+          </button>
         </span>
       </footer>
     </div>

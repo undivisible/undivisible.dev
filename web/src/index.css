@@ -1847,6 +1847,16 @@ a[data-tip] {
 }
 .machine-foot a { color: rgba(255, 255, 255, 0.5); }
 .machine-foot a:hover { color: #fff; }
+.machine-foot-escape {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: rgba(126, 200, 232, 0.75);
+  cursor: pointer;
+  text-decoration: underline dotted;
+}
+.machine-foot-escape:hover { color: #7ec8e8; }
 
 /* The VGA text layer: sized to the viewport, stays mono and crisp. */
 .machine-text {

@@ -194,6 +194,13 @@ class VmManager {
     this.emulator?.lock_mouse();
   }
 
+  /** The in-machine browsers own the keyboard and have no quit key — this
+   *  kills them over the ttyS0 bash console, and init brings the desktop
+   *  back. The escape hatch for "stuck in netsurf". */
+  exitBrowser(): void {
+    this.emulator?.serial0_send("\x03\npkill netsurf-fb; pkill links\n");
+  }
+
   onOpenRequest(listener: (url: string) => void): void {
     this.openListener = listener;
   }
