@@ -81,6 +81,7 @@ const Surface = struct {
     alive: bool = false,
     bg: bool = false,
     resizable: bool = false,
+    kbd: bool = false,
 };
 
 var fbfd: i32 = -1;
@@ -504,9 +505,10 @@ fn handleHello(s: *Surface, m: *const wire.AwMsg) void {
     // the glass feel without killing contrast.
     s.alpha = if (s.bg) 255 else 246;
     s.resizable = (m.e & wire.AW_F_RESIZE) != 0;
+    s.kbd = (m.e & wire.AW_F_KEYBOARD) != 0;
     // A window that asked for the keyboard gets focus at birth — a terminal
     // is useless if its first keystrokes land in the launcher instead.
-    if (!s.bg and (m.e & wire.AW_F_KEYBOARD) != 0) focus = s.id;
+    if (!s.bg and s.kbd) focus = s.id;
     copyStr(&s.title, std.mem.sliceTo(&m.s, 0));
 
     var r: wire.AwMsg = std.mem.zeroes(wire.AwMsg);
@@ -801,6 +803,14 @@ pub fn main() void {
                         e.type = wire.AW_INPUT;
                         e.a = wire.AW_IN_KEY;
                         e.d = @as(i32, 0x100) + k3;
+                        _ = sendMsg(surf[@intCast(fi2)].fd, &e);
+                    } else if (surf[@intCast(fi2)].kbd) {
+                        // A terminal wants the real escape byte; clicking
+                        // elsewhere is how focus leaves a keyboard window.
+                        var e: wire.AwMsg = std.mem.zeroes(wire.AwMsg);
+                        e.type = wire.AW_INPUT;
+                        e.a = wire.AW_IN_KEY;
+                        e.d = 27;
                         _ = sendMsg(surf[@intCast(fi2)].fd, &e);
                     } else {
                         focus = -1;
