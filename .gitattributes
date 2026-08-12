@@ -1,0 +1,7 @@
+# Archived site versions — keep them out of the language statistics.
+old/** linguist-vendored
+# Committed build artifacts for the /lab machine.
+web/public/v86/** linguist-generated
+web/os-image/overlay/usr/bin/** linguist-generated
+web/os-image/overlay/usr/local/** linguist-generated
+web/os-image/de/font_*.bin linguist-generated
