@@ -11,9 +11,8 @@
 /v86/alpenglow-v86-vmlinuz
   Cache-Control: public, max-age=0, must-revalidate
 
-# The wasm, BIOS and vga BIOS are upstream and never change.
-/v86/*.wasm
-  Cache-Control: public, max-age=604800, immutable
+# The BIOS and vga BIOS are upstream and never change. (The wasm is covered
+# by the /*.wasm rule below; listing it here too double-stacks the header.)
 /v86/*.bin
   Cache-Control: public, max-age=604800, immutable
 /v86/libv86.mjs
