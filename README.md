@@ -26,7 +26,7 @@ Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MA
   - `eight/` - Next.js site
   - `nine/` - Next.js 16 source snapshot only (`src/`, `app/`, configs); no `public/` bundle
   - `9.1/` - moonshine site source as it shipped at v9.1, before the machine redesign (`src/`, `scripts/`, configs)
-- `web/os-image/` - the `/lab` machine: the alpenglowed desktop (`de/`, Zig) and the initramfs overlay baked onto the real alpenglow v86 image
+- `web/os-image/` - the `/lab` machine: **undesk** (`de/`, Zig — my framebuffer compositor, not tschk/alpenglowed) and the initramfs overlay baked onto the real alpenglow v86 image
 
 ## Next.js to moonshine
 
@@ -64,8 +64,9 @@ draggable widgets with wikipedia-style hover cards, resizable panels) plus a
 real browser ([NetSurf](https://www.netsurf-browser.org/), framebuffer, real
 CSS) rendering the site offline. It adds one 5.3 KB page (`/lab`); the site CSS
 grew to ~70 KB with the desktop's host-side styles; the ~27 MB of v86
-kernel/initrd/wasm are vendored static assets loaded at runtime, cached
-immutably, and are not part of any page bundle. See `web/README.md` for the
+kernel/initrd/wasm are vendored static assets loaded at runtime
+(GitHub Pages serves them with ETag revalidation) and are not part of any
+page bundle. See `web/README.md` for the
 machine's internals.
 
 `/agent` ships no JavaScript because nothing on it is interactive; under
