@@ -25,6 +25,7 @@ Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MA
   - `seven/` - Rust/Leptos WASM site
   - `eight/` - Next.js site
   - `nine/` - Next.js 16 source snapshot only (`src/`, `app/`, configs); no `public/` bundle
+  - `9.1/` - moonshine site source as it shipped at v9.1, before the machine redesign (`src/`, `scripts/`, configs)
 - `web/os-image/` - the `/lab` machine: the alpenglowed desktop (`de/`, Zig) and the initramfs overlay baked onto the real alpenglow v86 image
 
 ## Next.js to moonshine
