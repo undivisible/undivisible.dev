@@ -76,7 +76,7 @@ class VmManager {
         bios: { url: "/v86/seabios.bin" },
         vga_bios: { url: "/v86/vgabios.bin" },
         bzimage: { url: "/v86/undesk-vmlinuz" },
-        initrd: { url: "/v86/undesk-initrd.cpio.gz" },
+        initrd: { url: "/v86/undesk-initrd.cpio" },
         // video= asks bochs-drm for a real mode (vga= is ignored under v86's
         // fast bzImage loader). Match the machine to the window it's shown
         // in, so it renders native pixels instead of upscaling a fixed
