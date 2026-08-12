@@ -22,12 +22,15 @@ type Progress = { message: string; percent: number | null; ready: boolean };
  *  of 8 (VBE convention); both axes are clamped to the compositor's MAXW/MAXH
  *  and stay within the 32 MB of emulated VRAM. */
 function screenResolution(el: HTMLElement): string {
-  const dpr = window.devicePixelRatio || 1;
+  // Full retina density means up to 1920x1200 = 2.3M pixels pushed through
+  // an emulated i686 on every composite — the whole desktop feels slow.
+  // 1.25x is visually close on a laptop and roughly halves the pixel work.
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
   const rect = el.getBoundingClientRect();
   const cap = (v: number, lo: number, hi: number) =>
     Math.max(lo, Math.min(hi, v));
-  const w = cap(Math.round((rect.width * dpr) / 8) * 8, 1024, 1920);
-  const h = cap(Math.round(rect.height * dpr), 700, 1200);
+  const w = cap(Math.round((rect.width * dpr) / 8) * 8, 1024, 1600);
+  const h = cap(Math.round(rect.height * dpr), 700, 1000);
   return `${w}x${h}`;
 }
 

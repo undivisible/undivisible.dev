@@ -172,7 +172,8 @@ export default function MachineRoot() {
         </span>
         <span className="machine-foot-hint">
           click the screen to hand it your mouse (esc takes it back) · type to
-          launch · drag the widgets · `sh` is the real console
+          launch · esc or the corner chip hides the launcher · drag the
+          widgets · `sh` is the real console
         </span>
       </footer>
     </div>
