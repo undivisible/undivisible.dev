@@ -198,6 +198,7 @@ fn builtinDesc(n: []const u8) []const u8 {
     if (std.mem.eql(u8, n, "sites")) return "the software; click to open a tab";
     if (std.mem.eql(u8, n, "docs")) return "alpenglow's own documentation";
     if (std.mem.eql(u8, n, "web")) return "netsurf, the site with real css";
+    if (std.mem.eql(u8, n, "history")) return "every old undivisible.dev, v1-v6";
     if (std.mem.eql(u8, n, "links")) return "links, the small fallback browser";
     if (std.mem.eql(u8, n, "fetch")) return "fastfetch, the real one";
     if (std.mem.eql(u8, n, "sh")) return "the real console (exit returns)";
@@ -252,7 +253,7 @@ fn scanDir(dir: []const u8) void {
 }
 
 fn scanApps() void {
-    const names = [_][]const u8{ "about", "works", "route", "before17", "activity", "sites", "docs", "web", "links", "fetch", "sh" };
+    const names = [_][]const u8{ "about", "works", "route", "before17", "activity", "sites", "docs", "web", "history", "links", "fetch", "sh" };
     for (names) |n| addApp(n, builtinDesc(n), true);
     scanDir("/bin");
     scanDir("/usr/bin");
@@ -567,6 +568,8 @@ fn launch(app_index: usize) void {
     if (std.mem.eql(u8, an, "sh")) linux.exit(42);
     if (std.mem.eql(u8, an, "web"))
         handOver("netsurf-fb -f linux -w 1440 -h 900 file:///usr/share/undesk/web/index.html");
+    if (std.mem.eql(u8, an, "history"))
+        handOver("netsurf-fb -f linux -w 1440 -h 900 file:///usr/share/undesk/old/index.html");
     if (std.mem.eql(u8, an, "links"))
         handOver("links -g -driver fb file:///usr/share/undesk/web/index.html");
     if (a.builtin) {

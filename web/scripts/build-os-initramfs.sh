@@ -51,6 +51,37 @@ by the same build that made the site you are looking at.</p>
 </body>
 HTML
 fi
+# The site's own history: every static-era version (v1-v6) travels with the
+# machine, browsable offline. v6.5/v8/v9 are unbuilt framework projects and
+# stay out; v9.1 and v10 are the two live deployments.
+OLD="$WORK/usr/share/undesk/old"
+mkdir -p "$OLD"
+for v in 1 2 3 4 5 6; do
+  [ -d "$DIR/../old/$v" ] && cp -a "$DIR/../old/$v" "$OLD/$v" || true
+done
+rm -f "$OLD"/*/mail.php
+cat > "$OLD/index.html" <<'HTML'
+<!doctype html>
+<meta charset="utf-8">
+<title>undivisible.dev — history</title>
+<body bgcolor="#10131c" text="#c4cad6" link="#7ec8e8" vlink="#7ec8e8">
+<h1>every undivisible.dev</h1>
+<p>The site's whole history, baked into this machine. Versions 1-6 are the
+static originals, byte for byte.</p>
+<ul>
+  <li><a href="1/index.html">v1</a> — where it started</li>
+  <li><a href="2/index.html">v2</a></li>
+  <li><a href="3/index.html">v3</a></li>
+  <li><a href="4/index.html">v4</a></li>
+  <li><a href="5/index.html">v5</a></li>
+  <li><a href="6/index.html">v6</a></li>
+</ul>
+<p>v6.5, v8 and v9 were framework builds and need a real toolchain; v9.1
+lives at undivisible.dev and v10 is the machine you are inside right now.</p>
+<p><a href="../web/index.html">back to the current site</a></p>
+</body>
+HTML
+
 # Only the overlay's own files — busybox symlinks in usr/bin dangle here.
 (cd "$DIR/os-image/overlay" && find . -type f) | while read -r f; do
   chmod 755 "$WORK/${f#./}"
