@@ -17,6 +17,49 @@ var span_at: [MAXLINE][MAXSPAN]u16 = std.mem.zeroes([MAXLINE][MAXSPAN]u16);
 var span_color: [MAXLINE][MAXSPAN]u32 = std.mem.zeroes([MAXLINE][MAXSPAN]u32);
 var span_n: [MAXLINE]usize = [_]usize{0} ** MAXLINE;
 var nlines: usize = 0;
+// The wrapped view: source lines folded to the panel's current width, so
+// nothing clips at the edge (docs ships unwrapped upstream lines, and any
+// panel can be resized narrower than the copy).
+const MAXVIEW: usize = 1200;
+var vline: [MAXVIEW]u16 = [_]u16{0} ** MAXVIEW;
+var vfrom: [MAXVIEW]u16 = [_]u16{0} ** MAXVIEW;
+var vto: [MAXVIEW]u16 = [_]u16{0} ** MAXVIEW;
+var nview: usize = 0;
+var wrap_cols: i32 = 0;
+
+fn rewrap(cols_raw: i32) void {
+    const cols: usize = @intCast(@max(cols_raw, 20));
+    wrap_cols = @intCast(cols);
+    nview = 0;
+    var li: usize = 0;
+    while (li < nlines and nview < MAXVIEW) : (li += 1) {
+        const len = llen[li];
+        if (len == 0) {
+            vline[nview] = @intCast(li);
+            vfrom[nview] = 0;
+            vto[nview] = 0;
+            nview += 1;
+            continue;
+        }
+        var from: usize = 0;
+        while (from < len and nview < MAXVIEW) {
+            var to = @min(from + cols, len);
+            if (to < len) {
+                // Fold at the last space that fits; hard-break a single
+                // word longer than the row.
+                var brk = to;
+                while (brk > from and lines[li][brk] != ' ') brk -= 1;
+                if (brk > from) to = brk;
+            }
+            vline[nview] = @intCast(li);
+            vfrom[nview] = @intCast(from);
+            vto[nview] = @intCast(to);
+            nview += 1;
+            from = to;
+            while (from < len and lines[li][from] == ' ') from += 1;
+        }
+    }
+}
 var site_urls: [24][160]u8 = std.mem.zeroes([24][160]u8);
 var site_ulen: [24]usize = [_]usize{0} ** 24;
 var site_rows: [24]i32 = [_]i32{0} ** 24;
@@ -186,21 +229,28 @@ fn drawAll(c: *awidget.AwClient, title: []const u8) void {
     const rows: i32 = @divTrunc(c.buf.h - 40, 18);
     var i: i32 = 0;
     while (i < rows) : (i += 1) {
-        const li: i32 = scroll_row + i;
-        if (li >= @as(i32, @intCast(nlines))) break;
-        const idx: usize = @intCast(li);
+        const vi: i32 = scroll_row + i;
+        if (vi >= @as(i32, @intCast(nview))) break;
+        const v: usize = @intCast(vi);
+        const idx: usize = vline[v];
+        const seg_from: usize = vfrom[v];
+        const seg_to: usize = vto[v];
         const y = 28 + i * 18;
         if (span_n[idx] == 0) {
-            _ = draw.text(&c.buf, 16, y, lines[idx][0..llen[idx]], line_color[idx], 1);
+            _ = draw.text(&c.buf, 16, y, lines[idx][seg_from..seg_to], line_color[idx], 1);
         } else {
             var x: i32 = 16;
-            var from: usize = 0;
+            var from: usize = seg_from;
+            // The color already in effect where this row starts.
             var col: u32 = 0xd8dbe2;
             var sidx: usize = 0;
-            while (from < llen[idx]) {
-                var to: usize = llen[idx];
+            while (sidx < span_n[idx] and @as(usize, span_at[idx][sidx]) <= from) : (sidx += 1) {
+                col = span_color[idx][sidx];
+            }
+            while (from < seg_to) {
+                var to: usize = seg_to;
                 if (sidx < span_n[idx]) {
-                    const at: usize = @min(@as(usize, span_at[idx][sidx]), llen[idx]);
+                    const at: usize = @min(@as(usize, span_at[idx][sidx]), seg_to);
                     if (at > from) {
                         to = at;
                     } else {
@@ -214,9 +264,9 @@ fn drawAll(c: *awidget.AwClient, title: []const u8) void {
             }
         }
     }
-    if (@as(i32, @intCast(nlines)) > rows) {
+    if (@as(i32, @intCast(nview)) > rows) {
         var pos: [48]u8 = undefined;
-        const ps = std.fmt.bufPrint(&pos, "{d}/{d}  arrows scroll", .{ scroll_row + 1, nlines }) catch unreachable;
+        const ps = std.fmt.bufPrint(&pos, "{d}/{d}  arrows scroll", .{ scroll_row + 1, nview }) catch unreachable;
         _ = draw.text(&c.buf, c.buf.w - 200, c.buf.h - 20, ps, 0x596074, 1);
     }
     var k: i32 = 0;
@@ -259,6 +309,7 @@ pub fn main() void {
 
     var c: awidget.AwClient = undefined;
     if (!awidget.open(&c, name, 800, 540, wire.AW_CENTER, 110, wire.AW_F_RESIZE)) linux.exit(1);
+    rewrap(@divTrunc(c.buf.w - 32, 8));
     drawAll(&c, name);
 
     while (true) {
@@ -268,7 +319,9 @@ pub fn main() void {
         if (r == 0) continue;
         const rows: i32 = @divTrunc(c.buf.h - 40, 18);
         if (in.type == wire.AW_SURFACE) {
-            if (scroll_row > @as(i32, @intCast(nlines)) - 1) scroll_row = @as(i32, @intCast(nlines)) - 1;
+            const cols = @divTrunc(c.buf.w - 32, 8);
+            if (cols != wrap_cols) rewrap(cols);
+            if (scroll_row > @as(i32, @intCast(nview)) - 1) scroll_row = @as(i32, @intCast(nview)) - 1;
             if (scroll_row < 0) scroll_row = 0;
             drawAll(&c, name);
             continue;
@@ -279,16 +332,18 @@ pub fn main() void {
             const k = in.d;
             if (k == 'q') linux.exit(0);
             if (k == 0x100 + 'A' and scroll_row > 0) scroll_row -= 1;
-            if (k == 0x100 + 'B' and scroll_row < @as(i32, @intCast(nlines)) - 1) scroll_row += 1;
+            if (k == 0x100 + 'B' and scroll_row < @as(i32, @intCast(nview)) - 1) scroll_row += 1;
             if (k == 0x100 + '5') { scroll_row -= rows; if (scroll_row < 0) scroll_row = 0; }
             if (k == 0x100 + '6') {
                 scroll_row += rows;
-                if (scroll_row > @as(i32, @intCast(nlines)) - 1) scroll_row = @as(i32, @intCast(nlines)) - 1;
+                if (scroll_row > @as(i32, @intCast(nview)) - 1) scroll_row = @as(i32, @intCast(nview)) - 1;
             }
             drawAll(&c, name);
         } else if (in.a == wire.AW_IN_PRESS) {
             if (in.b > c.buf.w - 30 and in.c < 24) linux.exit(0);
-            const row: i32 = @divTrunc(in.c - 28, 18) + scroll_row;
+            const vrow: i32 = @divTrunc(in.c - 28, 18) + scroll_row;
+            var row: i32 = -1;
+            if (vrow >= 0 and vrow < @as(i32, @intCast(nview))) row = vline[@intCast(vrow)];
             var s: usize = 0;
             while (s < nsites) : (s += 1) {
                 if (site_rows[s] == row) {
