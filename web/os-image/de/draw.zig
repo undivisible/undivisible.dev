@@ -88,7 +88,10 @@ pub fn blendGlyph(b: *AwBuf, x: i32, y: i32, g: [*]const u8, gw: i32, gh: i32, c
             const px_y: i32 = y + r;
             if (px_x < 0 or px_x >= b.w or px_y < 0 or px_y >= b.h) continue;
             const idx = @as(usize, @intCast(px_y * b.w + px_x));
-            b.px[idx] = mix(b.px[idx], c, a);
+            // Keep the pixel opaque: without the top byte the compositor
+            // treats every glyph pixel as a transparent hole and the text
+            // renders as sky — the great "why is everything slate blue".
+            b.px[idx] = AW_OPAQUE | (mix(b.px[idx] & 0xffffff, c, a) & 0xffffff);
         }
     }
 }
