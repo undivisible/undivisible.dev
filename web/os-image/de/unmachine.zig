@@ -30,7 +30,7 @@ fn firstF64(data: []const u8) f64 {
 
 pub fn main() void {
     var c: awidget.AwClient = undefined;
-    if (!awidget.open(&c, "machine", 250, 92, -28, 26, 0)) linux.exit(1);
+    if (!awidget.open(&c, "machine", 250, 116, -28, 26, 0)) linux.exit(1);
 
     var rbuf: [4096]u8 = undefined;
     var last: i64 = 0;
@@ -61,9 +61,19 @@ pub fn main() void {
         var buf: [96]u8 = undefined;
         const s1 = std.fmt.bufPrint(&buf, "up {d: >3}s   load {d:.2}", .{ @as(u32, @intFromFloat(up)), load }) catch unreachable;
         _ = draw.text(&c.buf, 12, 26, s1, 0xd8dbe2, 1);
+        // The meters: mem in amber, load in cyan, on a dark track. The load
+        // bar treats 1.0 as full — one busy cpu is all this machine has.
+        const track_w: i32 = c.buf.w - 24;
+        const mem_fill: i32 = if (mt > 0) @intCast(@divTrunc((mt - ma) * @as(i64, track_w), mt)) else 0;
+        draw.fill(&c.buf, 12, 46, track_w, 6, 0x232a3a);
+        draw.fill(&c.buf, 12, 46, @max(mem_fill, 1), 6, 0xf0c674);
+        var load_fill: i32 = @intFromFloat(load * @as(f64, @floatFromInt(track_w)));
+        if (load_fill > track_w) load_fill = track_w;
+        draw.fill(&c.buf, 12, 66, track_w, 6, 0x232a3a);
+        draw.fill(&c.buf, 12, 66, @max(load_fill, 1), 6, 0x7ec8e8);
         const s2 = std.fmt.bufPrint(&buf, "mem {d}/{d}M", .{ @divTrunc(mt - ma, 1024), @divTrunc(mt, 1024) }) catch unreachable;
-        _ = draw.text(&c.buf, 12, 44, s2, 0xd8dbe2, 1);
-        _ = draw.text(&c.buf, 12, 62, "linux 7.1.3 i686 real", 0x8890a0, 1);
+        _ = draw.text(&c.buf, 12, 76, s2, 0x8890a0, 1);
+        _ = draw.text(&c.buf, 12, 94, "linux 7.1.3 i686 real", 0x8890a0, 1);
         awidget.commit(&c);
     }
 }

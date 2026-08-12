@@ -330,7 +330,7 @@ fn drawBar() void {
         const a = &apps[matches[m]];
         const ry = bar_y + 52 + @as(i32, @intCast(m)) * 24;
         if (m == sel) draw.blend(&back, bar_x + 6, ry - 3, bar_w - 12, 22, 0xffffff, 26);
-        _ = draw.text(&back, bar_x + 16, ry, std.mem.sliceTo(&a.name, 0), if (m == sel) 0xffffff else 0xc4cad6, 1);
+        _ = draw.text(&back, bar_x + 16, ry, std.mem.sliceTo(&a.name, 0), if (m == sel) 0xffffff else 0x7ec8e8, 1);
         _ = draw.text(&back, bar_x + 180, ry, std.mem.sliceTo(&a.desc, 0), 0x767e92, 1);
     }
 }
@@ -475,7 +475,10 @@ fn handleHello(s: *Surface, m: *const wire.AwMsg) void {
         s.x = if (m.c == wire.AW_CENTER) @divTrunc(W - w, 2) else (if (m.c < 0) W + m.c - w else m.c);
         s.y = if (m.d == wire.AW_CENTER) @divTrunc(H - h, 2) else (if (m.d < 0) H + m.d - h else m.d);
     }
-    s.alpha = if (s.bg) 255 else 215;
+    // Near-opaque: at 215 the sky bled ~16% into every pixel and washed the
+    // panel colors into the same slate blue. A whisper of translucency keeps
+    // the glass feel without killing contrast.
+    s.alpha = if (s.bg) 255 else 246;
     s.resizable = (m.e & wire.AW_F_RESIZE) != 0;
     copyStr(&s.title, std.mem.sliceTo(&m.s, 0));
 
