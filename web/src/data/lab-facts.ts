@@ -25,7 +25,7 @@ export const GHOST_SUFFIXES: GhostSuffix[] = [
   },
   {
     word: "worse",
-    note: "if i was an nba player i would be like dillon brooks but worse. — peggy, “i scream this in the mirror before i interact with anyone”, i lay down my life for you.",
+    note: "“like dillon brooks but worse” — jpegmafia, i lay down my life for you. he says he screams it in the mirror before talking to anyone. same.",
   },
   {
     word: "autistic",

@@ -160,8 +160,12 @@ pub fn main() void {
                 const ly = in.c;
                 const ty = CARD_Y + 50;
                 if (ly >= ty and ly < ty + 16) {
+                    // "the ghost of terry davis, but {suffix}" — three hover
+                    // zones: the phrase, the man, the blank.
                     const col = @divTrunc(lx - 14, 8);
-                    if (col >= 13 and col < 24) {
+                    if (col >= 0 and col < 13) {
+                        want = "ghost";
+                    } else if (col >= 13 and col < 24) {
                         want = "terry";
                     } else if (col >= 30 and col < 30 + @as(i32, @intCast(suffix.len))) {
                         want = suffix;
