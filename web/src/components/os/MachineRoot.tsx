@@ -27,6 +27,12 @@ export default function MachineRoot() {
   const [askedUrl, setAskedUrl] = useState<string | null>(null);
   const [resumed, setResumed] = useState(false);
   const [dots, setDots] = useState("");
+  const touchRef = useRef<{
+    x: number;
+    y: number;
+    moved: boolean;
+    held: boolean;
+  } | null>(null);
 
   useEffect(() => {
     setCoarse(window.matchMedia("(pointer: coarse)").matches);
@@ -93,6 +99,44 @@ export default function MachineRoot() {
           ref={screenRef}
           onClick={() => vm.lockMouse()}
           title="click to give the machine your mouse — esc gives it back"
+          onTouchStart={(event) => {
+            const t = event.touches[0];
+            if (!t) return;
+            touchRef.current = {
+              x: t.clientX,
+              y: t.clientY,
+              moved: false,
+              held: event.touches.length > 1,
+            };
+            // A second finger holds the button down: two-finger drag moves
+            // windows, one-finger drag just moves the cursor.
+            if (event.touches.length > 1) vm.touchButton(true);
+          }}
+          onTouchMove={(event) => {
+            const t = event.touches[0];
+            const s = touchRef.current;
+            const rect = screenRef.current?.getBoundingClientRect();
+            if (!t || !s || !rect) return;
+            event.preventDefault();
+            vm.touchDelta(t.clientX - s.x, t.clientY - s.y, rect.width, rect.height);
+            s.x = t.clientX;
+            s.y = t.clientY;
+            s.moved = true;
+          }}
+          onTouchEnd={(event) => {
+            const s = touchRef.current;
+            if (!s) return;
+            if (event.touches.length === 0) {
+              if (s.held) {
+                vm.touchButton(false);
+              } else if (!s.moved) {
+                // A tap: press and release where the cursor already is.
+                vm.touchButton(true);
+                setTimeout(() => vm.touchButton(false), 60);
+              }
+              touchRef.current = null;
+            }
+          }}
         >
           <div className="machine-text" style={{ whiteSpace: "pre" }} />
           <canvas style={{ display: "none" }} />
@@ -136,7 +180,7 @@ export default function MachineRoot() {
           <input
             value={mobileLine}
             onChange={(event) => setMobileLine(event.target.value)}
-            placeholder="type here — it goes to the machine's keyboard"
+            placeholder="type here — drag moves the cursor, tap clicks, two fingers drag windows"
             aria-label="machine keyboard"
             autoCapitalize="off"
             autoComplete="off"

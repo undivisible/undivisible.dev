@@ -40,11 +40,14 @@ type V86Emulator = {
   keyboard_send_text(text: string): void;
   lock_mouse(): void;
   destroy(): void;
+  bus: { send(name: string, data: unknown): void };
 };
 
 class VmManager {
   private emulator: V86Emulator | null = null;
   private starting = false;
+  private guestW = 1024;
+  private guestH = 700;
   private serialLine = "";
   private progressListeners = new Set<(progress: Progress) => void>();
   private progress: Progress = { message: "cold", percent: null, ready: false };
@@ -111,7 +114,13 @@ class VmManager {
         // fast bzImage loader). Match the machine to the window it's shown
         // in, so it renders native pixels instead of upscaling a fixed
         // image into blocks — clamped to the compositor's max and the VRAM.
-        cmdline: `console=ttyS0 console=tty1 rdinit=/init loglevel=4 video=${screenResolution(screen)}`,
+        cmdline: `console=ttyS0 console=tty1 rdinit=/init loglevel=4 video=${(() => {
+          const res = screenResolution(screen);
+          const [w, h] = res.split("x").map(Number);
+          this.guestW = w ?? 1024;
+          this.guestH = h ?? 700;
+          return res;
+        })()}`,
         // 512 MB so a browser and the desktop have real headroom; 32 MB of
         // VRAM so a large framebuffer fits (1920x1200x32 is ~9.2 MB).
         memory_size: 512 * 1024 * 1024,
@@ -192,6 +201,23 @@ class VmManager {
   /** Capture the pointer for the machine's PS/2 mouse. Esc releases it. */
   lockMouse(): void {
     this.emulator?.lock_mouse();
+  }
+
+  /** Touch: a finger-move in css pixels becomes a PS/2 mouse delta in guest
+   *  pixels. Touch screens have no pointer lock, so this is the only way a
+   *  phone can move the machine's cursor. */
+  touchDelta(dxCss: number, dyCss: number, rectW: number, rectH: number): void {
+    if (rectW <= 0 || rectH <= 0) return;
+    const dx = Math.round((dxCss * this.guestW) / rectW);
+    const dy = Math.round((dyCss * this.guestH) / rectH);
+    if (dx === 0 && dy === 0) return;
+    // The guest inverts y (PS/2 convention: positive is up).
+    this.emulator?.bus.send("mouse-delta", [dx, -dy]);
+  }
+
+  /** Press or release the machine's left mouse button (taps, drags). */
+  touchButton(down: boolean): void {
+    this.emulator?.bus.send("mouse-click", [down, false, false]);
   }
 
   /** The in-machine browsers own the keyboard and have no quit key — this
