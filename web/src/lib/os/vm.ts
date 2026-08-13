@@ -211,12 +211,15 @@ class VmManager {
     const dx = Math.round((dxCss * this.guestW) / rectW);
     const dy = Math.round((dyCss * this.guestH) / rectH);
     if (dx === 0 && dy === 0) return;
-    // The guest inverts y (PS/2 convention: positive is up).
+    // v86 drops relative deltas unless it believes the pointer is locked —
+    // touch never locks, so claim it. The guest inverts y (PS/2: up is +).
+    this.emulator?.bus.send("mouse-pointer-lock", true);
     this.emulator?.bus.send("mouse-delta", [dx, -dy]);
   }
 
   /** Press or release the machine's left mouse button (taps, drags). */
   touchButton(down: boolean): void {
+    this.emulator?.bus.send("mouse-pointer-lock", true);
     this.emulator?.bus.send("mouse-click", [down, false, false]);
   }
 
