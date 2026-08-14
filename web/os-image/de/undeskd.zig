@@ -878,6 +878,25 @@ pub fn main() void {
                     refilter();
                     compositeAll();
                 }
+            } else if (k == 9) {
+                // Tab cycles the stack: the buried window surfaces. Only real
+                // windows (resizable) — the widgets stay put. A focused
+                // terminal never reaches here — tab is bash completion there.
+                var low: i32 = -1;
+                var ci: usize = 0;
+                while (ci < nsurf) : (ci += 1) {
+                    if (surf[ci].alive and !surf[ci].bg and surf[ci].resizable) {
+                        low = @intCast(ci);
+                        break;
+                    }
+                }
+                if (low >= 0) {
+                    const top = surf[@intCast(low)];
+                    var j2: usize = @intCast(low);
+                    while (j2 < nsurf - 1) : (j2 += 1) surf[j2] = surf[j2 + 1];
+                    surf[nsurf - 1] = top;
+                    damageSurface(&surf[nsurf - 1]);
+                }
             } else if (k >= 32 and k < 127 and qlen < 70) {
                 bar_on = true;
                 query[qlen] = k;
