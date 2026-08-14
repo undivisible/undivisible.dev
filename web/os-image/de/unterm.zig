@@ -21,8 +21,17 @@ const TIOCSWINSZ: u32 = 0x5414;
 
 const Winsize = extern struct { row: u16, col: u16, xpix: u16, ypix: u16 };
 
+const HIST: usize = 300;
+
 var grid: [MAXR][MAXC]u8 = std.mem.zeroes([MAXR][MAXC]u8);
 var gcol: [MAXR][MAXC]u32 = std.mem.zeroes([MAXR][MAXC]u32);
+// scrollback: a ring of rows that fell off the top. voff is how many
+// history rows the view is shifted up by; 0 means live.
+var hist: [HIST][MAXC]u8 = std.mem.zeroes([HIST][MAXC]u8);
+var histcol: [HIST][MAXC]u32 = std.mem.zeroes([HIST][MAXC]u32);
+var hhead: usize = 0;
+var hcount: usize = 0;
+var voff: usize = 0;
 var rows: usize = 0;
 var cols: usize = 0;
 var cx: usize = 0;
@@ -72,6 +81,10 @@ fn clearAll() void {
 }
 
 fn scrollUp() void {
+    hist[hhead] = grid[0];
+    histcol[hhead] = gcol[0];
+    hhead = (hhead + 1) % HIST;
+    if (hcount < HIST) hcount += 1;
     var r: usize = 0;
     while (r + 1 < rows) : (r += 1) {
         grid[r] = grid[r + 1];
@@ -189,20 +202,37 @@ fn feed(ch: u8) void {
     }
 }
 
+fn viewRow(v: usize) struct { ch: *const [MAXC]u8, co: *const [MAXC]u32 } {
+    // The stream is hcount history rows followed by `rows` live rows; the
+    // view is `rows` tall and slides up by voff.
+    const idx = hcount - voff + v;
+    if (idx < hcount) {
+        const h = (hhead + HIST - hcount + idx) % HIST;
+        return .{ .ch = &hist[h], .co = &histcol[h] };
+    }
+    return .{ .ch = &grid[idx - hcount], .co = &gcol[idx - hcount] };
+}
+
 fn redraw(c: *awidget.AwClient) void {
     draw.frame(&c.buf, "terminal");
     _ = draw.text(&c.buf, c.buf.w - 22, 6, "x", 0x9aa2b2, 1);
     var r: usize = 0;
     while (r < rows) : (r += 1) {
+        const src = viewRow(r);
         var i: usize = 0;
         while (i < cols) : (i += 1) {
-            const ch = grid[r][i];
+            const ch = src.ch[i];
             if (ch != ' ' and ch != 0)
-                draw.glyph(&c.buf, 12 + @as(i32, @intCast(i)) * CELL_W, 28 + @as(i32, @intCast(r)) * CELL_H, ch, gcol[r][i], 1);
+                draw.glyph(&c.buf, 12 + @as(i32, @intCast(i)) * CELL_W, 28 + @as(i32, @intCast(r)) * CELL_H, ch, src.co[i], 1);
         }
     }
-    // block cursor
-    draw.blend(&c.buf, 12 + @as(i32, @intCast(cx)) * CELL_W, 28 + @as(i32, @intCast(cy)) * CELL_H, CELL_W, CELL_H, 0xffffff, 110);
+    if (voff > 0) {
+        // scrolled back: no cursor, a marker instead
+        _ = draw.text(&c.buf, c.buf.w - 120, 6, "scrollback", 0x7ec8e8, 1);
+    } else {
+        // block cursor
+        draw.blend(&c.buf, 12 + @as(i32, @intCast(cx)) * CELL_W, 28 + @as(i32, @intCast(cy)) * CELL_H, CELL_W, CELL_H, 0xffffff, 110);
+    }
     var k: i32 = 0;
     while (k < 3) : (k += 1)
         draw.fill(&c.buf, c.buf.w - 6 - k * 5, c.buf.h - 6, 3, 3, 0x596074);
@@ -287,18 +317,28 @@ pub fn main() void {
                 redraw(&c);
             } else if (in.type == wire.AW_INPUT and in.a == wire.AW_IN_KEY) {
                 const k = in.d;
-                if (k >= 0x100) {
+                if (k == 0x100 + '5') {
+                    // page up into scrollback
+                    voff = @min(voff + (rows - 1), hcount);
+                    redraw(&c);
+                } else if (k == 0x100 + '6') {
+                    voff -|= rows - 1;
+                    redraw(&c);
+                } else if (k >= 0x100) {
+                    if (voff != 0) {
+                        voff = 0;
+                        redraw(&c);
+                    }
                     const seq: []const u8 = switch (@as(u8, @intCast(k - 0x100))) {
                         'A' => "\x1b[A",
                         'B' => "\x1b[B",
                         'C' => "\x1b[C",
                         'D' => "\x1b[D",
-                        '5' => "\x1b[5~",
-                        '6' => "\x1b[6~",
                         else => "",
                     };
                     if (seq.len > 0) _ = linux.write(ptm, seq.ptr, seq.len);
                 } else if (k > 0 and k < 256) {
+                    if (voff != 0) voff = 0;
                     var b: [1]u8 = .{@intCast(k)};
                     _ = linux.write(ptm, &b, 1);
                 }

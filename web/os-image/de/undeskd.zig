@@ -443,6 +443,16 @@ fn damageSurface(s: *const Surface) void {
     composite(s.x - 6, s.y - 6, s.w + 18, s.h + 20);
 }
 
+fn readKeyByte(out: *u8) bool {
+    // stdin is non-blocking, but the bytes of one escape sequence can
+    // straddle a read — wait a breath for the continuation so pgup doesn't
+    // shatter into a bare esc plus literal "[5~".
+    if (linux.read(0, @ptrCast(out), 1) == 1) return true;
+    var pfd = [1]linux.pollfd{.{ .fd = 0, .events = linux.POLL.IN, .revents = 0 }};
+    _ = linux.poll(&pfd, 1, 30);
+    return linux.read(0, @ptrCast(out), 1) == 1;
+}
+
 fn sendMsg(fd: i32, m: *const wire.AwMsg) bool {
     const bytes = std.mem.asBytes(m);
     const n = linux.write(fd, bytes.ptr, bytes.len);
@@ -798,7 +808,13 @@ pub fn main() void {
                 } else if (k == 27) {
                     var k2: u8 = 0;
                     var k3: u8 = 0;
-                    if (linux.read(0, @ptrCast(&k2), 1) == 1 and k2 == '[' and linux.read(0, @ptrCast(&k3), 1) == 1) {
+                    if (readKeyByte(&k2) and k2 == '[' and readKeyByte(&k3)) {
+                        // pgup/pgdn/home arrive as ESC [ n ~ — swallow the
+                        // trailing ~ so it doesn't land as a literal keypress.
+                        if (k3 >= '0' and k3 <= '9') {
+                            var k4: u8 = 0;
+                            _ = readKeyByte(&k4);
+                        }
                         var e: wire.AwMsg = std.mem.zeroes(wire.AwMsg);
                         e.type = wire.AW_INPUT;
                         e.a = wire.AW_IN_KEY;
@@ -828,7 +844,11 @@ pub fn main() void {
             if (k == 27) {
                 var k2: u8 = 0;
                 var k3: u8 = 0;
-                if (linux.read(0, @ptrCast(&k2), 1) == 1 and k2 == '[' and linux.read(0, @ptrCast(&k3), 1) == 1) {
+                if (readKeyByte(&k2) and k2 == '[' and readKeyByte(&k3)) {
+                    if (k3 >= '0' and k3 <= '9') {
+                        var k4: u8 = 0;
+                        _ = readKeyByte(&k4);
+                    }
                     if (k3 == 'A' and sel > 0) sel -= 1;
                     if (k3 == 'B' and sel < nmatch - 1) sel += 1;
                     if (bar_on) composite(bar_x, bar_y, bar_w, barH() + 8);
