@@ -9,6 +9,12 @@ WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 gzip -dc "$DIR/public/v86/alpenglow-v86-initrd.cpio.gz" | (cd "$WORK" && cpio -idm 2>/dev/null)
 cp -a "$DIR/os-image/overlay/." "$WORK/"
+# A fresh `zig build` outputs to zig-out; the overlay's committed copies can
+# lag behind it. Prefer the build output so an edited app is what ships.
+if [ -d "$DIR/os-image/de/zig-out/bin" ]; then
+  cp "$DIR/os-image/de/zig-out/bin/"* "$WORK/usr/bin/"
+  cp "$DIR/os-image/de/zig-out/bin/"* "$DIR/os-image/overlay/usr/bin/"
+fi
 
 # The machine has a real browser (links, framebuffer graphics) but no
 # network, so the site travels with it: the pages the static build just
