@@ -2,6 +2,7 @@
 # fetch
 # fastfetch, the real one
 clear
-fastfetch
+# this fastfetch build joins its first lines when piped — split them back
+fastfetch | sed -e 's/Host: /\nHost: /' -e 's/Kernel: /\nKernel: /'
 printf '\n  \033[90m[enter to go back]\033[0m '
 read -r _

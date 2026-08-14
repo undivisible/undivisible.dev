@@ -297,7 +297,7 @@ pub fn main() void {
         }
     }
 
-    if (std.mem.eql(u8, name, "fetch")) loadCmd("fastfetch 2>/dev/null")
+    if (std.mem.eql(u8, name, "fetch")) loadCmd("fastfetch 2>/dev/null | sed -e 's/Host: /\\nHost: /' -e 's/Kernel: /\\nKernel: /'")
     else if (std.mem.eql(u8, name, "docs")) loadText("/readme.md")
     else {
         var path: [160]u8 = undefined;
