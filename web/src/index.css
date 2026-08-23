@@ -57,6 +57,14 @@ html {
   overflow-x: hidden;
 }
 
+html.machine-page,
+html.machine-page body {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 html.snap-home {
   scroll-snap-type: y mandatory;
   scroll-padding-top: 1.25rem;
@@ -1728,8 +1736,10 @@ a[data-tip] {
    The page is a real emulated PC. The screen centers in the sky;
    everything drawn on it comes from the kernel, not the DOM. ──── */
 .machine-root {
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
   height: 100dvh;
   overflow: hidden;
+  overscroll-behavior: none;
   display: flex;
   flex-direction: column;
 }
@@ -1747,6 +1757,8 @@ a[data-tip] {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
   background: #000;
   scrollbar-width: none;
 }
@@ -1755,6 +1767,7 @@ a[data-tip] {
   padding: 10px 12px;
   color: #cfcfd6;
 }
+.machine-intro,
 .machine-cover {
   position: absolute;
   inset: 0;
@@ -1765,10 +1778,53 @@ a[data-tip] {
   justify-content: center;
   gap: 12px;
   text-align: center;
-  background: rgba(0, 0, 0, 0.82);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: #000;
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+.machine-intro {
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+.machine-intro canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.machine-intro-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 0 20px;
+}
+.machine-intro .machine-cover-title {
+  font-variant-ligatures: none;
+  min-height: 1.2em;
+}
+.machine-intro.is-exit {
+  animation: machine-intro-exit 0.32s var(--ease) forwards;
+  pointer-events: none;
+}
+.machine-intro.is-light {
+  background: #000;
+}
+@keyframes machine-intro-exit {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+    filter: brightness(1.4);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .machine-intro.is-exit {
+    animation: none;
+    opacity: 0;
+  }
 }
 .machine-cover-title {
   margin: 0;
@@ -1790,6 +1846,7 @@ a[data-tip] {
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.4);
 }
+.machine-intro button,
 .machine-cover button {
   margin-top: 6px;
   font: inherit;
@@ -1803,6 +1860,7 @@ a[data-tip] {
   padding: 7px 22px;
   cursor: pointer;
 }
+.machine-intro button:hover,
 .machine-cover button:hover { color: #fff; border-color: rgba(255, 255, 255, 0.6); }
 .machine-mobile-input {
   position: relative;
@@ -1810,6 +1868,7 @@ a[data-tip] {
   display: flex;
   gap: 8px;
   padding: 8px 12px 4px;
+  touch-action: manipulation;
 }
 .machine-mobile-input input {
   flex: 1;
@@ -1933,4 +1992,10 @@ a[data-tip] {
 }
 .machine-screen {
   cursor: none;
+}
+@media (pointer: coarse) {
+  .machine-screen,
+  .machine-screen canvas {
+    cursor: auto;
+  }
 }

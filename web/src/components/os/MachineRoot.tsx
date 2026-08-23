@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { MachineIntro } from "@/components/os/MachineIntro";
+import { coverVisible } from "@/lib/os/machine-input";
 import { vm, type VmProgress } from "@/lib/os/vm";
 
 /**
@@ -20,19 +22,41 @@ export default function MachineRoot() {
     message: "cold",
     percent: null,
     ready: false,
+    stage: "cold",
   });
-  const [covered, setCovered] = useState(true);
+  const [skipped, setSkipped] = useState(false);
+  const [introMounted, setIntroMounted] = useState(true);
   const [mobileLine, setMobileLine] = useState("");
   const [coarse, setCoarse] = useState(false);
   const [askedUrl, setAskedUrl] = useState<string | null>(null);
   const [resumed, setResumed] = useState(false);
-  const [dots, setDots] = useState("");
   const touchRef = useRef<{
     x: number;
     y: number;
     moved: boolean;
     held: boolean;
   } | null>(null);
+
+  const introOpen = coverVisible({ skipped, stage: progress.stage });
+
+  useEffect(() => {
+    document.documentElement.classList.add("machine-page");
+    return () => {
+      document.documentElement.classList.remove("machine-page");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (introOpen) {
+      setIntroMounted(true);
+      return;
+    }
+    const wait = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 0
+      : 320;
+    const id = window.setTimeout(() => setIntroMounted(false), wait);
+    return () => window.clearTimeout(id);
+  }, [introOpen]);
 
   useEffect(() => {
     setCoarse(window.matchMedia("(pointer: coarse)").matches);
@@ -57,7 +81,6 @@ export default function MachineRoot() {
       setProgress(next);
       // The cover exists for the download, not the boot — the boot is
       // content, drawn by the kernel itself.
-      if (next.ready) setCovered(false);
     });
     // A hidden tab has its timers clamped, so the machine stops dead —
     // usually mid-boot, which reads as a hang. Say so when it comes back.
@@ -75,17 +98,76 @@ export default function MachineRoot() {
       clear = setTimeout(() => setResumed(false), 5000);
     };
     document.addEventListener("visibilitychange", onVisibility);
-    // A quiet ellipsis while the machine boots, so the wait doesn't read as a
-    // hang once the download bar hits 100%.
-    const dotsTimer = setInterval(
-      () => setDots((d) => (d.length >= 3 ? "" : d + ".")),
-      450,
-    );
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
       clearTimeout(clear);
-      clearInterval(dotsTimer);
       detach();
+    };
+  }, []);
+
+  useEffect(() => {
+    const el = screenRef.current;
+    if (!el) return;
+
+    const point = (touch: Touch) => {
+      const rect = el.getBoundingClientRect();
+      vm.touchAt(touch.clientX - rect.left, touch.clientY - rect.top, rect.width, rect.height);
+    };
+
+    const onStart = (event: TouchEvent) => {
+      const t = event.touches[0];
+      if (!t) return;
+      event.preventDefault();
+      touchRef.current = {
+        x: t.clientX,
+        y: t.clientY,
+        moved: false,
+        held: event.touches.length > 1,
+      };
+      point(t);
+      // A second finger holds the button down: two-finger drag moves
+      // windows, one-finger drag just moves the cursor.
+      if (event.touches.length > 1) vm.touchButton(true);
+    };
+
+    const onMove = (event: TouchEvent) => {
+      const t = event.touches[0];
+      const s = touchRef.current;
+      if (!t || !s) return;
+      event.preventDefault();
+      point(t);
+      if (Math.abs(t.clientX - s.x) > 2 || Math.abs(t.clientY - s.y) > 2) {
+        s.moved = true;
+      }
+      s.x = t.clientX;
+      s.y = t.clientY;
+    };
+
+    const onEnd = (event: TouchEvent) => {
+      const s = touchRef.current;
+      if (!s) return;
+      event.preventDefault();
+      if (event.touches.length === 0) {
+        if (s.held) {
+          vm.touchButton(false);
+        } else if (!s.moved) {
+          // A tap: press and release where the cursor already is.
+          vm.touchButton(true);
+          setTimeout(() => vm.touchButton(false), 60);
+        }
+        touchRef.current = null;
+      }
+    };
+
+    el.addEventListener("touchstart", onStart, { passive: false });
+    el.addEventListener("touchmove", onMove, { passive: false });
+    el.addEventListener("touchend", onEnd, { passive: false });
+    el.addEventListener("touchcancel", onEnd, { passive: false });
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onEnd);
     };
   }, []);
 
@@ -99,44 +181,6 @@ export default function MachineRoot() {
           ref={screenRef}
           onClick={() => vm.lockMouse()}
           title="click to give the machine your mouse — esc gives it back"
-          onTouchStart={(event) => {
-            const t = event.touches[0];
-            if (!t) return;
-            touchRef.current = {
-              x: t.clientX,
-              y: t.clientY,
-              moved: false,
-              held: event.touches.length > 1,
-            };
-            // A second finger holds the button down: two-finger drag moves
-            // windows, one-finger drag just moves the cursor.
-            if (event.touches.length > 1) vm.touchButton(true);
-          }}
-          onTouchMove={(event) => {
-            const t = event.touches[0];
-            const s = touchRef.current;
-            const rect = screenRef.current?.getBoundingClientRect();
-            if (!t || !s || !rect) return;
-            event.preventDefault();
-            vm.touchDelta(t.clientX - s.x, t.clientY - s.y, rect.width, rect.height);
-            s.x = t.clientX;
-            s.y = t.clientY;
-            s.moved = true;
-          }}
-          onTouchEnd={(event) => {
-            const s = touchRef.current;
-            if (!s) return;
-            if (event.touches.length === 0) {
-              if (s.held) {
-                vm.touchButton(false);
-              } else if (!s.moved) {
-                // A tap: press and release where the cursor already is.
-                vm.touchButton(true);
-                setTimeout(() => vm.touchButton(false), 60);
-              }
-              touchRef.current = null;
-            }
-          }}
         >
           <div className="machine-text" style={{ whiteSpace: "pre" }} />
           <canvas style={{ display: "none" }} />
@@ -149,22 +193,12 @@ export default function MachineRoot() {
           </p>
         ) : null}
 
-        {covered ? (
-          <div className="machine-cover">
-            <p className="machine-cover-title">alpenglow</p>
-            <p className="machine-cover-line">
-              {progress.percent !== null && progress.percent < 100
-                ? `[${"#".repeat(Math.round(((progress.percent ?? 0) / 100) * 26)).padEnd(26, "·")}] ${progress.message}`
-                : `${progress.message}${dots}`}
-            </p>
-            <p className="machine-cover-fine">
-              a real i686 pc, emulated on your cpu — linux 7.1.3, built from
-              tschk/alpenglow. the desktop appears when it finishes booting.
-            </p>
-            <button type="button" onClick={() => setCovered(false)}>
-              watch it boot →
-            </button>
-          </div>
+        {introMounted ? (
+          <MachineIntro
+            progress={progress}
+            exiting={!introOpen}
+            onSkip={() => setSkipped(true)}
+          />
         ) : null}
       </div>
 
@@ -180,7 +214,7 @@ export default function MachineRoot() {
           <input
             value={mobileLine}
             onChange={(event) => setMobileLine(event.target.value)}
-            placeholder="type here — drag moves the cursor, tap clicks, two fingers drag windows"
+            placeholder="type here — tap places the pointer, drag follows your finger"
             aria-label="machine keyboard"
             autoCapitalize="off"
             autoComplete="off"
