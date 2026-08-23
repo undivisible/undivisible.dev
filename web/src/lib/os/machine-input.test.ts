@@ -3,7 +3,10 @@ import { coverVisible, cssToGuest, guestDelta } from "./machine-input";
 
 test("cssToGuest maps the top-left and bottom-right of the screen", () => {
   expect(cssToGuest(0, 0, 200, 100, 1024, 768)).toEqual({ x: 0, y: 0 });
-  expect(cssToGuest(200, 100, 200, 100, 1024, 768)).toEqual({ x: 1024, y: 768 });
+  expect(cssToGuest(200, 100, 200, 100, 1024, 768)).toEqual({
+    x: 1024,
+    y: 768,
+  });
 });
 
 test("cssToGuest clamps and survives a zero rect", () => {

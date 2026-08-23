@@ -1,6 +1,10 @@
 "use client";
 
-import { cssToGuest, guestDelta, type MachineStage } from "@/lib/os/machine-input";
+import {
+  cssToGuest,
+  guestDelta,
+  type MachineStage,
+} from "@/lib/os/machine-input";
 
 /**
  * The machine that is the page.

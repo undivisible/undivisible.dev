@@ -66,7 +66,11 @@ export default function MachineRoot() {
       // domains — the list lives inside the image, but belt and braces.
       try {
         const parsed = new URL(url);
-        if (/(^|\.)((undivisible\.dev)|(tsc\.hk)|(github\.com))$/.test(parsed.hostname)) {
+        if (
+          /(^|\.)((undivisible\.dev)|(tsc\.hk)|(github\.com))$/.test(
+            parsed.hostname,
+          )
+        ) {
           // The request arrives seconds after the keystroke that caused it,
           // so the popup blocker usually wins — offer the tab instead of
           // silently losing it.
@@ -111,7 +115,12 @@ export default function MachineRoot() {
 
     const point = (touch: Touch) => {
       const rect = el.getBoundingClientRect();
-      vm.touchAt(touch.clientX - rect.left, touch.clientY - rect.top, rect.width, rect.height);
+      vm.touchAt(
+        touch.clientX - rect.left,
+        touch.clientY - rect.top,
+        rect.width,
+        rect.height,
+      );
     };
 
     const onStart = (event: TouchEvent) => {
@@ -188,8 +197,8 @@ export default function MachineRoot() {
 
         {resumed ? (
           <p className="machine-resumed">
-            the machine was paused while this tab was in the background —
-            it picks up where it stopped
+            the machine was paused while this tab was in the background — it
+            picks up where it stopped
           </p>
         ) : null}
 
@@ -235,7 +244,11 @@ export default function MachineRoot() {
           >
             {askedUrl.replace("https://", "")}
           </a>
-          <button type="button" onClick={() => setAskedUrl(null)} aria-label="dismiss">
+          <button
+            type="button"
+            onClick={() => setAskedUrl(null)}
+            aria-label="dismiss"
+          >
             ×
           </button>
         </div>
@@ -244,7 +257,11 @@ export default function MachineRoot() {
       <footer className="machine-foot">
         <span>
           linux 7.1.3 i686 · v86 · image built from{" "}
-          <a href="https://github.com/tschk/alpenglow" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://github.com/tschk/alpenglow"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             tschk/alpenglow
           </a>
         </span>
