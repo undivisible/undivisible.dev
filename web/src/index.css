@@ -57,6 +57,14 @@ html {
   overflow-x: hidden;
 }
 
+html.machine-page,
+html.machine-page body {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 html.snap-home {
   scroll-snap-type: y mandatory;
   scroll-padding-top: 1.25rem;
@@ -1723,13 +1731,14 @@ a[data-tip] {
   }
 }
 
-
 /* ══ the machine ═════════════════════════════════════════════════
    The page is a real emulated PC. The screen centers in the sky;
    everything drawn on it comes from the kernel, not the DOM. ──── */
 .machine-root {
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
   height: 100dvh;
   overflow: hidden;
+  overscroll-behavior: none;
   display: flex;
   flex-direction: column;
 }
@@ -1747,14 +1756,19 @@ a[data-tip] {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
   background: #000;
   scrollbar-width: none;
 }
-.machine-screen::-webkit-scrollbar { display: none; }
+.machine-screen::-webkit-scrollbar {
+  display: none;
+}
 .machine-screen > div {
   padding: 10px 12px;
   color: #cfcfd6;
 }
+.machine-intro,
 .machine-cover {
   position: absolute;
   inset: 0;
@@ -1765,10 +1779,53 @@ a[data-tip] {
   justify-content: center;
   gap: 12px;
   text-align: center;
-  background: rgba(0, 0, 0, 0.82);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: #000;
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+.machine-intro {
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+.machine-intro canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.machine-intro-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 0 20px;
+}
+.machine-intro .machine-cover-title {
+  font-variant-ligatures: none;
+  min-height: 1.2em;
+}
+.machine-intro.is-exit {
+  animation: machine-intro-exit 0.32s var(--ease) forwards;
+  pointer-events: none;
+}
+.machine-intro.is-light {
+  background: #000;
+}
+@keyframes machine-intro-exit {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+    filter: brightness(1.4);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .machine-intro.is-exit {
+    animation: none;
+    opacity: 0;
+  }
 }
 .machine-cover-title {
   margin: 0;
@@ -1790,6 +1847,7 @@ a[data-tip] {
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.4);
 }
+.machine-intro button,
 .machine-cover button {
   margin-top: 6px;
   font: inherit;
@@ -1803,13 +1861,18 @@ a[data-tip] {
   padding: 7px 22px;
   cursor: pointer;
 }
-.machine-cover button:hover { color: #fff; border-color: rgba(255, 255, 255, 0.6); }
+.machine-intro button:hover,
+.machine-cover button:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.6);
+}
 .machine-mobile-input {
   position: relative;
   z-index: 10;
   display: flex;
   gap: 8px;
   padding: 8px 12px 4px;
+  touch-action: manipulation;
 }
 .machine-mobile-input input {
   flex: 1;
@@ -1845,8 +1908,12 @@ a[data-tip] {
   letter-spacing: 0.12em;
   color: rgba(255, 255, 255, 0.3);
 }
-.machine-foot a { color: rgba(255, 255, 255, 0.5); }
-.machine-foot a:hover { color: #fff; }
+.machine-foot a {
+  color: rgba(255, 255, 255, 0.5);
+}
+.machine-foot a:hover {
+  color: #fff;
+}
 .machine-foot-escape {
   background: none;
   border: none;
@@ -1856,19 +1923,28 @@ a[data-tip] {
   cursor: pointer;
   text-decoration: underline dotted;
 }
-.machine-foot-escape:hover { color: #7ec8e8; }
+.machine-foot-escape:hover {
+  color: #7ec8e8;
+}
 
 /* The VGA text layer: sized to the viewport, stays mono and crisp. */
 .machine-text {
-  font-family: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
+  font-family:
+    var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
   font-size: 15px;
   line-height: 15px;
 }
 @media (min-width: 1100px) {
-  .machine-text { font-size: 18px; line-height: 18px; }
+  .machine-text {
+    font-size: 18px;
+    line-height: 18px;
+  }
 }
 @media (min-width: 1500px) {
-  .machine-text { font-size: 21px; line-height: 21px; }
+  .machine-text {
+    font-size: 21px;
+    line-height: 21px;
+  }
 }
 
 /* Hidden tabs clamp v86's timers; the machine stops until you come back. */
@@ -1910,7 +1986,11 @@ a[data-tip] {
   color: rgba(255, 255, 255, 0.6);
   animation: min-fade-up 0.3s var(--ease);
 }
-.machine-ask a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.machine-ask a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .machine-ask button {
   font: inherit;
   color: rgba(255, 255, 255, 0.45);
@@ -1918,7 +1998,9 @@ a[data-tip] {
   border: 0;
   cursor: pointer;
 }
-.machine-ask button:hover { color: #fff; }
+.machine-ask button:hover {
+  color: #fff;
+}
 
 /* Graphical mode: the machine's 1024x768 canvas. Smooth-scaled rather than
    nearest-neighbour, so upscaling to a big display reads as soft type
@@ -1933,4 +2015,10 @@ a[data-tip] {
 }
 .machine-screen {
   cursor: none;
+}
+@media (pointer: coarse) {
+  .machine-screen,
+  .machine-screen canvas {
+    cursor: auto;
+  }
 }

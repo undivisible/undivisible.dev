@@ -38,7 +38,7 @@ export default function AgentPage() {
       </p>
       <h1 className="mt-2 text-lg text-white">Fetch markdown directly</h1>
       <p className="mt-4 text-white/70">
-        This site is static on GitHub Pages. Agents should{" "}
+        This site is static on Cloudflare Workers. Agents should{" "}
         <strong className="font-medium text-white/90">
           GET the .md / .txt URLs
         </strong>

@@ -25,6 +25,11 @@ test("sync-agent-public writes fetchable markdown under public/", async () => {
   }
   const llms = await Bun.file(path.join(pub, "llms.txt")).text();
   expect(llms).toContain("https://example.test/now.md");
+  expect(llms).toContain("Cloudflare Workers");
+  expect(llms).not.toContain("GitHub Pages");
+  const agent = await Bun.file(path.join(pub, "agent.md")).text();
+  expect(agent).toContain("Cloudflare Workers");
+  expect(agent).not.toContain("GitHub Pages");
   const full = await Bun.file(path.join(pub, "llms-full.txt")).text();
   expect(full).toContain("# Resume");
   expect(await Bun.file(path.join(pub, "ai.txt")).exists()).toBe(false);

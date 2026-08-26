@@ -1,0 +1,24 @@
+
+  [1;37mreading[0m
+
+  [96mPhenomenology of Spirit[0m  --  [90mHegel[0m
+
+
+  [1;37mfavourites[0m
+
+    [93mHeidegger[0m      [90mWhat is Called Thinking[0m
+    [93mSchopenhauer[0m      [90mOn the Freedom of the Will[0m
+    [93mCioran[0m      [90mThe Trouble with Being Born[0m
+
+  [1;37mnext[0m
+
+    [96mMaurice Merleau-Ponty[0m  [90m-- Phenomenology of Perception[0m
+    [96mKeiji Nishitani[0m  [90m-- Religion and Nothingness[0m
+    [96mSimone Weil[0m  [90m-- Gravity and Grace[0m
+    [96mWang Yangming[0m  [90m-- Instructions for Practical Living[0m
+    [96mGiacomo Leopardi[0m  [90m-- Canti[0m
+
+
+  [90m????? ??? -- investigate things, extend knowledge[0m
+
+  [90m  arrow keys scroll  |  q to close[0m

@@ -1,0 +1,25 @@
+
+  [1;37mphotos[0m
+
+  [90mInstagram has no public highlight API. The photos feed loads
+   from a local source instead.[0m
+
+  [93mupdate path[0m
+
+  [90mDrop a JSON array into[0m
+  [96m  photos/feed.json[0m
+  [90mat the site root, with each entry:[0m
+
+  [90m  { "src": "url", "alt": "description", "date": "2026-01-01" }[0m
+
+  [90mThe app reads it and renders the roll. No build step needed.[0m
+
+
+  [1;37minstagram[0m
+
+  [90mFollow[0m [96m@undivisible.dev[0m [90mon instagram for the live feed.
+   The highlight archive is not scraped -- this app uses the same
+   local-feed convention the rest of the site does for dynamic data.[0m
+
+
+  [90m  arrow keys scroll  |  q to close[0m

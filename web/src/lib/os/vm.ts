@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  cssToGuest,
+  guestDelta,
+  type MachineStage,
+} from "@/lib/os/machine-input";
+
 /**
  * The machine that is the page.
  *
@@ -16,7 +22,12 @@
  * browser to open a real tab.
  */
 
-type Progress = { message: string; percent: number | null; ready: boolean };
+type Progress = {
+  message: string;
+  percent: number | null;
+  ready: boolean;
+  stage: MachineStage;
+};
 
 /** The guest mode to match the element it renders into. Width is a multiple
  *  of 8 (VBE convention); both axes are clamped to the compositor's MAXW/MAXH
@@ -50,8 +61,16 @@ class VmManager {
   private guestH = 700;
   private serialLine = "";
   private progressListeners = new Set<(progress: Progress) => void>();
-  private progress: Progress = { message: "cold", percent: null, ready: false };
+  private progress: Progress = {
+    message: "cold",
+    percent: null,
+    ready: false,
+    stage: "cold",
+  };
   private openListener: ((url: string) => void) | null = null;
+  private cursorX = 0;
+  private cursorY = 0;
+  private cursorSeeded = false;
 
   get running(): boolean {
     return this.emulator !== null;
@@ -71,7 +90,12 @@ class VmManager {
         V86: new (options: Record<string, unknown>) => V86Emulator;
       };
 
-      this.emit({ message: "loading the machine", percent: 0, ready: false });
+      this.emit({
+        message: "loading the machine",
+        percent: 0,
+        ready: false,
+        stage: "loading",
+      });
 
       // Fetch the initrd ourselves and gunzip it on the host — native speed —
       // so the emulated cpu never pays for decompressing a 10 MB archive.
@@ -91,6 +115,7 @@ class VmManager {
               message: `loading alpenglow ${Math.round(percent)}%`,
               percent,
               ready: false,
+              stage: "loading",
             });
           }
           controller.enqueue(chunk);
@@ -141,7 +166,12 @@ class VmManager {
           // The desktop drew its first frame — now it's ready, not merely
           // when the emulator started (that still shows the boot log).
           if (line.includes("@@desktop")) {
-            this.emit({ message: "ready", percent: 100, ready: true });
+            this.emit({
+              message: "ready",
+              percent: 100,
+              ready: true,
+              stage: "ready",
+            });
           }
           return;
         }
@@ -164,6 +194,7 @@ class VmManager {
             message: `loading alpenglow ${Math.round(percent)}%`,
             percent,
             ready: false,
+            stage: "loading",
           });
         }
       });
@@ -174,19 +205,26 @@ class VmManager {
             "the kernel and initrd could not be fetched — this frame blocks requests. it boots on the site.",
           percent: this.progress.percent,
           ready: false,
+          stage: "failed",
         });
       });
 
       emulator.add_listener("emulator-ready", () => {
         // Downloaded and started — but keep `ready` false so the cover holds
         // over the kernel boot log until the desktop signals @@desktop.
-        this.emit({ message: "booting the machine", percent: 100, ready: false });
+        this.emit({
+          message: "booting the machine",
+          percent: 100,
+          ready: false,
+          stage: "booting",
+        });
       });
     } catch (error) {
       this.emit({
         message: `failed: ${error instanceof Error ? error.message : String(error)}`,
         percent: null,
         ready: false,
+        stage: "failed",
       });
     } finally {
       this.starting = false;
@@ -210,6 +248,27 @@ class VmManager {
     if (rectW <= 0 || rectH <= 0) return;
     const dx = Math.round((dxCss * this.guestW) / rectW);
     const dy = Math.round((dyCss * this.guestH) / rectH);
+    if (dx === 0 && dy === 0) return;
+    this.sendGuestDelta(dx, dy);
+  }
+
+  touchAt(xCss: number, yCss: number, rectW: number, rectH: number): void {
+    const to = cssToGuest(xCss, yCss, rectW, rectH, this.guestW, this.guestH);
+    if (!this.cursorSeeded) {
+      this.sendGuestDelta(-this.guestW, -this.guestH);
+      this.sendGuestDelta(to.x, to.y);
+      this.cursorX = to.x;
+      this.cursorY = to.y;
+      this.cursorSeeded = true;
+      return;
+    }
+    const { dx, dy } = guestDelta({ x: this.cursorX, y: this.cursorY }, to);
+    this.cursorX = to.x;
+    this.cursorY = to.y;
+    this.sendGuestDelta(dx, dy);
+  }
+
+  private sendGuestDelta(dx: number, dy: number): void {
     if (dx === 0 && dy === 0) return;
     // v86 drops relative deltas unless it believes the pointer is locked —
     // touch never locks, so claim it. The guest inverts y (PS/2: up is +).

@@ -47,7 +47,7 @@ if (resume) {
 
 const agentMd = `# undivisible.dev — agent index
 
-> Static site (GitHub Pages). Use **direct file URLs** — not HTML from \`/\`.
+> Static site (Cloudflare Workers). Use **direct file URLs** — not HTML from \`/\`.
 
 ## Fetch these (plain text)
 
@@ -79,7 +79,7 @@ const llms = `# undivisible.dev
 
 > Max Carter (undivisible) — software systems, AI automation, low-level tooling. **Agents: GET the markdown files below** (static hosting; same bytes as curl).
 
-Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrappers.
+Hosted on Cloudflare Workers: these are real files in the deploy bundle, not HTML wrappers.
 
 ## Markdown (fetch directly)
 

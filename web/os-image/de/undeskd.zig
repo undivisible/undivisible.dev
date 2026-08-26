@@ -214,6 +214,10 @@ fn builtinDesc(n: []const u8) []const u8 {
     if (std.mem.eql(u8, n, "links")) return "links, the small fallback browser";
     if (std.mem.eql(u8, n, "fetch")) return "fastfetch, the real one";
     if (std.mem.eql(u8, n, "sh")) return "the real console (exit returns)";
+    if (std.mem.eql(u8, n, "quotes")) return "six quotes by bjork through heidegger";
+    if (std.mem.eql(u8, n, "philosophy")) return "reading, favourites, next";
+    if (std.mem.eql(u8, n, "photos")) return "photo feed (local + instagram)";
+    if (std.mem.eql(u8, n, "crepuscularity")) return "the framework, in the host browser";
     return "";
 }
 
@@ -265,7 +269,7 @@ fn scanDir(dir: []const u8) void {
 }
 
 fn scanApps() void {
-    const names = [_][]const u8{ "about", "works", "route", "before17", "activity", "sites", "docs", "web", "history", "links", "term", "fetch", "sh" };
+    const names = [_][]const u8{ "about", "works", "route", "before17", "activity", "sites", "docs", "web", "history", "links", "term", "fetch", "sh", "quotes", "philosophy", "photos", "crepuscularity" };
     for (names) |n| addApp(n, builtinDesc(n), true);
     scanDir("/bin");
     scanDir("/usr/bin");
@@ -624,6 +628,24 @@ fn launch(app_index: usize) void {
         handOver("netsurf-fb -f linux -w 1440 -h 900 file:///usr/share/undesk/old/index.html");
     if (std.mem.eql(u8, an, "links"))
         handOver("links -g -driver fb file:///usr/share/undesk/web/index.html");
+    if (std.mem.eql(u8, an, "crepuscularity")) {
+        const ser_raw = linux.open("/dev/ttyS0", .{ .ACCMODE = .WRONLY }, 0);
+        if (linux.errno(ser_raw) == .SUCCESS) {
+            const ser: i32 = @intCast(ser_raw);
+            _ = linux.write(ser, "@@open https://crepuscularity.tsc.hk\n", 41);
+            _ = linux.close(ser);
+        }
+        var nz: [64]u8 = std.mem.zeroes([64]u8);
+        @memcpy(nz[0..an.len], an);
+        spawn("/usr/bin/unpanel", @ptrCast(&nz));
+        bar_on = false;
+        qlen = 0;
+        query[0] = 0;
+        sel = 0;
+        refilter();
+        compositeAll();
+        return;
+    }
     if (a.builtin) {
         var name_z: [64]u8 = std.mem.zeroes([64]u8);
         @memcpy(name_z[0..an.len], an);
