@@ -17,6 +17,8 @@ import {
   STOPS_THIS_YEAR,
   TERRY,
   TSCHK,
+  QUOTES,
+  PHILOSOPHY,
 } from "../src/data/lab-facts";
 
 const OUT = join(import.meta.dir, "../os-image/overlay/usr/share/undesk/content");
@@ -35,7 +37,6 @@ const asciify = (text: string) =>
     .replaceAll("\u2192", "->")
     .replaceAll("\u2605", "*")
     .replaceAll("\u2606", "*")
-    // Anything else non-ascii (hanzi included) becomes '?', stated nearby.
     .replace(/[^\x00-\x7f]/g, "?");
 
 /** Panels don't word-wrap; fold long copy at bake time. */
@@ -147,12 +148,93 @@ await write(
 ${SITES.map(([label, url], index) => `  \x1b[93m${String(index + 1).padStart(2)})\x1b[0m \x1b[96m${label.split(" — ")[0]}\x1b[0m${label.includes(" — ") ? ` — ${label.split(" — ")[1]}` : ""}  \x1b[90m${url}\x1b[0m`).join("\n")}
 `,
 );
-console.log("baked", OUT);
-
 await write(
-  "taglines.txt",
-  GHOST_SUFFIXES.map((suffix) => suffix.word).join("\n"),
+  "quotes.txt",
+  `
+  \x1b[1;37msix quotes\x1b[0m
+
+${QUOTES.map((q, i) => `
+  \x1b[93m${i + 1}\x1b[0m
+  \x1b[96m${wrap(q.text, 68, "  ")}\x1b[0m
+  \x1b[90m-- ${q.credit}${q.source ? `, ${q.source}` : ""}\x1b[0m
+`).join("\n")}
+
+  \x1b[90m  arrow keys scroll  |  q to close\x1b[0m
+`,
 );
+await write(
+  "philosophy.txt",
+  `
+  \x1b[1;37mreading\x1b[0m
+
+  \x1b[96m${PHILOSOPHY.currentReading.title}\x1b[0m  --  \x1b[90m${PHILOSOPHY.currentReading.author}\x1b[0m
+
+
+  \x1b[1;37mfavourites\x1b[0m
+
+${PHILOSOPHY.favourites.map((f) => `    \x1b[93m${f.name}\x1b[0m      \x1b[90m${f.work}\x1b[0m`).join("\n")}
+
+  \x1b[1;37mnext\x1b[0m
+
+${PHILOSOPHY.next.map((n) => `    \x1b[96m${n.name}\x1b[0m  \x1b[90m-- ${n.work}\x1b[0m`).join("\n")}
+
+
+  \x1b[90m????? ??? -- investigate things, extend knowledge\x1b[0m
+
+  \x1b[90m  arrow keys scroll  |  q to close\x1b[0m
+`,
+);
+await write(
+  "photos.txt",
+  `
+  \x1b[1;37mphotos\x1b[0m
+
+  \x1b[90mInstagram has no public highlight API. The photos feed loads
+   from a local source instead.\x1b[0m
+
+  \x1b[93mupdate path\x1b[0m
+
+  \x1b[90mDrop a JSON array into\x1b[0m
+  \x1b[96m  photos/feed.json\x1b[0m
+  \x1b[90mat the site root, with each entry:\x1b[0m
+
+  \x1b[90m  { "src": "url", "alt": "description", "date": "2026-01-01" }\x1b[0m
+
+  \x1b[90mThe app reads it and renders the roll. No build step needed.\x1b[0m
+
+
+  \x1b[1;37minstagram\x1b[0m
+
+  \x1b[90mFollow\x1b[0m \x1b[96m@undivisible.dev\x1b[0m \x1b[90mon instagram for the live feed.
+   The highlight archive is not scraped -- this app uses the same
+   local-feed convention the rest of the site does for dynamic data.\x1b[0m
+
+
+  \x1b[90m  arrow keys scroll  |  q to close\x1b[0m
+`,
+);
+await write(
+  "crepuscularity.txt",
+  `
+  \x1b[1;37mcrepuscularity\x1b[0m
+
+  \x1b[96mthe framework\x1b[0m  --  \x1b[90mone codebase, every platform\x1b[0m
+
+  \x1b[90mWrite .crepus templates in a DSL that compiles to GPUI desktop,
+  web WASM, SwiftUI, Jetpack Compose, Ratatui TUI, embedded LVGL,
+  and browser extensions -- all from the same source.\x1b[0m
+
+
+  \x1b[93mthe host browser is opening\x1b[0m \x1b[96mcrepuscularity.tsc.hk\x1b[0m
+
+  \x1b[90m(Framebuffer graphics on this machine cannot render a modern web
+  app. The site opens in your real browser as a host tab.)\x1b[0m
+
+  \x1b[90m  arrow keys scroll  |  q to close\x1b[0m
+`,
+);
+
+console.log("baked", OUT);
 
 // The hover cards: one record per line, `word\ttitle\tbody`, so the name
 // widget can pop the same wikipedia-style note the almanac shows when you

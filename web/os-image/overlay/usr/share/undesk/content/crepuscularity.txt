@@ -1,0 +1,16 @@
+
+  [1;37mcrepuscularity[0m
+
+  [96mthe framework[0m  --  [90mone codebase, every platform[0m
+
+  [90mWrite .crepus templates in a DSL that compiles to GPUI desktop,
+  web WASM, SwiftUI, Jetpack Compose, Ratatui TUI, embedded LVGL,
+  and browser extensions -- all from the same source.[0m
+
+
+  [93mthe host browser is opening[0m [96mcrepuscularity.tsc.hk[0m
+
+  [90m(Framebuffer graphics on this machine cannot render a modern web
+  app. The site opens in your real browser as a host tab.)[0m
+
+  [90m  arrow keys scroll  |  q to close[0m

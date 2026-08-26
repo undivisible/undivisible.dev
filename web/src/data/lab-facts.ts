@@ -182,7 +182,7 @@ export type Stop = {
 
 /** In order flown, not alphabetised. */
 export const STOPS_THIS_YEAR: Stop[] = [
-  { code: "HKG", city: "hong kong", note: "march. family. 祁明思" },
+  { code: "HKG", city: "hong kong", note: "march. family. ???" },
   { code: "HND", city: "tokyo haneda", note: "april" },
   { code: "HKG", city: "hong kong", note: "back again" },
   { code: "MEL", city: "melbourne", note: "july. where i'm from" },
@@ -193,9 +193,60 @@ export const STOPS_THIS_YEAR: Stop[] = [
   { code: "KUL", city: "kuala lumpur", note: "" },
   { code: "HKG", city: "hong kong", note: "here now" },
   {
+    code: "PVG",
+    city: "shanghai",
+    note: "",
+  },
+  {
+    code: "HGH",
+    city: "hangzhou",
+    note: "",
+  },
+  {
+    code: "CSX",
+    city: "changsha",
+    note: "",
+  },
+  {
     code: "CKG",
     city: "chongqing",
-    note: "next, with shanghai, chengdu and shenzhen",
+    note: "flew mom out so she could spend time with me here. she asked about the machine; i showed her the sky.",
+    next: true,
+  },
+  {
+    code: "CTU",
+    city: "chengdu",
+    note: "",
+    next: true,
+  },
+  {
+    code: "CAN",
+    city: "guangzhou",
+    note: "",
+    next: true,
+  },
+  {
+    code: "SZX",
+    city: "shenzhen",
+    note: "",
+    next: true,
+  },
+  {
+    code: "HKG",
+    city: "hong kong",
+    note: "",
+    next: true,
+  },
+  {
+    code: "MFM",
+    city: "macau",
+    note: "",
+    next: true,
+  },
+  {
+    code: "TPE",
+    city: "taipei",
+    note: "",
     next: true,
   },
   { code: "SGN", city: "ho chi minh city", note: "after that", next: true },
@@ -299,4 +350,60 @@ export const LAB_LINKS = [
 export const WEBRING = {
   prev: "https://ring.liampas.ca/left",
   next: "https://ring.liampas.ca/right",
+} as const;
+
+/** The six quotes for the quotes app. Each has text, credit and source. */
+export type Quote = { text: string; credit: string; source?: string };
+export const QUOTES: Quote[] = [
+  {
+    text: "I have learned a lesson. If you don't please anyone, you have a slight chance of pleasing everyone.",
+    credit: "Björk",
+    source: "sampled on slayr, Wipe Yo Nose",
+  },
+  {
+    text: "I never lose. Never. Even when I lose, I win.",
+    credit: "Johnny",
+    source: "Sin City: A Dame to Kill For",
+  },
+  {
+    text: "The true is the whole.",
+    credit: "Hegel",
+    source: "Phenomenology of Spirit",
+  },
+  {
+    text: "It's not worth the bother of killing yourself, since you always kill yourself too late.",
+    credit: "Cioran",
+    source: "The Trouble with Being Born",
+  },
+  {
+    text: "You can do what you will, but in any given moment of your life you can will only one definite thing and absolutely nothing other than that one thing.",
+    credit: "Schopenhauer",
+    source: "On the Freedom of the Will",
+  },
+  {
+    text: "The most thought-provoking thing in our thought-provoking time is that we are still not thinking.",
+    credit: "Heidegger",
+    source: "What is Called Thinking",
+  },
+];
+
+/** Philosophy data: current reading, favourites, and next picks. */
+export type Philosopher = { name: string; work: string };
+export const PHILOSOPHY = {
+  currentReading: {
+    title: "Phenomenology of Spirit",
+    author: "Hegel",
+  },
+  favourites: [
+    { name: "Heidegger", work: "What is Called Thinking" },
+    { name: "Schopenhauer", work: "On the Freedom of the Will" },
+    { name: "Cioran", work: "The Trouble with Being Born" },
+  ],
+  next: [
+    { name: "Maurice Merleau-Ponty", work: "Phenomenology of Perception" },
+    { name: "Keiji Nishitani", work: "Religion and Nothingness" },
+    { name: "Simone Weil", work: "Gravity and Grace" },
+    { name: "Wang Yangming", work: "Instructions for Practical Living" },
+    { name: "Giacomo Leopardi", work: "Canti" },
+  ],
 } as const;
