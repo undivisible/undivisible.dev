@@ -30,18 +30,43 @@ type Progress = {
 };
 
 /** The guest mode to match the element it renders into. Width is a multiple
- *  of 8 (VBE convention); both axes are clamped to the compositor's MAXW/MAXH
- *  and stay within the 32 MB of emulated VRAM. */
+ *  of 8 (VBE convention); axes stay within the compositor's MAXW/MAXH and the
+ *  32 MB of emulated VRAM. Aspect is preserved so CSS fill has no gutters. */
 function screenResolution(el: HTMLElement): string {
-  // Full retina density means up to 1920x1200 = 2.3M pixels pushed through
-  // an emulated i686 on every composite — the whole desktop feels slow.
-  // 1.25x is visually close on a laptop and roughly halves the pixel work.
-  const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+  // Full retina (≈1920×1200) is too many pixels for an emulated i686 composite
+  // every frame. 1.5× is sharp on a laptop; we clamp inside MAXW/MAXH without
+  // independently squashing width/height (that mismatch caused letterboxing).
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
   const rect = el.getBoundingClientRect();
-  const cap = (v: number, lo: number, hi: number) =>
-    Math.max(lo, Math.min(hi, v));
-  const w = cap(Math.round((rect.width * dpr) / 8) * 8, 1024, 1600);
-  const h = cap(Math.round(rect.height * dpr), 700, 1000);
+  const cssW = Math.max(1, rect.width);
+  const cssH = Math.max(1, rect.height);
+  const MAX_W = 1600;
+  const MAX_H = 1200;
+  const MIN_W = 1024;
+  const MIN_H = 640;
+
+  let w = Math.round((cssW * dpr) / 8) * 8;
+  let h = Math.max(1, Math.round(cssH * dpr));
+
+  const fit = (sw: number, sh: number, maxW: number, maxH: number) => {
+    if (sw <= maxW && sh <= maxH) return { w: sw, h: sh };
+    const scale = Math.min(maxW / sw, maxH / sh);
+    return {
+      w: Math.max(8, Math.round((sw * scale) / 8) * 8),
+      h: Math.max(1, Math.round(sh * scale)),
+    };
+  };
+
+  ({ w, h } = fit(w, h, MAX_W, MAX_H));
+  if (w < MIN_W || h < MIN_H) {
+    const scale = Math.max(MIN_W / w, MIN_H / h);
+    ({ w, h } = fit(
+      Math.round((w * scale) / 8) * 8,
+      Math.round(h * scale),
+      MAX_W,
+      MAX_H,
+    ));
+  }
   return `${w}x${h}`;
 }
 
