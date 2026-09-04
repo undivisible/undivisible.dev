@@ -322,22 +322,22 @@ fn drawBar() void {
         // The start chip: a quiet corner button that reopens the launcher.
         const cx: i32 = 10;
         const cy: i32 = H - CHIP_H - 10;
-        draw.blend(&back, cx + 3, cy + 4, CHIP_W, CHIP_H, 0x000000, 90);
-        draw.blend(&back, cx, cy, CHIP_W, CHIP_H, 0x10131c, 235);
-        draw.fill(&back, cx, cy, CHIP_W, 1, 0x2a3040);
-        draw.fill(&back, cx, cy + CHIP_H - 1, CHIP_W, 1, 0x1a1e2a);
-        draw.fill(&back, cx, cy, 1, CHIP_H, 0x1f2432);
-        draw.fill(&back, cx + CHIP_W - 1, cy, 1, CHIP_H, 0x1f2432);
+        draw.blend(&back, cx + 2, cy + 2, CHIP_W, CHIP_H, 0x000000, 56);
+        draw.blend(&back, cx, cy, CHIP_W, CHIP_H, 0x10131c, 242);
+        draw.fill(&back, cx, cy, CHIP_W, 1, 0x3a4258);
+        draw.fill(&back, cx, cy + CHIP_H - 1, CHIP_W, 1, 0x0c0e16);
+        draw.fill(&back, cx, cy, 1, CHIP_H, 0x2a3144);
+        draw.fill(&back, cx + CHIP_W - 1, cy, 1, CHIP_H, 0x0c0e16);
         _ = draw.textLg(&back, cx + 15, cy + 2, ">", 0x7ec8e8);
         return;
     }
     const h = barH();
-    draw.blend(&back, bar_x + 4, bar_y + 6, bar_w, h, 0x000000, 90);
-    draw.blend(&back, bar_x, bar_y, bar_w, h, 0x10131c, 215);
-    draw.fill(&back, bar_x, bar_y, bar_w, 1, 0x2a3040);
-    draw.fill(&back, bar_x, bar_y + h - 1, bar_w, 1, 0x1a1e2a);
-    draw.fill(&back, bar_x, bar_y, 1, h, 0x1f2432);
-    draw.fill(&back, bar_x + bar_w - 1, bar_y, 1, h, 0x1f2432);
+    draw.blend(&back, bar_x + 2, bar_y + 3, bar_w, h, 0x000000, 56);
+    draw.blend(&back, bar_x, bar_y, bar_w, h, 0x10131c, 230);
+    draw.fill(&back, bar_x, bar_y, bar_w, 1, 0x3a4258);
+    draw.fill(&back, bar_x, bar_y + h - 1, bar_w, 1, 0x0c0e16);
+    draw.fill(&back, bar_x, bar_y, 1, h, 0x2a3144);
+    draw.fill(&back, bar_x + bar_w - 1, bar_y, 1, h, 0x0c0e16);
 
     _ = draw.textLg(&back, bar_x + 12, bar_y + 8, ">", 0x7ec8e8);
     const room = bar_w - 46;

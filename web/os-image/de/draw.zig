@@ -125,15 +125,17 @@ pub fn frame(b: *AwBuf, title: ?[]const u8) void {
     // A visible title bar — the top strip is the drag handle, so it should
     // look like one instead of being an invisible 20px zone.
     if (title != null) {
-        fill(b, 0, 0, b.w, 24, 0x181d2b);
-        fill(b, 0, 24, b.w, 1, 0x232a3a);
+        fill(b, 0, 0, b.w, 24, 0x161b28);
+        fill(b, 0, 24, b.w, 1, 0x2c3345);
     }
-    fill(b, 0, 0, b.w, 1, 0x2a3040);
-    fill(b, 0, b.h - 1, b.w, 1, 0x1a1e2a);
-    fill(b, 0, 0, 1, b.h, 0x1f2432);
-    fill(b, b.w - 1, 0, 1, b.h, 0x1f2432);
+    // 1px outer rim: brighter top/left catch light, darker bottom/right —
+    // reads as a hard edge instead of a soft muddy box.
+    fill(b, 0, 0, b.w, 1, 0x3a4258);
+    fill(b, 0, b.h - 1, b.w, 1, 0x0c0e16);
+    fill(b, 0, 0, 1, b.h, 0x2a3144);
+    fill(b, b.w - 1, 0, 1, b.h, 0x0c0e16);
     if (title) |t| {
-        fill(b, 10, 10, 6, 6, 0x7ec8e8);
-        _ = text(b, 24, 6, t, 0x8e97ab, 1);
+        fill(b, 10, 9, 6, 6, 0x7ec8e8);
+        _ = text(b, 24, 5, t, 0xa8b0c4, 1);
     }
 }
