@@ -27,7 +27,7 @@ Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MA
 
 ## Current routes
 
-`web/` serves a static profile at `/`, a plain `/simple/` alternative, and an optional Linux desktop at `/lab/`. The profile routes need no JavaScript. The lab downloads and boots only after Start machine; Home, Simple version and Stop machine stay available. Selected projects are curated in `web/src/data/profile.ts`. Employment details remain in the published résumé.
+`web/` opens the Alpenglow Linux desktop: `/` redirects to `/lab/` and boots automatically, matching the original machine flow. `/simple/` is the static profile fallback in the same dark terminal palette and monospace type. Simple version, résumé and Stop machine stay available during boot; Start machine restarts after Stop. Selected projects are curated in `web/src/data/profile.ts`. Employment details remain in the published résumé.
 
 The offline image includes both profile pages, their styles and the published résumé. Guest-local navigation uses `file://` URLs.
 

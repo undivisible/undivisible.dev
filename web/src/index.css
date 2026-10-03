@@ -2042,11 +2042,11 @@ a[data-tip] {
 
 /* Readable static profile; no canvas, animation or client data dependency. */
 .profile-page {
-  color: #e7e8e2;
-  background: #121813;
+  color: #d8dbe2;
+  background: #10131c;
   min-height: 100vh;
   padding: 0 max(24px, calc((100vw - 1120px) / 2));
-  font-family: system-ui, sans-serif;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
   line-height: 1.6;
 }
 .profile-page a {
@@ -2054,19 +2054,19 @@ a[data-tip] {
   text-underline-offset: 5px;
 }
 .profile-page a:hover {
-  color: #c7eea3;
+  color: #7ec8e8;
   text-decoration: underline;
 }
 .profile-page :focus-visible,
 .lab-page :focus-visible {
-  outline: 3px solid #b4de8d;
+  outline: 3px solid #7ec8e8;
   outline-offset: 5px;
 }
 .profile-skip {
   position: absolute;
   top: -100px;
   padding: 12px;
-  background: #121813;
+  background: #10131c;
   z-index: 100;
 }
 .profile-skip:focus {
@@ -2083,7 +2083,7 @@ a[data-tip] {
 }
 .profile-header {
   padding: 24px 0;
-  border-bottom: 1px solid #384137;
+  border-bottom: 1px solid #2c3345;
   flex-wrap: wrap;
 }
 .profile-wordmark {
@@ -2092,7 +2092,7 @@ a[data-tip] {
   letter-spacing: -0.05em;
 }
 .profile-wordmark span {
-  color: #b4de8d;
+  color: #7ec8e8;
 }
 .profile-header nav,
 .profile-links {
@@ -2120,7 +2120,7 @@ a[data-tip] {
   font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #b4de8d;
+  color: #7ec8e8;
 }
 .profile-intro h1 {
   margin: 16px 0 24px;
@@ -2132,7 +2132,7 @@ a[data-tip] {
 .profile-intro h1 span {
   display: inline-block;
   font-size: 20px;
-  color: #aeb8aa;
+  color: #a8b0c4;
   margin-left: 22px;
   letter-spacing: 0.12em;
   vertical-align: middle;
@@ -2140,7 +2140,7 @@ a[data-tip] {
 .profile-description {
   font-size: clamp(20px, 2.4vw, 27px);
   max-width: 30em;
-  color: #c4ccc0;
+  color: #d8dbe2;
   line-height: 1.5;
 }
 .profile-links {
@@ -2149,7 +2149,7 @@ a[data-tip] {
 }
 .profile-section {
   padding: 36px 0 52px;
-  border-top: 1px solid #384137;
+  border-top: 1px solid #2c3345;
 }
 .profile-section-heading {
   flex-wrap: wrap;
@@ -2163,7 +2163,7 @@ a[data-tip] {
 }
 .profile-section-heading p,
 .profile-section-heading > a {
-  color: #b6c0b0;
+  color: #a8b0c4;
   font-size: 14px;
 }
 .profile-projects {
@@ -2184,12 +2184,12 @@ a[data-tip] {
   padding: 4px 0;
 }
 .profile-projects h3 span {
-  color: #8c9b82;
+  color: #8890a0;
   font-size: 18px;
 }
 .profile-projects li > p:last-child {
   font-size: 15px;
-  color: #b6c0b0;
+  color: #a8b0c4;
   max-width: 34em;
 }
 .profile-more {
@@ -2208,14 +2208,14 @@ a[data-tip] {
   grid-template-columns: 1fr auto;
   column-gap: 24px;
   padding: 22px 0;
-  border-bottom: 1px solid #293226;
+  border-bottom: 1px solid #2c3345;
 }
 .profile-experience h3 {
   font-size: 19px;
   font-weight: 550;
 }
 .profile-experience p {
-  color: #b6c0b0;
+  color: #a8b0c4;
   font-size: 15px;
 }
 .profile-experience .profile-date {
@@ -2228,12 +2228,12 @@ a[data-tip] {
 }
 .profile-lab {
   padding: 30px;
-  background: #202b1c;
-  border: 1px solid #3c4a32;
+  background: #161b28;
+  border: 1px solid #3a4258;
   flex-wrap: wrap;
 }
 .profile-lab p {
-  color: #b6c0b0;
+  color: #a8b0c4;
   font-size: 15px;
   margin-top: 5px;
 }
@@ -2242,24 +2242,24 @@ a[data-tip] {
 }
 .profile-footer {
   padding: 40px 0;
-  color: #aeb8aa;
+  color: #a8b0c4;
   font-size: 13px;
   flex-wrap: wrap;
 }
 .profile-simple {
-  background: #fafaf7;
-  color: #222a22;
+  background: #10131c;
+  color: #d8dbe2;
   padding: 0 max(24px, calc((100vw - 760px) / 2));
 }
 .profile-simple a {
   text-decoration: underline;
-  color: #29512b;
+  color: #7ec8e8;
 }
 .profile-simple a:hover {
-  color: #122713;
+  color: #9dd6f0;
 }
 .profile-simple .profile-header {
-  border-color: #d5d9d1;
+  border-color: #2c3345;
 }
 .profile-simple .profile-intro {
   padding: 48px 0;
@@ -2289,36 +2289,36 @@ a[data-tip] {
 }
 .profile-simple .profile-projects li > p:last-child {
   max-width: none;
-  color: #495447;
+  color: #a8b0c4;
 }
 .profile-simple .profile-section-heading p,
 .profile-simple .profile-lab p {
-  color: #495447;
+  color: #a8b0c4;
 }
 .profile-simple p,
 .profile-simple .profile-footer,
 .profile-simple .profile-date,
 .profile-simple h1 span {
-  color: #495447;
+  color: #a8b0c4;
 }
 .profile-simple .profile-section {
-  border-color: #d5d9d1;
+  border-color: #2c3345;
   padding-bottom: 32px;
 }
 .profile-simple .profile-experience li {
-  border-color: #d5d9d1;
+  border-color: #2c3345;
 }
 .profile-simple .profile-lab {
   padding: 24px 0;
   background: none;
   border: 0;
-  border-top: 1px solid #d5d9d1;
+  border-top: 1px solid #2c3345;
 }
 .lab-page {
-  background: #11151b;
-  color: #e8edf3;
+  background: #10131c;
+  color: #d8dbe2;
   min-height: 100dvh;
-  font-family: system-ui, sans-serif;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 .lab-navigation {
   position: relative;
@@ -2328,18 +2328,22 @@ a[data-tip] {
   align-items: center;
   gap: 8px 24px;
   padding: 8px 20px;
-  background: #11151b;
-  border-bottom: 1px solid #43505c;
+  background: #10131c;
+  border-bottom: 1px solid #2c3345;
 }
 .lab-navigation a,
 .lab-navigation button {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: #e8edf3;
+  color: #d8dbe2;
   font-size: 14px;
   text-decoration: underline;
   text-underline-offset: 4px;
+}
+.lab-navigation button:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 .lab-navigation button {
   margin-left: auto;
@@ -2368,8 +2372,8 @@ a[data-tip] {
   display: block;
   padding: 12px 22px;
   margin: 32px 0;
-  color: #11151b;
-  background: #c7eea3;
+  color: #10131c;
+  background: #7ec8e8;
   border-radius: 4px;
   cursor: pointer;
 }
@@ -2392,16 +2396,17 @@ a[data-tip] {
 }
 .lab-page .machine-foot {
   position: relative;
-  background: #11151b;
-  color: #c6cdd6;
+  background: #10131c;
+  color: #a8b0c4;
   font:
-    12px/1.6 system-ui,
-    sans-serif;
+    12px/1.6 var(--font-jetbrains-mono),
+    ui-monospace,
+    monospace;
   letter-spacing: 0;
 }
 .lab-page .machine-foot a,
 .lab-page .machine-foot button {
-  color: #b6d8ee;
+  color: #7ec8e8;
 }
 .lab-page .machine-foot button {
   min-height: 44px;

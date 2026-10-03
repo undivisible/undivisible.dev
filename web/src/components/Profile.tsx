@@ -72,11 +72,11 @@ export function Profile({ simple = false }: { simple?: boolean }) {
         </section>
         <aside className="profile-lab" aria-labelledby="lab-heading">
           <div>
-            <h2 id="lab-heading">A small experiment</h2>
-            <p>The lab runs a Linux desktop in your browser.</p>
+            <h2 id="lab-heading">Linux desktop</h2>
+            <p>The main version runs Alpenglow Linux in your browser.</p>
           </div>
           <a href="/lab/">
-            Open the lab <span aria-hidden="true">→</span>
+            Open Linux <span aria-hidden="true">→</span>
           </a>
         </aside>
       </main>
