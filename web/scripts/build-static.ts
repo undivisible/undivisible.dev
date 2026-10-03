@@ -65,7 +65,6 @@ function clientDefine(): Record<string, string> {
 type ClientEntry = { name: string; entry: string };
 
 const CLIENT_ENTRIES: ClientEntry[] = [
-  { name: "home", entry: join(projectDir, "src/client/home.tsx") },
   { name: "not-found", entry: join(projectDir, "src/client/not-found.tsx") },
   { name: "lab", entry: join(projectDir, "src/client/lab.tsx") },
 ];
@@ -180,7 +179,8 @@ async function main(): Promise<void> {
   };
 
   const entryForRoute: Record<string, string | undefined> = {
-    index: clientBundles.home,
+    index: undefined,
+    simple: undefined,
     agent: undefined,
     "not-found": clientBundles["not-found"],
   };
@@ -190,6 +190,7 @@ async function main(): Promise<void> {
     agent: "agent.html",
     "not-found": "404.html",
     lab: "lab/index.html",
+    simple: "simple/index.html",
   };
 
   entryForRoute.lab = clientBundles.lab;

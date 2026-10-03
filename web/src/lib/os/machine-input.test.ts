@@ -21,9 +21,14 @@ test("guestDelta is the PS/2 step between two guest points", () => {
   });
 });
 
-test("cover hides once the kernel is on screen or the visitor skips", () => {
+test("cover stays through boot until the desktop is ready, unless skipped", () => {
   expect(coverVisible({ skipped: false, stage: "loading" })).toBe(true);
-  expect(coverVisible({ skipped: false, stage: "booting" })).toBe(false);
+  expect(coverVisible({ skipped: false, stage: "booting" })).toBe(true);
   expect(coverVisible({ skipped: false, stage: "ready" })).toBe(false);
   expect(coverVisible({ skipped: true, stage: "loading" })).toBe(false);
+});
+
+test("a startup failure stays visible even after skipping the loading screen", () => {
+  expect(coverVisible({ skipped: false, stage: "failed" })).toBe(true);
+  expect(coverVisible({ skipped: true, stage: "failed" })).toBe(true);
 });

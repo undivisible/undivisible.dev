@@ -1,6 +1,6 @@
 # undivisible.dev
 
-Profile and CV markdown live on [`undivisible/undivisible`](https://github.com/undivisible/undivisible). This repo does not author those files; `web` sync scripts fetch raw GitHub URLs at build time and write deploy copies under `web/public/`.
+CV markdown and historical profile sources live on [`undivisible/undivisible`](https://github.com/undivisible/undivisible). This repo does not author those files; `web` sync scripts fetch raw GitHub URLs at build time and write deploy copies under `web/public/`.
 
 | Upstream file                                                                 | Role                                                                                                                         |
 | ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
@@ -25,7 +25,13 @@ Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MA
     **live on [undivisible.dev](https://undivisible.dev)**
 - `web/os-image/` - the `/lab` machine: **undesk** (`de/`, Zig — my framebuffer compositor, not tschk/alpenglowed) and the initramfs overlay baked onto the real alpenglow v86 image
 
-## Next.js to moonshine
+## Current routes
+
+`web/` serves a static profile at `/`, a plain `/simple/` alternative, and an optional Linux desktop at `/lab/`. The profile routes need no JavaScript. The lab downloads and boots only after Start machine; Home, Simple version and Stop machine stay available. Selected projects are curated in `web/src/data/profile.ts`. Employment details remain in the published résumé.
+
+The offline image includes both profile pages, their styles and the published résumé. Guest-local navigation uses `file://` URLs.
+
+## Historical Next.js to moonshine measurements
 
 `web/` ran on Next.js 15 (App Router, static export) before moving to
 moonshine. Same three routes, same 60 source files, same rendered output —
@@ -71,18 +77,16 @@ machine's internals.
 Both sites are Cloudflare Workers static-asset deploys (`bunx wrangler
 deploy`); GitHub Pages is retired and its workflow removed.
 
-| Site | Worker | Config | Serves |
-| --- | --- | --- | --- |
-| [undivisible.dev](https://undivisible.dev) | `undivisible` | `old/9.1/wrangler.jsonc` | v9.1, the pre-machine design (zone route over the apex) |
-| [next.undivisible.dev](https://next.undivisible.dev) | `undivisible-next` | `web/wrangler.jsonc` | v10, the machine redesign (custom domain) |
+| Site                                                 | Worker             | Config                   | Serves                                                  |
+| ---------------------------------------------------- | ------------------ | ------------------------ | ------------------------------------------------------- |
+| [undivisible.dev](https://undivisible.dev)           | `undivisible`      | `old/9.1/wrangler.jsonc` | v9.1, the pre-machine design (zone route over the apex) |
+| [next.undivisible.dev](https://next.undivisible.dev) | `undivisible-next` | `web/wrangler.jsonc`     | v10, the machine redesign (custom domain)               |
 
 The v86 kernel/initrd revalidate on every load (`max-age=0, must-revalidate`
 via `web/public/_headers`); the wasm/BIOS assets are immutable.
 
 `/agent` ships no JavaScript because nothing on it is interactive; under
-Next.js it still received the framework runtime. The interactive parts of `/`
-— canvas shaders, the clock, the ASCII field — hydrate as islands and are
-unchanged.
+Next.js it still received the framework runtime. The current main and simple profile routes also ship no JavaScript; `/lab/` hydrates its emulator controls.
 
 Only four of the 60 source files imported from Next (`next/link` ×2,
 `next/font/google`, `next/dynamic`); the rest is plain React, which moonshine

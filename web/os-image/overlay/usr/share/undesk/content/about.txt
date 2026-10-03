@@ -1,11 +1,9 @@
 
   [1;37mmax carter[0m  (qi ming si; the console font cannot draw the hanzi)
 
-  the ghost of terry davis, but asian.
-  (the blank rotates: worse | autistic | bored | not schizo | rusty ?)
+  I build software, from compilers and operating systems to web and desktop apps.
 
-  founding engineer at based hardware -- on omi: the
-  platform underneath and the product on top. not the firmware.
+  experience and skills: the published resume.md in the offline web folder
 
   links
     github     https://github.com/undivisible

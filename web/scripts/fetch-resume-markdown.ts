@@ -15,7 +15,9 @@ export async function fetchResumeMarkdown(options?: {
   const urls = options?.urls ?? resumeMarkdownUrls();
   for (const url of urls) {
     try {
-      const res = await fetch(url, { signal: options?.signal });
+      const res = await fetch(url, {
+        signal: options?.signal ?? AbortSignal.timeout(10_000),
+      });
       if (!res.ok) continue;
       const raw = (await res.text()).trim();
       if (raw.length > 0) return raw;

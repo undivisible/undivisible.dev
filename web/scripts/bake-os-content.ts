@@ -6,6 +6,7 @@
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { GITHUB_ACTIVITY } from "../src/data/github-activity";
+import { profile, projects } from "../src/data/profile";
 import {
   COUNTRIES,
   GHOST_SOURCE,
@@ -21,7 +22,10 @@ import {
   PHILOSOPHY,
 } from "../src/data/lab-facts";
 
-const OUT = join(import.meta.dir, "../os-image/overlay/usr/share/undesk/content");
+const OUT = join(
+  import.meta.dir,
+  "../os-image/overlay/usr/share/undesk/content",
+);
 await mkdir(OUT, { recursive: true });
 
 /** The console font is CP437; bake pure ASCII so nothing renders as mojibake. */
@@ -45,8 +49,10 @@ const wrap = (text: string, width = 88, indent = "      ") => {
   const rows: string[] = [];
   let row = "";
   for (const w of words) {
-    if (row && row.length + 1 + w.length > width) { rows.push(row); row = w; }
-    else row = row ? `${row} ${w}` : w;
+    if (row && row.length + 1 + w.length > width) {
+      rows.push(row);
+      row = w;
+    } else row = row ? `${row} ${w}` : w;
   }
   if (row) rows.push(row);
   return rows.join(`\x1b[0m\n${indent}\x1b[90m`);
@@ -60,11 +66,9 @@ await write(
   `
   \x1b[1;37m${IDENTITY.name}\x1b[0m  (qi ming si; the console font cannot draw the hanzi)
 
-  the ghost of terry davis, but ${GHOST_SUFFIXES[0]?.word ?? "asian"}.
-  (the blank rotates: ${GHOST_SUFFIXES.slice(1, 6).map((s) => s.word).join(" · ")} …)
+  ${profile.description}
 
-  ${IDENTITY.role} at ${IDENTITY.org} — on ${IDENTITY.product}: the
-  platform underneath and the product on top. not the firmware.
+  experience and skills: the published resume.md in the offline web folder
 
   links
 ${LAB_LINKS.map((l) => `    ${l.name.padEnd(10)} ${"href" in l ? l.href : ""}`).join("\n")}
@@ -79,11 +83,13 @@ await write(
   `
   \x1b[1;37mheadline works\x1b[0m — all under ${TSCHK.name}, ${TSCHK.full}
 
-${HEADLINE_WORKS.map(
-    (w) => `  \x1b[96m${w.name}\x1b[0m  \x1b[90m${w.what} ·\x1b[0m \x1b[93m${w.stat}\x1b[0m
-    ${w.line}
+${projects
+  .map(
+    (w) => `  \x1b[96m${w.name}\x1b[0m  \x1b[90m${w.kind}\x1b[0m
+    ${w.description}
 `,
-  ).join("\n")}`,
+  )
+  .join("\n")}`,
 );
 
 await write(
@@ -93,7 +99,11 @@ await write(
 
   ${STOPS_THIS_YEAR.map((s) => `\x1b[93m${s.code}\x1b[0m`).join(" \x1b[90m->\x1b[0m ")}
 
-${STOPS_THIS_YEAR.filter((s) => s.note).map((s) => `    \x1b[93m${s.code}\x1b[0m  ${s.city} — \x1b[90m${s.note}\x1b[0m`).join("\n")}
+${STOPS_THIS_YEAR.filter((s) => s.note)
+  .map(
+    (s) => `    \x1b[93m${s.code}\x1b[0m  ${s.city} — \x1b[90m${s.note}\x1b[0m`,
+  )
+  .join("\n")}
 
   \x1b[93m${COUNTRIES.length}\x1b[0m countries so far; seven of them inside one year.
 `,
@@ -104,9 +114,11 @@ await write(
   `
   \x1b[1;37mbefore seventeen\x1b[0m
 
-${MILESTONES.map((m) => `  \x1b[93m${m.age.padStart(2)}\x1b[0m  \x1b[96m${m.title}\x1b[0m
+${MILESTONES.map(
+  (m) => `  \x1b[93m${m.age.padStart(2)}\x1b[0m  \x1b[96m${m.title}\x1b[0m
       \x1b[90m${wrap(m.detail)}\x1b[0m
-`).join("\n")}`,
+`,
+).join("\n")}`,
 );
 
 await write(
@@ -122,15 +134,21 @@ await write(
     ${GITHUB_ACTIVITY.account.closedUnmerged} closed without merging — nearly all by me. not rejections.
 
   recent merged on ${GITHUB_ACTIVITY.repo}:
-${GITHUB_ACTIVITY.recentMerged.slice(0, 5).map((pr) => `    \x1b[90m${pr.mergedAt}\x1b[0m  ${pr.title}`).join("\n")}
+${GITHUB_ACTIVITY.recentMerged
+  .slice(0, 5)
+  .map((pr) => `    \x1b[90m${pr.mergedAt}\x1b[0m  ${pr.title}`)
+  .join("\n")}
 `,
 );
 
 const SITES: Array<[string, string]> = [
   ["tsc.hk — the software company of hong kong", "https://tsc.hk"],
-  ["crepuscularity — one codebase, every platform", "https://crepuscularity.undivisible.dev"],
+  [
+    "crepuscularity — UI language and runtime",
+    "https://crepuscularity.undivisible.dev",
+  ],
   ["moonshine — renders the host site", "https://moonshine.tsc.hk"],
-  ["inauguration — forty languages, no llvm", "https://inauguration.tsc.hk"],
+  ["inauguration — compiler infrastructure", "https://inauguration.tsc.hk"],
   ["alpenglow — this machine, natively", "https://alpenglow.tsc.hk"],
   ["space — the os the compiler grew", "https://space.tsc.hk"],
   ["notes", "https://notes.undivisible.dev"],
@@ -153,11 +171,13 @@ await write(
   `
   \x1b[1;37msix quotes\x1b[0m
 
-${QUOTES.map((q, i) => `
+${QUOTES.map(
+  (q, i) => `
   \x1b[93m${i + 1}\x1b[0m
   \x1b[96m${wrap(q.text, 68, "  ")}\x1b[0m
   \x1b[90m-- ${q.credit}${q.source ? `, ${q.source}` : ""}\x1b[0m
-`).join("\n")}
+`,
+).join("\n")}
 
   \x1b[90m  arrow keys scroll  |  q to close\x1b[0m
 `,
@@ -218,11 +238,10 @@ await write(
   `
   \x1b[1;37mcrepuscularity\x1b[0m
 
-  \x1b[96mthe framework\x1b[0m  --  \x1b[90mone codebase, every platform\x1b[0m
+  \x1b[96mUI language and runtime\x1b[0m
 
-  \x1b[90mWrite .crepus templates in a DSL that compiles to GPUI desktop,
-  web WASM, SwiftUI, Jetpack Compose, Ratatui TUI, embedded LVGL,
-  and browser extensions -- all from the same source.\x1b[0m
+  \x1b[90mCompact .crepus templates drive native desktop, terminal, web
+  and browser extension surfaces. Mobile backends are in development.\x1b[0m
 
 
   \x1b[93mthe host browser is opening\x1b[0m \x1b[96mcrepuscularity.tsc.hk\x1b[0m

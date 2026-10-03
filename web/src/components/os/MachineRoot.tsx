@@ -13,8 +13,8 @@ import { vm, type VmProgress } from "@/lib/os/vm";
  * is a program in there now — alpenwall holds a background surface the
  * compositor blits under everything else.
  *
- * The boot log you see is the kernel's own. The cover only reports asset
- * download; it can be skipped and never blocks the screen behind it.
+ * The boot log is the kernel's own. The cover reports download and boot
+ * progress until the desktop is ready; it can be skipped.
  */
 export default function MachineRoot() {
   const screenRef = useRef<HTMLDivElement>(null);
@@ -30,6 +30,7 @@ export default function MachineRoot() {
   const [coarse, setCoarse] = useState(false);
   const [askedUrl, setAskedUrl] = useState<string | null>(null);
   const [resumed, setResumed] = useState(false);
+  const [mouseUnavailable, setMouseUnavailable] = useState(false);
   const touchRef = useRef<{
     x: number;
     y: number;
@@ -83,8 +84,7 @@ export default function MachineRoot() {
     });
     const detach = vm.attachProgress((next) => {
       setProgress(next);
-      // The cover exists for the download, not the boot — the boot is
-      // content, drawn by the kernel itself.
+      // Keep progress until the guest signals its first desktop frame.
     });
     // A hidden tab has its timers clamped, so the machine stops dead —
     // usually mid-boot, which reads as a hang. Say so when it comes back.
@@ -106,6 +106,7 @@ export default function MachineRoot() {
       document.removeEventListener("visibilitychange", onVisibility);
       clearTimeout(clear);
       detach();
+      vm.stop();
     };
   }, []);
 
@@ -181,14 +182,35 @@ export default function MachineRoot() {
   }, []);
 
   return (
-    <div className="lab-root machine-root">
+    <main
+      className="lab-root machine-root"
+      aria-label="Linux machine"
+      data-machine-stage={progress.stage}
+    >
       <div className="machine-frame">
         {/* v86 renders here: the text layer for VGA text mode, the canvas
             for graphical modes. Structure is what libv86 expects. */}
         <div
           className="machine-screen"
           ref={screenRef}
-          onClick={() => vm.lockMouse()}
+          tabIndex={0}
+          role="group"
+          aria-label="Linux screen. Press Escape to return to page controls."
+          onFocus={() => vm.captureKeyboard(true)}
+          onBlur={() => vm.captureKeyboard(false)}
+          onKeyDown={(event) => {
+            if (event.key !== "Escape") return;
+            event.preventDefault();
+            event.stopPropagation();
+            vm.releaseKeyboard();
+            document
+              .querySelector<HTMLAnchorElement>(".lab-navigation a")
+              ?.focus();
+          }}
+          onClick={(event) => {
+            event.currentTarget.focus();
+            void vm.lockMouse().then((locked) => setMouseUnavailable(!locked));
+          }}
           title="click to give the machine your mouse — esc gives it back"
         >
           <div className="machine-text" style={{ whiteSpace: "pre" }} />
@@ -216,7 +238,7 @@ export default function MachineRoot() {
           className="machine-mobile-input"
           onSubmit={(event) => {
             event.preventDefault();
-            vm.typeText(`${mobileLine}\n`);
+            void vm.typeText(`${mobileLine}\n`);
             setMobileLine("");
           }}
         >
@@ -225,11 +247,18 @@ export default function MachineRoot() {
             onChange={(event) => setMobileLine(event.target.value)}
             placeholder="type here — tap places the pointer, drag follows your finger"
             aria-label="machine keyboard"
+            disabled={!progress.ready}
             autoCapitalize="off"
             autoComplete="off"
             spellCheck={false}
           />
-          <button type="submit">⏎</button>
+          <button
+            type="submit"
+            aria-label="Send command"
+            disabled={!progress.ready}
+          >
+            ⏎
+          </button>
         </form>
       ) : null}
 
@@ -255,6 +284,12 @@ export default function MachineRoot() {
       ) : null}
 
       <footer className="machine-foot">
+        {mouseUnavailable ? (
+          <span role="status">
+            Mouse capture is unavailable. Keyboard and touch controls still
+            work.
+          </span>
+        ) : null}
         <span>
           linux 7.1.3 i686 · v86 · image built from{" "}
           <a
@@ -279,6 +314,6 @@ export default function MachineRoot() {
           </button>
         </span>
       </footer>
-    </div>
+    </main>
   );
 }
