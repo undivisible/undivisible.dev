@@ -360,6 +360,12 @@ class VmManager {
     this.emulator?.keyboard_set_enabled(enabled);
   }
 
+  /** Ctrl+C for touch users: exit a console app or interrupt its command. */
+  async interrupt(): Promise<void> {
+    if (!this.ready) return;
+    await this.emulator?.keyboard_send_scancodes([0x1d, 0x2e, 0xae, 0x9d]);
+  }
+
   releaseKeyboard(): void {
     // Close the guest launcher too, then return Tab/Enter to the host page.
     void this.emulator?.keyboard_send_scancodes([0x01, 0x81]);

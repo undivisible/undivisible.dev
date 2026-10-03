@@ -43,6 +43,9 @@ while [ ! -e /dev/fb0 ] && [ "$tries" -lt 40 ]; do
 done
 
 if [ -e /dev/fb0 ] && [ -x /usr/bin/undeskd ] && [ -c /dev/tty1 ]; then
+  # Match the console's 16 colors to the desktop. Full RGB styles in terminal
+  # apps can fall back to these colors on the Linux virtual console.
+  /bin/printf '\033]P010131c\033]P1ff8888\033]P2a8d68a\033]P3f0c674\033]P47ea6e8\033]P5d8a8e8\033]P67ec8e8\033]P7d8dbe2\033]P88890a0\033]P9ff9d9d\033]Pabfe6a4\033]Pbf5d494\033]Pc9dbcf0\033]Pde4c0f0\033]Pe9dd6f0\033]Pfffffff\033[0m' >/dev/tty1
   # The compositor and the bar. The clock, the machine monitor and the name
   # card are separate programs it starts as clients — see wire.h.
   # Exit 42 means "give me the console": run bash on tty1, then come back.
