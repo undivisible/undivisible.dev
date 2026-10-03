@@ -259,6 +259,15 @@ export default function MachineRoot() {
           >
             ⏎
           </button>
+          <button
+            type="button"
+            aria-label="Send Control C to machine"
+            title="Exit Nexnet or interrupt a console command"
+            disabled={!progress.ready}
+            onClick={() => void vm.interrupt()}
+          >
+            Ctrl+C
+          </button>
         </form>
       ) : null}
 
@@ -299,6 +308,11 @@ export default function MachineRoot() {
           >
             tschk/alpenglow
           </a>
+        </span>
+        <span className="machine-foot-hint">
+          Nexnet: type <code>nexnet</code> in the launcher for Updates and
+          Public chat. Offline preview; sign-in and posting are unavailable.
+          Press q outside the editor or Ctrl+C to return to the desktop.
         </span>
         <span className="machine-foot-hint">
           click the screen to hand it your mouse (esc takes it back) · type to
