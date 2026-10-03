@@ -1,8 +1,12 @@
 import { DEFAULT_PROFILE_MARKDOWN_URL } from "../src/lib/profile-readme.ts";
 import { fetchResumeMarkdown } from "./fetch-resume-markdown.ts";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
-const PUBLIC_DIR = new URL("../public/", import.meta.url);
-const SITE = process.env.SITE_URL ?? "https://undivisible.dev";
+const PUBLIC_DIR = process.env.AGENT_PUBLIC_DIR
+  ? pathToFileURL(resolve(process.env.AGENT_PUBLIC_DIR) + "/")
+  : new URL("../public/", import.meta.url);
+const SITE = process.env.SITE_URL ?? "https://next.undivisible.dev";
 
 /**
  * now.md only.
@@ -15,7 +19,7 @@ const SITE = process.env.SITE_URL ?? "https://undivisible.dev";
 async function fetchNow(): Promise<string | null> {
   const url = process.env.NOW_MARKDOWN_URL ?? DEFAULT_PROFILE_MARKDOWN_URL;
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
     if (!res.ok) return null;
     const raw = (await res.text()).trim();
     return raw.length > 0 ? raw : null;
@@ -64,7 +68,7 @@ Best first request for full context: \`curl -sL ${SITE}/llms-full.txt\`
 ## Not available here
 
 - No \`Accept: text/markdown\` on HTML routes (unlike Cloudflare markdown for agents on dynamic hosts).
-- Do not scrape \`${SITE}/\` (WebGL UI); use \`.md\` paths above.
+- The profile at \`${SITE}/\` and \`${SITE}/simple/\` is static HTML. The optional emulator is at \`${SITE}/lab/\`.
 
 ## Humans
 

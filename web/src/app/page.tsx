@@ -1,8 +1,5 @@
-import Home from "@/page-components/home";
-import { nowMarkdownFromRepo } from "@/data/now-markdown.generated";
-import { getProfileReadmeProjects } from "@/lib/profile-readme";
+import { Profile } from "@/components/Profile";
 
 export default function Page() {
-  const readme = getProfileReadmeProjects();
-  return <Home readme={readme} nowMarkdown={nowMarkdownFromRepo} />;
+  return <Profile />;
 }

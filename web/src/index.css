@@ -2039,3 +2039,456 @@ a[data-tip] {
     cursor: auto;
   }
 }
+
+/* Readable static profile; no canvas, animation or client data dependency. */
+.profile-page {
+  color: #e7e8e2;
+  background: #121813;
+  min-height: 100vh;
+  padding: 0 max(24px, calc((100vw - 1120px) / 2));
+  font-family: system-ui, sans-serif;
+  line-height: 1.6;
+}
+.profile-page a {
+  color: inherit;
+  text-underline-offset: 5px;
+}
+.profile-page a:hover {
+  color: #c7eea3;
+  text-decoration: underline;
+}
+.profile-page :focus-visible,
+.lab-page :focus-visible {
+  outline: 3px solid #b4de8d;
+  outline-offset: 5px;
+}
+.profile-skip {
+  position: absolute;
+  top: -100px;
+  padding: 12px;
+  background: #121813;
+  z-index: 100;
+}
+.profile-skip:focus {
+  top: 8px;
+}
+.profile-header,
+.profile-footer,
+.profile-section-heading,
+.profile-lab {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+.profile-header {
+  padding: 24px 0;
+  border-bottom: 1px solid #384137;
+  flex-wrap: wrap;
+}
+.profile-wordmark {
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.05em;
+}
+.profile-wordmark span {
+  color: #b4de8d;
+}
+.profile-header nav,
+.profile-links {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.profile-header nav a,
+.profile-links a,
+.profile-footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  gap: 8px;
+}
+.profile-header nav {
+  font-size: 14px;
+}
+.profile-intro {
+  padding: 92px 0 72px;
+  max-width: 830px;
+}
+.profile-eyebrow,
+.profile-kind {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #b4de8d;
+}
+.profile-intro h1 {
+  margin: 16px 0 24px;
+  font-size: clamp(52px, 8vw, 96px);
+  letter-spacing: -0.065em;
+  font-weight: 500;
+  line-height: 1.08;
+}
+.profile-intro h1 span {
+  display: inline-block;
+  font-size: 20px;
+  color: #aeb8aa;
+  margin-left: 22px;
+  letter-spacing: 0.12em;
+  vertical-align: middle;
+}
+.profile-description {
+  font-size: clamp(20px, 2.4vw, 27px);
+  max-width: 30em;
+  color: #c4ccc0;
+  line-height: 1.5;
+}
+.profile-links {
+  margin-top: 28px;
+  font-size: 15px;
+}
+.profile-section {
+  padding: 36px 0 52px;
+  border-top: 1px solid #384137;
+}
+.profile-section-heading {
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.profile-section-heading h2,
+.profile-lab h2 {
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+.profile-section-heading p,
+.profile-section-heading > a {
+  color: #b6c0b0;
+  font-size: 14px;
+}
+.profile-projects {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+  padding: 0;
+  gap: 40px 36px;
+}
+.profile-projects h3 {
+  font-size: 24px;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+  margin: 10px 0;
+}
+.profile-projects h3 a {
+  display: inline-block;
+  padding: 4px 0;
+}
+.profile-projects h3 span {
+  color: #8c9b82;
+  font-size: 18px;
+}
+.profile-projects li > p:last-child {
+  font-size: 15px;
+  color: #b6c0b0;
+  max-width: 34em;
+}
+.profile-more {
+  display: inline-block;
+  margin-top: 36px;
+  padding: 10px 0;
+  font-size: 14px;
+  text-decoration: underline;
+}
+.profile-experience {
+  list-style: none;
+  padding: 0;
+}
+.profile-experience li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 24px;
+  padding: 22px 0;
+  border-bottom: 1px solid #293226;
+}
+.profile-experience h3 {
+  font-size: 19px;
+  font-weight: 550;
+}
+.profile-experience p {
+  color: #b6c0b0;
+  font-size: 15px;
+}
+.profile-experience .profile-date {
+  font-size: 13px;
+  padding-top: 5px;
+}
+.profile-job-description {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+}
+.profile-lab {
+  padding: 30px;
+  background: #202b1c;
+  border: 1px solid #3c4a32;
+  flex-wrap: wrap;
+}
+.profile-lab p {
+  color: #b6c0b0;
+  font-size: 15px;
+  margin-top: 5px;
+}
+.profile-lab > a {
+  padding: 12px 0;
+}
+.profile-footer {
+  padding: 40px 0;
+  color: #aeb8aa;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+.profile-simple {
+  background: #fafaf7;
+  color: #222a22;
+  padding: 0 max(24px, calc((100vw - 760px) / 2));
+}
+.profile-simple a {
+  text-decoration: underline;
+  color: #29512b;
+}
+.profile-simple a:hover {
+  color: #122713;
+}
+.profile-simple .profile-header {
+  border-color: #d5d9d1;
+}
+.profile-simple .profile-intro {
+  padding: 48px 0;
+}
+.profile-simple .profile-intro h1 {
+  font-size: 40px;
+  letter-spacing: -0.04em;
+}
+.profile-simple .profile-intro h1 span {
+  font-size: 16px;
+}
+.profile-simple .profile-description {
+  font-size: 18px;
+}
+.profile-simple .profile-eyebrow,
+.profile-simple .profile-kind {
+  display: none;
+}
+.profile-simple .profile-projects {
+  display: block;
+}
+.profile-simple .profile-projects li {
+  margin-bottom: 24px;
+}
+.profile-simple .profile-projects h3 {
+  font-size: 18px;
+}
+.profile-simple .profile-projects li > p:last-child {
+  max-width: none;
+  color: #495447;
+}
+.profile-simple .profile-section-heading p,
+.profile-simple .profile-lab p {
+  color: #495447;
+}
+.profile-simple p,
+.profile-simple .profile-footer,
+.profile-simple .profile-date,
+.profile-simple h1 span {
+  color: #495447;
+}
+.profile-simple .profile-section {
+  border-color: #d5d9d1;
+  padding-bottom: 32px;
+}
+.profile-simple .profile-experience li {
+  border-color: #d5d9d1;
+}
+.profile-simple .profile-lab {
+  padding: 24px 0;
+  background: none;
+  border: 0;
+  border-top: 1px solid #d5d9d1;
+}
+.lab-page {
+  background: #11151b;
+  color: #e8edf3;
+  min-height: 100dvh;
+  font-family: system-ui, sans-serif;
+}
+.lab-navigation {
+  position: relative;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  padding: 8px 20px;
+  background: #11151b;
+  border-bottom: 1px solid #43505c;
+}
+.lab-navigation a,
+.lab-navigation button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #e8edf3;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.lab-navigation button {
+  margin-left: auto;
+  cursor: pointer;
+}
+.lab-welcome {
+  max-width: 700px;
+  padding: 80px 24px;
+  margin: auto;
+}
+.lab-welcome h1 {
+  font-size: clamp(36px, 7vw, 64px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  margin: 16px 0 24px;
+}
+.lab-welcome p {
+  line-height: 1.6;
+  margin: 16px 0;
+}
+.lab-welcome a,
+.machine-intro a {
+  text-decoration: underline;
+}
+.lab-welcome button {
+  display: block;
+  padding: 12px 22px;
+  margin: 32px 0;
+  color: #11151b;
+  background: #c7eea3;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.lab-welcome button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.lab-running {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+.lab-running .lab-navigation {
+  flex-shrink: 0;
+}
+.lab-page .machine-root {
+  height: auto;
+  min-height: 0;
+  flex: 1;
+}
+.lab-page .machine-foot {
+  position: relative;
+  background: #11151b;
+  color: #c6cdd6;
+  font:
+    12px/1.6 system-ui,
+    sans-serif;
+  letter-spacing: 0;
+}
+.lab-page .machine-foot a,
+.lab-page .machine-foot button {
+  color: #b6d8ee;
+}
+.lab-page .machine-foot button {
+  min-height: 44px;
+}
+.lab-page .machine-cover-line {
+  white-space: normal;
+  max-width: 42ch;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.lab-page .machine-intro button {
+  min-height: 44px;
+  font-size: 12px;
+}
+@media (max-width: 700px) {
+  .profile-header {
+    gap: 8px;
+    padding: 16px 0;
+  }
+  .profile-header nav {
+    gap: 20px;
+  }
+  .profile-intro {
+    padding: 52px 0 48px;
+  }
+  .profile-intro h1 span {
+    display: block;
+    margin: 14px 0 0;
+    font-size: 18px;
+  }
+  .profile-projects {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .profile-experience li {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .profile-lab {
+    padding: 24px;
+  }
+  .profile-section-heading {
+    gap: 8px;
+  }
+  .lab-navigation {
+    gap: 8px 16px;
+  }
+  .lab-navigation button {
+    margin-left: 0;
+  }
+  .lab-page .machine-foot-hint {
+    display: none;
+  }
+}
+@media print {
+  .profile-page {
+    background: white;
+    color: black;
+    padding: 0;
+  }
+  .profile-page p,
+  .profile-page a,
+  .profile-page span {
+    color: black !important;
+  }
+  .profile-header,
+  .profile-footer,
+  .profile-lab,
+  .profile-skip,
+  .profile-links {
+    display: none;
+  }
+  .profile-intro {
+    padding: 16px 0 24px;
+  }
+  .profile-intro h1 {
+    font-size: 32px;
+  }
+  .profile-description {
+    font-size: 16px;
+  }
+  .profile-section,
+  .profile-experience li {
+    border-color: #aaa;
+  }
+  .profile-projects li,
+  .profile-experience li {
+    break-inside: avoid;
+  }
+}

@@ -26,6 +26,7 @@ export function coverVisible(opts: {
   skipped: boolean;
   stage: MachineStage;
 }): boolean {
+  if (opts.stage === "failed") return true;
   if (opts.skipped) return false;
-  return opts.stage === "cold" || opts.stage === "loading";
+  return opts.stage !== "ready";
 }

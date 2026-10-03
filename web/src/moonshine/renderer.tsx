@@ -94,19 +94,6 @@ function head(
     }),
   ];
 
-  // Faces are served from /fonts on our own origin, so the only thing worth
-  // warming is the first one the page actually paints with.
-  children.push(
-    createElement("link", {
-      key: "preload-sans",
-      rel: "preload",
-      as: "font",
-      type: "font/woff2",
-      href: "/fonts/instrument-sans-normal-latin.woff2",
-      crossOrigin: "anonymous",
-    }),
-  );
-
   for (const href of fontHrefs()) {
     children.push(
       createElement("link", { key: href, rel: "stylesheet", href }),

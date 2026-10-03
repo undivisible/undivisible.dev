@@ -1,23 +1,20 @@
 
   [1;37mheadline works[0m -- all under tsc.hk, the software company of hong kong
 
-  [96minauguration[0m  [90mcompiler |[0m [93mno llvm[0m
-    forty languages through one import graph. self-hosts in under two seconds into a 9 mb binary.
+  [96mInauguration[0m  [90mCompiler[0m
+    A compiler toolchain that brings multiple languages into a shared intermediate representation.
 
-  [96mspace[0m  [90moperating system |[0m [93mno posix[0m
-    built from the compiler up, five layers deep. the compiler defines authority, objects and scheduling -- not just machine code.
+  [96mSpace[0m  [90mOperating system | Experimental[0m
+    A component-based operating system built with Inauguration. Boots and runs its own desktop under QEMU.
 
-  [96mcrepuscularity[0m  [90mframework |[0m [93m29 *[0m
-    write react, get gpui desktop, swiftui, jetpack compose, ratatui and embedded. write rust, get browser extensions.
+  [96mCrepuscularity[0m  [90mUI toolkit | In development[0m
+    A Rust UI toolkit for desktop, web, terminal and browser extensions, with native mobile backends in development.
 
-  [96malpenglow[0m  [90mlinux |[0m [93mown package manager[0m
-    diskless. the minimal build is smaller than a photo from a modern phone, and it boots in under a second.
+  [96mAlpenglow[0m  [90mLinux | Testing releases[0m
+    A musl Linux distribution with an immutable root filesystem, dinit and Oil packages.
 
-  [96mmoonshine[0m  [90mweb framework |[0m [93mrenders this[0m
-    bun-first, signal-only kernel, opt-in compiler. this page is rendered by it.
+  [96mCupboard[0m  [90mDevice software | In development[0m
+    A home hub for syncing files, photos and clipboard history between locally paired devices.
 
-  [96mrotary | apollo[0m  [90magent stack |[0m [93mall rust[0m
-    rotary owns the loop -- tools, providers, sessions, permissions, computer-use. apollo is the runtime on top: 14 mb, 20+ llm providers, 10+ messaging channels. zkr remembers, praefectus verifies, darash searches.
-
-  [96mrv8[0m  [90mbrowser engine |[0m [93mservo + v8[0m
-    servo for rendering, v8 for javascript, rust holding it together.
+  [96mTelekinesis[0m  [90mDeveloper tool[0m
+    A terminal coding agent built on Rotary, with provider login, persistent sessions and an ACP server.

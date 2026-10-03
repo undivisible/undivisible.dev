@@ -5,6 +5,7 @@ import {
   guestDelta,
   type MachineStage,
 } from "@/lib/os/machine-input";
+import { emulatorLifecycle } from "@/lib/os/emulator-lifecycle";
 
 /**
  * The machine that is the page.
@@ -73,15 +74,22 @@ function screenResolution(el: HTMLElement): string {
 type V86Emulator = {
   add_listener(name: string, handler: (arg: unknown) => void): void;
   serial0_send(text: string): void;
-  keyboard_send_text(text: string): void;
-  lock_mouse(): void;
-  destroy(): void;
+  keyboard_send_text(text: string): Promise<void>;
+  lock_mouse(): Promise<void>;
+  destroy(): Promise<void>;
+  run(): Promise<void>;
+  keyboard_set_enabled(enabled: boolean): void;
+  keyboard_send_scancodes(codes: number[]): Promise<void>;
   bus: { send(name: string, data: unknown): void };
 };
 
 class VmManager {
   private emulator: V86Emulator | null = null;
   private starting = false;
+  private controller: AbortController | null = null;
+  private disposeEmulator: (() => void) | null = null;
+  private keyboardCaptured = false;
+  private startupTimeout: ReturnType<typeof setTimeout> | undefined;
   private guestW = 1024;
   private guestH = 700;
   private serialLine = "";
@@ -108,12 +116,28 @@ class VmManager {
   async start(screen: HTMLElement): Promise<void> {
     if (this.emulator || this.starting || typeof window === "undefined") return;
     this.starting = true;
+    const controller = new AbortController();
+    this.controller = controller;
+    const isCurrent = () =>
+      this.controller === controller && !controller.signal.aborted;
+    this.startupTimeout = setTimeout(() => {
+      if (!isCurrent()) return;
+      this.stop();
+      this.emit({
+        message:
+          "Startup timed out. Stop the machine and try again, or use the simple version.",
+        percent: null,
+        ready: false,
+        stage: "failed",
+      });
+    }, 90_000);
 
     try {
       const libUrl = "/v86/libv86.mjs";
       const { V86 } = (await import(/* @vite-ignore */ libUrl)) as {
         V86: new (options: Record<string, unknown>) => V86Emulator;
       };
+      if (!isCurrent()) return;
 
       this.emit({
         message: "loading the machine",
@@ -125,7 +149,9 @@ class VmManager {
       // Fetch the initrd ourselves and gunzip it on the host — native speed —
       // so the emulated cpu never pays for decompressing a 10 MB archive.
       // The wire stays gzip; v86 gets the raw cpio buffer.
-      const initrdRes = await fetch("/v86/undesk-initrd.cpio.gz");
+      const initrdRes = await fetch("/v86/undesk-initrd.cpio.gz", {
+        signal: controller.signal,
+      });
       if (!initrdRes.ok || !initrdRes.body) {
         throw new Error(`initrd fetch failed (${initrdRes.status})`);
       }
@@ -134,7 +160,7 @@ class VmManager {
       const counted = new TransformStream<Uint8Array, Uint8Array>({
         transform: (chunk, controller) => {
           seen += chunk.byteLength;
-          if (total > 0) {
+          if (total > 0 && isCurrent()) {
             const percent = (seen / total) * 60;
             this.emit({
               message: `loading alpenglow ${Math.round(percent)}%`,
@@ -152,13 +178,33 @@ class VmManager {
       const initrdBuffer = await new Response(
         initrdRes.body.pipeThrough(counted).pipeThrough(gunzip),
       ).arrayBuffer();
+      if (!isCurrent()) return;
+
+      // Fetch every machine file with the current run's abort signal. v86's
+      // own downloader cannot be cancelled during initialization.
+      const asset = async (path: string) => {
+        const response = await fetch(path, { signal: controller.signal });
+        if (!response.ok)
+          throw new Error(`Machine file failed to load (${response.status})`);
+        return response.arrayBuffer();
+      };
+      const [bios, vgaBios, kernel, wasm] = await Promise.all([
+        asset("/v86/seabios.bin"),
+        asset("/v86/vgabios.bin"),
+        asset("/v86/undesk-vmlinuz"),
+        asset("/v86/v86.wasm"),
+      ]);
+      const wasmModule = await WebAssembly.compile(wasm);
+      if (!isCurrent()) return;
 
       const emulator = new V86({
         wasm_path: "/v86/v86.wasm",
+        wasm_fn: async (imports: WebAssembly.Imports) =>
+          (await WebAssembly.instantiate(wasmModule, imports)).exports,
         screen_container: screen,
-        bios: { url: "/v86/seabios.bin" },
-        vga_bios: { url: "/v86/vgabios.bin" },
-        bzimage: { url: "/v86/undesk-vmlinuz" },
+        bios: { buffer: bios },
+        vga_bios: { buffer: vgaBios },
+        bzimage: { buffer: kernel },
         initrd: { buffer: initrdBuffer },
         // video= asks bochs-drm for a real mode (vga= is ignored under v86's
         // fast bzImage loader). Match the machine to the window it's shown
@@ -175,13 +221,15 @@ class VmManager {
         // VRAM so a large framebuffer fits (1920x1200x32 is ~9.2 MB).
         memory_size: 512 * 1024 * 1024,
         vga_memory_size: 32 * 1024 * 1024,
-        autostart: true,
+        autostart: false,
       });
       this.emulator = emulator;
+      emulator.keyboard_set_enabled(this.keyboardCaptured);
 
       // The serial line is the machine's voice to the host: watch for
       // @@open lines from the sites app; everything else is debug.
       emulator.add_listener("serial0-output-byte", (byte) => {
+        if (!isCurrent()) return;
         const ch = String.fromCharCode(byte as number);
         if (ch === "\n") {
           const line = this.serialLine;
@@ -191,6 +239,7 @@ class VmManager {
           // The desktop drew its first frame — now it's ready, not merely
           // when the emulator started (that still shows the boot log).
           if (line.includes("@@desktop")) {
+            clearTimeout(this.startupTimeout);
             this.emit({
               message: "ready",
               percent: 100,
@@ -204,6 +253,7 @@ class VmManager {
       });
 
       emulator.add_listener("download-progress", (event) => {
+        if (!isCurrent()) return;
         const e = event as {
           lengthComputable?: boolean;
           total?: number;
@@ -225,26 +275,44 @@ class VmManager {
       });
 
       emulator.add_listener("download-error", () => {
+        if (!isCurrent()) return;
+        this.stop();
         this.emit({
           message:
-            "the kernel and initrd could not be fetched — this frame blocks requests. it boots on the site.",
+            "The machine files could not be loaded. Stop the machine and try again, or use the simple version.",
           percent: this.progress.percent,
           ready: false,
           stage: "failed",
         });
       });
 
-      emulator.add_listener("emulator-ready", () => {
-        // Downloaded and started — but keep `ready` false so the cover holds
-        // over the kernel boot log until the desktop signals @@desktop.
-        this.emit({
-          message: "booting the machine",
-          percent: 100,
-          ready: false,
-          stage: "booting",
-        });
+      this.disposeEmulator = emulatorLifecycle(emulator, {
+        current: isCurrent,
+        failed: (error) => {
+          if (!isCurrent()) return;
+          this.stop();
+          this.emit({
+            message: `Machine failed: ${String(error)}`,
+            percent: null,
+            ready: false,
+            stage: "failed",
+          });
+        },
+        ready: () => {
+          emulator.keyboard_set_enabled(this.keyboardCaptured);
+          // Downloaded and started — but keep `ready` false so the cover holds
+          // over the kernel boot log until the desktop signals @@desktop.
+          this.emit({
+            message: "booting the machine",
+            percent: 100,
+            ready: false,
+            stage: "booting",
+          });
+        },
       });
     } catch (error) {
+      if (controller.signal.aborted) return;
+      this.stop();
       this.emit({
         message: `failed: ${error instanceof Error ? error.message : String(error)}`,
         percent: null,
@@ -252,18 +320,61 @@ class VmManager {
         stage: "failed",
       });
     } finally {
-      this.starting = false;
+      if (this.controller === controller) this.starting = false;
     }
   }
 
+  /** Release the VM and any pending download when leaving or stopping the lab. */
+  stop(): void {
+    this.controller?.abort();
+    this.controller = null;
+    clearTimeout(this.startupTimeout);
+    this.startupTimeout = undefined;
+    this.emulator?.keyboard_set_enabled(false);
+    this.disposeEmulator?.();
+    this.disposeEmulator = null;
+    this.emulator = null;
+    this.starting = false;
+    this.openListener = null;
+    this.serialLine = "";
+    this.cursorSeeded = false;
+    this.keyboardCaptured = false;
+    this.emit({ message: "cold", percent: null, ready: false, stage: "cold" });
+  }
+
   /** Types into the machine's PS/2 keyboard — for touch keyboards. */
-  typeText(text: string): void {
-    this.emulator?.keyboard_send_text(text);
+  async typeText(text: string): Promise<void> {
+    const emulator = this.emulator;
+    if (!emulator || !this.ready) return;
+    emulator.keyboard_set_enabled(true);
+    try {
+      await emulator.keyboard_send_text(text);
+    } finally {
+      if (this.emulator === emulator)
+        emulator.keyboard_set_enabled(this.keyboardCaptured);
+    }
+  }
+
+  captureKeyboard(enabled: boolean): void {
+    this.keyboardCaptured = enabled;
+    this.emulator?.keyboard_set_enabled(enabled);
+  }
+
+  releaseKeyboard(): void {
+    // Close the guest launcher too, then return Tab/Enter to the host page.
+    void this.emulator?.keyboard_send_scancodes([0x01, 0x81]);
+    this.captureKeyboard(false);
   }
 
   /** Capture the pointer for the machine's PS/2 mouse. Esc releases it. */
-  lockMouse(): void {
-    this.emulator?.lock_mouse();
+  async lockMouse(): Promise<boolean> {
+    if (!this.emulator) return false;
+    try {
+      await this.emulator.lock_mouse();
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /** Touch: a finger-move in css pixels becomes a PS/2 mouse delta in guest
