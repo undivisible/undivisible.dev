@@ -32,7 +32,7 @@ export function offlineHtml(html: string): string {
   return converted.replace(
     "</head>",
     `<style>
-.profile-page{padding:24px;font-family:sans-serif}
+.profile-page{padding:24px;font-family:monospace}
 .profile-header,.profile-header nav,.profile-section-heading,.profile-lab,.profile-footer,.profile-projects{display:block}
 .profile-header a,.profile-links a{display:inline-block;margin-right:20px;padding:8px 0}
 .profile-section-heading>*{display:block;margin:8px 0}

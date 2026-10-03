@@ -2,9 +2,9 @@
 
 Moonshine, React 19, Tailwind v4 and Bun prerender the site to static HTML.
 
-- `/` — profile and six selected personal projects; no client JavaScript.
-- `/simple/` — a plain version of the same profile; no client JavaScript.
-- `/lab/` — optional Alpenglow Linux desktop running locally with v86. Start downloads the image and allocates 512 MB. Stop releases the emulator and pending download. Home and Simple version remain available while it runs. Failed startup shows a fallback link.
+- `/` — redirects to `/lab/`, the primary Alpenglow Linux experience.
+- `/simple/` — profile and six curated projects in the existing dark terminal palette and monospace type; no application JavaScript.
+- `/lab/` — automatically boots the existing Alpenglow Linux desktop with v86. Stop releases the emulator and pending download; Start machine restarts after Stop. Simple version and résumé remain available during boot and while running. Startup failure and disabled JavaScript offer a static fallback. The machine uses about 512 MB.
 - `/agent` — direct links to the public Markdown snapshots.
 
 Project copy is curated in `src/data/profile.ts`. The résumé sync scripts normally read `undivisible/undivisible/resume.md`. `RESUME_MARKDOWN_URL` can pin an approved source; a code-only release may preserve the exact current public résumé while a separate copy update remains pending. Public résumé, agent files and offline copies must all use that same approved content. Do not silently publish a local draft.

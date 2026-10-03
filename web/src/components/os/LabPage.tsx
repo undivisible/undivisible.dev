@@ -4,25 +4,27 @@ import { useEffect, useState } from "react";
 import MachineRoot from "@/components/os/MachineRoot";
 
 export default function LabPage() {
-  const [started, setStarted] = useState(false);
+  const [started, setStarted] = useState(true);
   const [interactive, setInteractive] = useState(false);
   useEffect(() => setInteractive(true), []);
 
   return (
     <div className={`lab-page${started ? " lab-running" : ""}`}>
       <nav className="lab-navigation" aria-label="Lab navigation">
-        <a href="/">← Home</a>
+        <a href="/">undivisible.</a>
         <a href="/simple/">Simple version</a>
         <a href="/resume.md">Résumé</a>
         {started ? (
-          <button onClick={() => setStarted(false)}>Stop machine</button>
+          <button disabled={!interactive} onClick={() => setStarted(false)}>
+            Stop machine
+          </button>
         ) : null}
       </nav>
       {started ? (
         <MachineRoot />
       ) : (
         <main className="lab-welcome">
-          <p className="profile-eyebrow">Browser experiment</p>
+          <p className="profile-eyebrow">Linux desktop</p>
           <h1>Alpenglow lab</h1>
           <p>A Linux desktop running locally in your browser with v86.</p>
           <p>
@@ -34,7 +36,7 @@ export default function LabPage() {
           </button>
           <p>
             The <a href="/simple/">simple version</a> has the profile, projects
-            and experience.
+            and résumé without starting Linux.
           </p>
           <noscript>
             <p>
