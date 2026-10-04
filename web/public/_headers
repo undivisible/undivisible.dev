@@ -13,6 +13,9 @@
 
 # The BIOS and vga BIOS are upstream and never change. (The wasm is covered
 # by the /*.wasm rule below; listing it here too double-stacks the header.)
+/nexnet/bridge.js
+  Cache-Control: public, max-age=0, must-revalidate
+
 /v86/*.bin
   Cache-Control: public, max-age=604800, immutable
 /v86/libv86.mjs

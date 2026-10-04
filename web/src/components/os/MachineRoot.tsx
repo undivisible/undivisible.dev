@@ -322,7 +322,9 @@ export default function MachineRoot() {
               setPasskeyNote("waiting for your authenticator…");
               vm.registerNexnetPasskey().then(
                 () =>
-                  setPasskeyNote("passkey added; pick it on the Identity page"),
+                  setPasskeyNote(
+                    "passkey added; restart nexnet to pick it on the Identity page",
+                  ),
                 (error: unknown) =>
                   setPasskeyNote(
                     error instanceof Error ? error.message : "passkey failed",

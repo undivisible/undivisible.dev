@@ -46,3 +46,14 @@ describe("nexnetGatewayUrl", () => {
     ).toBe("https://chat.example.test");
   });
 });
+
+describe("nexnetGatewayUrl loopback", () => {
+  test("accepts IPv6 loopback over http", () => {
+    expect(
+      nexnetGatewayUrl("http://[::1]:8787", {
+        hostname: "undivisible.dev",
+        search: "",
+      }),
+    ).toBe("http://[::1]:8787");
+  });
+});

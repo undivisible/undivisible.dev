@@ -23,7 +23,8 @@ export type NexnetBridge = {
   close(): void;
 };
 
-const CHUNK = 2048;
+const CHUNK = 512;
+const CHUNK_GAP_MS = 2;
 
 export function nexnetGatewayUrl(
   configured: string | undefined,
@@ -41,7 +42,9 @@ export function nexnetGatewayUrl(
   try {
     const url = new URL(value);
     const loopback =
-      url.hostname === "localhost" || url.hostname === "127.0.0.1";
+      url.hostname === "localhost" ||
+      url.hostname === "127.0.0.1" ||
+      url.hostname === "[::1]";
     if (url.protocol !== "https:" && !(url.protocol === "http:" && loopback)) {
       return null;
     }
@@ -63,13 +66,26 @@ export async function attachNexnetBridge(
   const module = (await loadModule("/nexnet/bridge.js")) as BridgeModule;
   if (!isCurrent()) return null;
   const encoder = new TextEncoder();
+  const queue: Uint8Array[] = [];
+  let pumping = false;
+  const pump = () => {
+    const next = queue.shift();
+    if (!next || !isCurrent()) {
+      queue.length = 0;
+      pumping = false;
+      return;
+    }
+    emulator.bus.send("virtio-console0-input-bytes", next);
+    setTimeout(pump, CHUNK_GAP_MS);
+  };
   const bridge = module.createBridge({ gatewayUrl }, (frame) => {
     const bytes = encoder.encode(frame);
     for (let at = 0; at < bytes.length; at += CHUNK) {
-      emulator.bus.send(
-        "virtio-console0-input-bytes",
-        bytes.slice(at, at + CHUNK),
-      );
+      queue.push(bytes.slice(at, at + CHUNK));
+    }
+    if (!pumping) {
+      pumping = true;
+      pump();
     }
   });
   emulator.add_listener("virtio-console0-output-bytes", (bytes) => {
