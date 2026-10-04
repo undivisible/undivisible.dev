@@ -35,6 +35,15 @@ if [ -c /dev/ttyS0 ]; then
   /bin/setsid -c /bin/bash --login -i </dev/ttyS0 >/dev/ttyS0 2>&1 &
 fi
 
+# The Nexnet terminal talks to the host page over the virtio console. It is
+# a separate line from the serial debug shell, so the two never share input.
+export NEXNET_SERIAL=/dev/hvc0
+tries=0
+while [ ! -c /dev/hvc0 ] && [ "$tries" -lt 20 ]; do
+  /bin/sleep 0.1
+  tries=$((tries + 1))
+done
+
 # The screen. bochs-drm probes async — give /dev/fb0 a moment to appear.
 tries=0
 while [ ! -e /dev/fb0 ] && [ "$tries" -lt 40 ]; do

@@ -31,6 +31,7 @@ export default function MachineRoot() {
   const [askedUrl, setAskedUrl] = useState<string | null>(null);
   const [resumed, setResumed] = useState(false);
   const [mouseUnavailable, setMouseUnavailable] = useState(false);
+  const [passkeyNote, setPasskeyNote] = useState<string | null>(null);
   const touchRef = useRef<{
     x: number;
     y: number;
@@ -310,9 +311,31 @@ export default function MachineRoot() {
           </a>
         </span>
         <span className="machine-foot-hint">
-          Nexnet: type <code>nexnet</code> in the launcher for Updates and
-          Public chat. Offline preview; sign-in and posting are unavailable.
-          Press q outside the editor or Ctrl+C to return to the desktop.
+          Nexnet: type <code>nexnet</code> in the launcher. Read Updates and
+          Public chat; create an identity and sign in on the Identity page (3).
+          Press q outside the editor or Ctrl+C to return to the desktop.{" "}
+          <button
+            type="button"
+            className="machine-foot-escape"
+            disabled={!progress.ready || !vm.nexnetPasskeyAvailable()}
+            onClick={() => {
+              setPasskeyNote("waiting for your authenticator…");
+              vm.registerNexnetPasskey().then(
+                () =>
+                  setPasskeyNote(
+                    "passkey added; restart nexnet to pick it on the Identity page",
+                  ),
+                (error: unknown) =>
+                  setPasskeyNote(
+                    error instanceof Error ? error.message : "passkey failed",
+                  ),
+              );
+            }}
+            title="Register a passkey for your Nexnet identity (create the identity in the terminal first)"
+          >
+            add a passkey
+          </button>
+          {passkeyNote ? <span role="status"> {passkeyNote}</span> : null}
         </span>
         <span className="machine-foot-hint">
           click the screen to hand it your mouse (esc takes it back) · type to
