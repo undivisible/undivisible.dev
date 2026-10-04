@@ -1,37 +1,50 @@
-# Nexnet guest shell
+# Nexnet in the Linux guest
 
-`overlay/usr/bin/nexnet` is the static Linux candidate from the Nexnet terminal
-handoff, source commit `f0dbc9bfb735171e6e3fff795da065b8a1df8503`. Its embedded
-Crepuscularity `.crepus` template owns the app layout. The Rust loop owns local
-navigation and the memory-only draft. It uses locked `crepuscularity-tui 0.4.24`;
-the independent upstream source review accepted its offline boundary.
+`overlay/usr/bin/nexnet` is the Crepuscularity terminal chat from
+`tschk/nexnet` (`terminal/`, crate `nexnet-term`, `crepuscularity-tui 0.4.24`),
+built for `i686-unknown-linux-musl`.
 
-- Target: `i686-unknown-linux-musl`, ELF32 Intel 80386, static and stripped.
-- Bytes: 1,428,296.
-- SHA-256: `0d3317281c09bac7e75b6f1655577114ce25a1628d689956d6cb3e7253652c57`.
-- Source/build manifest SHA-256:
-  `dfe42a0ff7511df6561e22fdbb91062e8220edf2b6ae6d8672e21dcd4534941b`.
-- Built with cached stable Rust 1.98.1, cargo-zigbuild 0.23.0 and Zig 0.16.0,
-  locked offline dependencies and one build job. The website copies this verified
-  executable; it does not rebuild or modify Nexnet source during site builds.
+- Source commit: `f3289dc088d3dd7dded510b344ee8b3b7619ce56` on the nexnet
+  branch `feat/web-terminal-identity` (not yet pushed or merged at the time of
+  writing; replace this line with the merge commit when it lands).
+- ELF32 Intel 80386, static, stripped, 1,009,720 bytes.
+- SHA-256: `5a8923f9938017b26afdf134b1dd382232ff885aca66cb03b989a30cbcd2672b`.
+- Built with `cargo zigbuild --release --target i686-unknown-linux-musl`
+  (Rust 1.98.1, Zig 0.16.0). The website copies this executable; it does not
+  rebuild Nexnet source.
 - ISC notice: `overlay/usr/share/doc/nexnet/LICENSE`.
 
-The existing desktop scans `/usr/bin`. Its non-builtin console handover runs
-Nexnet on real tty1 and restarts the desktop when it exits. Type `nexnet` in the
-launcher; there is no replacement wrapper, new daemon or compositor builtin.
+## How it signs in and posts
 
-`1` Updates, `2` Public chat, `3` Identity; Tab cycles pages. Updates cannot be
-edited. In Public chat, e or Enter edits a local draft. Enter refuses submission
-and retains the draft. Ordinary letters including q are text while editing.
-Esc leaves the editor; q outside the editor or Ctrl+C exits. Quit discards the
-memory-only draft. Sign-in, sessions, network, posting and IPC are absent.
-The website's touch controls include a labeled Ctrl+C button to exit even while
-editing a draft.
+The guest has no network and holds no keys. The UI speaks newline-delimited JSON
+(`docs/terminal-agent.md` in nexnet) over `/dev/hvc0`, a virtio console that
+`vm.ts` enables, with every line prefixed `@@nexnet `. `init` exports
+`NEXNET_SERIAL=/dev/hvc0`, so the launcher's plain `nexnet` command uses it.
+The UI switches the device to raw mode itself.
 
-The Linux virtual console has a 16-color palette and the existing bitmap font.
-Init sets that palette to the desktop colors. Full RGB app styles can fall back
-to the console foreground/background; CJK glyphs are limited by its font. This
-does not establish full Unicode rendering or the windowed terminal's support.
-The website's touch keyboard sends ASCII commands. The app supports local UTF-8
-drafts on terminals that provide them. Keep the existing Linux-primary theme
-and static Simple fallback when packaging this shell.
+On the host page, `public/nexnet/bridge.js` answers those lines. It is the
+nexnet `packages/agent` browser bundle (`bun run build:browser`):
+
+- SHA-256: `52c1d925d5547f7638f308d0cc146f5dd4e7aecf3bba87216884777337cb52f7`,
+  from the same source commit.
+- It keeps the wallet in this browser's IndexedDB, signs challenges and events,
+  and calls the gateway with `fetch`. It can register and use a WebAuthn passkey
+  (footer button "add a passkey") once an identity exists.
+- SSH-key sign-in is a Linux-terminal feature (`nexnet-agent` with
+  `ssh-keygen`) and is not available in the browser.
+
+## Gateway endpoint
+
+`NEXT_PUBLIC_NEXNET_GATEWAY_URL` selects the gateway at build time. It must be
+an `https` origin (or loopback `http`). Unset means the UI shows the gateway as
+unconfigured and reading and posting stay off. No endpoint is built in. On
+`localhost`, `127.0.0.1` and `[::1]` only, `?nexnet=<origin>` overrides it for
+development. The gateway must list this site's origin in `NEXNET_ORIGINS`.
+
+## Keys
+
+`1` Updates, `2` Public chat, `3` Identity (`c` create, `s` method, Enter sign
+in, `o` sign out); Tab cycles pages; `e` or Enter edits; Esc leaves the editor;
+`q` outside the editor or Ctrl+C exits. The Linux console has 16 colours;
+`init` sets them to the desktop palette. Keep the Linux-primary theme and the
+static Simple fallback.

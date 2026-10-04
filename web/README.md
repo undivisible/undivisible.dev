@@ -26,7 +26,7 @@ Project copy is curated in `src/data/profile.ts`. The résumé sync scripts norm
 
 After a static build, run `bun run scripts/bake-os-content.ts`, then `sh scripts/build-os-initramfs.sh`. The latter repacks the upstream initramfs with the overlay and calls `prepare-os-web.ts` to include main/simple pages with guest-local stylesheet and navigation URLs. The guest has no network. Its `web` app opens NetSurf; `links` is the smaller fallback. The host browser escape control returns to the desktop.
 
-Type `nexnet` in the desktop launcher to open the native offline Updates/Public chat shell. It is not signed in; Updates is read-only and a Public chat draft cannot be submitted. Press q outside the editor or Ctrl+C to return to the desktop. See [binary provenance and console limits](os-image/NEXNET.md). No wrapper replaces `/usr/bin/nexnet`.
+Type `nexnet` in the desktop launcher to open the Nexnet terminal chat. It reads Updates and Public chat from a gateway and lets you create an identity, sign in and post; set `NEXT_PUBLIC_NEXNET_GATEWAY_URL` at build time (unset means unconfigured and read/post stay off). Press q outside the editor or Ctrl+C to return to the desktop. See [the bridge, provenance and gateway notes](os-image/NEXNET.md).
 
 ## Deployment
 
