@@ -4,7 +4,7 @@
 `tschk/nexnet` (`terminal/`, crate `nexnet-term`, `crepuscularity-tui 0.4.24`),
 built for `i686-unknown-linux-musl`.
 
-- Source commit: `b24f42a412a825fb8dc5dc076e941a141bb3c6f8` on the nexnet
+- Source commit: `355d51af41e5fd2f6ab0878ba4ea078beaeb6f57` on the nexnet
   branch `feat/web-terminal-identity` (not yet pushed or merged at the time of
   writing; replace this line with the merge commit when it lands).
 - ELF32 Intel 80386, static, stripped, 1,014,232 bytes.
