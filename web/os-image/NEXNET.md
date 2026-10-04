@@ -4,11 +4,11 @@
 `tschk/nexnet` (`terminal/`, crate `nexnet-term`, `crepuscularity-tui 0.4.24`),
 built for `i686-unknown-linux-musl`.
 
-- Source commit: `b3a71a9ff7f110d16ba5dca3a383f2c8e3903973` on the nexnet
+- Source commit: `a1f59c1014a267bd68c05c3ec11b0f0a10b66a98` on the nexnet
   branch `feat/web-terminal-identity` (not yet pushed or merged at the time of
   writing; replace this line with the merge commit when it lands).
-- ELF32 Intel 80386, static, stripped, 1,013,384 bytes.
-- SHA-256: `34a9545528583a21f4041d09403589009279ad33d3c1d468b4196d202df86463`.
+- ELF32 Intel 80386, static, stripped, 1,013,624 bytes.
+- SHA-256: `0e4ffd1c57399562e01446eb5cb34b9d93332eaad87ca5f6bf47224f783bee59`.
 - Built with `cargo zigbuild --release --target i686-unknown-linux-musl`
   (Rust 1.98.1, Zig 0.16.0). The website copies this executable; it does not
   rebuild Nexnet source.
@@ -25,7 +25,7 @@ The UI switches the device to raw mode itself.
 On the host page, `public/nexnet/bridge.js` answers those lines. It is the
 nexnet `packages/agent` browser bundle (`bun run build:browser`):
 
-- SHA-256: `b6a0d6b9a13cbc4e18c0f79a2e9b001e0c7558cceb645cbe3efdb493528354c9`,
+- SHA-256: `3b39d22c997c8edaec0f19db20fece91f9373502650a6cc3a2039c6fb0457bf8`,
   from the same source commit.
 - It keeps the wallet in this browser's IndexedDB, signs challenges and events,
   and calls the gateway with `fetch`. It can register and use a WebAuthn passkey
