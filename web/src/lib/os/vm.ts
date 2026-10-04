@@ -6,6 +6,12 @@ import {
   type MachineStage,
 } from "@/lib/os/machine-input";
 import { emulatorLifecycle } from "@/lib/os/emulator-lifecycle";
+import {
+  attachNexnetBridge,
+  nexnetGatewayUrl,
+  type NexnetBridge,
+  type NexnetEmulator,
+} from "@/lib/os/nexnet-bridge";
 
 /**
  * The machine that is the page.
@@ -84,6 +90,7 @@ type V86Emulator = {
 };
 
 class VmManager {
+  private nexnet: NexnetBridge | null = null;
   private emulator: V86Emulator | null = null;
   private starting = false;
   private controller: AbortController | null = null;
@@ -221,10 +228,25 @@ class VmManager {
         // VRAM so a large framebuffer fits (1920x1200x32 is ~9.2 MB).
         memory_size: 512 * 1024 * 1024,
         vga_memory_size: 32 * 1024 * 1024,
+        virtio_console: true,
         autostart: false,
       });
       this.emulator = emulator;
       emulator.keyboard_set_enabled(this.keyboardCaptured);
+      void attachNexnetBridge(
+        emulator as unknown as NexnetEmulator,
+        nexnetGatewayUrl(
+          process.env.NEXT_PUBLIC_NEXNET_GATEWAY_URL,
+          window.location,
+        ),
+        isCurrent,
+      ).then(
+        (bridge) => {
+          if (bridge && isCurrent()) this.nexnet = bridge;
+          else bridge?.close();
+        },
+        () => undefined,
+      );
 
       // The serial line is the machine's voice to the host: watch for
       // @@open lines from the sites app; everything else is debug.
@@ -331,6 +353,8 @@ class VmManager {
     clearTimeout(this.startupTimeout);
     this.startupTimeout = undefined;
     this.emulator?.keyboard_set_enabled(false);
+    this.nexnet?.close();
+    this.nexnet = null;
     this.disposeEmulator?.();
     this.disposeEmulator = null;
     this.emulator = null;
@@ -358,6 +382,15 @@ class VmManager {
   captureKeyboard(enabled: boolean): void {
     this.keyboardCaptured = enabled;
     this.emulator?.keyboard_set_enabled(enabled);
+  }
+
+  nexnetPasskeyAvailable(): boolean {
+    return this.nexnet?.passkeySupported() ?? false;
+  }
+
+  async registerNexnetPasskey(): Promise<void> {
+    if (!this.nexnet) throw new Error("The machine is not running");
+    await this.nexnet.registerPasskey();
   }
 
   /** Ctrl+C for touch users: exit a console app or interrupt its command. */
