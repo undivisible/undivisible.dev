@@ -4,11 +4,11 @@
 `tschk/nexnet` (`terminal/`, crate `nexnet-term`, `crepuscularity-tui 0.4.24`),
 built for `i686-unknown-linux-musl`.
 
-- Source commit: `a1f59c1014a267bd68c05c3ec11b0f0a10b66a98` on the nexnet
+- Source commit: `b24f42a412a825fb8dc5dc076e941a141bb3c6f8` on the nexnet
   branch `feat/web-terminal-identity` (not yet pushed or merged at the time of
   writing; replace this line with the merge commit when it lands).
-- ELF32 Intel 80386, static, stripped, 1,013,624 bytes.
-- SHA-256: `0e4ffd1c57399562e01446eb5cb34b9d93332eaad87ca5f6bf47224f783bee59`.
+- ELF32 Intel 80386, static, stripped, 1,014,232 bytes.
+- SHA-256: `55f5d9ed025adf89d37774e3a98c31d471855016b8341357be7ce174f2ae3c61`.
 - Built with `cargo zigbuild --release --target i686-unknown-linux-musl`
   (Rust 1.98.1, Zig 0.16.0). The website copies this executable; it does not
   rebuild Nexnet source.
