@@ -4,11 +4,11 @@
 `tschk/nexnet` (`terminal/`, crate `nexnet-term`, `crepuscularity-tui 0.4.24`),
 built for `i686-unknown-linux-musl`.
 
-- Source commit: `eae24c4d2a78bd2cbdadcd4b9e7068ec13adfe83` on the nexnet
+- Source commit: `b3a71a9ff7f110d16ba5dca3a383f2c8e3903973` on the nexnet
   branch `feat/web-terminal-identity` (not yet pushed or merged at the time of
   writing; replace this line with the merge commit when it lands).
-- ELF32 Intel 80386, static, stripped, 1,012,568 bytes.
-- SHA-256: `b1207ed4fbe331189c6599a767bd36c0befd2b2d848e0f85150f545fbc771d57`.
+- ELF32 Intel 80386, static, stripped, 1,013,384 bytes.
+- SHA-256: `34a9545528583a21f4041d09403589009279ad33d3c1d468b4196d202df86463`.
 - Built with `cargo zigbuild --release --target i686-unknown-linux-musl`
   (Rust 1.98.1, Zig 0.16.0). The website copies this executable; it does not
   rebuild Nexnet source.
@@ -45,6 +45,6 @@ development. The gateway must list this site's origin in `NEXNET_ORIGINS`, and i
 
 `1` Updates, `2` Public chat, `3` Identity (`c` create, `s` method, Enter sign
 in, `o` sign out); Tab cycles pages; `e` or Enter edits; Esc leaves the editor;
-`q` outside the editor or Ctrl+C exits. The Linux console has 16 colours;
+`q` outside the editor or Ctrl+C exits. A paste never submits: newlines become spaces (bracketed paste, or an Enter arriving within 8 ms of the previous editor key on the Linux console). The Linux console has 16 colours;
 `init` sets them to the desktop palette. Keep the Linux-primary theme and the
 static Simple fallback.
