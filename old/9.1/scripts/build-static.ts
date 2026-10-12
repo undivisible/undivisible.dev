@@ -237,9 +237,10 @@ async function main(): Promise<void> {
     await writeFile(target, html);
   }
 
-  // Share the current asset bundle, then overlay this version’s content.
+  // Share assets, but keep the Linux desktop redirect on next.undivisible.dev.
   await cp(resolve(projectDir, "../../web/public"), outDir, {
     recursive: true,
+    filter: (source) => !source.endsWith("/_redirects"),
   });
   await cp(join(projectDir, "public"), outDir, { recursive: true });
 
