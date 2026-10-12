@@ -12,9 +12,9 @@ test("resume markdown does not provide standalone project sections", () => {
 test("resume document includes experience dates and B1 product links", () => {
   expect(resumeDoc.experience.map((job) => job.time)).toEqual(
     expect.arrayContaining([
-      "February 2026–July 2026",
-      "2023 – present",
-      "2024 - present",
+      "February 2026 - June 2026",
+      "January 2023 - present",
+      "October 2024 - present",
     ]),
   );
 

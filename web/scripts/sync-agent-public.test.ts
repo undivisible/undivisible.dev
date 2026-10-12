@@ -31,6 +31,7 @@ test("sync-agent-public writes fetchable markdown without changing deploy conten
     expect(await proc.exited).toBe(0);
     for (const name of [
       "resume.md",
+      "projects.md",
       "llms.txt",
       "llms-full.txt",
       "agent.md",

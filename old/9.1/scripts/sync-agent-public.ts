@@ -1,16 +1,20 @@
+import { readFile } from "node:fs/promises";
 import { DEFAULT_PROFILE_MARKDOWN_URL } from "../src/lib/profile-readme.ts";
 import { fetchResumeMarkdown } from "./fetch-resume-markdown.ts";
 
 const PUBLIC_DIR = new URL("../public/", import.meta.url);
+const projects = await readFile(
+  new URL("../../../projects.md", import.meta.url),
+  "utf8",
+);
+await Bun.write(new URL("projects.md", PUBLIC_DIR), projects);
+
 const SITE = process.env.SITE_URL ?? "https://undivisible.dev";
 
 async function fetchNow(): Promise<string | null> {
   const urls = process.env.PROFILE_README_URL
     ? [process.env.PROFILE_README_URL]
-    : [
-        DEFAULT_PROFILE_MARKDOWN_URL,
-        "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md",
-      ];
+    : [DEFAULT_PROFILE_MARKDOWN_URL];
   for (const url of urls) {
     try {
       const res = await fetch(url);
@@ -48,7 +52,7 @@ if (resume) {
 
 const agentMd = `# undivisible.dev — agent index
 
-> Static site (GitHub Pages). Use **direct file URLs** — not HTML from \`/\`.
+> Static site (Cloudflare Workers). Use **direct file URLs** — not HTML from \`/\`.
 
 ## Fetch these (plain text)
 
@@ -80,13 +84,13 @@ const llms = `# undivisible.dev
 
 > Max Carter (undivisible) — software systems, AI automation, low-level tooling. **Agents: GET the markdown files below** (static hosting; same bytes as curl).
 
-Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrappers.
+Hosted on Cloudflare Workers: these are real files in the deploy bundle, not HTML wrappers.
 
 ## Markdown (fetch directly)
 
 - [Full bundle](${SITE}/llms-full.txt): Agent guide, profile/current projects, and resume in one Markdown request.
 - [Now status](${SITE}/now.md): Short now line (upstream now.md snapshot).
-- [Project list source](https://raw.githubusercontent.com/undivisible/undivisible/main/README.md): Parsed for portfolio; live site and sync:readme use this README, not now.md.
+- [Project list source](${SITE}/projects.md): Parsed for portfolio; live site and sync:readme use this reviewed project list, not now.md.
 - [Resume](${SITE}/resume.md): Experience, skills, contact.
 - [Agent how-to](${SITE}/agent.md): Which URLs to use; static vs Cloudflare-style negotiation.
 
@@ -98,8 +102,8 @@ Hosted on GitHub Pages: these are real files in the deploy bundle, not HTML wrap
 ## Optional
 
 - [Upstream now.md](https://raw.githubusercontent.com/undivisible/undivisible/main/now.md): Status text before deploy sync.
-- [Upstream README.md](https://raw.githubusercontent.com/undivisible/undivisible/main/README.md): Project list before deploy sync.
-- [Upstream resume.md](https://raw.githubusercontent.com/undivisible/undivisible/main/resume.md): GitHub source before deploy sync.
+- [Project list](${SITE}/projects.md): Project list before deploy sync.
+- [Upstream resume.md](https://raw.githubusercontent.com/undivisible/undivisible.dev/main/resume.md): GitHub source before deploy sync.
 `;
 
 await Bun.write(new URL("llms.txt", PUBLIC_DIR), llms);
@@ -110,6 +114,12 @@ const llmsFull = `${llms}
 ---
 
 ${agentMd}
+
+---
+
+# Projects
+
+${projects}
 
 ---
 

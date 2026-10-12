@@ -1,7 +1,12 @@
 import type { ReactNode } from "react";
 import { C, sans } from "@/components/brief/ui/constants";
 import { Ft } from "@/components/brief/ui/Ft";
-import { CHROME, PAGE_H, PAGE_W, pt } from "@/components/home/print/print-metrics";
+import {
+  CHROME,
+  PAGE_H,
+  PAGE_W,
+  pt,
+} from "@/components/home/print/print-metrics";
 
 export function PrintPage({
   children,
@@ -41,7 +46,7 @@ export function PrintPage({
         {children}
         <Ft
           left="Max Carter — Resume"
-          right={`undivisible.dev · ${page}/${total}`}
+          right="undivisible.dev"
           fontSize={CHROME.ft}
         />
       </div>

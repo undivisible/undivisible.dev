@@ -281,7 +281,7 @@ export function parseReadme(md: string): ReadmeBundle {
     }
 
     if (mode === "semitech") {
-      if (trimmed === "***") {
+      if (trimmed === "***" || trimmed === "---") {
         mode = "idle";
         i++;
         continue;
@@ -299,7 +299,7 @@ export function parseReadme(md: string): ReadmeBundle {
     }
 
     if (mode === "other") {
-      if (trimmed === "***") {
+      if (trimmed === "***" || trimmed === "---") {
         mode = "idle";
         i++;
         continue;
@@ -316,7 +316,11 @@ export function parseReadme(md: string): ReadmeBundle {
     }
 
     if (mode === "subprojects") {
-      if (trimmed === "***" || trimmed.startsWith("## [atechnology")) {
+      if (
+        trimmed === "***" ||
+        trimmed === "---" ||
+        trimmed.startsWith("## [atechnology")
+      ) {
         mode = "idle";
         i++;
         continue;
@@ -441,11 +445,11 @@ export const DEFAULT_PROFILE_MARKDOWN_URL =
   "https://raw.githubusercontent.com/undivisible/undivisible/main/now.md";
 
 export const DEFAULT_RESUME_MARKDOWN_URL =
-  "https://raw.githubusercontent.com/undivisible/undivisible/main/resume.md";
+  "https://raw.githubusercontent.com/undivisible/undivisible.dev/main/resume.md";
 
-/** Project list + portfolio sections (parseReadme) live here on undivisible/undivisible. */
+/** Project list + portfolio sections (parseReadme) live in this repository’s projects.md. */
 export const PROFILE_PROJECT_LIST_MARKDOWN_URL =
-  "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md";
+  "https://raw.githubusercontent.com/undivisible/undivisible.dev/main/projects.md";
 
 export function readmeBundleProjectCount(bundle: ReadmeBundle): number {
   return (
@@ -479,7 +483,7 @@ export function promoteAuroralityToUtilities(
 const EQSWIFT: ReadmeProject = {
   key: "eqswift",
   name: "eqswift",
-  href: "https://github.com/semitechnological/eqswift",
+  href: "https://github.com/tschk/eqswift",
   desc: "Rust-to-Swift binding tooling designed to reduce UniFFI boilerplate and make interop practical.",
 };
 

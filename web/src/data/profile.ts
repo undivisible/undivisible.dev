@@ -40,9 +40,23 @@ export const projects = [
   {
     name: "Cupboard",
     kind: "Device software · In development",
-    href: "https://github.com/tschk/cupboard",
+    href: "https://cupboard.tsc.hk",
     description:
       "A home hub for syncing files, photos and clipboard history between locally paired devices.",
+  },
+  {
+    name: "Moonshine",
+    kind: "Web framework",
+    href: "https://github.com/tschk/moonshine",
+    description:
+      "A Bun-first UI runtime with a signal kernel and optional compiler, routing, rendering and deployment layers.",
+  },
+  {
+    name: "eqts",
+    kind: "Language interoperability",
+    href: "https://github.com/tschk/eqts",
+    description:
+      "One Rust API for TypeScript across Node, Bun, Deno and WebAssembly.",
   },
   {
     name: "Telekinesis",

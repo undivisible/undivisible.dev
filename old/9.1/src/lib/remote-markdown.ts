@@ -1,14 +1,11 @@
-import {
-  DEFAULT_PROFILE_MARKDOWN_URL,
-  PROFILE_PROJECT_LIST_MARKDOWN_URL,
-} from "@/lib/parse-readme-markdown";
+import { DEFAULT_PROFILE_MARKDOWN_URL } from "@/lib/parse-readme-markdown";
 
 export const NOW_STATUS_URL =
   process.env.NEXT_PUBLIC_NOW_STATUS_URL ?? DEFAULT_PROFILE_MARKDOWN_URL;
 
 export const REMOTE_README_URLS = process.env.NEXT_PUBLIC_PROFILE_README_URL
   ? [process.env.NEXT_PUBLIC_PROFILE_README_URL]
-  : [PROFILE_PROJECT_LIST_MARKDOWN_URL, DEFAULT_PROFILE_MARKDOWN_URL];
+  : ["/projects.md"];
 
 const CACHE_PREFIX = "undivisible-remote-md:v2:";
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
@@ -85,9 +82,7 @@ export async function fetchReadmeMarkdown(options?: {
 }
 
 export function resumeMarkdownCacheUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_RESUME_MARKDOWN_URL ?? "/resume.md"
-  );
+  return process.env.NEXT_PUBLIC_RESUME_MARKDOWN_URL ?? "/resume.md";
 }
 
 export function readRemoteMarkdownCache(url: string): string | null {

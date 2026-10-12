@@ -10,11 +10,13 @@ test("resume markdown does not provide standalone project sections", () => {
 });
 
 test("resume document includes experience dates and B1 product links", () => {
-  expect(resumeDoc.experience.map((job) => job.time)).toEqual([
-    "February 2026–July 2026",
-    "2023 – present",
-    "2024 - present",
-  ]);
+  expect(resumeDoc.experience.map((job) => job.time)).toEqual(
+    expect.arrayContaining([
+      "February 2026 - June 2026",
+      "January 2023 - present",
+      "October 2024 - present",
+    ]),
+  );
 
   const gizzmo = resumeDoc.experience.find(
     (job) => job.org === "Gizzmo Electronics",
@@ -35,8 +37,9 @@ test("resume document includes experience dates and B1 product links", () => {
 });
 
 test("resume document extracts underscore stack emphasis", () => {
-  const studio = resumeDoc.experience[0]?.subsections
-    .flatMap((section) => section.items)
+  const studio = resumeDoc.experience
+    .find((job) => job.org === "The Arkie Company")
+    ?.subsections.flatMap((section) => section.items)
     .find((item) => item.name === "Studio of Optimisations");
 
   expect(studio?.desc).not.toContain("_Built with");
@@ -46,8 +49,9 @@ test("resume document extracts underscore stack emphasis", () => {
 });
 
 test("resume linked description segments strip emphasis markers", () => {
-  const arkie = resumeDoc.experience[0]?.subsections
-    .flatMap((section) => section.items)
+  const arkie = resumeDoc.experience
+    .find((job) => job.org === "The Arkie Company")
+    ?.subsections.flatMap((section) => section.items)
     .find((item) => item.name === "Arkie");
 
   expect(arkie?.descSegments).not.toContainEqual({

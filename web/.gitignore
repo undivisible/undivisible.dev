@@ -11,3 +11,5 @@ src/data/resume-from-markdown.generated.ts
 
 # scratch copies used when the sandbox proxy blocks bun fetch
 .localsync/
+
+public/projects.md

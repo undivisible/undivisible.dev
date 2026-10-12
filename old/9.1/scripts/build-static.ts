@@ -237,6 +237,10 @@ async function main(): Promise<void> {
     await writeFile(target, html);
   }
 
+  // Share the current asset bundle, then overlay this version’s content.
+  await cp(resolve(projectDir, "../../web/public"), outDir, {
+    recursive: true,
+  });
   await cp(join(projectDir, "public"), outDir, { recursive: true });
 
   const manifest: MoonshineManifest = {

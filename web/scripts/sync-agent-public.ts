@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import { DEFAULT_PROFILE_MARKDOWN_URL } from "../src/lib/profile-readme.ts";
 import { fetchResumeMarkdown } from "./fetch-resume-markdown.ts";
 import { resolve } from "node:path";
@@ -6,6 +7,12 @@ import { pathToFileURL } from "node:url";
 const PUBLIC_DIR = process.env.AGENT_PUBLIC_DIR
   ? pathToFileURL(resolve(process.env.AGENT_PUBLIC_DIR) + "/")
   : new URL("../public/", import.meta.url);
+const projects = await readFile(
+  new URL("../../projects.md", import.meta.url),
+  "utf8",
+);
+await Bun.write(new URL("projects.md", PUBLIC_DIR), projects);
+
 const SITE = process.env.SITE_URL ?? "https://next.undivisible.dev";
 
 /**
@@ -89,7 +96,7 @@ Hosted on Cloudflare Workers: these are real files in the deploy bundle, not HTM
 
 - [Full bundle](${SITE}/llms-full.txt): Agent guide, profile/current projects, and resume in one Markdown request.
 - [Now status](${SITE}/now.md): Short now line (upstream now.md snapshot).
-- [Project list source](https://raw.githubusercontent.com/undivisible/undivisible/main/README.md): Parsed for portfolio; live site and sync:readme use this README, not now.md.
+- [Project list source](${SITE}/projects.md): Parsed for portfolio; live site and sync:readme use this reviewed project list, not now.md.
 - [Resume](${SITE}/resume.md): Experience, skills, contact.
 - [Agent how-to](${SITE}/agent.md): Which URLs to use; static vs Cloudflare-style negotiation.
 
@@ -101,8 +108,8 @@ Hosted on Cloudflare Workers: these are real files in the deploy bundle, not HTM
 ## Optional
 
 - [Upstream now.md](https://raw.githubusercontent.com/undivisible/undivisible/main/now.md): Status text before deploy sync.
-- [Upstream README.md](https://raw.githubusercontent.com/undivisible/undivisible/main/README.md): Project list before deploy sync.
-- [Upstream resume.md](https://raw.githubusercontent.com/undivisible/undivisible/main/resume.md): GitHub source before deploy sync.
+- [Project list](${SITE}/projects.md): Project list before deploy sync.
+- [Upstream resume.md](https://raw.githubusercontent.com/undivisible/undivisible.dev/main/resume.md): GitHub source before deploy sync.
 `;
 
 await Bun.write(new URL("llms.txt", PUBLIC_DIR), llms);
@@ -113,6 +120,12 @@ const llmsFull = `${llms}
 ---
 
 ${agentMd}
+
+---
+
+# Projects
+
+${projects}
 
 ---
 
