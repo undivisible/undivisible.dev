@@ -71,7 +71,7 @@ _January 2023 - present_
 _July 2026 - October 2026_
 
 - Travelled to New York at 17 to work with Omi, then continued remotely. Worked across desktop, backend, device SDKs, security and infrastructure.
-- Developed the v5 app rewrite, consolidated shared native/backend functionality, and built design spikes and interface scaffolds for capture, memory and assistant workflows.
+- Developed the v5 app rewrite in React Native and C++, consolidated shared native/backend functionality, and built design spikes and interface scaffolds for capture, memory and assistant workflows.
 - Worked with a colleague on optimisations that reduced monthly compute and app-hosting charges by approximately $11,800, or 37%.
 - Fixed private account context leaking into group chats, unsafe database-query permissions and desktop chat stalls.
 - Revamped the web platform, added current features and mobile support, and migrated it to Moonshine.
@@ -84,23 +84,6 @@ _February 2026 - June 2026_
 - Owned technical direction and development for AI SaaS products, from product design through deployment: business automation, content tools, communication services and shared AI infrastructure.
 - Ran an agency building custom AI software for small and medium businesses, covering onboarding, internal workflows, data processing and client-facing applications.
 - Closed the company after moving on to other opportunities.
-
-**SaaS products built**
-
-_Status_
-
-- **Studio of Optimisations** — Dual-brand sales funnels (same codebase): Arkie-backed chat, live voice, calendar booking, lead capture, Notion connect portal. _Built with: SvelteKit 5, TypeScript, Tailwind CSS v4, Cloudflare Workers, Arkie API proxy, Bun._
-- **Arkie** — Centralized MCP/AI backend for all Arkie apps: per-app system prompts, tool sets, chat/stream, calendar booking, Stripe/Calendly/Notion webhooks, Gemini Live voice, embeddings, admin console, OAuth for Claude MCP. _Built with: Rust, Axum, Tokio, Google Gemini, Supabase (PostgREST, Auth, pgvector), Cloudflare Workers/Containers, DigitalOcean SIP edge._
-- **Pava** — AI content strategist and crossposting: brand chat, idea generation, AI-negotiated Stripe pricing, competitor analysis, video review, enterprise/agency workspaces, 13+ platforms via Late API. _Built with: Next.js 16, TypeScript, Supabase, Stripe, Google Gemini, Late API, Tailwind CSS v4, Capacitor, Bun._
-- **Graft Mail** — Built on top of Unthinkmail: Send Emails (singular and bulk to 100000+ recipients) through MCP. _Built with: Qwik, TypeScript, Javascript, Stripe, Cloudflare Workers + Email, Tailwind CSS v4, Bun._
-- **Unthought** — Business platforming: custom domain, AI-generated site, professional email, Cloudflare edge deploy, Stripe checkout, Stalwart mail provisioning (made with my own custom lightened Stalwart crate), Tangent integration hooks. _Built with: Next.js 16, TypeScript, Supabase, Cloudflare (OpenNext, D1, R2, Queues), Arkie, Stripe, Porkbun, Bun._
-- **Tangent** — Discord automation for digital product sellers: Stripe payment webhooks, order fulfillment (keys, roles, content), ticketing, purchase-linked profiles, Gemini RAG support and image verification, event-driven workflows, admin dashboard, MCP tools for store ops. _Built with: Go (discordgo), SQLite/Postgres, Google Gemini, Astro 4, Alpine.js, htmx, UnoCSS, Cloudflare Workers (MCP, D1, Durable Objects)._
-- **Currant** — Multi-tenant AI sales agents and job management for trades businesses; autonomous agents across WhatsApp, Telegram, SMS, Instagram, Slack, email, and native SIP/RTP phone; leads → quotes → jobs → invoices. _Built with: Go, Python (FastAPI), Elixir (Phoenix), Rust (telephony), Vlang (filter), SvelteKit, React Native (Expo), Tauri, SurrealDB, Redis, Gemini, Stripe, Square._
-- **Waarom** — AI step-by-step in-product guidance: GPUI desktop companion, `@waarom/embed` SDK, Crepuscularity static portal and knowledge base. _Built with: Rust, GPUI, Crepuscularity, Gemini, TypeScript (embed SDK), MV3 web extension runtime._
-
-**Client work**
-
-- **[AJ Stafford Property Advocates](https://www.ajstafford.com.au)** — Chrome MV3 extension for realestate.com.au: finds comparable listings (bedrooms, ±15% price), on-page results widget, tab groups, CSV/TXT export; Buyer Ready Report print mockups and buyer-ready campaign assets. _Built with: JavaScript, Chrome Extensions MV3, Leaflet, Alpine.js, UnoCSS._
 
 ## Skills
 
