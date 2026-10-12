@@ -12,12 +12,6 @@ export async function fetchResumeMarkdown(options?: {
   signal?: AbortSignal;
   urls?: string[];
 }): Promise<string> {
-  // Keep ordinary builds on the reviewed résumé in this repository.
-  if (!options?.urls && !process.env.RESUME_MARKDOWN_URL) {
-    return (
-      await readFile(new URL("../../../resume.md", import.meta.url), "utf8")
-    ).trim();
-  }
   const urls = options?.urls ?? resumeMarkdownUrls();
   for (const url of urls) {
     try {

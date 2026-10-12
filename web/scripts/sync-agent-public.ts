@@ -109,7 +109,7 @@ Hosted on Cloudflare Workers: these are real files in the deploy bundle, not HTM
 
 - [Upstream now.md](https://raw.githubusercontent.com/undivisible/undivisible/main/now.md): Status text before deploy sync.
 - [Project list](${SITE}/projects.md): Project list before deploy sync.
-- [Upstream resume.md](https://raw.githubusercontent.com/undivisible/undivisible.dev/main/resume.md): GitHub source before deploy sync.
+- [Upstream resume.md](https://raw.githubusercontent.com/undivisible/undivisible/main/resume.md): GitHub source before deploy sync.
 `;
 
 await Bun.write(new URL("llms.txt", PUBLIC_DIR), llms);

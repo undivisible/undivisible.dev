@@ -1,12 +1,12 @@
 # undivisible.dev
 
-Historical profile sources live on [`undivisible/undivisible`](https://github.com/undivisible/undivisible). The reviewed résumé is authored in `resume.md` in this repo; `web` sync scripts fetch the reviewed local résumé and project list, plus the upstream now status, at build time and write deploy copies under `web/public/`.
+Profile sources live on [`undivisible/undivisible`](https://github.com/undivisible/undivisible). The résumé is authored in `undivisible/undivisible`; sync scripts fetch the upstream résumé and now status, plus the local project list, at build time and write deploy copies under `web/public/`.
 
 | Upstream file                                                                 | Role                                                                                                                         |
 | ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | [`README.md`](https://github.com/undivisible/undivisible/blob/main/README.md) | Historical project list; current portfolio copy is reviewed in this repo’s `projects.md`.                                    |
 | [`now.md`](https://github.com/undivisible/undivisible/blob/main/now.md)       | **Now status** (short line; optional `---` + article). Clock overlay and `public/now.md` snapshot only—not the project list. |
-| [`resume.md`](https://github.com/undivisible/undivisible/blob/main/resume.md) | Historical CV source; current CV is this repo’s `resume.md`.                                                                 |
+| [`resume.md`](https://github.com/undivisible/undivisible/blob/main/resume.md) | Authoritative CV source, fetched at build time.                                                                 |
 
 Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MARKDOWN_URL` when syncing locally.
 
