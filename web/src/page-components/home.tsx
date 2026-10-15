@@ -69,8 +69,15 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
           </a>
           <SiteNav onPrintResume={runPrint} />
         </header>
-        <main id="main-content" className="personal-main" tabIndex={-1}>
-          <section className="personal-hero" aria-labelledby="personal-name">
+        <main
+          id="main-content"
+          className="personal-main personal-bento"
+          tabIndex={-1}
+        >
+          <section
+            className="personal-hero bento-cell"
+            aria-labelledby="personal-name"
+          >
             <p className="personal-kicker">
               <span lang="zh">{profile.hanzi}</span>
               <span>software / systems / people</span>
@@ -95,15 +102,10 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
               </p>
               <p>
                 I started building software at eight and left school at
-                seventeen to do it full time. These days I work with Chert and
-                Twenify, and build independent projects through{" "}
+                seventeen to do it full time. My independent projects live at{" "}
                 <a href="https://tsc.hk">the software company of hong kong ↗</a>
                 .
               </p>
-            </div>
-            <div className="personal-interests">
-              <span>away from the keyboard</span>
-              <p>philosophy · cooking · photography · languages · lifting</p>
             </div>
             <div className="personal-links">
               <a href={`mailto:${profile.email}`}>
@@ -122,6 +124,37 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
                 résumé ↓
               </button>
             </div>
+          </section>
+          <section
+            className="bento-cell bento-current"
+            aria-labelledby="current-heading"
+          >
+            <p className="bento-caption">currently</p>
+            <h2 id="current-heading">building with</h2>
+            <div className="bento-job">
+              <strong>Chert</strong>
+              <span>software engineer</span>
+            </div>
+            <div className="bento-job">
+              <strong>Twenify</strong>
+              <span>cto</span>
+            </div>
+            <p className="bento-previous">previously at Omi</p>
+          </section>
+          <section
+            className="bento-cell bento-life"
+            aria-labelledby="life-heading"
+          >
+            <p className="bento-caption">away from the keyboard</p>
+            <h2 id="life-heading">a few other things.</h2>
+            <ul>
+              <li>philosophy</li>
+              <li>cooking & photography</li>
+              <li>languages & lifting</li>
+            </ul>
+            <span className="bento-life-mark" aria-hidden="true">
+              ( 祁 )
+            </span>
           </section>
           <section
             className="personal-work"
@@ -150,16 +183,6 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
                 </a>
               ))}
             </div>
-          </section>
-          <section className="personal-experience" aria-label="Work">
-            <p>
-              <span>currently</span> software engineer at <strong>Chert</strong>{" "}
-              / cto at <strong>Twenify</strong>
-            </p>
-            <p>
-              <span>previously</span> member of technical staff at{" "}
-              <strong>Omi</strong>
-            </p>
           </section>
         </main>
         <footer className="personal-footer">
