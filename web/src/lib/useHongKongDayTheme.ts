@@ -176,6 +176,24 @@ function logWeather(message: string, extra?: unknown) {
   console.info(`[hkt-weather] ${message}`, extra);
 }
 
+const TRAVEL_CLOCK_ZONES = new Set([
+  "Asia/Hong_Kong",
+  "Asia/Kuala_Lumpur",
+  "Australia/Melbourne",
+  "America/New_York",
+  "Asia/Tokyo",
+  // Browsers may retain these IANA aliases instead of returning the city name.
+  "Hongkong",
+  "Asia/Singapore",
+  "Australia/Victoria",
+  "US/Eastern",
+  "Japan",
+]);
+
+export function isTravelClockZone(timeZone: string) {
+  return TRAVEL_CLOCK_ZONES.has(timeZone);
+}
+
 export function formatTimeForZone(date: Date, timeZone: string) {
   return new Intl.DateTimeFormat("en-AU", {
     timeZone,

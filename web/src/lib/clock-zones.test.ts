@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { formatTimeForZone } from "./useHongKongDayTheme";
+import { formatTimeForZone, isTravelClockZone } from "./useHongKongDayTheme";
 
 describe("travel clock zones", () => {
   test.each(["2026-01-15T12:34:56Z", "2026-07-15T12:34:56Z"])(
@@ -38,3 +38,24 @@ describe("travel clock zones", () => {
     ).toBe("01:30:00");
   });
 });
+
+test.each([
+  "Asia/Hong_Kong",
+  "Asia/Kuala_Lumpur",
+  "Australia/Melbourne",
+  "America/New_York",
+  "Asia/Tokyo",
+  "US/Eastern",
+  "Hongkong",
+  "Asia/Singapore",
+  "Australia/Victoria",
+  "Japan",
+])("suppresses duplicate local row for %s", (zone) => {
+  expect(isTravelClockZone(zone)).toBe(true);
+});
+test.each(["Europe/London", "America/Los_Angeles", "UTC"])(
+  "keeps visitor local row for %s",
+  (zone) => {
+    expect(isTravelClockZone(zone)).toBe(false);
+  },
+);

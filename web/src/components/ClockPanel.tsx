@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   formatTimeForZone,
+  isTravelClockZone,
   type HongKongDayTheme,
 } from "@/lib/useHongKongDayTheme";
 import type { NowContent } from "@/lib/parse-now-markdown";
@@ -181,7 +182,9 @@ export function ClockPanel({
             </a>
           </div>
         ))}
-      {(travelClocks || dayTheme.showLocalTime) && (
+      {(travelClocks
+        ? hydrated && !isTravelClockZone(localZone)
+        : dayTheme.showLocalTime) && (
         <div className="mt-1">
           <a
             href={
