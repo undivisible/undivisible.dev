@@ -4392,3 +4392,44 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   .personal-font-loader {
   display: none;
 }
+.personal-header-identity {
+  display: grid;
+  justify-items: start;
+  gap: 18px;
+}
+.personal-clock [data-time-scrubber] > div > a > span:first-child {
+  width: 5.5rem;
+}
+@media (max-width: 650px) {
+  .personal-masthead {
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+  .personal-header-tools {
+    width: auto;
+    justify-items: end;
+  }
+  .personal-header-tools .site-mode-navigation nav {
+    flex-wrap: wrap;
+    justify-content: end;
+  }
+}
+.personal-clock,
+.personal-clock * {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+.personal-header-identity {
+  min-width: 0;
+}
+.personal-clock [data-time-scrubber] > div {
+  position: relative;
+  margin-top: 0;
+}
+.personal-clock [data-time-scrubber] > div > :is(span, button) {
+  position: absolute;
+  left: 190px;
+  top: 0;
+  white-space: nowrap;
+}

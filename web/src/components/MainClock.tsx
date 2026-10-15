@@ -31,6 +31,7 @@ export function MainClock({
         nowArticleOpen={nowArticleOpen}
         onToggleNowArticle={onToggleNowArticle}
         hydrated={hydrated}
+        travelClocks
       />
     </div>
   );

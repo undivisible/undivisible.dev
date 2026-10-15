@@ -176,7 +176,7 @@ function logWeather(message: string, extra?: unknown) {
   console.info(`[hkt-weather] ${message}`, extra);
 }
 
-function formatTimeForZone(date: Date, timeZone: string) {
+export function formatTimeForZone(date: Date, timeZone: string) {
   return new Intl.DateTimeFormat("en-AU", {
     timeZone,
     hour: "2-digit",

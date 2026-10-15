@@ -112,21 +112,23 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
           Skip to content
         </a>
         <header className="personal-masthead">
-          <a
-            href="/"
-            className="personal-wordmark"
-            aria-label="undivisible — open OS"
-          >
-            undivisible<span aria-hidden="true">↗</span>
-          </a>
-          <div className="personal-header-tools">
-            <SiteNav onPrintResume={runPrint} />
+          <div className="personal-header-identity">
+            <a
+              href="/"
+              className="personal-wordmark"
+              aria-label="undivisible — open OS"
+            >
+              undivisible<span aria-hidden="true">↗</span>
+            </a>
             <MainClock
               dayTheme={dayTheme}
               now={now}
               nowArticleOpen={nowArticleOpen}
               onToggleNowArticle={toggleNowArticle}
             />
+          </div>
+          <div className="personal-header-tools">
+            <SiteNav onPrintResume={runPrint} />
           </div>
         </header>
         <main
