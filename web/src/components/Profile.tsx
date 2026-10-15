@@ -24,6 +24,7 @@ export function Profile({ simple = false }: { simple?: boolean }) {
           <h1 id="profile-name">
             {profile.name} <span lang="zh">{profile.hanzi}</span>
           </h1>
+          <p className="profile-listening" data-listening-summary hidden />
           <p className="profile-description">{profile.description}</p>
           <div className="profile-links">
             <a href={`mailto:${profile.email}`}>

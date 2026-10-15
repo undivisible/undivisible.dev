@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import NowPlaying from "@/components/NowPlaying";
+import { AlbumBackground } from "@/components/AlbumBackground";
 import { SiteNav } from "@/components/SiteNav";
 import { profile, projects } from "@/data/profile";
 import { useRemoteReadme } from "@/hooks/use-remote-content";
@@ -52,117 +54,120 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
 
   return (
     <>
-      <div className="main-bento screen-only">
+      <div className="personal-page screen-only">
+        <AlbumBackground />
         <a className="profile-skip" href="#main-content">
           Skip to content
         </a>
-        <header className="bento-masthead">
-          <a href="/main/" aria-label="undivisible home">
-            undivisible<span>.</span>
+        <header className="personal-masthead">
+          <a
+            href="/main/"
+            className="personal-wordmark"
+            aria-label="undivisible home"
+          >
+            [ undivisible<span>_</span> ]
           </a>
-          <span className="bento-edition">
-            personal index / software & systems
-          </span>
           <SiteNav onPrintResume={runPrint} />
         </header>
-        <main id="main-content" className="bento-grid" tabIndex={-1}>
-          <section
-            className="bento-pane bento-identity"
-            aria-labelledby="bento-name"
-          >
-            <div className="bento-label">
-              <span>01 / about</span>
+        <main id="main-content" className="personal-main" tabIndex={-1}>
+          <section className="personal-hero" aria-labelledby="personal-name">
+            <p className="personal-kicker">
               <span lang="zh">{profile.hanzi}</span>
-            </div>
-            <h1 id="bento-name">
-              Max
-              <br />
-              Carter<span>.</span>
-            </h1>
-            <p>{profile.description}</p>
-            <div className="bento-identity-footer">
-              <span>independent software development</span>
-              <span aria-hidden="true">↗</span>
-            </div>
-          </section>
-          <section
-            className="bento-pane bento-studio"
-            aria-labelledby="studio-heading"
-          >
-            <div className="bento-label">
-              <span>02 / studio</span>
-              <span aria-hidden="true">＋</span>
-            </div>
-            <h2 id="studio-heading">
-              the software
-              <br />
-              company of
-              <br />
-              <span>hong kong</span>
-            </h2>
-            <a href="https://tsc.hk">
-              explore tsc.hk <span aria-hidden="true">↗</span>
-            </a>
-          </section>
-          <section
-            className="bento-pane bento-work"
-            aria-labelledby="work-heading"
-          >
-            <div className="bento-label">
-              <span>03 / work</span>
-            </div>
-            <h2 id="work-heading">Building with</h2>
-            <p className="bento-role">
-              Chert <span>software engineer</span>
+              <span>software / systems / people</span>
             </p>
-            <p className="bento-role">
-              Twenify <span>cto</span>
-            </p>
-            <button type="button" onClick={runPrint}>
-              experience & résumé <span aria-hidden="true">↓</span>
-            </button>
-          </section>
-          {selectedProjects.map((project, index) => (
-            <a
-              className={`bento-pane bento-project bento-project-${index}`}
-              href={project.href}
-              key={project.name}
-            >
-              <div className="bento-label">
+            <h1 id="personal-name" aria-label="Max Carter">
+              <span className="name-reveal">
                 <span>
-                  0{index + 4} / {project.kind}
+                  max carter<span className="name-dot">.</span>
                 </span>
-                <span aria-hidden="true">↗</span>
-              </div>
-              <div className="bento-project-mark" aria-hidden="true">
-                {["{ ; }", "⏣", " /\\ ", "◐"][index]}
-              </div>
-              <h2>{project.name}</h2>
-              <p>{project.description}</p>
-            </a>
-          ))}
+              </span>
+            </h1>
+            <div className="personal-listening">
+              <NowPlaying />
+            </div>
+            <p className="personal-intro">i make things for people.</p>
+            <div className="personal-bio">
+              <p>
+                I’m a self-taught software engineer. I build compilers,
+                operating systems, apps and the tools that connect them. I like
+                understanding how the whole thing works, then making it easier
+                to use.
+              </p>
+              <p>
+                I started building software at eight and left school at
+                seventeen to do it full time. These days I work with Chert and
+                Twenify, and build independent projects through{" "}
+                <a href="https://tsc.hk">the software company of hong kong ↗</a>
+                .
+              </p>
+            </div>
+            <div className="personal-interests">
+              <span>away from the keyboard</span>
+              <p>philosophy · cooking · photography · languages · lifting</p>
+            </div>
+            <div className="personal-links">
+              <a href={`mailto:${profile.email}`}>
+                <span>email ↗</span>
+              </a>
+              <a href={profile.github}>
+                <span>github ↗</span>
+              </a>
+              <a href="https://x.com/makethings4ppl">
+                <span>x ↗</span>
+              </a>
+              <a href="https://www.instagram.com/undivisible.dev/">
+                <span>instagram ↗</span>
+              </a>
+              <button type="button" onClick={runPrint}>
+                résumé ↓
+              </button>
+            </div>
+          </section>
           <section
-            className="bento-pane bento-contact"
-            aria-labelledby="contact-heading"
+            className="personal-work"
+            aria-labelledby="personal-work-heading"
           >
-            <div className="bento-label">
-              <span>08 / elsewhere</span>
+            <div className="personal-section-title">
+              <h2 id="personal-work-heading">what i'm working on</h2>
+              <span aria-hidden="true">[ 01 — 04 ]</span>
             </div>
-            <h2 id="contact-heading">
-              Say hello<span>↗</span>
-            </h2>
-            <a href={`mailto:${profile.email}`}>{profile.email}</a>
-            <div>
-              <a href={profile.github}>GitHub ↗</a>
-              <a href="https://x.com/makethings4ppl">X ↗</a>
-              <a href="/simple/">text version ↗</a>
+            <div className="personal-projects">
+              {selectedProjects.map((project, index) => (
+                <a
+                  className={`personal-project project-${index}`}
+                  href={project.href}
+                  key={project.name}
+                >
+                  <span className="project-index">0{index + 1}</span>
+                  <div>
+                    <span className="project-kind">{project.kind}</span>
+                    <h3>{project.name}</h3>
+                    <p>{project.description}</p>
+                  </div>
+                  <span className="project-arrow" aria-hidden="true">
+                    ↗
+                  </span>
+                </a>
+              ))}
             </div>
+          </section>
+          <section className="personal-experience" aria-label="Work">
+            <p>
+              <span>currently</span> software engineer at <strong>Chert</strong>{" "}
+              / cto at <strong>Twenify</strong>
+            </p>
+            <p>
+              <span>previously</span> member of technical staff at{" "}
+              <strong>Omi</strong>
+            </p>
           </section>
         </main>
-        <footer className="bento-colophon">
-          <span>max carter / 祁明思</span>
-          <a href={`${profile.github}?tab=repositories`}>all repositories ↗</a>
-          <span>undivisible.dev</span>
+        <footer className="personal-footer">
+          <span>max carter / {profile.hanzi}</span>
+          <a href={`${profile.github}?tab=repositories`}>
+            more things on github ↗
+          </a>
+          <a href="/simple/">simple version ↗</a>
         </footer>
       </div>
       {printMounted ? (

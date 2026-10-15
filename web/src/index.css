@@ -2598,418 +2598,527 @@ a[data-tip] {
   }
 }
 
-/* Main index: compact Swiss hierarchy, industrial glass, project-sized panels. */
-.main-bento {
-  --bento-accent: var(--album-accent);
+/* Centered personal profile over the original animated sky and ASCII field. */
+.personal-page {
+  position: relative;
+  isolation: isolate;
   min-height: 100dvh;
-  padding: 0 clamp(18px, 3vw, 48px);
   color: var(--album-text);
+  font-family: var(--font-instrument-sans), sans-serif;
+  overflow: clip;
+}
+.personal-page a {
+  text-decoration: none;
+}
+.personal-page :focus-visible {
+  outline: 2px solid var(--album-accent);
+  outline-offset: 6px;
+}
+.personal-masthead,
+.personal-main,
+.personal-footer {
+  position: relative;
+  z-index: 3;
+  max-width: 1080px;
+  margin-inline: auto;
+  padding-inline: 32px;
+}
+.personal-masthead {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.personal-wordmark,
+.personal-kicker,
+.personal-links,
+.personal-section-title,
+.project-kind,
+.project-index,
+.personal-interests,
+.personal-experience,
+.personal-footer {
+  font-family: var(--font-jetbrains-mono), monospace;
+}
+.personal-wordmark {
+  font-size: 12px;
+  letter-spacing: -0.04em;
+}
+.personal-wordmark span {
+  color: var(--album-accent);
+}
+.personal-page .site-mode-navigation {
+  position: static;
+}
+.personal-page .site-mode-navigation nav {
+  background: color-mix(in srgb, var(--album-background) 55%, transparent);
+  backdrop-filter: blur(20px);
+  border-color: color-mix(in srgb, var(--album-border) 50%, transparent);
+  border-radius: 0;
+}
+.personal-page .site-mode-navigation a,
+.personal-page .site-mode-navigation button {
+  border-radius: 0;
+}
+.personal-hero {
+  text-align: center;
+  padding: 56px 0 54px;
+}
+.personal-kicker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  color: var(--album-muted);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.personal-kicker span:first-child {
+  color: var(--album-secondary);
+  font-size: 16px;
+}
+.personal-hero h1 {
+  font-size: clamp(66px, 11vw, 144px);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.075em;
+  margin: 20px -8px 24px;
+}
+.name-reveal {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0 0.06em 0.08em;
+  vertical-align: bottom;
+}
+.name-reveal > span {
+  display: inline-block;
+  background: linear-gradient(
+    115deg,
+    var(--album-text) 16%,
+    var(--album-color-3, var(--album-accent)) 48%,
+    var(--album-color-6, var(--album-secondary)) 70%,
+    var(--album-text) 94%
+  );
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  background-size: 180% 100%;
+  animation: name-cut 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: background-position 1s;
+}
+.personal-hero h1:hover .name-reveal > span {
+  background-position: 100% 0;
+}
+.name-dot {
+  color: var(--album-color-2, var(--album-secondary));
+}
+.personal-intro {
+  font-size: clamp(22px, 3vw, 32px);
+  letter-spacing: -0.04em;
+  margin: 30px 0 18px;
+}
+.personal-bio {
+  max-width: 650px;
+  margin-inline: auto;
+  color: var(--album-muted);
+  font-size: 16px;
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+.personal-bio p + p {
+  margin-top: 12px;
+}
+.personal-bio a {
+  color: var(--album-secondary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(
+    in srgb,
+    var(--album-secondary) 40%,
+    transparent
+  );
+  text-underline-offset: 4px;
+}
+.personal-interests {
+  margin-top: 24px;
+  font-size: 10px;
+  line-height: 1.9;
+  color: var(--album-muted);
+}
+.personal-interests > span {
+  color: var(--album-color-7, var(--album-secondary));
+}
+.personal-interests p {
+  font-size: 11px;
+}
+.personal-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin-top: 28px;
+  font-size: 11px;
+}
+.personal-links a,
+.personal-links button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+  transition:
+    color 0.25s,
+    transform 0.25s;
+}
+.personal-links a:nth-child(3n + 1) {
+  color: var(--album-color-3, var(--album-accent));
+}
+.personal-links a:nth-child(3n + 2) {
+  color: var(--album-color-6, var(--album-secondary));
+}
+.personal-links a::after,
+.personal-links button::after {
+  content: "";
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+.personal-links a:hover,
+.personal-links button:hover {
+  color: var(--album-text);
+  transform: translateY(-3px);
+}
+.personal-links a:hover::after,
+.personal-links button:hover::after {
+  transform: scaleX(1);
+}
+.personal-section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px 0 16px;
+  gap: 16px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--album-muted);
+}
+.personal-section-title h2 {
+  font-size: 12px;
+  color: var(--album-text);
+  text-transform: lowercase;
+  font-weight: 400;
+}
+.personal-projects {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: color-mix(in srgb, var(--album-border) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--album-border) 35%, transparent);
+}
+.personal-project {
+  --project-color: var(--album-color-3, var(--album-accent));
+  position: relative;
+  display: flex;
+  gap: 18px;
+  padding: 26px 24px;
+  min-width: 0;
+  background: color-mix(in srgb, var(--album-background) 82%, transparent);
+  backdrop-filter: blur(14px);
+  transition:
+    background 0.4s,
+    box-shadow 0.4s;
+}
+.personal-project::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 15%,
+    color-mix(in srgb, var(--project-color) 16%, transparent) 45%,
+    transparent 75%
+  );
+  background-size: 220% 100%;
+  background-position: 130% 0;
+  transition: background-position 0.7s;
+}
+.personal-project:hover::before {
+  background-position: -30% 0;
+}
+.personal-project:hover {
+  box-shadow: inset 2px 0 var(--project-color);
+  background: color-mix(in srgb, var(--album-surface) 88%, transparent);
+}
+.project-1 {
+  --project-color: var(--album-color-5, var(--album-secondary));
+}
+.project-2 {
+  --project-color: var(--album-color-7, var(--album-accent));
+}
+.project-3 {
+  --project-color: var(--album-color-2, var(--album-secondary));
+}
+.project-index {
+  color: var(--project-color);
+  font-size: 10px;
+  padding-top: 2px;
+}
+.project-kind {
+  color: var(--album-muted);
+  font-size: 9px;
+}
+.personal-project h3 {
+  font-size: 23px;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+  margin: 8px 0;
+}
+.personal-project p {
+  max-width: 34em;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--album-muted);
+}
+.project-arrow {
+  color: var(--project-color);
+  margin-left: auto;
+  transition: transform 0.3s;
+}
+.personal-project:hover .project-arrow {
+  transform: translate(3px, -3px);
+}
+.personal-experience {
+  text-align: center;
+  font-size: 10px;
+  line-height: 2;
+  color: var(--album-muted);
+  margin: 30px 0;
+}
+.personal-experience span {
+  color: var(--album-color-5, var(--album-secondary));
+  margin-right: 10px;
+}
+.personal-experience strong {
+  font-weight: 400;
+  color: var(--album-text);
+}
+.personal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 18px;
+  padding-block: 24px;
+  font-size: 9px;
+  color: var(--album-muted);
+  border-top: 1px solid color-mix(in srgb, var(--album-border) 40%, transparent);
+}
+.album-background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--album-background);
+  overflow: hidden;
+}
+.album-sky {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.7;
+}
+.album-ascii {
+  position: absolute;
+  inset: 0;
+  opacity: 0.65;
+}
+.album-spectrum {
+  position: absolute;
+  inset: -15%;
+  opacity: 0.35;
+  filter: blur(75px);
   background:
     radial-gradient(
-      ellipse at 5% 85%,
-      color-mix(in srgb, var(--album-accent) 10%, transparent),
-      transparent 45%
+      ellipse at 10% 25%,
+      var(--album-color-2, var(--album-accent)),
+      transparent 44%
     ),
+    radial-gradient(
+      ellipse at 85% 20%,
+      var(--album-color-5, var(--album-secondary)),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 65% 95%,
+      var(--album-color-8, var(--album-accent)),
+      transparent 40%
+    );
+  animation: spectrum-drift 22s ease-in-out infinite alternate;
+}
+.album-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+  background:
     linear-gradient(
-      color-mix(in srgb, var(--album-text) 2%, transparent) 1px,
+      color-mix(in srgb, var(--album-text) 7%, transparent) 1px,
       transparent 1px
     ),
     linear-gradient(
       90deg,
-      color-mix(in srgb, var(--album-text) 2%, transparent) 1px,
+      color-mix(in srgb, var(--album-text) 7%, transparent) 1px,
       transparent 1px
-    ),
-    var(--album-background);
-  background-size:
-    auto,
-    48px 48px,
-    48px 48px,
-    auto;
-  font-family: var(--font-instrument-sans, sans-serif);
+    );
+  background-size: 80px 80px;
+  mask-image: linear-gradient(transparent, #000 40%, transparent);
 }
-.main-bento a {
-  text-decoration: none;
-}
-.main-bento :focus-visible {
-  outline: 2px solid var(--album-accent);
-  outline-offset: 4px;
-}
-.bento-masthead {
-  min-height: 88px;
-  display: flex;
-  align-items: center;
-  gap: 32px;
-}
-.bento-masthead > a {
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -1px;
-}
-.bento-masthead > a span {
-  color: var(--bento-accent);
-}
-.bento-edition,
-.bento-label,
-.bento-colophon,
-.bento-identity-footer,
-.bento-studio > a,
-.bento-work > .bento-role span,
-.bento-work > button,
-.bento-contact > div {
-  font-family: var(--font-jetbrains-mono, monospace);
-  font-size: 10px;
-  letter-spacing: 0.035em;
-}
-.main-bento .site-mode-navigation {
-  position: static;
-  margin-left: auto;
-}
-.main-bento .site-mode-navigation nav {
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--album-surface) 65%, transparent);
-}
-.main-bento .site-mode-navigation a,
-.main-bento .site-mode-navigation button {
-  border-radius: 0;
-}
-.bento-grid {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 12px;
-}
-.bento-pane {
-  position: relative;
-  min-width: 0;
-  padding: 24px;
-  border: 1px solid var(--album-border);
-  background: linear-gradient(
-    130deg,
-    color-mix(in srgb, var(--album-text) 4%, transparent),
-    color-mix(in srgb, var(--album-text) 1%, transparent)
-  );
-  backdrop-filter: blur(18px);
-}
-.bento-label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  text-transform: uppercase;
-  color: var(--album-muted);
-  line-height: 1.5;
-}
-.bento-identity {
-  grid-column: span 6;
-}
-.bento-identity h1 {
-  font-size: clamp(76px, 8vw, 122px);
-  line-height: 0.82;
-  letter-spacing: -0.075em;
-  font-weight: 600;
-  margin: 30px 0 22px;
-}
-.bento-identity h1 span {
-  color: var(--bento-accent);
-}
-.bento-identity > p {
-  max-width: 340px;
-  font-size: 17px;
-  line-height: 1.35;
-  color: var(--album-muted);
-}
-.bento-identity-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 28px;
-  color: var(--album-muted);
-}
-.bento-identity-footer > span:last-child {
-  color: var(--bento-accent);
-  font-size: 24px;
-}
-.bento-studio {
-  grid-column: span 3;
-  display: flex;
-  flex-direction: column;
-  background: var(--album-accent);
-  color: var(--album-on-accent);
-  border-color: var(--album-accent);
-}
-.bento-studio .bento-label {
-  color: var(--album-on-accent);
-}
-.bento-studio h2 {
-  font-size: clamp(26px, 3vw, 43px);
-  line-height: 1.05;
-  font-weight: 600;
-  letter-spacing: -0.045em;
-  margin-top: 40px;
-}
-.bento-studio h2 span {
-  text-decoration: underline;
-  text-underline-offset: 6px;
-  text-decoration-thickness: 1px;
-}
-.bento-studio > a {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 44px;
-  margin-top: auto;
-  padding-top: 24px;
-}
-.bento-studio :focus-visible {
-  outline-color: var(--album-on-accent);
-}
-.bento-work {
-  grid-column: span 3;
-}
-.bento-work h2 {
-  font-size: 22px;
-  margin: 40px 0 14px;
-  letter-spacing: -0.035em;
-}
-.bento-work > .bento-role {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 18px 0;
-  border-bottom: 1px solid var(--album-border);
-  font-size: 25px;
-  letter-spacing: -0.04em;
-}
-.bento-work > .bento-role span {
-  color: var(--album-muted);
-  letter-spacing: 0;
-}
-.bento-work > button {
-  min-height: 44px;
-  cursor: pointer;
-  margin-top: 14px;
-  text-align: left;
-  color: var(--album-secondary);
-}
-.bento-project {
-  grid-column: span 3;
-  display: flex;
-  flex-direction: column;
-  min-height: 242px;
-  transition:
-    background 0.2s,
-    border-color 0.2s;
-}
-.bento-project:hover {
-  border-color: var(--album-accent);
-  background: color-mix(in srgb, var(--album-text) 5%, var(--album-surface));
-}
-.bento-project-mark {
-  color: var(--album-accent);
-  font-family: var(--font-jetbrains-mono, monospace);
-  font-size: 34px;
-  line-height: 1;
-  margin: 23px 0 18px;
-}
-.bento-project h2 {
-  font-size: 25px;
-  line-height: 1.1;
-  letter-spacing: -0.04em;
-  margin-bottom: 10px;
-  font-weight: 500;
-}
-.bento-project p {
-  color: var(--album-muted);
-  font-size: 13px;
-  line-height: 1.45;
-  max-width: 32em;
-}
-.bento-contact {
-  grid-column: span 12;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  gap: 12px 24px;
-  padding: 18px 24px;
-}
-.bento-contact .bento-label {
-  grid-column: 1 / -1;
-}
-.bento-contact h2 {
-  font-size: 30px;
-  font-weight: 500;
-  letter-spacing: -0.05em;
-}
-.bento-contact h2 span {
-  margin-left: 20px;
-  color: var(--album-accent);
-}
-.bento-contact > a {
-  font-size: 20px;
-  letter-spacing: -0.03em;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-}
-.bento-contact > div:last-child {
-  display: flex;
-  justify-content: flex-end;
-  gap: 24px;
-}
-.bento-contact > div:last-child a {
+.now-playing {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  gap: 12px;
+  max-width: min(100%, 440px);
+  min-height: 68px;
+  padding: 10px 16px 10px 10px;
+  text-align: left;
+  background: color-mix(in srgb, var(--album-surface) 65%, transparent);
+  border: 1px solid color-mix(in srgb, var(--album-secondary) 35%, transparent);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 35px
+    color-mix(
+      in srgb,
+      var(--album-color-4, var(--album-accent)) 8%,
+      transparent
+    );
+  opacity: 0;
+  transition:
+    opacity 0.24s ease,
+    background-color 0.8s,
+    border-color 0.8s;
 }
-.bento-contact a:hover,
-.bento-colophon a:hover,
-.bento-work a:hover {
+.now-playing[data-visible="true"] {
+  opacity: 1;
+}
+.now-playing-art {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.now-playing-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+.now-playing-status {
+  font:
+    8px var(--font-jetbrains-mono),
+    monospace;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--album-muted);
+}
+.now-playing-song {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--album-text);
+  overflow-wrap: anywhere;
+}
+.now-playing-artist {
+  font-size: 11px;
   color: var(--album-secondary);
 }
-.bento-colophon {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 0;
-  color: var(--album-muted);
-  text-transform: uppercase;
-}
-@media (min-width: 1600px) {
-  .main-bento {
-    padding-left: max(48px, calc((100vw - 1540px) / 2));
-    padding-right: max(48px, calc((100vw - 1540px) / 2));
+@keyframes name-cut {
+  from {
+    transform: translateY(105%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
-@media (max-width: 1050px) {
-  .bento-edition {
-    display: none;
+@keyframes spectrum-drift {
+  from {
+    transform: translate(-2%, -1%) rotate(-6deg) scale(1);
   }
-  .bento-pane {
-    padding: 20px;
-  }
-  .bento-identity {
-    grid-column: span 7;
-  }
-  .bento-studio {
-    grid-column: span 5;
-  }
-  .bento-work {
-    grid-column: span 12;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px 24px;
-    align-items: center;
-  }
-  .bento-work .bento-label {
-    width: 100%;
-  }
-  .bento-work h2,
-  .bento-work > button {
-    margin: 0;
-  }
-  .bento-work > .bento-role {
-    border: 0;
-    padding: 8px 0;
-  }
-  .bento-project {
-    grid-column: span 6;
-  }
-  .bento-contact {
-    grid-template-columns: 1fr 1fr;
-  }
-  .bento-contact > div:last-child {
-    justify-content: flex-start;
-    grid-column: 1 / -1;
+  to {
+    transform: translate(3%, 2%) rotate(6deg) scale(1.12);
   }
 }
-@media (max-width: 639px) {
-  .bento-masthead {
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 18px 0;
+@media (max-width: 700px) {
+  .personal-masthead,
+  .personal-main,
+  .personal-footer {
+    padding-inline: 22px;
   }
-  .main-bento .site-mode-navigation {
-    margin-left: 0;
-    width: 100%;
+  .personal-masthead {
+    min-height: 80px;
+    gap: 12px;
   }
-  .main-bento .site-mode-navigation nav {
-    justify-content: space-between;
+  .personal-wordmark {
+    font-size: 10px;
   }
-  .bento-grid {
-    gap: 10px;
+  .personal-page .site-mode-navigation nav {
+    padding: 3px;
   }
-  .bento-identity,
-  .bento-studio,
-  .bento-project {
-    grid-column: span 12;
+  .personal-page .site-mode-navigation a,
+  .personal-page .site-mode-navigation button {
+    padding: 9px 8px;
+    font-size: 9px;
   }
-  .bento-identity h1 {
-    font-size: 100px;
+  .personal-hero {
+    padding-top: 42px;
   }
-  .bento-studio h2 {
-    margin-top: 24px;
-    font-size: 36px;
+  .personal-kicker {
+    gap: 14px;
+    font-size: 8px;
   }
-  .bento-work {
-    display: block;
-  }
-  .bento-work h2 {
+  .personal-hero h1 {
+    font-size: clamp(55px, 12.8vw, 88px);
     margin-top: 24px;
   }
-  .bento-work > .bento-role {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--album-border);
+  .personal-bio {
+    font-size: 14px;
   }
-  .bento-work > button {
-    margin-top: 14px;
-  }
-  .bento-project {
-    min-height: auto;
-  }
-  .bento-project-mark {
-    margin: 20px 0;
-  }
-  .bento-contact {
+  .personal-projects {
     grid-template-columns: 1fr;
   }
-  .bento-contact > div:last-child {
-    flex-wrap: wrap;
-    gap: 22px;
+  .personal-project {
+    padding: 22px 18px;
   }
-  .bento-colophon {
-    flex-wrap: wrap;
+  .personal-section-title {
+    font-size: 8px;
+  }
+  .personal-section-title h2 {
+    font-size: 11px;
+  }
+  .personal-footer {
+    font-size: 8px;
+  }
+  .personal-experience {
+    font-size: 9px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .bento-project {
-    transition: none;
+  .name-reveal > span,
+  .album-spectrum {
+    animation: none;
   }
-}
-@media (min-width: 1051px) and (min-height: 760px) {
-  .bento-masthead {
-    min-height: 80px;
-  }
-  .bento-pane {
-    padding: 20px;
-  }
-  .bento-identity h1 {
-    margin-top: 24px;
-    margin-bottom: 18px;
-  }
-  .bento-identity-footer {
-    margin-top: 18px;
-  }
-  .bento-project {
-    min-height: 220px;
-  }
-  .bento-project-mark {
-    margin-top: 18px;
-    margin-bottom: 14px;
-  }
-  .bento-contact {
-    padding: 14px 20px;
+  .personal-page *,
+  .personal-page *::before,
+  .personal-page *::after,
+  .now-playing {
+    transition: none !important;
   }
 }
 
@@ -3035,4 +3144,440 @@ a[data-tip] {
   .machine-intro.is-light {
     background: var(--album-background);
   }
+}
+
+@property --album-background {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #09090b;
+}
+@property --album-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #191919;
+}
+@property --album-text {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f4f4f5;
+}
+@property --album-muted {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #a1a1aa;
+}
+@property --album-border {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #3f3f46;
+}
+@property --album-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-on-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #000000;
+}
+@property --album-secondary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff8751;
+}
+@property --album-color-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-3 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-4 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-5 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-6 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-7 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-8 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+:root {
+  transition:
+    --album-background 1.2s ease,
+    --album-surface 1.2s ease,
+    --album-text 1.2s ease,
+    --album-muted 1.2s ease,
+    --album-border 1.2s ease,
+    --album-accent 1.2s ease,
+    --album-on-accent 1.2s ease,
+    --album-secondary 1.2s ease,
+    --album-color-1 1.2s ease,
+    --album-color-2 1.2s ease,
+    --album-color-3 1.2s ease,
+    --album-color-4 1.2s ease,
+    --album-color-5 1.2s ease,
+    --album-color-6 1.2s ease,
+    --album-color-7 1.2s ease,
+    --album-color-8 1.2s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    transition: none;
+  }
+}
+
+.personal-listening {
+  min-height: 72px;
+}
+.profile-listening {
+  color: var(--album-secondary);
+  font-size: 12px;
+  margin: 16px 0;
+}
+
+/* Keep neon hues readable over the moving sky. */
+.album-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(#0007, #0008 50%, #0003);
+}
+.name-reveal > span {
+  background-image: linear-gradient(
+    115deg,
+    var(--album-text) 16%,
+    color-mix(in srgb, var(--album-color-3) 55%, var(--album-text)) 48%,
+    color-mix(in srgb, var(--album-color-6) 55%, var(--album-text)) 70%,
+    var(--album-text) 94%
+  );
+}
+.personal-kicker span:first-child,
+.personal-bio a,
+.now-playing-artist {
+  color: color-mix(in srgb, var(--album-secondary) 55%, var(--album-text));
+}
+.personal-links a:nth-child(3n + 1) {
+  color: color-mix(in srgb, var(--album-color-3) 50%, var(--album-text));
+}
+.personal-links a:nth-child(3n + 2) {
+  color: color-mix(in srgb, var(--album-color-6) 50%, var(--album-text));
+}
+.personal-interests > span,
+.personal-experience span {
+  color: color-mix(in srgb, var(--album-color-7) 50%, var(--album-text));
+}
+.project-index,
+.project-arrow {
+  color: color-mix(in srgb, var(--project-color) 55%, var(--album-text));
+}
+
+/* Dot-matrix identity and restrained, tactile instrument controls. */
+.personal-hero h1 {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: clamp(60px, 9.5vw, 126px);
+  font-weight: 500;
+  letter-spacing: -0.085em;
+}
+.name-reveal > span {
+  background: none;
+  color: var(--album-text);
+  mask-image: radial-gradient(
+    circle at center,
+    #000 1.35px,
+    transparent 1.65px
+  );
+  mask-size: 4px 4px;
+}
+.name-dot {
+  color: var(--album-accent);
+}
+.personal-hero {
+  padding-top: 38px;
+}
+.personal-kicker {
+  letter-spacing: 0.04em;
+}
+.personal-kicker span:first-child {
+  color: var(--album-text);
+}
+.personal-wordmark {
+  letter-spacing: -0.06em;
+}
+.personal-page .site-mode-navigation nav {
+  border-radius: 8px;
+  padding: 5px;
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--album-background) 80%, #000);
+}
+.personal-page .site-mode-navigation a,
+.personal-page .site-mode-navigation button {
+  border-radius: 4px;
+}
+.personal-page .site-mode-navigation a:hover,
+.personal-page .site-mode-navigation button:hover {
+  background: color-mix(
+    in srgb,
+    var(--album-text) 12%,
+    var(--album-background)
+  );
+}
+.personal-links {
+  gap: 10px;
+}
+.personal-links a,
+.personal-links button {
+  min-height: 40px;
+  padding-inline: 18px;
+  border: 1px solid color-mix(in srgb, var(--album-text) 15%, transparent);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--album-background) 70%, transparent);
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--album-background) 90%, #000);
+  color: var(--album-text) !important;
+}
+.personal-links a:hover,
+.personal-links button:hover {
+  transform: translateY(-1px);
+  border-color: var(--album-accent);
+}
+.personal-links a:active,
+.personal-links button:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.personal-links a::after,
+.personal-links button::after {
+  display: none;
+}
+.now-playing {
+  width: 340px;
+  max-width: 100%;
+  min-height: 84px;
+  padding: 10px;
+  border-radius: 6px;
+  border-color: color-mix(in srgb, var(--album-text) 25%, transparent);
+  background: color-mix(in srgb, var(--album-background) 85%, transparent);
+  box-shadow:
+    0 4px 0 color-mix(in srgb, var(--album-background) 90%, #000),
+    inset 0 1px color-mix(in srgb, var(--album-text) 12%, transparent);
+}
+.now-playing-art {
+  width: 60px;
+  height: 60px;
+  border-radius: 2px;
+}
+.now-playing-copy {
+  gap: 5px;
+}
+.now-playing-status {
+  color: var(--album-muted);
+}
+.now-playing-song {
+  font:
+    12px var(--font-jetbrains-mono),
+    monospace;
+}
+.personal-listening {
+  min-height: 88px;
+}
+.personal-projects {
+  display: block;
+  background: none;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--album-text) 22%, transparent);
+}
+.personal-project {
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--album-text) 18%, transparent);
+  background: color-mix(in srgb, var(--album-background) 55%, transparent);
+  padding: 24px 18px;
+  gap: 24px;
+  align-items: center;
+}
+.personal-project > div {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  gap: 6px 24px;
+  align-items: center;
+  width: 100%;
+}
+.project-kind {
+  grid-column: 1;
+  font-size: 8px;
+}
+.personal-project h3 {
+  grid-column: 1;
+  grid-row: 2;
+  margin: 0;
+  font-size: 22px;
+}
+.personal-project p {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  max-width: none;
+}
+.project-index {
+  color: var(--album-muted);
+}
+.album-spectrum {
+  opacity: 0.25;
+}
+@media (max-width: 700px) {
+  .personal-hero h1 {
+    font-size: clamp(47px, 11.5vw, 78px);
+  }
+  .name-reveal > span {
+    mask-size: 3px 3px;
+    mask-image: radial-gradient(circle at center, #000 1px, transparent 1.25px);
+  }
+  .personal-project {
+    gap: 14px;
+    padding: 22px 12px;
+    align-items: flex-start;
+  }
+  .personal-project > div {
+    display: block;
+  }
+  .personal-project h3 {
+    margin: 8px 0;
+  }
+  .personal-project p {
+    margin-top: 8px;
+  }
+  .personal-links {
+    gap: 8px;
+  }
+  .personal-links a,
+  .personal-links button {
+    padding-inline: 13px;
+  }
+}
+.now-playing-palette {
+  display: flex;
+  gap: 3px;
+  margin-top: 3px;
+}
+.now-playing-palette > span {
+  width: 14px;
+  height: 3px;
+  border-radius: 1px;
+}
+.machine-keyboard-hints {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  top: 80px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 12px;
+  color: var(--album-muted);
+  background: color-mix(in srgb, var(--album-background) 85%, transparent);
+  border: 1px solid color-mix(in srgb, var(--album-text) 18%, transparent);
+  border-radius: 6px;
+  backdrop-filter: blur(15px);
+  font:
+    9px var(--font-jetbrains-mono),
+    monospace;
+}
+.machine-keyboard-hints > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.machine-keyboard-hints kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  background: color-mix(in srgb, var(--album-text) 8%, var(--album-background));
+  border: 1px solid color-mix(in srgb, var(--album-text) 22%, transparent);
+  border-bottom-width: 3px;
+  border-radius: 4px;
+  font:
+    10px var(--font-jetbrains-mono),
+    monospace;
+  color: var(--album-text);
+  transition:
+    transform 0.12s,
+    background-color 0.12s,
+    border-color 0.12s;
+}
+.machine-keyboard-hints kbd[data-pressed="true"] {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  background: var(--album-accent);
+  color: var(--album-on-accent);
+  border-color: var(--album-accent);
+}
+.machine-boot-spinner {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 22px;
+  color: var(--album-accent);
+}
+.machine-boot-spinner > span {
+  position: absolute;
+  width: 3px;
+  height: 8px;
+  top: 0;
+  left: 12px;
+  border-radius: 2px;
+  transform-origin: 1.5px 14px;
+  animation: boot-bars 1s linear infinite;
+}
+@keyframes boot-bars {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.15;
+  }
+}
+@media (pointer: coarse), (max-width: 700px) {
+  .machine-keyboard-hints {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .machine-boot-spinner > span {
+    animation: none;
+    opacity: 0.5;
+  }
+  .machine-keyboard-hints kbd {
+    transition: none;
+  }
+}
+
+.machine-boot-spinner > span {
+  background: currentColor;
+  transform: rotate(calc(var(--bar-index) * 45deg));
+  animation-delay: calc(var(--bar-index) * -0.125s);
 }

@@ -12,6 +12,22 @@ async function refresh() {
   refreshing = true;
   try {
     const { track } = await fetchLastFmRecent();
+    if (track) {
+      const summary = document.querySelector<HTMLElement>(
+        "[data-listening-summary]",
+      );
+      const label = `${track.isNowPlaying ? "listening to" : "last played"} ${track.track} — ${track.artist}`;
+      if (summary && summary.textContent !== label) {
+        summary.hidden = false;
+        summary.textContent = label;
+        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+          summary.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 600 });
+      }
+      document.documentElement.dataset.albumTrack = JSON.stringify(track);
+      window.dispatchEvent(
+        new CustomEvent("site:album-track", { detail: track }),
+      );
+    }
     const art = track?.albumArt;
     if (!art || art === currentArt) return;
     const image = new Image();
@@ -28,7 +44,8 @@ async function refresh() {
     });
     image.src = art;
     if (!(await loaded)) return;
-    const colors = extractColorsFromCanvasImage(image);
+    const artworkColors = extractColorsFromCanvasImage(image, 8);
+    const colors = artworkColors?.slice(0, 5);
     const palette = colors && deriveAlbumPalette(colors);
     if (!palette) return;
     for (const [name, value] of Object.entries(palette)) {
@@ -38,6 +55,12 @@ async function refresh() {
       );
       document.documentElement.style.setProperty(`--album-${property}`, value);
     }
+    artworkColors!.forEach((color, index) => {
+      document.documentElement.style.setProperty(
+        `--album-color-${index + 1}`,
+        color,
+      );
+    });
     currentArt = art;
     document.documentElement.dataset.albumColors = colors.join(" ");
     window.dispatchEvent(

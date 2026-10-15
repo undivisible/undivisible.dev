@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { KeyboardHints } from "@/components/os/KeyboardHints";
 import { MachineIntro } from "@/components/os/MachineIntro";
 import { coverVisible } from "@/lib/os/machine-input";
 import { vm, type VmProgress } from "@/lib/os/vm";
@@ -291,6 +292,8 @@ export default function MachineRoot() {
           </button>
         </div>
       ) : null}
+
+      {progress.ready && !coarse ? <KeyboardHints /> : null}
 
       <details className="machine-foot">
         <summary>Controls</summary>

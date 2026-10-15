@@ -42,9 +42,17 @@ fn makeTable(colors: [5]u32) [256]u32 {
     return table;
 }
 
+pub fn nowMs() i64 {
+    var ts: linux.timespec = undefined;
+    _ = linux.clock_gettime(.MONOTONIC, &ts);
+    return @as(i64, @intCast(ts.sec)) * 1000 + @divTrunc(ts.nsec, 1000000);
+}
+
 pub const Palette = struct {
     colors: ?[5]u32 = null,
     table: [256]u32 = undefined,
+    previous: ?[256]u32 = null,
+    progress: i32 = 255,
 
     pub fn reload(self: *Palette) bool {
         var next: ?[5]u32 = null;
@@ -57,13 +65,29 @@ pub const Palette = struct {
             if (linux.errno(n) == .SUCCESS and n < bytes.len) next = parse(bytes[0..n]);
         }
         if (std.meta.eql(self.colors, next)) return false;
+        self.previous = if (self.colors != null) self.table else null;
+        self.progress = 0;
         self.colors = next;
         if (next) |colors| self.table = makeTable(colors);
         return true;
     }
 
+    pub fn active(self: *const Palette) bool {
+        return self.colors != null or self.progress < 255;
+    }
+
+    pub fn advance(self: *Palette, elapsed_ms: i64) bool {
+        if (self.progress >= 255 or elapsed_ms <= 0) return false;
+        self.progress = @intCast(@min(255, self.progress + @divTrunc(elapsed_ms * 255, 600)));
+        return true;
+    }
+
     pub fn color(self: *const Palette, source: u32) u32 {
-        return self.table[brightness(source)];
+        const level = brightness(source);
+        const target = if (self.colors != null) self.table[level] else source;
+        if (self.progress >= 255) return target;
+        const previous = if (self.previous) |table| table[level] else source;
+        return draw.mix(previous, target, self.progress);
     }
 };
 
@@ -101,4 +125,15 @@ test "dark, monochrome and saturated albums retain readable text contrast" {
         const panel = relativeLuminance(palette.color(0x0f0f0f));
         try std.testing.expect((text + 0.05) / (panel + 0.05) >= 4.5);
     }
+}
+
+test "palette fade starts at original color and settles at target" {
+    const colors = parse("402000 602000 804000 a04000 000000").?;
+    var palette: Palette = .{ .colors = colors, .table = makeTable(colors), .progress = 0 };
+    try std.testing.expectEqual(@as(u32, 0xabcdef), palette.color(0xabcdef));
+    try std.testing.expect(palette.advance(300));
+    try std.testing.expect(palette.progress > 0 and palette.progress < 255);
+    try std.testing.expect(palette.advance(310));
+    try std.testing.expectEqual(palette.table[brightness(0xabcdef)], palette.color(0xabcdef));
+    try std.testing.expect(!palette.advance(100));
 }

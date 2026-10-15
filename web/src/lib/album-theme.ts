@@ -62,33 +62,59 @@ export function deriveAlbumPalette(colors: string[]): AlbumPalette | null {
   };
 }
 
+/** Keep frequent cover colors, then choose the furthest remaining color at each step. */
+export function selectArtworkColors(
+  pixels: ArrayLike<number>,
+  count = 5,
+): string[] | null {
+  const buckets = new Map<string, number>();
+  for (let i = 0; i < pixels.length; i += 4) {
+    if ((pixels[i + 3] ?? 0) < 128) continue;
+    const color = hex(
+      [pixels[i]!, pixels[i + 1]!, pixels[i + 2]!].map((value) =>
+        Math.min(255, Math.round(value / 16) * 16),
+      ),
+    );
+    buckets.set(color, (buckets.get(color) ?? 0) + 1);
+  }
+  const candidates = [...buckets].sort((a, b) => b[1] - a[1]);
+  if (!candidates.length || count < 1) return null;
+  const selected = [candidates.shift()![0]];
+  const distance = (a: string, b: string) =>
+    rgb(a).reduce((sum, channel, i) => sum + (channel - rgb(b)[i]!) ** 2, 0);
+  const maximumPopulation = buckets.get(selected[0]!)!;
+  while (selected.length < count && candidates.length) {
+    let bestIndex = 0;
+    let bestScore = -1;
+    for (let i = 0; i < candidates.length; i++) {
+      const [color, population] = candidates[i]!;
+      const separation = Math.min(
+        ...selected.map((other) => distance(color, other)),
+      );
+      const score =
+        separation * (0.65 + 0.35 * Math.sqrt(population / maximumPopulation));
+      if (score > bestScore) {
+        bestScore = score;
+        bestIndex = i;
+      }
+    }
+    selected.push(candidates.splice(bestIndex, 1)[0]![0]);
+  }
+  while (selected.length < count) selected.push(selected[selected.length - 1]!);
+  return selected;
+}
+
 export function extractColorsFromCanvasImage(
   image: CanvasImageSource,
+  count = 5,
 ): string[] | null {
   try {
     const canvas = document.createElement("canvas");
-    canvas.width = canvas.height = 24;
+    canvas.width = canvas.height = 48;
     const context = canvas.getContext("2d");
     if (!context) return null;
-    context.drawImage(image, 0, 0, 24, 24);
-    const pixels = context.getImageData(0, 0, 24, 24).data;
-    const buckets = new Map<string, number>();
-    for (let i = 0; i < pixels.length; i += 4) {
-      if (pixels[i + 3]! < 128) continue;
-      const color = hex(
-        [pixels[i]!, pixels[i + 1]!, pixels[i + 2]!].map((v) =>
-          Math.min(255, Math.round(v / 32) * 32),
-        ),
-      );
-      buckets.set(color, (buckets.get(color) ?? 0) + 1);
-    }
-    const colors = [...buckets]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
-      .map(([color]) => color);
-    if (!colors.length) return null;
-    while (colors.length < 5) colors.push(colors[colors.length - 1]!);
-    return colors;
+    context.drawImage(image, 0, 0, 48, 48);
+    return selectArtworkColors(context.getImageData(0, 0, 48, 48).data, count);
   } catch {
     return null;
   }

@@ -1,5 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { contrastRatio, deriveAlbumPalette } from "./album-theme";
+import {
+  contrastRatio,
+  deriveAlbumPalette,
+  selectArtworkColors,
+} from "./album-theme";
 
 describe("album palette", () => {
   test("rejects malformed or incomplete color events", () => {
@@ -29,5 +33,39 @@ describe("album palette", () => {
     expect(deriveAlbumPalette(Array(5).fill("#cc2200"))!.background).not.toBe(
       deriveAlbumPalette(Array(5).fill("#0022cc"))!.background,
     );
+  });
+});
+
+describe("cover color diversity", () => {
+  const pixels = (colors: number[][]) =>
+    new Uint8ClampedArray(
+      colors.flatMap(([r, g, b, count = 1]) =>
+        Array.from({ length: count! }, () => [r!, g!, b!, 255]).flat(),
+      ),
+    );
+  test("selects distinct minority colors ahead of near-identical dominant browns", () => {
+    const result = selectArtworkColors(
+      pixels([
+        [96, 64, 32, 100],
+        [112, 64, 32, 80],
+        [96, 80, 32, 60],
+        [0, 64, 224, 8],
+        [224, 0, 64, 6],
+        [0, 224, 96, 4],
+        [224, 224, 0, 3],
+      ]),
+    )!;
+    expect(result).toHaveLength(5);
+    expect(result).toContain("#0040e0");
+    expect(result).toContain("#e00040");
+    expect(result).toContain("#00e060");
+  });
+  test("supports eight swatches and monochrome covers without inventing colors", () => {
+    expect(selectArtworkColors(pixels([[32, 64, 96, 5]]), 8)).toEqual(
+      Array(8).fill("#204060"),
+    );
+    expect(
+      selectArtworkColors(new Uint8ClampedArray([255, 0, 0, 0])),
+    ).toBeNull();
   });
 });

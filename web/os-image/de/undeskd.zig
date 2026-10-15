@@ -449,7 +449,7 @@ fn composite(x: i32, y: i32, w: i32, h: i32) void {
         const src = @as(usize, @intCast(j * W + dx0));
         const dst = @as(usize, @intCast(@as(usize, @intCast(j)) * @as(usize, @intCast(stride)) + @as(usize, @intCast(dx0))));
         const len = @as(usize, @intCast(dx1 - dx0)) * 4;
-        if (album_palette.colors != null) {
+        if (album_palette.active()) {
             for (0..len / 4) |offset| fb[dst + offset] = album_palette.color(back.px[src + offset]);
         } else {
             @memcpy(fb[dst .. dst + len / 4], back.px[src .. src + len / 4]);
@@ -790,6 +790,7 @@ pub fn main() void {
     var drag_dx: i32 = 0;
     var drag_dy: i32 = 0;
     var last_tick: i64 = 0;
+    var last_palette_frame = album.nowMs();
 
     while (true) {
         var fds: [3 + MAXSURF]linux.pollfd = undefined;
@@ -810,7 +811,7 @@ pub fn main() void {
             fds[nfds] = .{ .fd = surf[i].fd, .events = linux.POLL.IN, .revents = 0 };
             nfds += 1;
         }
-        _ = linux.poll(&fds, nfds, 250);
+        _ = linux.poll(&fds, nfds, if (album_palette.progress < 255) 70 else 250);
 
         if (fds[1].revents & linux.POLL.IN != 0) {
             const cfd = linux.accept(lfd, null, null);
@@ -1119,10 +1120,19 @@ pub fn main() void {
             }
         }
 
+        const palette_now = album.nowMs();
+        if (palette_now - last_palette_frame >= 70) {
+            const changed = album_palette.advance(palette_now - last_palette_frame);
+            last_palette_frame = palette_now;
+            if (changed) compositeAll();
+        }
         const now = nowSec();
         if (now != last_tick) {
             last_tick = now;
-            if (album_palette.reload()) compositeAll();
+            if (album_palette.reload()) {
+                last_palette_frame = album.nowMs();
+                compositeAll();
+            }
             // The caret blink only needs the bar strip; when the launcher is
             // hidden nothing on screen blinks, so skip the copy entirely.
             if (bar_on) composite(bar_x, bar_y, bar_w, 44);
