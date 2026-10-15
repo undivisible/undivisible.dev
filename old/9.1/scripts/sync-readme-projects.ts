@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import {
   parseReadme,
   applyReadmeStackFallbacks,
@@ -67,7 +68,9 @@ const LOCAL_NOW = new URL("../public/now.md", import.meta.url);
 
 let md: string;
 try {
-  md = await fetchProfileMarkdown({ urls: profileMarkdownUrls() });
+  md = process.env.PROFILE_README_URL
+    ? await fetchProfileMarkdown({ urls: profileMarkdownUrls() })
+    : await readFile(new URL("../../../projects.md", import.meta.url), "utf8");
 } catch (error) {
   try {
     md = await Bun.file(LOCAL_NOW).text();

@@ -115,3 +115,20 @@ test("readmeBundleProjectCount", () => {
   );
   expect(readmeBundleProjectCount(b)).toBeGreaterThan(4);
 });
+
+test("standard Markdown separators preserve project categories", () => {
+  const bundle = parseReadme(`### other
+- **[tool](https://github.com/tschk/tool)** — utility.
+
+---
+
+## miniapps
+### web apps
+- **[app](https://github.com/undivisible/app)** — web app.
+
+## libraries
+- **[lib](https://github.com/undivisible/lib)** — library.`);
+  expect(bundle.utilities.map((project) => project.name)).toEqual(["tool"]);
+  expect(bundle.miniapps.map((project) => project.name)).toEqual(["app"]);
+  expect(bundle.libraries.map((project) => project.name)).toEqual(["lib"]);
+});

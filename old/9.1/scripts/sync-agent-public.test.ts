@@ -15,6 +15,7 @@ test("sync-agent-public writes fetchable markdown under public/", async () => {
   const pub = path.join(import.meta.dirname, "../public");
   for (const name of [
     "resume.md",
+    "projects.md",
     "llms.txt",
     "llms-full.txt",
     "agent.md",
@@ -27,5 +28,9 @@ test("sync-agent-public writes fetchable markdown under public/", async () => {
   expect(llms).toContain("https://example.test/now.md");
   const full = await Bun.file(path.join(pub, "llms-full.txt")).text();
   expect(full).toContain("# Resume");
+  expect(full).toContain("Software Engineer — Chert");
+  expect(full).toContain("Member of Technical Staff — Omi");
+  expect(full).toContain("# Projects");
+  expect(full).not.toContain("2008-11-04");
   expect(await Bun.file(path.join(pub, "ai.txt")).exists()).toBe(false);
 });

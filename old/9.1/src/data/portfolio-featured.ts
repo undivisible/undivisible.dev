@@ -26,7 +26,7 @@ const templates: Record<PillarKey, PillarTemplate> = {
     narrative:
       "A framework for shipping real interfaces across desktop, mobile, terminal, extension, and web from a single React and Tailwind codebase — with GPUI, SwiftUI, Jetpack Compose, Ratatui, and the open web as first-class targets.",
     stat: "Multi-surface",
-    hrefFallback: "https://crepuscularity.undivisible.dev",
+    hrefFallback: "https://crepuscularity.tsc.hk",
   },
   space: {
     eyebrow: "Operating system",
@@ -44,15 +44,15 @@ const templates: Record<PillarKey, PillarTemplate> = {
     narrative:
       "An experimental compiler and runtime stack aimed at Core IR, SIL-level reasoning, and ultrafast incremental workflows — where frontends are swappable but the pipeline stays ruthless about throughput.",
     stat: "Research",
-    hrefFallback: "https://github.com/semitechnological/inauguration",
+    hrefFallback: "https://github.com/tschk/inauguration",
   },
   alpenglow: {
-    eyebrow: "Linux appliance",
+    eyebrow: "Linux distribution",
     displayName: "Alpenglow",
-    tagline: "Diskless, hardened, immutable.",
+    tagline: "Diskless, immutable Linux.",
     narrative:
-      "Diskless, hardened, immutable Linux appliance. GlowFS root, dinit init, Oil packages. Boots to login in <1s on native virt. x86_64, aarch64, riscv64, Rockchip RK3566.",
-    stat: "<1s boot",
+      "A diskless musl Linux distribution with an immutable erofs or squashfs root, dinit and Oil packages. Testing releases for several architectures.",
+    stat: "Diskless",
     hrefFallback: "https://github.com/tschk/alpenglow",
   },
 };

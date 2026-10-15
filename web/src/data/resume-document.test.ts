@@ -12,9 +12,9 @@ test("resume markdown does not provide standalone project sections", () => {
 test("resume document includes experience dates and B1 product links", () => {
   expect(resumeDoc.experience.map((job) => job.time)).toEqual(
     expect.arrayContaining([
-      "February 2026–July 2026",
-      "2023 – present",
-      "2024 - present",
+      "February 2026 - June 2026",
+      "January 2023 - present",
+      "October 2024 - present",
     ]),
   );
 
@@ -36,33 +36,12 @@ test("resume document includes experience dates and B1 product links", () => {
   });
 });
 
-test("resume document extracts underscore stack emphasis", () => {
-  const studio = resumeDoc.experience
-    .flatMap((job) => job.subsections)
-    .flatMap((section) => section.items)
-    .find((item) => item.name === "Studio of Optimisations");
-
-  expect(studio?.desc).not.toContain("_Built with");
-  expect(studio?.stack).toBe(
-    "SvelteKit 5, TypeScript, Tailwind CSS v4, Cloudflare Workers, Arkie API proxy, Bun.",
+test("Arkie experience keeps the role summary without the detailed product list", () => {
+  const arkie = resumeDoc.experience.find(
+    (job) => job.org === "The Arkie Company",
   );
-});
-
-test("resume linked description segments strip emphasis markers", () => {
-  const arkie = resumeDoc.experience
-    .flatMap((job) => job.subsections)
-    .flatMap((section) => section.items)
-    .find((item) => item.name === "Arkie");
-
-  expect(arkie?.descSegments).not.toContainEqual({
-    type: "text",
-    value: "**",
-  });
-  expect(
-    arkie?.descSegments.some(
-      (segment) => segment.type === "text" && segment.value.includes("**"),
-    ),
-  ).toBe(false);
+  expect(arkie?.bullets.length).toBe(3);
+  expect(arkie?.subsections).toEqual([]);
 });
 
 test("readme project stacks use GitHub Linguist language order", () => {

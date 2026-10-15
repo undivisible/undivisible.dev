@@ -16,5 +16,11 @@
   [96mCupboard[0m  [90mDevice software | In development[0m
     A home hub for syncing files, photos and clipboard history between locally paired devices.
 
+  [96mMoonshine[0m  [90mWeb framework[0m
+    A Bun-first UI runtime with a signal kernel and optional compiler, routing, rendering and deployment layers.
+
+  [96meqts[0m  [90mLanguage interoperability[0m
+    One Rust API for TypeScript across Node, Bun, Deno and WebAssembly.
+
   [96mTelekinesis[0m  [90mDeveloper tool[0m
     A terminal coding agent built on Rotary, with provider login, persistent sessions and an ACP server.

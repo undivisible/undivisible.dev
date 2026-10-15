@@ -1,12 +1,12 @@
 # undivisible.dev
 
-CV markdown and historical profile sources live on [`undivisible/undivisible`](https://github.com/undivisible/undivisible). This repo does not author those files; `web` sync scripts fetch raw GitHub URLs at build time and write deploy copies under `web/public/`.
+Profile sources live on [`undivisible/undivisible`](https://github.com/undivisible/undivisible). The résumé is authored in `undivisible/undivisible`; sync scripts fetch the upstream résumé and now status, plus the local project list, at build time and write deploy copies under `web/public/`.
 
 | Upstream file                                                                 | Role                                                                                                                         |
 | ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| [`README.md`](https://github.com/undivisible/undivisible/blob/main/README.md) | **Project list** and portfolio sections parsed into the site (`parseReadme` / `readme-projects.generated.ts`).               |
+| [`README.md`](https://github.com/undivisible/undivisible/blob/main/README.md) | Historical project list; current portfolio copy is reviewed in this repo’s `projects.md`.                                    |
 | [`now.md`](https://github.com/undivisible/undivisible/blob/main/now.md)       | **Now status** (short line; optional `---` + article). Clock overlay and `public/now.md` snapshot only—not the project list. |
-| [`resume.md`](https://github.com/undivisible/undivisible/blob/main/resume.md) | CV, contact, experience.                                                                                                     |
+| [`resume.md`](https://github.com/undivisible/undivisible/blob/main/resume.md) | Authoritative CV source, fetched at build time.                                                                 |
 
 Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MARKDOWN_URL` when syncing locally.
 

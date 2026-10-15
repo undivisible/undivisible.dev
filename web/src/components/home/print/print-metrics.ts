@@ -24,11 +24,14 @@ export const PRINT_RESUME_STYLES = (cream: string) => `
       box-shadow: none !important;
       margin: 0 !important;
       width: 210mm !important;
-      height: 297mm !important;
-      overflow: hidden !important;
+      height: auto !important;
+      min-height: 297mm;
+      overflow: visible !important;
       page-break-after: always;
       break-after: page;
     }
+    .page-wrapper > div { height: auto !important; min-height: 297mm; }
+    .page-wrapper div { overflow: visible !important; }
     .page-wrapper:last-child {
       page-break-after: auto !important;
       break-after: auto;
