@@ -16,3 +16,10 @@ test("adjacent letters cannot overwrite each other when measured widths differ f
   expect(cells.map((cell) => cell.char).join("")).toBe("Alpenglow");
   expect(contentCell(0, 50, 8.4, 20, previous)).toEqual({ col: 0, row: 2 });
 });
+
+test("20px text lines remain separate at viewport rounding boundaries", () => {
+  const first = contentCell(132, 525, 8.4, 20);
+  const next = contentCell(132, 545, 8.4, 20, first);
+  expect(next.row).toBe(first.row + 1);
+  expect(next.col).toBe(first.col);
+});

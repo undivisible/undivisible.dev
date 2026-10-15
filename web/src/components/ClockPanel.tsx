@@ -36,7 +36,14 @@ export function ClockPanel({
     hydrated && dayTheme ? dayTheme.weatherDisplay : "--°C --";
   const hkgText = hydrated && dayTheme ? dayTheme.hkgTime : "--:--:--";
   const melText = hydrated && dayTheme ? dayTheme.melTime : "--:--:--";
-  const localText = hydrated && dayTheme ? dayTheme.localTime : "--:--:--";
+  const localZone = hydrated
+    ? Intl.DateTimeFormat().resolvedOptions().timeZone
+    : "UTC";
+  const localText = hydrated
+    ? travelClocks
+      ? formatTimeForZone(dayTheme.displayedDate, localZone)
+      : dayTheme.localTime
+    : "--:--:--";
 
   const statusInteractive = Boolean(now.article && onToggleNowArticle);
   const showStatus = Boolean(now.status);
@@ -174,10 +181,14 @@ export function ClockPanel({
             </a>
           </div>
         ))}
-      {dayTheme.showLocalTime && !travelClocks && (
+      {(travelClocks || dayTheme.showLocalTime) && (
         <div className="mt-1">
           <a
-            href={dayTheme.localClockHref}
+            href={
+              travelClocks
+                ? `https://www.timeanddate.com/worldclock/results.html?query=${encodeURIComponent(localZone)}`
+                : dayTheme.localClockHref
+            }
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex flex-wrap items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
@@ -187,7 +198,7 @@ export function ClockPanel({
               className="w-[3.2rem] shrink-0"
               style={{ color: "var(--page-text-soft)" }}
             >
-              {dayTheme.localLabel}
+              {travelClocks ? "LOCAL" : dayTheme.localLabel}
             </span>
             <span>{localText}</span>
           </a>

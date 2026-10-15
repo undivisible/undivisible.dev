@@ -4433,3 +4433,86 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   top: 0;
   white-space: nowrap;
 }
+/* Keep related content together instead of reserving empty card-sized rows. */
+.personal-page .personal-project {
+  min-height: 0;
+  padding-block: 18px;
+}
+.personal-page .personal-project:nth-child(even) {
+  margin-top: 0;
+}
+.personal-page .personal-projects {
+  gap: 20px 8%;
+}
+.personal-page .personal-work {
+  margin-top: 12px;
+}
+.personal-page .personal-footer {
+  margin-top: 28px;
+}
+@media (min-width: 851px) {
+  .personal-page .personal-hero {
+    gap: 16px 8%;
+  }
+  .personal-page .personal-hero h1 {
+    font-size: clamp(72px, 11vw, 150px);
+  }
+  .personal-page .personal-bio {
+    grid-column: 1;
+    grid-row: 3 / span 2;
+    margin: 0;
+  }
+  .personal-page .personal-listening {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: start;
+  }
+  .personal-page .personal-links {
+    grid-column: 2;
+    grid-row: 4;
+    align-self: start;
+    margin-top: 0;
+  }
+  .personal-page .bento-current {
+    grid-column: 1 / span 6;
+    padding: 0;
+  }
+  .personal-page .bento-life {
+    grid-column: 7 / span 6;
+    padding: 0;
+  }
+  .personal-page .bento-caption {
+    margin-bottom: 12px;
+  }
+  .personal-page :is(.bento-current, .bento-life) h2 {
+    margin-bottom: 12px;
+  }
+  .personal-page .bento-job {
+    padding-block: 8px;
+  }
+  .personal-page .bento-previous {
+    margin-top: 12px;
+  }
+}
+.personal-page .personal-bio .personal-intro {
+  margin: 0 0 16px;
+}
+@media (min-width: 1024px) {
+  .personal-page #personal-name,
+  .personal-page #personal-name * {
+    font-size: clamp(72px, 11vw, 150px) !important;
+  }
+  .personal-page .bento-life-mark {
+    display: none;
+  }
+}
+@media (min-width: 851px) {
+  .personal-page .bento-job {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .personal-page .bento-job span {
+    text-align: right;
+  }
+}

@@ -539,10 +539,17 @@ export default function Ascii({
 
       const cellDiv = width < 1024 ? 32 : 56;
       const cell = Math.max(8, Math.min(width, height) / cellDiv);
-      const cols = Math.max(1, Math.floor(width / (page ? 8.4 : cell * 0.9)));
-      const rows = Math.max(1, Math.floor(height / (page ? 20 : cell)));
-      const cellWidth = width / cols;
-      const cellHeight = height / rows;
+      const cols = Math.max(
+        1,
+        page ? Math.ceil(width / 8.4) : Math.floor(width / (cell * 0.9)),
+      );
+      const rows = Math.max(
+        1,
+        page ? Math.ceil(height / 20) : Math.floor(height / cell),
+      );
+      // Keep the content grid on the DOM font metrics; stretching it can merge adjacent lines.
+      const cellWidth = page ? 8.4 : width / cols;
+      const cellHeight = page ? 20 : height / rows;
       if (contentDirty && page && ink) {
         contentDirty = false;
         contentGlyphs = new Map();
@@ -643,8 +650,8 @@ export default function Ascii({
 
       for (let row = 0; row < rows; row += 1) {
         for (let col = 0; col < cols; col += 1) {
-          const x = (col + 0.5) * (width / cols);
-          const y = (row + 0.5) * (height / rows);
+          const x = (col + 0.5) * cellWidth;
+          const y = (row + 0.5) * cellHeight;
           const pixelIndex = (row * cols + col) * 4;
           let r = pixels[pixelIndex] ?? 0;
           let g = pixels[pixelIndex + 1] ?? 0;

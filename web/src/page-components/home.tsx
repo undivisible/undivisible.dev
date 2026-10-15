@@ -169,8 +169,8 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
                 <div className="personal-listening">
                   <NowPlaying />
                 </div>
-                <p className="personal-intro">i make things for people.</p>
                 <div className="personal-bio">
+                  <p className="personal-intro">i make things for people.</p>
                   <p>
                     I’m a self-taught software engineer. I build compilers,
                     operating systems, apps and the tools that connect them. I
