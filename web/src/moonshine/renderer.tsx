@@ -15,6 +15,7 @@ export type DocumentOptions = {
   lang: string;
   fontVariableCss: string;
   stylesheet: string;
+  albumThemeEntry?: string;
   clientEntries: Record<string, string>;
   metadata: Record<string, Metadata>;
 };
@@ -125,6 +126,16 @@ function head(
         ),
       );
   }
+
+  if (mode && options.albumThemeEntry)
+    children.push(
+      createElement("script", {
+        key: "album-theme",
+        type: "module",
+        src: options.albumThemeEntry,
+        "data-optional": "true",
+      }),
+    );
 
   for (const href of fontHrefs()) {
     children.push(

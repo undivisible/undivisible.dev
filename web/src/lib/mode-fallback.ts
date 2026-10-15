@@ -94,6 +94,7 @@ export function installModeFallback(
             : "");
       // Third-party analytics blocked by the browser must not eject the visitor.
       const criticalAsset =
+        !element?.hasAttribute?.("data-optional") &&
         resource &&
         new URL(resource, browser.location.href).origin ===
           browser.location.origin &&

@@ -145,3 +145,15 @@ test("clicking a mode link remembers it, including from Simple", () => {
   });
   expect(b.preference()).toBe("os");
 });
+
+test("optional album theme cannot trigger fallback when blocked", () => {
+  const b = browserFor("main");
+  b.emit("error", {
+    target: {
+      tagName: "SCRIPT",
+      src: "https://undivisible.dev/assets/album-theme.js",
+      hasAttribute: (name: string) => name === "data-optional",
+    },
+  });
+  expect(b.visits).toEqual([]);
+});

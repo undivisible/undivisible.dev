@@ -66,6 +66,7 @@ function clientDefine(): Record<string, string> {
 type ClientEntry = { name: string; entry: string };
 
 const CLIENT_ENTRIES: ClientEntry[] = [
+  { name: "album-theme", entry: join(projectDir, "src/client/album-theme.ts") },
   { name: "home", entry: join(projectDir, "src/client/home.tsx") },
   { name: "not-found", entry: join(projectDir, "src/client/not-found.tsx") },
   { name: "lab", entry: join(projectDir, "src/client/lab.tsx") },
@@ -228,6 +229,7 @@ async function main(): Promise<void> {
     lang: "en",
     fontVariableCss: layout.fontVariableCss,
     stylesheet,
+    albumThemeEntry: clientBundles["album-theme"],
     clientEntries,
     metadata,
   });

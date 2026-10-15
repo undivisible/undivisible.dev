@@ -5,6 +5,7 @@ import {
   guestDelta,
   type MachineStage,
 } from "@/lib/os/machine-input";
+import { albumPaletteCommand } from "@/lib/os/album-palette";
 import { emulatorLifecycle } from "@/lib/os/emulator-lifecycle";
 import {
   attachNexnetBridge,
@@ -100,6 +101,7 @@ class VmManager {
   private guestW = 1024;
   private guestH = 700;
   private serialLine = "";
+  private albumCommand: string | null = null;
   private progressListeners = new Set<(progress: Progress) => void>();
   private progress: Progress = {
     message: "cold",
@@ -117,6 +119,13 @@ class VmManager {
   }
   get ready(): boolean {
     return this.progress.ready;
+  }
+
+  setAlbumColors(colors: unknown): void {
+    const command = albumPaletteCommand(colors);
+    if (!command) return;
+    this.albumCommand = command;
+    if (this.ready) this.emulator?.serial0_send(command);
   }
 
   /** Power on, rendering into `screen` (a div holding a text div + canvas). */
@@ -261,6 +270,7 @@ class VmManager {
           // The desktop drew its first frame — now it's ready, not merely
           // when the emulator started (that still shows the boot log).
           if (line.includes("@@desktop")) {
+            if (this.albumCommand) emulator.serial0_send(this.albumCommand);
             clearTimeout(this.startupTimeout);
             this.emit({
               message: "ready",

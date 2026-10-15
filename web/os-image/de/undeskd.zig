@@ -2,6 +2,8 @@ const std = @import("std");
 const linux = std.os.linux;
 const draw = @import("draw.zig");
 const wire = @import("wire.zig");
+const album = @import("album-palette.zig");
+var album_palette: album.Palette = .{};
 
 const MAXW: i32 = 1920;
 const MAXH: i32 = 1200;
@@ -122,12 +124,25 @@ fn hkMin() i32 {
 }
 
 fn skyStops(hour: i32, top: *u32, bot: *u32) void {
-    if (hour >= 5 and hour < 8) { top.* = 0x080b10; bot.* = 0x1a2632; }
-    else if (hour < 12) { top.* = 0x0d1720; bot.* = 0x183546; }
-    else if (hour < 15) { top.* = 0x10212e; bot.* = 0x1b3d4d; }
-    else if (hour < 18) { top.* = 0x12232a; bot.* = 0x33423e; }
-    else if (hour < 20) { top.* = 0x101722; bot.* = 0x27313d; }
-    else { top.* = 0x080b10; bot.* = 0x111722; }
+    if (hour >= 5 and hour < 8) {
+        top.* = 0x2a1e33;
+        bot.* = 0xc96f4a;
+    } else if (hour < 12) {
+        top.* = 0x1d3a5f;
+        bot.* = 0x7fb2d9;
+    } else if (hour < 15) {
+        top.* = 0x2456a0;
+        bot.* = 0x9fc7e8;
+    } else if (hour < 18) {
+        top.* = 0x27436e;
+        bot.* = 0xd99a5b;
+    } else if (hour < 20) {
+        top.* = 0x1d1230;
+        bot.* = 0xc4586e;
+    } else {
+        top.* = 0x05060e;
+        bot.* = 0x141b2e;
+    }
 }
 
 fn wallpaper() void {
@@ -434,7 +449,11 @@ fn composite(x: i32, y: i32, w: i32, h: i32) void {
         const src = @as(usize, @intCast(j * W + dx0));
         const dst = @as(usize, @intCast(@as(usize, @intCast(j)) * @as(usize, @intCast(stride)) + @as(usize, @intCast(dx0))));
         const len = @as(usize, @intCast(dx1 - dx0)) * 4;
-        @memcpy(fb[dst .. dst + len / 4], back.px[src .. src + len / 4]);
+        if (album_palette.colors != null) {
+            for (0..len / 4) |offset| fb[dst + offset] = album_palette.color(back.px[src + offset]);
+        } else {
+            @memcpy(fb[dst .. dst + len / 4], back.px[src .. src + len / 4]);
+        }
     }
     dx0 = 0; dy0 = 0; dx1 = W; dy1 = H;
 }
@@ -1103,6 +1122,7 @@ pub fn main() void {
         const now = nowSec();
         if (now != last_tick) {
             last_tick = now;
+            if (album_palette.reload()) compositeAll();
             // The caret blink only needs the bar strip; when the launcher is
             // hidden nothing on screen blinks, so skip the copy entirely.
             if (bar_on) composite(bar_x, bar_y, bar_w, 44);

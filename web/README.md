@@ -4,10 +4,12 @@ Moonshine, React 19, Tailwind v4 and Bun prerender the site to static HTML.
 
 - `/` and `/lab/` — boot the full-screen Alpenglow browser desktop. Startup errors or 12 seconds without readiness fall back to `/main/`.
 - `/main/` — the regular animated portfolio. Startup errors or 5 seconds without hydration fall back to `/simple/`.
-- `/simple/` — the static profile and eight curated projects. No JavaScript required. Zinc surfaces, monospace typography and `#ff5705` accents.
+- `/simple/` — the static profile and eight curated projects. No JavaScript required. Monospace typography and album-derived colors, with `#ff5705` as the offline fallback.
 - `/agent` — direct links to the public Markdown snapshots.
 
-Choosing OS, Main or Simple remembers the choice in local storage, bypasses fallback checks for that mode, and reopens it on visits to `/`. Only first-party application assets trigger resource-error fallback; blocked analytics are ignored.
+Choosing OS, Main or Simple remembers the choice in local storage, bypasses fallback checks for that mode, and reopens it on visits to `/`. Only required first-party application assets trigger resource-error fallback; blocked analytics and optional album theming are ignored.
+
+`NEXT_PUBLIC_LASTFM_USERNAME` and `NEXT_PUBLIC_LASTFM_API_KEY` in the repository-root `.env` enable live album-art colors. The browser refreshes every minute and on returning to the tab. The latest scrobbled album is used when playback is inactive. Artwork drives Main, Simple, host controls and the guest framebuffer palette; the original desktop wallpaper geometry stays intact. Music/artwork failures retain the last usable colors.
 
 Selected project copy is curated in `src/data/profile.ts`; the full portfolio is reviewed in root `projects.md`. The résumé sync scripts read the published `undivisible/undivisible/resume.md`. `RESUME_MARKDOWN_URL` can pin an approved source; a code-only release may preserve the exact current public résumé while a separate copy update remains pending. Public résumé, agent files and offline copies must all use that same approved content. Do not silently publish a local draft.
 
