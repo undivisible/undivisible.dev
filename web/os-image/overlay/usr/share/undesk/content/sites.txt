@@ -1,5 +1,5 @@
 
-  [1;37mthe software, deployed[0m
+  [1;37mproject websites[0m
 
   [93m 1)[0m [96mtsc.hk[0m -- the software company of hong kong  [90mhttps://tsc.hk[0m
   [93m 2)[0m [96mcrepuscularity[0m -- UI language and runtime  [90mhttps://crepuscularity.undivisible.dev[0m

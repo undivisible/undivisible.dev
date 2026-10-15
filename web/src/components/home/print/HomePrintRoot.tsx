@@ -85,7 +85,7 @@ export function HomePrintRoot({
 
       <PrintPage page={1} total={totalPages}>
         <Tb
-          left="RESUME BUILT WITH REACT"
+          left="MAX CARTER · RÉSUMÉ"
           right={
             <a
               href="https://undivisible.dev"
@@ -212,8 +212,7 @@ export function HomePrintRoot({
               href="https://undivisible.dev"
               style={{ color: "inherit", textDecoration: "none" }}
             >
-              Descriptions pulled from GitHub README · project names and top
-              tabs clickable
+              undivisible.dev
             </a>
           }
           fontSize={CHROME.tb}

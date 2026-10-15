@@ -1,5 +1,5 @@
 
-  [1;37mheadline works[0m -- all under tsc.hk, the software company of hong kong
+  [1;37mselected projects[0m
 
   [96mInauguration[0m  [90mCompiler[0m
     A compiler toolchain that brings multiple languages into a shared intermediate representation.

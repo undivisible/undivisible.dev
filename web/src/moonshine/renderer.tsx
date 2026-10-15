@@ -7,6 +7,7 @@ import {
 } from "react";
 import { renderToReadableStream } from "react-dom/server";
 import type { RenderContext, Renderer } from "@tschk/moonshine-framework";
+import { installModeFallback } from "@/lib/mode-fallback";
 import { fontHrefs } from "@/moonshine/font-google";
 import type { Metadata } from "@/moonshine/next";
 
@@ -84,6 +85,7 @@ function head(
   metadata: Metadata,
   options: DocumentOptions,
   clientEntry: string | undefined,
+  routeId: string,
 ): ReactNode {
   const children: ReactNode[] = [
     createElement("meta", { key: "charset", charSet: "utf-8" }),
@@ -93,6 +95,33 @@ function head(
       content: "width=device-width, initial-scale=1",
     }),
   ];
+
+  const mode =
+    routeId === "index" || routeId === "lab"
+      ? "os"
+      : routeId === "main"
+        ? "main"
+        : null;
+  if (mode) {
+    children.push(
+      createElement("script", {
+        key: "mode-fallback",
+        dangerouslySetInnerHTML: {
+          __html: `(${installModeFallback.toString()})(${JSON.stringify(mode)});`,
+        },
+      }),
+    );
+    children.push(
+      createElement(
+        "noscript",
+        { key: "no-js-fallback" },
+        createElement("meta", {
+          httpEquiv: "refresh",
+          content: "0;url=/simple/",
+        }),
+      ),
+    );
+  }
 
   for (const href of fontHrefs()) {
     children.push(
@@ -188,7 +217,7 @@ export function createStaticRenderer(options: DocumentOptions): Renderer {
     const tree = createElement(
       "html",
       { lang: options.lang, suppressHydrationWarning: true },
-      head(metadata, options, clientEntry),
+      head(metadata, options, clientEntry, context.route.id),
       createElement(
         "body",
         { suppressHydrationWarning: true },

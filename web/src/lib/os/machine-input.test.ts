@@ -32,3 +32,11 @@ test("a startup failure stays visible even after skipping the loading screen", (
   expect(coverVisible({ skipped: false, stage: "failed" })).toBe(true);
   expect(coverVisible({ skipped: true, stage: "failed" })).toBe(true);
 });
+
+test("touch follows the contained framebuffer after viewport resize", () => {
+  // A landscape framebuffer centered in a portrait viewport.
+  expect(cssToGuest(100, 150, 200, 400, 800, 400)).toEqual({ x: 400, y: 0 });
+  expect(cssToGuest(100, 250, 200, 400, 800, 400)).toEqual({ x: 400, y: 400 });
+  expect(cssToGuest(100, 200, 200, 400, 800, 400)).toEqual({ x: 400, y: 200 });
+  expect(cssToGuest(10, 200, 400, 400, 200, 400)).toEqual({ x: 0, y: 200 });
+});

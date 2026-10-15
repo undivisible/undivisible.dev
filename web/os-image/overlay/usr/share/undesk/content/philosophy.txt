@@ -19,6 +19,6 @@
     [96mGiacomo Leopardi[0m  [90m-- Canti[0m
 
 
-  [90m????? ??? -- investigate things, extend knowledge[0m
+  [90minvestigate things, extend knowledge[0m
 
   [90m  arrow keys scroll  |  q to close[0m

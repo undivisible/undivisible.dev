@@ -20,6 +20,7 @@ export function offlineHtml(html: string): string {
         const routes: Record<string, string> = {
           "/": "/index.html",
           "/simple/": "/simple/index.html",
+          "/main/": "/index.html",
           "/agent": "/agent.html",
           "/agent/": "/agent.html",
           "/lab/": "/lab/index.html",
@@ -49,7 +50,10 @@ export async function prepareOfflineWeb(
 ): Promise<void> {
   await mkdir(destination, { recursive: true });
   for (const name of ["index.html", "agent.html", "simple/index.html"]) {
-    const html = await readFile(join(source, name), "utf8");
+    const html = await readFile(
+      join(source, name === "index.html" ? "simple/index.html" : name),
+      "utf8",
+    );
     const target = join(destination, name);
     await mkdir(join(target, ".."), { recursive: true });
     await writeFile(target, offlineHtml(html));

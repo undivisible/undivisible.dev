@@ -7,9 +7,9 @@
 export const IDENTITY = {
   name: "max carter",
   hanzi: "祁明思",
-  role: "founding engineer",
-  org: "based hardware",
-  product: "omi",
+  role: "software engineer",
+  org: "chert",
+  product: "facetime",
 } as const;
 
 /**
@@ -103,7 +103,7 @@ export const OMI = {
   meta: "based hardware · open source",
   body: "A wearable that listens to your day and a system that remembers it — conversations transcribed, turned into memories and action items, and answerable later. Open source, with apps on iOS, Android, macOS and Windows.",
   /** What of it is mine. */
-  mine: "i'm a founding engineer on it: the platform underneath — backend, llm gateway, knowledge graph, device sdks — and the product on top, including the desktop apps. not the firmware.",
+  mine: "i worked on omi from july to october 2026, across desktop apps, backend, device sdks, security and infrastructure.",
   link: "https://github.com/BasedHardware/omi",
   linkLabel: "github.com/BasedHardware/omi",
 } as const;
@@ -182,7 +182,7 @@ export type Stop = {
 
 /** In order flown, not alphabetised. */
 export const STOPS_THIS_YEAR: Stop[] = [
-  { code: "HKG", city: "hong kong", note: "march. family. ???" },
+  { code: "HKG", city: "hong kong", note: "march. family" },
   { code: "HND", city: "tokyo haneda", note: "april" },
   { code: "HKG", city: "hong kong", note: "back again" },
   { code: "MEL", city: "melbourne", note: "july. where i'm from" },
@@ -191,7 +191,7 @@ export const STOPS_THIS_YEAR: Stop[] = [
   { code: "BAH", city: "bahrain", note: "" },
   { code: "SIN", city: "singapore", note: "" },
   { code: "KUL", city: "kuala lumpur", note: "" },
-  { code: "HKG", city: "hong kong", note: "here now" },
+  { code: "HKG", city: "hong kong", note: "" },
   {
     code: "PVG",
     city: "shanghai",
@@ -210,7 +210,7 @@ export const STOPS_THIS_YEAR: Stop[] = [
   {
     code: "CKG",
     city: "chongqing",
-    note: "flew mom out so she could spend time with me here. she asked about the machine; i showed her the sky.",
+    note: "visited with my mom",
     next: true,
   },
   {
@@ -313,7 +313,7 @@ export const MILESTONES: Milestone[] = [
   },
   {
     age: "17",
-    title: "left school, seven countries, a job paying 100k+",
+    title: "left school, worked and travelled",
     detail:
       "hong kong, china, malaysia, singapore, bahrain, the united states and japan in twelve months, working the whole way through. founded tsc.hk, and the arkie company — which i closed after leaving school. tsc.hk stayed open.",
   },
@@ -335,7 +335,7 @@ export const LAB_LINKS = [
   },
   {
     name: "twitter",
-    href: "https://twitter.com/makethings4ppl",
+    href: "https://x.com/makethings4ppl",
     handle: "makethings4ppl",
   },
   {

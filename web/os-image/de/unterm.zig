@@ -6,8 +6,7 @@ const wire = @import("wire.zig");
 
 // A terminal in a window: bash on a unix98 pty, a small vt parser, the
 // grid drawn into a shared-memory surface. The compositor forwards raw
-// tty bytes as AW_IN_KEY, so ctrl-c and friends arrive for free. This is
-// the windowed alternative to `sh`, which hands over the whole screen.
+// tty bytes as AW_IN_KEY. Both `sh` and `term` launch this shell.
 
 const CELL_W: i32 = 8;
 const CELL_H: i32 = 16;
@@ -121,7 +120,7 @@ fn feed(ch: u8) void {
         },
         2 => {
             if (ch >= '0' and ch <= '9') {
-                params[nparam] = params[nparam] * 10 + @as(i32, ch - '0');
+                params[nparam] = params[nparam] *| 10 +| @as(i32, ch - '0');
                 return;
             }
             if (ch == ';') {
@@ -228,7 +227,7 @@ fn redraw(c: *awidget.AwClient) void {
     }
     if (voff > 0) {
         // scrolled back: no cursor, a marker instead
-        _ = draw.text(&c.buf, c.buf.w - 120, 6, "scrollback", 0x7ec8e8, 1);
+        _ = draw.text(&c.buf, c.buf.w - 120, 6, "scrollback", 0xff5705, 1);
     } else {
         // block cursor
         draw.blend(&c.buf, 12 + @as(i32, @intCast(cx)) * CELL_W, 28 + @as(i32, @intCast(cy)) * CELL_H, CELL_W, CELL_H, 0xffffff, 110);
@@ -240,8 +239,8 @@ fn redraw(c: *awidget.AwClient) void {
 }
 
 fn gridSize(c: *const awidget.AwClient) void {
-    cols = @min(@as(usize, @intCast(@divTrunc(c.buf.w - 24, CELL_W))), MAXC);
-    rows = @min(@as(usize, @intCast(@divTrunc(c.buf.h - 40, CELL_H))), MAXR);
+    cols = @intCast(@min(@max(@divTrunc(c.buf.w - 24, CELL_W), 1), MAXC));
+    rows = @intCast(@min(@max(@divTrunc(c.buf.h - 40, CELL_H), 1), MAXR));
     if (cy >= rows) cy = rows - 1;
     if (cx >= cols) cx = cols - 1;
 }
@@ -261,16 +260,22 @@ pub fn main() void {
     const ptm_raw = linux.open("/dev/ptmx", .{ .ACCMODE = .RDWR, .NOCTTY = true }, 0);
     if (linux.errno(ptm_raw) != .SUCCESS) linux.exit(1);
     const ptm: i32 = @intCast(ptm_raw);
+    var master_open = true;
+    defer if (master_open) {
+        _ = linux.close(ptm);
+    };
     var zero: i32 = 0;
-    _ = linux.ioctl(ptm, TIOCSPTLCK, @intFromPtr(&zero));
+    if (linux.errno(linux.ioctl(ptm, TIOCSPTLCK, @intFromPtr(&zero))) != .SUCCESS) return;
     var ptn: i32 = 0;
-    _ = linux.ioctl(ptm, TIOCGPTN, @intFromPtr(&ptn));
+    if (linux.errno(linux.ioctl(ptm, TIOCGPTN, @intFromPtr(&ptn))) != .SUCCESS) return;
     var spath: [32]u8 = std.mem.zeroes([32]u8);
     _ = std.fmt.bufPrint(&spath, "/dev/pts/{d}", .{ptn}) catch linux.exit(1);
     setWinsize(ptm);
 
     const pid = linux.fork();
+    if (linux.errno(pid) != .SUCCESS) return;
     if (pid == 0) {
+        _ = linux.close(c.fd);
         _ = linux.close(ptm);
         _ = linux.setsid();
         const pts_raw = linux.open(@ptrCast(&spath), .{ .ACCMODE = .RDWR }, 0);
@@ -287,6 +292,16 @@ pub fn main() void {
         linux.exit(127);
     }
 
+    defer {
+        // Closing the master hangs up foreground jobs; stop and reap the shell too.
+        _ = linux.close(ptm);
+        master_open = false;
+        _ = linux.kill(-@as(i32, @intCast(pid)), .HUP);
+        _ = linux.kill(@intCast(pid), .KILL);
+        var status: u32 = 0;
+        _ = linux.waitpid(@intCast(pid), &status, 0);
+    }
+
     redraw(&c);
 
     while (true) {
@@ -295,23 +310,25 @@ pub fn main() void {
             .{ .fd = ptm, .events = linux.POLL.IN, .revents = 0 },
         };
         const pn = linux.poll(&fds, 2, 1000);
-        if (linux.errno(pn) != .SUCCESS) linux.exit(0);
+        if (linux.errno(pn) == .INTR) continue;
+        if (linux.errno(pn) != .SUCCESS) return;
+        if (fds[0].revents & (linux.POLL.HUP | linux.POLL.ERR | linux.POLL.NVAL) != 0) return;
 
         if (fds[1].revents & (linux.POLL.IN) != 0) {
             var buf: [2048]u8 = undefined;
             const n = linux.read(ptm, &buf, buf.len);
-            if (linux.errno(n) != .SUCCESS or n == 0) linux.exit(0);
+            if (linux.errno(n) != .SUCCESS or n == 0) return;
             for (buf[0..n]) |ch| feed(ch);
             redraw(&c);
         } else if (fds[1].revents & (linux.POLL.HUP | linux.POLL.ERR) != 0) {
-            linux.exit(0);
+            return;
         }
 
         if (fds[0].revents & linux.POLL.IN != 0) {
             var in: wire.AwMsg = undefined;
-            if (!awidget.recv(c.fd, &in)) linux.exit(0);
+            if (!awidget.recv(c.fd, &in)) return;
             if (in.type == wire.AW_SURFACE) {
-                if (!awidget.remap(&c, &in)) linux.exit(0);
+                if (!awidget.remap(&c, &in)) return;
                 gridSize(&c);
                 setWinsize(ptm);
                 redraw(&c);
@@ -343,8 +360,30 @@ pub fn main() void {
                     _ = linux.write(ptm, &b, 1);
                 }
             } else if (in.type == wire.AW_INPUT and in.a == wire.AW_IN_PRESS) {
-                if (in.b > c.buf.w - 30 and in.c < 24) linux.exit(0);
+                if (in.b > c.buf.w - 30 and in.c < 24) return;
             }
         }
     }
+}
+
+test "shell output survives control sequences, wrapping and narrow resize" {
+    var c: awidget.AwClient = undefined;
+    c.buf.w = 720;
+    c.buf.h = 440;
+    gridSize(&c);
+    clearAll();
+    st = 0;
+    for ("hello\r\n\x1b[31mworld\x1b[0m") |ch| feed(ch);
+    try std.testing.expectEqualStrings("hello", grid[0][0..5]);
+    try std.testing.expectEqualStrings("world", grid[1][0..5]);
+    try std.testing.expectEqual(ansiColor(31), gcol[1][0]);
+    for ("\x1b[999999999999999999999999999999C") |ch| feed(ch);
+    try std.testing.expectEqual(cols - 1, cx);
+    c.buf.w = 1;
+    c.buf.h = 1;
+    gridSize(&c);
+    try std.testing.expectEqual(@as(usize, 1), rows);
+    try std.testing.expectEqual(@as(usize, 1), cols);
+    for ("ab\r\nc") |ch| feed(ch);
+    try std.testing.expectEqual(@as(u8, 'c'), grid[0][0]);
 }

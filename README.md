@@ -6,7 +6,7 @@ Profile sources live on [`undivisible/undivisible`](https://github.com/undivisib
 | ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | [`README.md`](https://github.com/undivisible/undivisible/blob/main/README.md) | Historical project list; current portfolio copy is reviewed in this repo’s `projects.md`.                                    |
 | [`now.md`](https://github.com/undivisible/undivisible/blob/main/now.md)       | **Now status** (short line; optional `---` + article). Clock overlay and `public/now.md` snapshot only—not the project list. |
-| [`resume.md`](https://github.com/undivisible/undivisible/blob/main/resume.md) | Authoritative CV source, fetched at build time.                                                                 |
+| [`resume.md`](https://github.com/undivisible/undivisible/blob/main/resume.md) | Authoritative CV source, fetched at build time.                                                                              |
 
 Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MARKDOWN_URL` when syncing locally.
 
@@ -22,14 +22,14 @@ Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MA
   - `9/` - Next.js 16 source snapshot only (`src/`, `app/`, configs); no `public/` bundle
   - `9.1/` - the moonshine site as it shipped before the machine redesign —
     still buildable (workspace member `@workspace/undivisible-9-1`) and
-    **live on [undivisible.dev](https://undivisible.dev)**
+    retained as the previous production version
 - `web/os-image/` - the `/lab` machine: **undesk** (`de/`, Zig — my framebuffer compositor, not tschk/alpenglowed) and the initramfs overlay baked onto the real alpenglow v86 image
 
 ## Current routes
 
-`web/` opens the Alpenglow Linux desktop: `/` redirects to `/lab/` and boots automatically, matching the original machine flow. `/simple/` is the static profile fallback in the same dark terminal palette and monospace type. Simple version, résumé and Stop machine stay available during boot; Start machine restarts after Stop. Selected projects are curated in `web/src/data/profile.ts`. Employment details remain in the published résumé.
+`/` and `/lab/` boot the full-screen Alpenglow browser desktop. `/main/` is the regular portfolio, with OS and Simple mode links. The OS falls back to Main on startup errors or after 12 seconds; Main falls back to `/simple/` on startup errors or after 5 seconds without hydration. JavaScript-disabled browsers go directly to Simple. Stop cancels automatic fallback until the machine is restarted. Both `sh` and `term` open a windowed PTY shell. Simple uses zinc surfaces, monospace type and the `#ff5705` accent. Selected project copy is curated in `web/src/data/profile.ts`; employment details come from the published résumé.
 
-The offline image includes both profile pages, their styles and the published résumé. Guest-local navigation uses `file://` URLs.
+The offline image uses the static profile for Home and Simple, with their styles and the published résumé. Guest-local navigation uses `file://` URLs.
 
 ## Historical Next.js to moonshine measurements
 
@@ -77,16 +77,16 @@ machine's internals.
 Both sites are Cloudflare Workers static-asset deploys (`bunx wrangler
 deploy`); GitHub Pages is retired and its workflow removed.
 
-| Site                                                 | Worker             | Config                   | Serves                                                  |
-| ---------------------------------------------------- | ------------------ | ------------------------ | ------------------------------------------------------- |
-| [undivisible.dev](https://undivisible.dev)           | `undivisible`      | `old/9.1/wrangler.jsonc` | v9.1, the pre-machine design (zone route over the apex) |
-| [next.undivisible.dev](https://next.undivisible.dev) | `undivisible-next` | `web/wrangler.jsonc`     | v10, the machine redesign (custom domain)               |
+| Site                                                 | Worker             | Config                          | Serves                                             |
+| ---------------------------------------------------- | ------------------ | ------------------------------- | -------------------------------------------------- |
+| [undivisible.dev](https://undivisible.dev)           | `undivisible`      | `web/wrangler.production.jsonc` | current three-mode site (zone route over the apex) |
+| [next.undivisible.dev](https://next.undivisible.dev) | `undivisible-next` | `web/wrangler.jsonc`            | v10, the machine redesign (custom domain)          |
 
 The v86 kernel/initrd revalidate on every load (`max-age=0, must-revalidate`
 via `web/public/_headers`); the wasm/BIOS assets are immutable.
 
 `/agent` ships no JavaScript because nothing on it is interactive; under
-Next.js it still received the framework runtime. The current main and simple profile routes also ship no JavaScript; `/lab/` hydrates its emulator controls.
+Next.js it still received the framework runtime. The main portfolio hydrates its interactive effects and project controls; the simple profile ships no JavaScript. `/lab/` hydrates its emulator controls.
 
 Only four of the 60 source files imported from Next (`next/link` ×2,
 `next/font/google`, `next/dynamic`); the rest is plain React, which moonshine

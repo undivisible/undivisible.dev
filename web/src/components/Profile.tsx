@@ -7,14 +7,14 @@ export function Profile({ simple = false }: { simple?: boolean }) {
         Skip to content
       </a>
       <header className="profile-header">
-        <a className="profile-wordmark" href="/">
+        <a className="profile-wordmark" href="/main/">
           undivisible<span aria-hidden="true">.</span>
         </a>
         <nav aria-label="Main navigation">
-          <a href={simple ? "/" : "/simple/"}>
-            {simple ? "Main version" : "Simple version"}
+          <a href={simple ? "/main/" : "/simple/"}>
+            {simple ? "Main" : "Simple"}
           </a>
-          <a href="/lab/">Lab</a>
+          <a href="/lab/">OS</a>
           <a href="/resume.md">Résumé</a>
         </nav>
       </header>
@@ -73,7 +73,7 @@ export function Profile({ simple = false }: { simple?: boolean }) {
         <aside className="profile-lab" aria-labelledby="lab-heading">
           <div>
             <h2 id="lab-heading">Linux desktop</h2>
-            <p>The main version runs Alpenglow Linux in your browser.</p>
+            <p>Run Alpenglow Linux in your browser.</p>
           </div>
           <a href="/lab/">
             Open Linux <span aria-hidden="true">→</span>

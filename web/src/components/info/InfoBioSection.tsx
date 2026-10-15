@@ -7,7 +7,12 @@ import { lifeTimeline } from "@/data/life-timeline";
 import { contactHref } from "@/data/resume-document";
 import type { ResumeDocument } from "@/lib/parse-resume-markdown";
 import { RandomizedText } from "@/components/randomized-text";
-import { REVEAL_EASE, introText, transport, transportColors } from "@/components/info/constants";
+import {
+  REVEAL_EASE,
+  introText,
+  transport,
+  transportColors,
+} from "@/components/info/constants";
 
 export function InfoBioSection({
   resumeDocLive,
@@ -359,10 +364,6 @@ export function InfoBioSection({
                 })}
             </dl>
           </motion.div>
-
-          <p className="pt-2 text-[10px] tracking-[0.12em] text-white/30 font-mono">
-            built with crepuscularity + moonshine
-          </p>
         </div>
       </div>
     </section>

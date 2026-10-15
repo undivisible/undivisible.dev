@@ -421,8 +421,9 @@ class VmManager {
    *  phone can move the machine's cursor. */
   touchDelta(dxCss: number, dyCss: number, rectW: number, rectH: number): void {
     if (rectW <= 0 || rectH <= 0) return;
-    const dx = Math.round((dxCss * this.guestW) / rectW);
-    const dy = Math.round((dyCss * this.guestH) / rectH);
+    const scale = Math.min(rectW / this.guestW, rectH / this.guestH);
+    const dx = Math.round(dxCss / scale);
+    const dy = Math.round(dyCss / scale);
     if (dx === 0 && dy === 0) return;
     this.sendGuestDelta(dx, dy);
   }

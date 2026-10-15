@@ -1,3 +1,4 @@
+import { projects } from "@/data/profile";
 import type { ReadmeBundle } from "@/lib/profile-readme";
 
 export const pillarKeys = [
@@ -13,7 +14,6 @@ type PillarTemplate = {
   eyebrow: string;
   displayName: string;
   tagline: string;
-  narrative: string;
   stat: string;
   hrefFallback: string;
 };
@@ -22,27 +22,21 @@ const templates: Record<PillarKey, PillarTemplate> = {
   crepuscularity: {
     eyebrow: "Application platform",
     displayName: "Crepuscularity",
-    tagline: "One surface model. Every target.",
-    narrative:
-      "A framework for shipping real interfaces across desktop, mobile, terminal, extension, and web from a single React and Tailwind codebase — with GPUI, SwiftUI, Jetpack Compose, Ratatui, and the open web as first-class targets.",
+    tagline: "Desktop, web and terminal interfaces.",
     stat: "Multi-surface",
     hrefFallback: "https://crepuscularity.tsc.hk",
   },
   space: {
     eyebrow: "Operating system",
     displayName: "Space",
-    tagline: "Component-based nanokernel. .in native language.",
-    narrative:
-      "A component-based operating system built on a five-layer architecture: .in native language, Inauguration compiler, SCI component image format, Space runtime, and nanokernel enforcement. No POSIX in the kernel — Linux, Darwin, and Windows are microservices.",
+    tagline: "An experimental component-based OS.",
     stat: "Boots",
     hrefFallback: "https://github.com/tschk/space",
   },
   inauguration: {
     eyebrow: "Compiler platform",
     displayName: "Inauguration",
-    tagline: "Multi-frontend, Core IR, hot paths.",
-    narrative:
-      "An experimental compiler and runtime stack aimed at Core IR, SIL-level reasoning, and ultrafast incremental workflows — where frontends are swappable but the pipeline stays ruthless about throughput.",
+    tagline: "Multiple languages, one intermediate representation.",
     stat: "Research",
     hrefFallback: "https://github.com/tschk/inauguration",
   },
@@ -50,8 +44,6 @@ const templates: Record<PillarKey, PillarTemplate> = {
     eyebrow: "Linux distribution",
     displayName: "Alpenglow",
     tagline: "Diskless, immutable Linux.",
-    narrative:
-      "A diskless musl Linux distribution with an immutable erofs or squashfs root, dinit and Oil packages. Testing releases for several architectures.",
     stat: "Diskless",
     hrefFallback: "https://github.com/tschk/alpenglow",
   },
@@ -78,7 +70,9 @@ export function resolvePillars(readme: ReadmeBundle): PillarResolved[] {
     const t = templates[key];
     const row = findInReadme(readme, key);
     const href = row?.href && row.href !== "#" ? row.href : t.hrefFallback;
-    const narrative = row?.desc ?? t.narrative;
+    const narrative =
+      projects.find((project) => project.name.toLowerCase() === key)
+        ?.description ?? "";
     return {
       key,
       href,

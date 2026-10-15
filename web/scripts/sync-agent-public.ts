@@ -75,7 +75,7 @@ Best first request for full context: \`curl -sL ${SITE}/llms-full.txt\`
 ## Not available here
 
 - No \`Accept: text/markdown\` on HTML routes (unlike Cloudflare markdown for agents on dynamic hosts).
-- \`${SITE}/\` opens the primary Linux desktop at \`${SITE}/lab/\`, which boots automatically. The profile at \`${SITE}/simple/\` is static HTML and works without JavaScript.
+- \`${SITE}/\` boots the Linux desktop, also available at \`${SITE}/lab/\` boots automatically. The portfolio is at \`${SITE}/main/\`. The profile at \`${SITE}/simple/\` is static HTML and works without JavaScript.
 
 ## Humans
 
