@@ -2272,6 +2272,7 @@ a[data-tip] {
   padding: 48px 0;
 }
 .profile-simple .profile-intro h1 {
+  color: var(--album-heading, var(--album-text));
   font-size: clamp(26px, 5vw, 32px);
   letter-spacing: -0.04em;
 }
@@ -2292,6 +2293,7 @@ a[data-tip] {
   margin-bottom: 24px;
 }
 .profile-simple .profile-projects h3 {
+  color: var(--album-secondary);
   font-size: 14px;
 }
 .profile-simple .profile-projects li > p:last-child {
@@ -2328,6 +2330,7 @@ a[data-tip] {
 }
 .profile-simple .profile-section-heading h2,
 .profile-simple .profile-lab h2 {
+  color: var(--album-tertiary, var(--album-secondary));
   font-size: 16px;
   letter-spacing: 0;
 }
@@ -2340,6 +2343,23 @@ a[data-tip] {
 }
 .profile-simple :focus-visible {
   outline-color: var(--album-accent);
+}
+.profile-simple .profile-projects h3 a {
+  color: var(--album-secondary);
+}
+.profile-simple .profile-header nav a,
+.profile-simple .profile-lab > a {
+  color: var(--album-tertiary, var(--album-accent));
+}
+.profile-simple .profile-intro h1 span,
+.profile-simple .profile-section-heading > p {
+  color: var(--album-label, var(--album-muted));
+}
+.profile-simple .profile-projects a:hover,
+.profile-simple .profile-header nav a:hover,
+.profile-simple .profile-lab > a:hover {
+  color: var(--album-text);
+  text-decoration: underline;
 }
 .site-mode-navigation {
   position: fixed;
@@ -4269,4 +4289,106 @@ a[data-tip] {
   .personal-page .personal-intro {
     max-width: none;
   }
+}
+/* Wait for the intended face and first character frame, without a font swap. */
+.personal-page:not(.site-fonts-ready) {
+  visibility: hidden;
+}
+.personal-font-loader {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  background: #080808;
+  z-index: 100;
+  pointer-events: none;
+}
+.personal-font-loader i {
+  width: 4px;
+  height: 20px;
+  background: #ff5705;
+  animation: type-wait 900ms ease-in-out infinite alternate;
+}
+.personal-font-loader i:nth-child(2) {
+  animation-delay: 150ms;
+}
+.personal-font-loader i:nth-child(3) {
+  animation-delay: 300ms;
+}
+.personal-font-loader i:nth-child(4) {
+  animation-delay: 450ms;
+}
+@keyframes type-wait {
+  to {
+    transform: scaleY(0.3);
+    opacity: 0.4;
+  }
+}
+body:has(.personal-page.unicode-content-ready) .personal-font-loader {
+  display: none;
+}
+.personal-header-tools {
+  display: grid;
+  justify-items: end;
+  gap: 16px;
+}
+.personal-masthead {
+  align-items: flex-start;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+.personal-clock {
+  max-width: 340px;
+}
+.personal-clock-reset {
+  margin-top: 10px;
+  cursor: pointer;
+}
+.personal-now {
+  min-height: 60vh;
+}
+.personal-now-article {
+  max-width: 70ch;
+  font:
+    14px/1.7 var(--font-jetbrains-mono),
+    monospace;
+  white-space: pre-wrap;
+  padding-block: 30px;
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .personal-page.site-fonts-ready.character-field-enabled:not(
+      .unicode-content-ready
+    ) {
+    visibility: hidden;
+  }
+}
+@media (max-width: 1023px), (prefers-reduced-motion: reduce) {
+  body:has(.personal-page.site-fonts-ready) .personal-font-loader {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .personal-font-loader i {
+    animation: none;
+  }
+}
+@media (max-width: 650px) {
+  .personal-masthead {
+    flex-wrap: wrap;
+  }
+  .personal-header-tools {
+    width: 100%;
+    justify-items: start;
+  }
+  .personal-clock {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
+  .personal-font-loader {
+  display: none;
 }

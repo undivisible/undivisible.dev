@@ -69,3 +69,44 @@ describe("cover color diversity", () => {
     ).toBeNull();
   });
 });
+
+describe("semantic cover roles", () => {
+  test("uses the extra swatches for distinct readable supporting roles", () => {
+    const warm = ["#ff3300", "#dd5522", "#aa4422", "#773311", "#442211"];
+    const palette = deriveAlbumPalette([
+      ...warm,
+      "#00ccff",
+      "#55dd22",
+      "#eeeecc",
+    ])!;
+    const limited = deriveAlbumPalette(warm)!;
+    expect(palette.secondary).not.toBe(limited.secondary);
+    expect(palette.secondary).not.toBe(palette.tertiary);
+    for (const role of [
+      "accent",
+      "secondary",
+      "tertiary",
+      "heading",
+      "label",
+    ] as const)
+      expect(
+        contrastRatio(palette[role], palette.surface),
+      ).toBeGreaterThanOrEqual(4.5);
+  });
+  test("keeps every semantic role readable for black, white and muted covers", () => {
+    for (const color of ["#000000", "#ffffff", "#444444", "#312c20"])
+      for (const role of [
+        "secondary",
+        "tertiary",
+        "heading",
+        "label",
+      ] as const) {
+        const palette = deriveAlbumPalette(Array(8).fill(color))!;
+        expect(
+          contrastRatio(palette[role], palette.surface),
+        ).toBeGreaterThanOrEqual(4.5);
+      }
+    expect(deriveAlbumPalette(Array(7).fill("#ff5705"))).toBeNull();
+    expect(deriveAlbumPalette([...Array(7).fill("#ff5705"), "red"])).toBeNull();
+  });
+});

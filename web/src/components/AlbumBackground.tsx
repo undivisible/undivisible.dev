@@ -3,19 +3,23 @@
 import { useEffect, useState } from "react";
 import Ascii from "@/components/Ascii";
 import { Light } from "@/components/Light";
-import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
-import { useSiteVisualEffects } from "@/hooks/use-site-visual-effects";
+import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
 
 const DEFAULT_COLORS = ["#ffffff", "#cccccc", "#999999", "#666666", "#333333"];
 
-export function AlbumBackground() {
-  const day = useHongKongDayTheme();
-  const visualEffects = useSiteVisualEffects();
+export function AlbumBackground({
+  dayTheme: day,
+  fontsReady,
+  visualEffects,
+}: {
+  dayTheme: HongKongDayTheme;
+  fontsReady: boolean;
+  visualEffects: boolean;
+}) {
   const animateWeather =
     visualEffects ||
     day.shader.weatherKind === "rain" ||
     day.shader.weatherKind === "storm";
-  const [ready, setReady] = useState(false);
   const [colors, setColors] = useState<string[]>(DEFAULT_COLORS);
 
   useEffect(() => {
@@ -26,14 +30,11 @@ export function AlbumBackground() {
         next.every((color) => /^#[0-9a-f]{6}$/i.test(color))
       ) {
         setColors(next);
-        setReady(true);
       }
     };
-    const fallback = window.setTimeout(() => setReady(true), 10000);
     read();
     window.addEventListener("site:album-palette", read);
     return () => {
-      window.clearTimeout(fallback);
       window.removeEventListener("site:album-palette", read);
     };
   }, []);
@@ -47,7 +48,7 @@ export function AlbumBackground() {
       />
       <div className="album-ascii">
         {visualEffects ? (
-          <Ascii colors={colors} track={null} ready={ready} />
+          <Ascii colors={colors} track={null} ready={fontsReady} />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-b from-black/[0.58] via-black/[0.5] to-black/[0.62]" />
         )}

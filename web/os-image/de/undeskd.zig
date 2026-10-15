@@ -1015,7 +1015,7 @@ pub fn main() void {
                                 resizing = hit;
                                 drag_dx = s.x + s.w - mx;
                                 drag_dy = s.y + s.h - my;
-                            } else if (my < s.y + 20) {
+                            } else if (my < s.y + 20 and !(s.resizable and wire.closeHit(s.w, mx - s.x, my - s.y))) {
                                 dragging = hit;
                                 drag_dx = mx - s.x;
                                 drag_dy = my - s.y;

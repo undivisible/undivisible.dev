@@ -570,7 +570,10 @@ export default function Ascii({
           )
             continue;
           const style = getComputedStyle(parent);
+          if (style.opacity === "0" && !parent.closest(".now-playing"))
+            continue;
           const range = document.createRange();
+          let previousCell: { col: number; row: number } | undefined;
           const large = parseFloat(style.fontSize) > 30;
           ink.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
           for (let index = 0; index < node.textContent.length; index++) {
@@ -588,7 +591,9 @@ export default function Ascii({
                 rect.y + rect.height / 2,
                 cellWidth,
                 cellHeight,
+                previousCell,
               );
+              previousCell = point;
               if (point.row >= 0 && point.row < rows) {
                 const key = `${point.col},${point.row}`;
                 contentGlyphs.set(key, char);

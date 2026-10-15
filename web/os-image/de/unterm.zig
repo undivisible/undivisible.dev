@@ -360,7 +360,7 @@ pub fn main() void {
                     _ = linux.write(ptm, &b, 1);
                 }
             } else if (in.type == wire.AW_INPUT and in.a == wire.AW_IN_PRESS) {
-                if (in.b > c.buf.w - 30 and in.c < 24) return;
+                if (wire.closeHit(c.buf.w, in.b, in.c)) return;
             }
         }
     }

@@ -4,6 +4,12 @@ export function contentCell(
   y: number,
   cellWidth: number,
   cellHeight: number,
+  previous?: { col: number; row: number },
 ) {
-  return { col: Math.floor(x / cellWidth), row: Math.floor(y / cellHeight) };
+  const row = Math.floor(y / cellHeight);
+  const col = Math.floor(x / cellWidth);
+  return {
+    col: previous?.row === row ? Math.max(col, previous.col + 1) : col,
+    row,
+  };
 }

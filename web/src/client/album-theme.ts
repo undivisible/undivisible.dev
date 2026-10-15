@@ -46,8 +46,8 @@ async function refresh() {
     if (!(await loaded)) return;
     const artworkColors = extractColorsFromCanvasImage(image, 8);
     const colors = artworkColors?.slice(0, 5);
-    const palette = colors && deriveAlbumPalette(colors);
-    if (!palette) return;
+    const palette = artworkColors && deriveAlbumPalette(artworkColors);
+    if (!palette || !colors) return;
     for (const [name, value] of Object.entries(palette)) {
       const property = name.replace(
         /[A-Z]/g,

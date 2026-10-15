@@ -7,6 +7,9 @@ export type AlbumPalette = {
   accent: string;
   onAccent: string;
   secondary: string;
+  tertiary: string;
+  heading: string;
+  label: string;
 };
 
 const HEX = /^#[0-9a-f]{6}$/i;
@@ -30,13 +33,14 @@ export function contrastRatio(a: string, b: string): number {
 }
 
 export function deriveAlbumPalette(colors: string[]): AlbumPalette | null {
-  if (colors.length !== 5 || !colors.every((color) => HEX.test(color)))
+  if (
+    (colors.length !== 5 && colors.length !== 8) ||
+    !colors.every((color) => HEX.test(color))
+  )
     return null;
-  const saturated = [...colors].sort((a, b) => {
-    const saturation = (color: string) =>
-      Math.max(...rgb(color)) - Math.min(...rgb(color));
-    return saturation(b) - saturation(a);
-  });
+  const chroma = (color: string) =>
+    Math.max(...rgb(color)) - Math.min(...rgb(color));
+  const saturated = [...colors].sort((a, b) => chroma(b) - chroma(a));
   const base = saturated[0]!;
   const background = mix(base, "#000000", 0.94);
   const surface = mix(base, "#000000", 0.86);
@@ -47,6 +51,23 @@ export function deriveAlbumPalette(colors: string[]): AlbumPalette | null {
     return value;
   };
   const accent = readable(base);
+  // Spread supporting roles across the cover instead of repeating its dominant hue.
+  const distance = (a: string, b: string) =>
+    rgb(a).reduce((sum, channel, i) => sum + (channel - rgb(b)[i]!) ** 2, 0);
+  const secondarySource = [...colors].sort(
+    (a, b) => distance(b, base) * chroma(b) - distance(a, base) * chroma(a),
+  )[0]!;
+  const tertiarySource = [...colors].sort((a, b) => {
+    const score = (color: string) =>
+      Math.min(distance(color, base), distance(color, secondarySource)) *
+      chroma(color);
+    return score(b) - score(a);
+  })[0]!;
+  const lightest = [...colors].sort(
+    (a, b) => contrastRatio(b, "#000000") - contrastRatio(a, "#000000"),
+  )[0]!;
+  const secondary = readable(secondarySource);
+  const tertiary = readable(tertiarySource);
   return {
     background,
     surface,
@@ -58,7 +79,10 @@ export function deriveAlbumPalette(colors: string[]): AlbumPalette | null {
       contrastRatio(accent, "#000000") >= contrastRatio(accent, "#ffffff")
         ? "#000000"
         : "#ffffff",
-    secondary: readable(saturated[1]!),
+    secondary,
+    tertiary,
+    heading: readable(mix(lightest, "#ffffff", 0.5)),
+    label: readable(mix(tertiary, "#ffffff", 0.3)),
   };
 }
 
