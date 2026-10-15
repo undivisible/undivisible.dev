@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { contentCell } from "./ascii-content";
 import type { TrackInfo } from "@/lib/useLastFmVisualData";
 
 type ShapeType = "circle" | "triangle" | "square";
@@ -388,6 +389,42 @@ export default function Ascii({
     });
     if (!ctx || !frameCtx || !sampleCtx) return;
 
+    const page = container.closest(".personal-page");
+    const inkCanvas = document.createElement("canvas");
+    const ink = inkCanvas.getContext("2d", { willReadFrequently: true });
+    let contentDirty = true;
+    let contentColor = "#ffffff";
+    let activeColor = "#ff5705";
+    const activeCells = new Set<string>();
+    const musicCells = new Set<string>();
+    const invalidateContent = () => {
+      contentDirty = true;
+    };
+    const contentObserver = new MutationObserver(invalidateContent);
+    const contentResize = new ResizeObserver(invalidateContent);
+    if (page) {
+      contentObserver.observe(page, {
+        childList: true,
+        characterData: true,
+        subtree: true,
+      });
+      contentResize.observe(page);
+      for (const event of [
+        "pointerover",
+        "pointerout",
+        "focusin",
+        "focusout",
+        "transitionend",
+      ])
+        page.addEventListener(event, invalidateContent);
+    }
+    window.addEventListener("scroll", invalidateContent, { passive: true });
+    window.addEventListener("resize", invalidateContent);
+    window.addEventListener("site:album-palette", invalidateContent);
+    void document.fonts.ready.then(invalidateContent);
+    let contentGlyphs = new Map<string, string>();
+    let inkPixels: Uint8ClampedArray | undefined;
+
     const shapes: ShapeState[] = [
       {
         x: 140,
@@ -502,8 +539,74 @@ export default function Ascii({
 
       const cellDiv = width < 1024 ? 32 : 56;
       const cell = Math.max(8, Math.min(width, height) / cellDiv);
-      const cols = Math.max(1, Math.floor(width / (cell * 0.9)));
-      const rows = Math.max(1, Math.floor(height / cell));
+      const cols = Math.max(1, Math.floor(width / (page ? 8.4 : cell * 0.9)));
+      const rows = Math.max(1, Math.floor(height / (page ? 20 : cell)));
+      const cellWidth = width / cols;
+      const cellHeight = height / rows;
+      if (contentDirty && page && ink) {
+        contentDirty = false;
+        contentGlyphs = new Map();
+        activeCells.clear();
+        musicCells.clear();
+        activeColor =
+          getComputedStyle(page).getPropertyValue("--album-secondary").trim() ||
+          "#ff5705";
+        contentColor =
+          getComputedStyle(page).getPropertyValue("--album-text").trim() ||
+          "#ffffff";
+        inkCanvas.width = width;
+        inkCanvas.height = height;
+        ink.clearRect(0, 0, width, height);
+        ink.fillStyle = "white";
+        ink.textBaseline = "top";
+        const walker = document.createTreeWalker(page, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) {
+          const node = walker.currentNode;
+          const parent = node.parentElement;
+          if (
+            !node.textContent?.trim() ||
+            !parent?.closest("main, header, footer") ||
+            parent.closest("[aria-hidden=true]")
+          )
+            continue;
+          const style = getComputedStyle(parent);
+          const range = document.createRange();
+          const large = parseFloat(style.fontSize) > 30;
+          ink.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+          for (let index = 0; index < node.textContent.length; index++) {
+            let char = node.textContent[index];
+            if (style.textTransform === "uppercase") char = char.toUpperCase();
+            range.setStart(node, index);
+            range.setEnd(node, index + 1);
+            const rect = range.getBoundingClientRect();
+            if (!rect.width || rect.bottom < 0 || rect.top > height) continue;
+            if (large) {
+              ink.fillText(char, rect.x, rect.y);
+            } else {
+              const point = contentCell(
+                rect.x,
+                rect.y + rect.height / 2,
+                cellWidth,
+                cellHeight,
+              );
+              if (point.row >= 0 && point.row < rows) {
+                const key = `${point.col},${point.row}`;
+                contentGlyphs.set(key, char);
+                if (parent.closest(".now-playing")) musicCells.add(key);
+                if (
+                  parent.closest(
+                    "a:hover, button:hover, a:focus-visible, button:focus-visible",
+                  )
+                )
+                  activeCells.add(key);
+              }
+            }
+          }
+        }
+        inkPixels = ink.getImageData(0, 0, width, height).data;
+        asciiCanvas.dataset.contentCells = String(contentGlyphs.size);
+        page.classList.add("unicode-content-ready");
+      }
 
       if (sampleCanvas.width !== cols || sampleCanvas.height !== rows) {
         sampleCanvas.width = cols;
@@ -520,9 +623,12 @@ export default function Ascii({
       frameCtx.textBaseline = "middle";
       frameCtx.textAlign = "center";
       const monoFont = monoFontStackRef.current;
-      const font = `${Math.max(12, cell * 0.72)}px ${monoFont}, monospace`;
+      const font = `${page ? 14 : Math.max(12, cell * 0.72)}px ${monoFont}, monospace`;
       frameCtx.font = font;
       frameCtx.shadowColor = "transparent";
+
+      const music = page?.querySelector(".now-playing");
+      const musicOpacity = music ? Number(getComputedStyle(music).opacity) : 1;
 
       // Precompute cos/sin per shape — avoids 3× trig per cell per shape
       const shapeTrig = shapes.map((s) => ({
@@ -564,7 +670,28 @@ export default function Ascii({
           frameCtx.globalAlpha = insideAnyShape
             ? clamp(0.86 + brightness * 0.1, 0.78, 0.94)
             : clamp(0.52 + brightness * 0.4, 0.52, 0.94);
-          frameCtx.fillText(charSet[charIndex], x, y);
+          const contentChar = contentGlyphs.get(`${col},${row}`);
+          const inkIndex =
+            (Math.min(height - 1, Math.floor(y)) * width +
+              Math.min(width - 1, Math.floor(x))) *
+              4 +
+            3;
+          const titleInk = (inkPixels?.[inkIndex] ?? 0) > 80;
+          if (contentChar !== undefined || titleInk) {
+            frameCtx.fillStyle = activeCells.has(`${col},${row}`)
+              ? activeColor
+              : contentColor;
+            frameCtx.globalAlpha = musicCells.has(`${col},${row}`)
+              ? musicOpacity
+              : 1;
+          } else if (page) {
+            frameCtx.globalAlpha *= 0.35;
+          }
+          frameCtx.fillText(
+            contentChar ?? (titleInk ? "▓" : charSet[charIndex]),
+            x,
+            y,
+          );
         }
       }
 
@@ -582,6 +709,21 @@ export default function Ascii({
 
     return () => {
       detachResize();
+      if (page)
+        for (const event of [
+          "pointerover",
+          "pointerout",
+          "focusin",
+          "focusout",
+          "transitionend",
+        ])
+          page.removeEventListener(event, invalidateContent);
+      contentObserver.disconnect();
+      contentResize.disconnect();
+      window.removeEventListener("scroll", invalidateContent);
+      window.removeEventListener("resize", invalidateContent);
+      window.removeEventListener("site:album-palette", invalidateContent);
+      page?.classList.remove("unicode-content-ready");
       document.removeEventListener("visibilitychange", visibilityHandler);
       cancelAnimationFrame(frameRef.current);
     };

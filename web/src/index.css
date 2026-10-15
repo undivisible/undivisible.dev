@@ -4183,3 +4183,90 @@ a[data-tip] {
 .personal-page .personal-links :is(a, button) {
   box-shadow: none;
 }
+/* The DOM keeps selection, links and focus; the canvas paints their characters. */
+.personal-page main,
+.personal-page header,
+.personal-page footer {
+  font-family: var(--font-jetbrains-mono), monospace;
+}
+.personal-page .personal-bio,
+.personal-page .personal-project p,
+.personal-page .bento-life ul {
+  font-size: 14px;
+  line-height: 20px;
+}
+.personal-page.unicode-content-ready :is(main, header, footer),
+.personal-page.unicode-content-ready :is(main, header, footer) * {
+  color: transparent !important;
+  text-shadow: none;
+  -webkit-text-fill-color: transparent;
+  background-image: none;
+}
+.personal-page.unicode-content-ready ::selection {
+  background: var(--album-accent);
+  -webkit-text-fill-color: var(--album-on-accent);
+}
+@media (min-width: 1024px) {
+  .personal-page
+    :is(
+      .personal-kicker,
+      .bento-caption,
+      .bento-job span,
+      .bento-previous,
+      .personal-links a,
+      .personal-links button,
+      .project-kind,
+      .project-index,
+      .personal-section-title,
+      .now-playing-song,
+      .now-playing-artist,
+      .now-playing-status,
+      .personal-footer,
+      .site-mode-navigation a,
+      .site-mode-navigation button
+    ) {
+    font:
+      14px/20px var(--font-jetbrains-mono),
+      monospace;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .personal-page.unicode-content-ready .album-ascii canvas + div {
+    opacity: 0;
+  }
+}
+@media (min-width: 1024px) {
+  .personal-page
+    :is(
+      .personal-wordmark,
+      .personal-kicker span,
+      .bento-current h2,
+      .bento-life h2,
+      .now-playing-copy,
+      .now-playing-copy *,
+      .personal-footer *
+    ) {
+    font-family: var(--font-jetbrains-mono), monospace;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+  }
+}
+@media (min-width: 1024px) {
+  .personal-page main * {
+    font-family: var(--font-jetbrains-mono), monospace !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    letter-spacing: 0;
+  }
+  .personal-page #personal-name,
+  .personal-page #personal-name * {
+    font-family: Barlow, sans-serif !important;
+    font-size: clamp(72px, 12.8vw, 178px) !important;
+    font-weight: 700;
+    line-height: 1.08 !important;
+  }
+  .personal-page .personal-intro {
+    max-width: none;
+  }
+}
