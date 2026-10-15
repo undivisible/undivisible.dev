@@ -22,23 +22,23 @@ fn hkMin() i32 {
 
 fn skyStops(hour: i32, top: *u32, bot: *u32) void {
     if (hour >= 5 and hour < 8) {
-        top.* = 0x080b10;
-        bot.* = 0x1a2632;
+        top.* = 0x2a1e33;
+        bot.* = 0xc96f4a;
     } else if (hour < 12) {
-        top.* = 0x0d1720;
-        bot.* = 0x183546;
+        top.* = 0x1d3a5f;
+        bot.* = 0x7fb2d9;
     } else if (hour < 15) {
-        top.* = 0x10212e;
-        bot.* = 0x1b3d4d;
+        top.* = 0x2456a0;
+        bot.* = 0x9fc7e8;
     } else if (hour < 18) {
-        top.* = 0x12232a;
-        bot.* = 0x33423e;
+        top.* = 0x27436e;
+        bot.* = 0xd99a5b;
     } else if (hour < 20) {
-        top.* = 0x101722;
-        bot.* = 0x27313d;
+        top.* = 0x1d1230;
+        bot.* = 0xc4586e;
     } else {
-        top.* = 0x080b10;
-        bot.* = 0x111722;
+        top.* = 0x05060e;
+        bot.* = 0x141b2e;
     }
 }
 

@@ -101,7 +101,9 @@ function head(
       ? "os"
       : routeId === "main"
         ? "main"
-        : null;
+        : routeId === "simple"
+          ? "simple"
+          : null;
   if (mode) {
     children.push(
       createElement("script", {
@@ -111,16 +113,17 @@ function head(
         },
       }),
     );
-    children.push(
-      createElement(
-        "noscript",
-        { key: "no-js-fallback" },
-        createElement("meta", {
-          httpEquiv: "refresh",
-          content: "0;url=/simple/",
-        }),
-      ),
-    );
+    if (mode !== "simple")
+      children.push(
+        createElement(
+          "noscript",
+          { key: "no-js-fallback" },
+          createElement("meta", {
+            httpEquiv: "refresh",
+            content: "0;url=/simple/",
+          }),
+        ),
+      );
   }
 
   for (const href of fontHrefs()) {

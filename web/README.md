@@ -7,6 +7,8 @@ Moonshine, React 19, Tailwind v4 and Bun prerender the site to static HTML.
 - `/simple/` — the static profile and eight curated projects. No JavaScript required. Zinc surfaces, monospace typography and `#ff5705` accents.
 - `/agent` — direct links to the public Markdown snapshots.
 
+Choosing OS, Main or Simple remembers the choice in local storage, bypasses fallback checks for that mode, and reopens it on visits to `/`. Only first-party application assets trigger resource-error fallback; blocked analytics are ignored.
+
 Selected project copy is curated in `src/data/profile.ts`; the full portfolio is reviewed in root `projects.md`. The résumé sync scripts read the published `undivisible/undivisible/resume.md`. `RESUME_MARKDOWN_URL` can pin an approved source; a code-only release may preserve the exact current public résumé while a separate copy update remains pending. Public résumé, agent files and offline copies must all use that same approved content. Do not silently publish a local draft.
 
 ## Commands

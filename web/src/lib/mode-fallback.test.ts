@@ -1,14 +1,29 @@
 import { expect, test } from "bun:test";
 import { installModeFallback } from "./mode-fallback";
 
-function browserFor(mode: "os" | "main") {
+function browserFor(
+  mode: "os" | "main" | "simple",
+  preferred: string | null = null,
+  pathname = mode === "os" ? "/" : `/${mode}/`,
+) {
   let now = 0;
   let sequence = 0;
   const timers = new Map<number, { at: number; run: () => void }>();
   const listeners = new Map<string, Array<(event: unknown) => void>>();
   const visits: string[] = [];
   const browser = {
-    location: { replace: (path: string) => visits.push(path) },
+    location: {
+      pathname,
+      href: `https://undivisible.dev${pathname}`,
+      origin: "https://undivisible.dev",
+      replace: (path: string) => visits.push(path),
+    },
+    localStorage: {
+      getItem: () => preferred,
+      setItem: (_key: string, value: string) => {
+        preferred = value;
+      },
+    },
     setTimeout: (run: () => void, delay: number) => {
       timers.set(++sequence, { at: now + delay, run });
       return sequence;
@@ -21,6 +36,7 @@ function browserFor(mode: "os" | "main") {
   installModeFallback(mode, browser as unknown as Window);
   return {
     visits,
+    preference: () => preferred,
     emit: (name: string, event = {}) =>
       listeners.get(name)?.forEach((run) => run(event)),
     advance: (ms: number) => {
@@ -69,7 +85,12 @@ test("startup script errors fail immediately, but optional image errors do not",
   const b = browserFor("os");
   b.emit("error", { target: { tagName: "IMG" } });
   expect(b.visits).toEqual([]);
-  b.emit("error", { target: { tagName: "SCRIPT" } });
+  b.emit("error", {
+    target: {
+      tagName: "SCRIPT",
+      src: "https://undivisible.dev/assets/client.js",
+    },
+  });
   expect(b.visits).toEqual(["/main/"]);
 });
 
@@ -86,4 +107,41 @@ test("unhandled startup failures take main to simple", () => {
   const b = browserFor("main");
   b.emit("unhandledrejection");
   expect(b.visits).toEqual(["/simple/"]);
+});
+
+test("blocked third-party analytics does not trigger fallback", () => {
+  const b = browserFor("os");
+  b.emit("error", {
+    target: {
+      tagName: "SCRIPT",
+      src: "https://static.cloudflareinsights.com/beacon.min.js",
+    },
+  });
+  expect(b.visits).toEqual([]);
+});
+
+test("explicit choices bypass errors and timers, and root remembers the choice", () => {
+  for (const mode of ["os", "main", "simple"] as const) {
+    const b = browserFor(mode, mode);
+    b.emit("site:mode-failed");
+    b.advance(60000);
+    expect(b.visits).toEqual([]);
+  }
+  expect(browserFor("os", "main").visits).toEqual(["/main/"]);
+  expect(browserFor("os", "simple").visits).toEqual(["/simple/"]);
+});
+
+test("clicking a mode link remembers it, including from Simple", () => {
+  const b = browserFor("simple");
+  b.emit("click", {
+    button: 0,
+    target: {
+      closest: () => ({
+        href: "https://undivisible.dev/lab/",
+        target: "",
+        hasAttribute: () => false,
+      }),
+    },
+  });
+  expect(b.preference()).toBe("os");
 });
