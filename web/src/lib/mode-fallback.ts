@@ -38,15 +38,6 @@ export function installModeFallback(
         /* Navigation still works without storage. */
       }
   });
-  if (
-    browser.location.pathname === "/" &&
-    preferred &&
-    Object.hasOwn(paths, preferred) &&
-    preferred !== "os"
-  ) {
-    browser.location.replace(paths[preferred as keyof typeof paths]);
-    return;
-  }
   if (mode === "simple" || preferred === mode) return;
   let ready = false;
   let navigating = false;

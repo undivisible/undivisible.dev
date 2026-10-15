@@ -3791,3 +3791,222 @@ a[data-tip] {
     margin-top: 12px;
   }
 }
+
+/* Solid industrial typography over borderless glass. */
+@font-face {
+  font-family: Barlow;
+  src: url("/fonts/barlow-latin-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: Barlow;
+  src: url("/fonts/barlow-latin-600.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: Barlow;
+  src: url("/fonts/barlow-latin-700.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+.personal-page {
+  font-family: Barlow, sans-serif;
+}
+.personal-masthead {
+  justify-content: flex-end;
+  min-height: 70px;
+}
+.personal-bento .personal-hero {
+  text-align: left;
+}
+.personal-bento .personal-hero h1 {
+  font-family: Barlow, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  margin-left: 0;
+  margin-right: 0;
+}
+.personal-page .name-reveal > span {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+.personal-bento .personal-kicker,
+.personal-bento .personal-links,
+.personal-page .now-playing {
+  justify-content: flex-start;
+}
+.personal-page .bento-cell,
+.personal-bento .personal-project {
+  border: 0;
+  border-radius: 3px;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--album-text) 7%, transparent),
+      transparent 65%
+    ),
+    color-mix(in srgb, var(--album-background) 48%, transparent);
+  backdrop-filter: blur(24px) saturate(140%);
+  box-shadow: 0 12px 40px #00000024;
+}
+.personal-page .bento-job,
+.personal-page .personal-links a,
+.personal-page .personal-links button,
+.personal-page .personal-kicker,
+.personal-page .site-mode-navigation a,
+.personal-page .site-mode-navigation button,
+.personal-page .now-playing {
+  border: 0;
+}
+.personal-page .site-mode-navigation nav {
+  border: 0;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--album-background) 48%, transparent);
+  backdrop-filter: blur(24px);
+  box-shadow: none;
+}
+.personal-page .now-playing {
+  box-shadow: none;
+  background: color-mix(in srgb, var(--album-background) 40%, transparent);
+}
+/* Small physical responses without delaying navigation. */
+.personal-page .personal-project,
+.personal-page .personal-links a,
+.personal-page .personal-links button,
+.personal-page .site-mode-navigation a,
+.personal-page .site-mode-navigation button {
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+.personal-page .personal-project:is(:hover, :focus-visible) {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 45px #00000038;
+}
+.personal-page .project-arrow {
+  transition: transform 180ms ease;
+}
+.personal-page .personal-project:is(:hover, :focus-visible) .project-arrow {
+  transform: translate(3px, -3px);
+}
+.personal-page .personal-links :is(a, button):is(:hover, :focus-visible),
+.personal-page .site-mode-navigation :is(a, button):is(:hover, :focus-visible) {
+  transform: translateY(-2px);
+  background-color: color-mix(in srgb, var(--album-secondary) 15%, transparent);
+}
+.personal-page .personal-project:active,
+.personal-page .personal-links :is(a, button):active,
+.personal-page .site-mode-navigation :is(a, button):active {
+  transform: translateY(1px) scale(0.98);
+}
+@media (prefers-reduced-motion: reduce) {
+  .personal-page .personal-project,
+  .personal-page .personal-links :is(a, button),
+  .personal-page .site-mode-navigation :is(a, button),
+  .personal-page .project-arrow {
+    transition: none;
+    transform: none !important;
+  }
+}
+/* Translucent panels and iridescent type over the original sky. */
+.personal-page .bento-cell,
+.personal-bento .personal-project {
+  position: relative;
+  isolation: isolate;
+  background: color-mix(in srgb, var(--album-background) 32%, transparent);
+}
+.personal-page .personal-hero h1 {
+  text-transform: uppercase;
+  font-size: clamp(45px, 5.6vw, 76px);
+  line-height: 0.92;
+  font-weight: 700;
+  letter-spacing: -0.065em;
+}
+.personal-page .name-reveal > span {
+  background: linear-gradient(
+    115deg,
+    var(--album-text) 30%,
+    color-mix(in srgb, var(--album-color-6) 24%, var(--album-text)) 60%,
+    var(--album-text) 80%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.personal-page .bento-caption,
+.personal-page .personal-section-title,
+.personal-page .project-index {
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+}
+.personal-page .personal-project h3 {
+  font-weight: 600;
+  letter-spacing: -0.055em;
+}
+.personal-page .bento-life-mark {
+  transform: rotate(-8deg);
+  text-shadow: 3px 2px color-mix(in srgb, var(--album-color-3) 35%, transparent);
+}
+.personal-page .project-arrow {
+  font-size: 26px;
+}
+@media (max-width: 520px) {
+  .personal-page .personal-hero h1 {
+    font-size: clamp(40px, 11vw, 57px);
+  }
+}
+
+.personal-masthead {
+  justify-content: space-between;
+}
+.personal-page .site-mode-navigation nav {
+  background: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  padding: 0;
+}
+.personal-page .personal-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font:
+    600 15px Barlow,
+    sans-serif;
+  letter-spacing: -0.025em;
+  color: var(--album-text);
+  text-decoration: none;
+  transition:
+    color 180ms ease,
+    letter-spacing 180ms ease;
+}
+.personal-page .personal-wordmark span {
+  display: inline-block;
+  opacity: 0;
+  transform: translate(-5px, 5px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+.personal-page .personal-wordmark:is(:hover, :focus-visible) {
+  color: var(--album-secondary);
+  letter-spacing: 0.04em;
+}
+.personal-page .personal-wordmark:is(:hover, :focus-visible) span {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .personal-page .personal-wordmark,
+  .personal-page .personal-wordmark span {
+    transition: none;
+  }
+}
+.personal-page .personal-project::before {
+  display: none;
+}
+.personal-page .personal-hero h1 {
+  line-height: 1.08;
+}

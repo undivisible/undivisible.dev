@@ -120,15 +120,20 @@ test("blocked third-party analytics does not trigger fallback", () => {
   expect(b.visits).toEqual([]);
 });
 
-test("explicit choices bypass errors and timers, and root remembers the choice", () => {
+test("explicit choices bypass checks while root always starts the OS", () => {
   for (const mode of ["os", "main", "simple"] as const) {
     const b = browserFor(mode, mode);
     b.emit("site:mode-failed");
     b.advance(60000);
     expect(b.visits).toEqual([]);
   }
-  expect(browserFor("os", "main").visits).toEqual(["/main/"]);
-  expect(browserFor("os", "simple").visits).toEqual(["/simple/"]);
+  for (const preference of ["main", "simple"]) {
+    const b = browserFor("os", preference);
+    expect(b.visits).toEqual([]);
+    b.emit("site:mode-ready");
+    b.advance(60000);
+    expect(b.visits).toEqual([]);
+  }
 });
 
 test("clicking a mode link remembers it, including from Simple", () => {

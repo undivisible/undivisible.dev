@@ -61,11 +61,11 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
         </a>
         <header className="personal-masthead">
           <a
-            href="/main/"
+            href="/"
             className="personal-wordmark"
-            aria-label="undivisible home"
+            aria-label="undivisible — open OS"
           >
-            [ undivisible<span>_</span> ]
+            undivisible<span aria-hidden="true">↗</span>
           </a>
           <SiteNav onPrintResume={runPrint} />
         </header>

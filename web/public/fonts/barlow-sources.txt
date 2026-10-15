@@ -1,0 +1,9 @@
+Barlow by The Barlow Project Authors (https://github.com/jpt/barlow).
+Self-hosted unmodified Latin WOFF2 subsets, retrieved 2026-10-16.
+License: SIL Open Font License 1.1; see barlow-OFL.txt.
+License source: https://raw.githubusercontent.com/google/fonts/main/ofl/barlow/OFL.txt
+CSS source: https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap
+
+barlow-latin-400.woff2 (normal, 400): https://fonts.gstatic.com/s/barlow/v13/7cHpv4kjgoGqM7E_DMs5ynghnQ.woff2
+barlow-latin-600.woff2 (normal, 600): https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E30-8s51ostz0rdg.woff2
+barlow-latin-700.woff2 (normal, 700): https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E3t-4s51ostz0rdg.woff2
