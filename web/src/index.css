@@ -4010,3 +4010,176 @@ a[data-tip] {
 .personal-page .personal-hero h1 {
   line-height: 1.08;
 }
+/* Type embedded directly in the uninterrupted ASCII field. */
+.personal-page .personal-bento {
+  max-width: 1240px;
+  gap: 24px 2%;
+  padding-top: 24px;
+}
+.personal-page .bento-cell,
+.personal-page .personal-project,
+.personal-page .personal-project:is(:hover, :focus-visible),
+.personal-page .now-playing {
+  background: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+.personal-page .personal-hero {
+  grid-column: 1 / -1;
+  grid-row: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 12%;
+  padding: 0;
+}
+.personal-page .personal-kicker {
+  grid-column: 1 / -1;
+  justify-content: space-between;
+}
+.personal-page .personal-hero h1 {
+  grid-column: 1 / -1;
+  font-size: clamp(72px, 12.8vw, 178px);
+  margin: 5px 0 10px;
+  letter-spacing: -0.075em;
+  transform: skewX(-7deg);
+}
+.personal-page .personal-intro {
+  grid-column: 1;
+  grid-row: 3;
+  font-size: clamp(28px, 3.3vw, 46px);
+  line-height: 1.05;
+  max-width: 10em;
+  margin: 0;
+}
+.personal-page .personal-listening {
+  grid-column: 2;
+  grid-row: 3;
+  align-self: end;
+  min-height: 0;
+}
+.personal-page .personal-bio {
+  grid-column: 1;
+  margin: 25px 0 0;
+}
+.personal-page .personal-links {
+  grid-column: 2;
+  align-self: end;
+  justify-content: flex-start;
+}
+.personal-page .bento-current {
+  grid-column: 2 / span 5;
+  padding: 50px 0 0;
+}
+.personal-page .bento-life {
+  grid-column: 8 / span 5;
+  padding: 65px 0 0;
+  overflow: visible;
+}
+.personal-page .bento-job strong {
+  font-size: clamp(38px, 5vw, 68px);
+  font-weight: 600;
+}
+.personal-page .bento-life-mark {
+  font-size: 100px;
+  margin-top: 50px;
+}
+.personal-page .personal-work {
+  margin-top: 50px;
+}
+.personal-page .personal-projects {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px 8%;
+}
+.personal-page .personal-project {
+  padding: 35px 0;
+  min-height: 240px;
+  grid-column: span 1;
+}
+.personal-page .personal-project:nth-child(even) {
+  margin-top: 55px;
+}
+.personal-page .personal-project h3 {
+  font-size: clamp(32px, 4vw, 53px);
+}
+.personal-page .personal-project p {
+  font-size: 14px;
+}
+.personal-page .personal-footer {
+  margin-top: 80px;
+  padding-bottom: 40px;
+}
+.personal-page .personal-bio,
+.personal-page .personal-project p,
+.personal-page .bento-life ul {
+  color: var(--album-text);
+}
+@media (max-width: 850px) {
+  .personal-page .personal-bento {
+    gap: 50px 20px;
+    padding-top: 20px;
+  }
+  .personal-page .personal-hero {
+    gap: 24px;
+  }
+  .personal-page .personal-hero h1 {
+    font-size: clamp(46px, 12vw, 100px);
+    margin-bottom: 20px;
+  }
+  .personal-page .personal-listening,
+  .personal-page .personal-bio,
+  .personal-page .personal-links,
+  .personal-page .personal-intro {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    margin: 0;
+  }
+  .personal-page .personal-intro {
+    grid-row: 3;
+  }
+  .personal-page .bento-current {
+    grid-column: 1;
+    padding: 10px 0;
+  }
+  .personal-page .bento-life {
+    grid-column: 2;
+    padding: 100px 0 0;
+  }
+  .personal-page .personal-project {
+    grid-column: 1 / -1;
+    min-height: 0;
+  }
+  .personal-page .personal-project:nth-child(even) {
+    margin-top: 0;
+  }
+}
+@media (max-width: 520px) {
+  .personal-page .bento-current,
+  .personal-page .bento-life {
+    grid-column: 1 / -1;
+    padding: 0;
+  }
+  .personal-page .bento-life {
+    margin-left: 12%;
+  }
+}
+
+.personal-page .personal-main {
+  text-shadow:
+    0 2px 10px var(--album-background),
+    0 0 3px var(--album-background);
+}
+.personal-page .personal-links :is(a, button) {
+  background: none;
+}
+.personal-page .personal-hero h1 {
+  text-shadow: none;
+}
+
+.personal-page .personal-masthead,
+.personal-page .personal-footer {
+  max-width: 1240px;
+}
+.personal-page .personal-links :is(a, button) {
+  box-shadow: none;
+}
