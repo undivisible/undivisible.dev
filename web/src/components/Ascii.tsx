@@ -421,6 +421,7 @@ export default function Ascii({
     window.addEventListener("scroll", invalidateContent, { passive: true });
     window.addEventListener("resize", invalidateContent);
     window.addEventListener("site:album-palette", invalidateContent);
+    window.addEventListener("site:sky-contrast", invalidateContent);
     void document.fonts.ready.then(invalidateContent);
     let contentGlyphs = new Map<string, string>();
     let inkPixels: Uint8ClampedArray | undefined;
@@ -735,6 +736,7 @@ export default function Ascii({
       window.removeEventListener("scroll", invalidateContent);
       window.removeEventListener("resize", invalidateContent);
       window.removeEventListener("site:album-palette", invalidateContent);
+      window.removeEventListener("site:sky-contrast", invalidateContent);
       page?.classList.remove("unicode-content-ready");
       document.removeEventListener("visibilitychange", visibilityHandler);
       cancelAnimationFrame(frameRef.current);

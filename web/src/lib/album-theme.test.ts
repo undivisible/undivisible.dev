@@ -3,7 +3,22 @@ import {
   contrastRatio,
   deriveAlbumPalette,
   selectArtworkColors,
+  skyTextColor,
 } from "./album-theme";
+
+describe("sky text contrast", () => {
+  test("uses dark text for the original bright daytime sky", () => {
+    const sky = ["#b8cbe4", "#a9bfdc", "#79b0e6"];
+    const text = skyTextColor(sky);
+    expect(text).toBe("#000000");
+    for (const color of sky)
+      expect(contrastRatio(text, color)).toBeGreaterThanOrEqual(4.5);
+  });
+  test("uses white text at night and follows the least readable sample", () => {
+    expect(skyTextColor(["#000000", "#171a22"])).toBe("#ffffff");
+    expect(skyTextColor(["#b8cbe4", "#11131a"])).toBe("#ffffff");
+  });
+});
 
 describe("album palette", () => {
   test("rejects malformed or incomplete color events", () => {

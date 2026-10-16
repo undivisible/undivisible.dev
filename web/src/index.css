@@ -2945,7 +2945,7 @@ a[data-tip] {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: #000;
+  background: var(--page-background);
   overflow: hidden;
 }
 .album-sky {
@@ -2954,14 +2954,36 @@ a[data-tip] {
   width: 100%;
   height: 100%;
   opacity: 1;
-  /* Keep daylight behind pale DOM and canvas text dark enough to read.
-     Apply this to the sky only: the ASCII canvas also contains page text. */
-  filter: brightness(0.12);
 }
 .album-ascii {
   position: absolute;
   inset: 0;
   opacity: 1;
+}
+
+/* The sky stays at its original brightness; text follows its actual colors.
+   Scope these roles to Main so album colors on Simple and the OS stay intact. */
+.personal-page[data-sky-tone="light"] {
+  --album-text: #000000;
+  --album-muted: #17212d;
+  --album-secondary: #17212d;
+  --album-tertiary: #17212d;
+  --album-heading: #000000;
+  --album-label: #17212d;
+  --album-accent: #17212d;
+  --page-text: #000000;
+  --page-text-muted: #17212d;
+  --page-text-soft: #17212d;
+  --transport-text: #000000;
+}
+.personal-page[data-sky-tone="light"],
+.personal-page[data-sky-tone="light"] * {
+  text-shadow: none;
+}
+
+/* This veil sits above the canvas text as well as the decorative field. */
+.personal-page .album-ascii canvas + div {
+  opacity: 0;
 }
 
 .now-playing {

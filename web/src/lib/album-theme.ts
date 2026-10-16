@@ -32,6 +32,15 @@ export function contrastRatio(a: string, b: string): number {
   return (first! + 0.05) / (second! + 0.05);
 }
 
+/** Choose the text color with the best contrast across the visible sky. */
+export function skyTextColor(colors: string[]): "#000000" | "#ffffff" {
+  const minimumContrast = (text: string) =>
+    Math.min(...colors.map((color) => contrastRatio(text, color)));
+  return minimumContrast("#000000") > minimumContrast("#ffffff")
+    ? "#000000"
+    : "#ffffff";
+}
+
 export function deriveAlbumPalette(colors: string[]): AlbumPalette | null {
   if (
     (colors.length !== 5 && colors.length !== 8) ||

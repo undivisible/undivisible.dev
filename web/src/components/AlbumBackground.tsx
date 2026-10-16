@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { skyTextColor } from "@/lib/album-theme";
 import Ascii from "@/components/Ascii";
 import { Light } from "@/components/Light";
 import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
@@ -21,6 +22,54 @@ export function AlbumBackground({
     day.shader.weatherKind === "rain" ||
     day.shader.weatherKind === "storm";
   const [colors, setColors] = useState<string[]>(DEFAULT_COLORS);
+  const backgroundRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const background = backgroundRef.current;
+    if (!background) return;
+    const page = background.closest<HTMLElement>(".personal-page");
+    if (!page) return;
+    const update = () => {
+      const sky = background.querySelector<HTMLCanvasElement>(".album-sky");
+      const context = sky?.getContext("2d");
+      const samples: string[] = [];
+      if (sky && context && sky.width && sky.height) {
+        for (const y of [0.1, 0.3, 0.5, 0.7, 0.9]) {
+          const pixel = context.getImageData(
+            Math.floor(sky.width / 2),
+            Math.floor(sky.height * y),
+            1,
+            1,
+          ).data;
+          const alpha = pixel[3]! / 255;
+          const channels = [0, 1, 2].map((index) => {
+            const base = parseInt(
+              day.shader.base.slice(1 + index * 2, 3 + index * 2),
+              16,
+            );
+            return Math.round(pixel[index]! * alpha + base * (1 - alpha))
+              .toString(16)
+              .padStart(2, "0");
+          });
+          samples.push(`#${channels.join("")}`);
+        }
+      }
+      const tone =
+        skyTextColor(samples.length ? samples : [day.shader.base]) === "#000000"
+          ? "light"
+          : "dark";
+      if (page.dataset.skyTone !== tone) {
+        page.dataset.skyTone = tone;
+        window.dispatchEvent(new Event("site:sky-contrast"));
+      }
+    };
+    update();
+    const timer = window.setInterval(update, 500);
+    return () => {
+      window.clearInterval(timer);
+      delete page.dataset.skyTone;
+    };
+  }, [day.shader.base]);
 
   useEffect(() => {
     const read = () => {
@@ -40,7 +89,7 @@ export function AlbumBackground({
   }, []);
 
   return (
-    <div className="album-background" aria-hidden>
+    <div ref={backgroundRef} className="album-background" aria-hidden>
       <Light
         scene={day.shader}
         animated={animateWeather}
@@ -49,9 +98,7 @@ export function AlbumBackground({
       <div className="album-ascii">
         {visualEffects ? (
           <Ascii colors={colors} track={null} ready={fontsReady} />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-b from-black/[0.58] via-black/[0.5] to-black/[0.62]" />
-        )}
+        ) : null}
       </div>
     </div>
   );
