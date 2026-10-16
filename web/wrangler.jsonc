@@ -1,12 +1,25 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "undivisible-next",
+  "account_id": "fc62a6e6528bec6d3d81c3bf8967ceeb",
+  "main": "server/worker.ts",
   "compatibility_date": "2026-08-10",
-  "routes": [
-    { "pattern": "next.undivisible.dev", "custom_domain": true },
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "NEXNET_ORIGIN": "https://next.undivisible.dev",
+    "NEXNET_ENABLED": "true",
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "NEXNET", "class_name": "NexnetNetwork" }],
+  },
+  "migrations": [
+    { "tag": "nexnet-v1", "new_sqlite_classes": ["NexnetNetwork"] },
   ],
+  "routes": [{ "pattern": "next.undivisible.dev", "custom_domain": true }],
   "assets": {
     "directory": "./out",
+    "binding": "ASSETS",
+    "run_worker_first": ["/v1/*"],
     "not_found_handling": "404-page",
   },
 }

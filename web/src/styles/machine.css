@@ -1,0 +1,277 @@
+/* ══ the machine ═════════════════════════════════════════════════
+   The page is a real emulated PC. The screen centers in the sky;
+   everything drawn on it comes from the kernel, not the DOM. ──── */
+.machine-root {
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  @apply relative h-dvh overflow-hidden;
+  overscroll-behavior: none;
+  @apply flex flex-col;
+}
+.machine-frame {
+  @apply relative;
+  z-index: 10;
+  flex: 1;
+  @apply min-h-0 grid place-items-stretch p-0;
+}
+.machine-screen {
+  @apply relative w-full h-full overflow-hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  background: var(--album-background);
+  scrollbar-width: none;
+}
+.machine-screen::-webkit-scrollbar {
+  @apply hidden;
+}
+.machine-screen > div {
+  padding: 10px 12px;
+  color: var(--album-text);
+}
+.machine-intro,
+.machine-cover {
+  @apply absolute inset-0;
+  z-index: 20;
+  @apply flex flex-col items-center justify-center;
+  gap: 12px;
+  @apply text-center;
+  background: #000;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+.machine-intro {
+  @apply overflow-hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+.machine-intro canvas {
+  @apply absolute inset-0 w-full h-full pointer-events-none;
+}
+.machine-intro-copy {
+  @apply relative;
+  z-index: 1;
+  @apply flex flex-col items-center;
+  gap: 14px;
+  padding: 0 20px;
+}
+.machine-intro .machine-cover-title {
+  font-variant-ligatures: none;
+  min-height: 1.2em;
+}
+.machine-intro.is-exit {
+  animation: machine-intro-exit 0.32s var(--ease) forwards;
+  @apply pointer-events-none;
+}
+.machine-intro.is-light {
+  background: #000;
+}
+@keyframes machine-intro-exit {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+    filter: brightness(1.4);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .machine-intro.is-exit {
+    animation: none;
+    opacity: 0;
+  }
+}
+.machine-cover-title {
+  @apply m-0;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  @apply uppercase;
+  color: #fff;
+}
+.machine-cover-line {
+  @apply m-0;
+  font-size: 11px;
+  color: color-mix(in srgb, var(--album-text) 65%, transparent);
+  white-space: pre;
+}
+.machine-cover-fine {
+  @apply m-0;
+  max-width: 44ch;
+  font-size: 10px;
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--album-text) 40%, transparent);
+}
+.machine-intro button,
+.machine-cover button {
+  margin-top: 6px;
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  @apply uppercase;
+  color: color-mix(in srgb, var(--album-text) 75%, transparent);
+  @apply [background:transparent];
+  border: 1px solid color-mix(in srgb, var(--album-text) 25%, transparent);
+  border-radius: 999px;
+  padding: 7px 22px;
+  @apply cursor-pointer;
+}
+.machine-intro button:hover,
+.machine-cover button:hover {
+  color: #fff;
+  border-color: color-mix(in srgb, var(--album-text) 60%, transparent);
+}
+.machine-mobile-input {
+  @apply relative;
+  z-index: 10;
+  @apply flex;
+  gap: 8px;
+  padding: 8px 12px 4px;
+  touch-action: manipulation;
+}
+.machine-mobile-input input {
+  flex: 1;
+  @apply min-w-0;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 13px;
+  color: #fff;
+  background: color-mix(in srgb, var(--album-text) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--album-text) 12%, transparent);
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+}
+.machine-mobile-input button {
+  font-size: 15px;
+  color: #fff;
+  background: color-mix(in srgb, var(--album-text) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--album-text) 12%, transparent);
+  border-radius: 10px;
+  padding: 0 16px;
+  @apply cursor-pointer;
+}
+.machine-foot {
+  @apply absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 15;
+  @apply flex justify-between;
+  gap: 16px;
+  @apply flex-wrap;
+  padding: 10px 14px 8px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.18) 55%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: color-mix(in srgb, var(--album-text) 30%, transparent);
+  @apply pointer-events-none;
+}
+.machine-foot a,
+.machine-foot button {
+  @apply pointer-events-auto;
+}
+.machine-foot a {
+  color: color-mix(in srgb, var(--album-text) 50%, transparent);
+}
+.machine-foot a:hover {
+  color: #fff;
+}
+.machine-foot-escape {
+  @apply [background:none] border-none p-0;
+  font: inherit;
+  color: rgba(126, 200, 232, 0.75);
+  @apply cursor-pointer;
+  text-decoration: underline dotted;
+}
+.machine-foot-escape:hover {
+  color: var(--album-secondary);
+}
+
+/* The VGA text layer: sized to the viewport, stays mono and crisp. */
+.machine-text {
+  font-family:
+    var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
+  font-size: 15px;
+  line-height: 15px;
+}
+@media (min-width: 1100px) {
+  .machine-text {
+    font-size: 18px;
+    line-height: 18px;
+  }
+}
+@media (min-width: 1500px) {
+  .machine-text {
+    font-size: 21px;
+    line-height: 21px;
+  }
+}
+
+/* Hidden tabs clamp v86's timers; the machine stops until you come back. */
+.machine-resumed {
+  @apply absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  @apply m-0;
+  padding: 7px 14px;
+  max-width: min(520px, 84%);
+  border-radius: 999px;
+  background: rgba(12, 18, 30, 0.82);
+  color: rgba(235, 242, 255, 0.9);
+  font-size: 12px;
+  line-height: 1.4;
+  @apply text-center pointer-events-none;
+}
+
+/* A tab request from inside the machine, surfaced for a real click. */
+.machine-ask {
+  @apply fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  @apply flex items-center;
+  gap: 10px;
+  padding: 9px 16px;
+  border: 1px solid color-mix(in srgb, var(--album-text) 16%, transparent);
+  border-radius: 999px;
+  background: rgba(10, 10, 14, 0.92);
+  backdrop-filter: blur(14px);
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 11px;
+  color: color-mix(in srgb, var(--album-text) 60%, transparent);
+  animation: min-fade-up 0.3s var(--ease);
+}
+.machine-ask a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.machine-ask button {
+  font: inherit;
+  color: color-mix(in srgb, var(--album-text) 45%, transparent);
+  @apply [background:none] border-0 cursor-pointer;
+}
+.machine-ask button:hover {
+  color: #fff;
+}
+
+/* Preserve the framebuffer aspect ratio when a window resizes after boot. */
+.machine-screen canvas {
+  @apply block w-full h-full;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  @apply cursor-none;
+}
+.machine-screen {
+  @apply cursor-none;
+}
+@media (pointer: coarse) {
+  .machine-screen,
+  .machine-screen canvas {
+    @apply cursor-auto;
+  }
+}

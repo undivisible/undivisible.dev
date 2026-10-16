@@ -1,12 +1,20 @@
 import { describe, expect, test } from "bun:test";
 import { nexnetGatewayUrl } from "./nexnet-bridge";
 
-const prod = { hostname: "undivisible.dev", search: "" };
-const local = (search: string) => ({ hostname: "127.0.0.1", search });
+const prod = {
+  hostname: "undivisible.dev",
+  search: "",
+  origin: "https://undivisible.dev",
+};
+const local = (search: string) => ({
+  hostname: "127.0.0.1",
+  search,
+  origin: "http://127.0.0.1:4321",
+});
 
 describe("nexnetGatewayUrl", () => {
-  test("is absent unless a gateway is configured", () => {
-    expect(nexnetGatewayUrl(undefined, prod)).toBeNull();
+  test("uses the internal same-origin server by default; an empty override disables it", () => {
+    expect(nexnetGatewayUrl(undefined, prod)).toBe("https://undivisible.dev");
     expect(nexnetGatewayUrl("", prod)).toBeNull();
   });
 
@@ -36,12 +44,14 @@ describe("nexnetGatewayUrl", () => {
       nexnetGatewayUrl(undefined, {
         hostname: "undivisible.dev",
         search: "?nexnet=https://evil.example.test",
+        origin: "https://undivisible.dev",
       }),
-    ).toBeNull();
+    ).toBe("https://undivisible.dev");
     expect(
       nexnetGatewayUrl("https://chat.example.test", {
         hostname: "undivisible.dev",
         search: "?nexnet=https://evil.example.test",
+        origin: "https://undivisible.dev",
       }),
     ).toBe("https://chat.example.test");
   });
@@ -53,6 +63,7 @@ describe("nexnetGatewayUrl loopback", () => {
       nexnetGatewayUrl("http://[::1]:8787", {
         hostname: "undivisible.dev",
         search: "",
+        origin: "https://undivisible.dev",
       }),
     ).toBe("http://[::1]:8787");
   });

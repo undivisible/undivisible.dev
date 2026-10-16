@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { skyTextColor } from "@/lib/album-theme";
+import { useSkyContrast } from "@/hooks/use-sky-contrast";
 import Ascii from "@/components/Ascii";
 import { Light } from "@/components/Light";
 import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
@@ -26,53 +26,7 @@ export function AlbumBackground({
   const skyBaseRef = useRef(day.shader.base);
   skyBaseRef.current = day.shader.base;
 
-  useEffect(() => {
-    const background = backgroundRef.current;
-    if (!background) return;
-    const page = background.closest<HTMLElement>(".personal-page");
-    if (!page) return;
-    const update = () => {
-      const baseColor = skyBaseRef.current;
-      const sky = background.querySelector<HTMLCanvasElement>(".album-sky");
-      const context = sky?.getContext("2d");
-      const samples: string[] = [];
-      if (sky && context && sky.width && sky.height) {
-        for (const y of [0.1, 0.3, 0.5, 0.7, 0.9]) {
-          const pixel = context.getImageData(
-            Math.floor(sky.width / 2),
-            Math.floor(sky.height * y),
-            1,
-            1,
-          ).data;
-          const alpha = pixel[3]! / 255;
-          const channels = [0, 1, 2].map((index) => {
-            const base = parseInt(
-              baseColor.slice(1 + index * 2, 3 + index * 2),
-              16,
-            );
-            return Math.round(pixel[index]! * alpha + base * (1 - alpha))
-              .toString(16)
-              .padStart(2, "0");
-          });
-          samples.push(`#${channels.join("")}`);
-        }
-      }
-      const tone =
-        skyTextColor(samples.length ? samples : [baseColor]) === "#000000"
-          ? "light"
-          : "dark";
-      if (page.dataset.skyTone !== tone) {
-        page.dataset.skyTone = tone;
-        window.dispatchEvent(new Event("site:sky-contrast"));
-      }
-    };
-    update();
-    const timer = window.setInterval(update, 500);
-    return () => {
-      window.clearInterval(timer);
-      delete page.dataset.skyTone;
-    };
-  }, []);
+  useSkyContrast({ backgroundRef, skyBaseRef });
 
   useEffect(() => {
     const read = () => {

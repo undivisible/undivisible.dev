@@ -1,0 +1,1872 @@
+/* Centered personal profile over the original animated sky and ASCII field. */
+.personal-page {
+  @apply relative isolate min-h-dvh;
+  color: var(--album-text);
+  font-family: var(--font-instrument-sans), sans-serif;
+  @apply overflow-clip;
+}
+.personal-page a {
+  text-decoration: none;
+}
+.personal-page :focus-visible {
+  outline: 2px solid var(--album-accent);
+  outline-offset: 6px;
+}
+.personal-masthead,
+.personal-main,
+.personal-footer {
+  @apply relative;
+  z-index: 3;
+  max-width: 1080px;
+  margin-inline: auto;
+  padding-inline: 32px;
+}
+.personal-masthead {
+  min-height: 100px;
+  @apply flex items-center justify-between;
+  gap: 20px;
+}
+.personal-wordmark,
+.personal-kicker,
+.personal-links,
+.personal-section-title,
+.project-kind,
+.project-index,
+.personal-interests,
+.personal-experience,
+.personal-footer {
+  font-family: var(--font-jetbrains-mono), monospace;
+}
+.personal-wordmark {
+  font-size: 12px;
+  letter-spacing: -0.04em;
+}
+.personal-wordmark span {
+  color: var(--album-accent);
+}
+.personal-page .site-mode-navigation {
+  position: static;
+}
+.personal-page .site-mode-navigation nav {
+  background: color-mix(in srgb, var(--album-background) 55%, transparent);
+  backdrop-filter: blur(20px);
+  border-color: color-mix(in srgb, var(--album-border) 50%, transparent);
+  border-radius: 0;
+}
+.personal-page .site-mode-navigation a,
+.personal-page .site-mode-navigation button {
+  border-radius: 0;
+}
+.personal-hero {
+  @apply text-center;
+  padding: 56px 0 54px;
+}
+.personal-kicker {
+  @apply flex justify-center items-center;
+  gap: 24px;
+  color: var(--album-muted);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  @apply uppercase;
+}
+.personal-kicker span:first-child {
+  color: var(--album-secondary);
+  font-size: 16px;
+}
+.personal-hero h1 {
+  font-size: clamp(66px, 11vw, 144px);
+  @apply font-semibold;
+  line-height: 1.04;
+  letter-spacing: -0.075em;
+  margin: 20px -8px 24px;
+}
+.name-reveal {
+  @apply inline-block overflow-hidden;
+  padding: 0 0.06em 0.08em;
+  vertical-align: bottom;
+}
+.name-reveal > span {
+  @apply inline-block;
+  background: linear-gradient(
+    115deg,
+    var(--album-text) 16%,
+    var(--album-color-3, var(--album-accent)) 48%,
+    var(--album-color-6, var(--album-secondary)) 70%,
+    var(--album-text) 94%
+  );
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  background-size: 180% 100%;
+  animation: name-cut 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: background-position 1s;
+}
+.personal-hero h1:hover .name-reveal > span {
+  background-position: 100% 0;
+}
+.name-dot {
+  color: var(--album-color-2, var(--album-secondary));
+}
+.personal-intro {
+  font-size: clamp(22px, 3vw, 32px);
+  letter-spacing: -0.04em;
+  margin: 30px 0 18px;
+}
+.personal-bio {
+  max-width: 650px;
+  margin-inline: auto;
+  color: var(--album-muted);
+  font-size: 16px;
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+.personal-bio p + p {
+  margin-top: 12px;
+}
+.personal-bio a {
+  color: var(--album-secondary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(
+    in srgb,
+    var(--album-secondary) 40%,
+    transparent
+  );
+  text-underline-offset: 4px;
+}
+.personal-interests {
+  margin-top: 24px;
+  font-size: 10px;
+  line-height: 1.9;
+  color: var(--album-muted);
+}
+.personal-interests > span {
+  color: var(--album-color-7, var(--album-secondary));
+}
+.personal-interests p {
+  font-size: 11px;
+}
+.personal-links {
+  @apply flex justify-center flex-wrap;
+  gap: 10px 28px;
+  margin-top: 28px;
+  font-size: 11px;
+}
+.personal-links a,
+.personal-links button {
+  @apply relative inline-flex items-center;
+  min-height: 44px;
+  @apply cursor-pointer;
+  transition:
+    color 0.25s,
+    transform 0.25s;
+}
+.personal-links a:nth-child(3n + 1) {
+  color: var(--album-color-3, var(--album-accent));
+}
+.personal-links a:nth-child(3n + 2) {
+  color: var(--album-color-6, var(--album-secondary));
+}
+.personal-links a::after,
+.personal-links button::after {
+  content: "";
+  @apply absolute;
+  bottom: 6px;
+  left: 0;
+  @apply w-full;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+.personal-links a:hover,
+.personal-links button:hover {
+  color: var(--album-text);
+  transform: translateY(-3px);
+}
+.personal-links a:hover::after,
+.personal-links button:hover::after {
+  transform: scaleX(1);
+}
+.personal-section-title {
+  @apply flex justify-between items-center;
+  margin: 16px 0 16px;
+  gap: 16px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--album-muted);
+}
+.personal-section-title h2 {
+  font-size: 12px;
+  color: var(--album-text);
+  text-transform: lowercase;
+  @apply font-normal;
+}
+.personal-projects {
+  @apply grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: color-mix(in srgb, var(--album-border) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--album-border) 35%, transparent);
+}
+.personal-project {
+  --project-color: var(--album-color-3, var(--album-accent));
+  @apply relative flex;
+  gap: 18px;
+  padding: 26px 24px;
+  @apply min-w-0;
+  background: color-mix(in srgb, var(--album-background) 82%, transparent);
+  backdrop-filter: blur(14px);
+  transition:
+    background 0.4s,
+    box-shadow 0.4s;
+}
+.personal-project::before {
+  content: "";
+  @apply pointer-events-none absolute inset-0;
+  background: linear-gradient(
+    115deg,
+    transparent 15%,
+    color-mix(in srgb, var(--project-color) 16%, transparent) 45%,
+    transparent 75%
+  );
+  background-size: 220% 100%;
+  background-position: 130% 0;
+  transition: background-position 0.7s;
+}
+.personal-project:hover::before {
+  background-position: -30% 0;
+}
+.personal-project:hover {
+  box-shadow: inset 2px 0 var(--project-color);
+  background: color-mix(in srgb, var(--album-surface) 88%, transparent);
+}
+.project-1 {
+  --project-color: var(--album-color-5, var(--album-secondary));
+}
+.project-2 {
+  --project-color: var(--album-color-7, var(--album-accent));
+}
+.project-3 {
+  --project-color: var(--album-color-2, var(--album-secondary));
+}
+.project-index {
+  color: var(--project-color);
+  font-size: 10px;
+  padding-top: 2px;
+}
+.project-kind {
+  color: var(--album-muted);
+  font-size: 9px;
+}
+.personal-project h3 {
+  font-size: 23px;
+  letter-spacing: -0.04em;
+  @apply font-medium;
+  margin: 8px 0;
+}
+.personal-project p {
+  max-width: 34em;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--album-muted);
+}
+.project-arrow {
+  color: var(--project-color);
+  margin-left: auto;
+  transition: transform 0.3s;
+}
+.personal-project:hover .project-arrow {
+  transform: translate(3px, -3px);
+}
+.personal-experience {
+  @apply text-center;
+  font-size: 10px;
+  line-height: 2;
+  color: var(--album-muted);
+  margin: 30px 0;
+}
+.personal-experience span {
+  color: var(--album-color-5, var(--album-secondary));
+  margin-right: 10px;
+}
+.personal-experience strong {
+  @apply font-normal;
+  color: var(--album-text);
+}
+.personal-footer {
+  @apply flex flex-wrap justify-between;
+  gap: 18px;
+  padding-block: 24px;
+  font-size: 9px;
+  color: var(--album-muted);
+  border-top: 1px solid color-mix(in srgb, var(--album-border) 40%, transparent);
+}
+.album-background {
+  @apply fixed inset-0;
+  z-index: -1;
+  @apply pointer-events-none;
+  background: var(--page-background);
+  @apply overflow-hidden;
+}
+.album-sky {
+  @apply absolute inset-0 w-full h-full;
+  opacity: 1;
+}
+.album-ascii {
+  @apply absolute inset-0;
+  opacity: 1;
+}
+
+/* The sky stays at its original brightness; text follows its actual colors.
+   Scope these roles to Main so album colors on Simple and the OS stay intact. */
+.personal-page[data-sky-tone="light"] {
+  --album-text: #000000;
+  --album-muted: #17212d;
+  --album-secondary: #17212d;
+  --album-tertiary: #17212d;
+  --album-heading: #000000;
+  --album-label: #17212d;
+  --album-accent: #17212d;
+  --page-text: #000000;
+  --page-text-muted: #17212d;
+  --page-text-soft: #17212d;
+  --transport-text: #000000;
+}
+.personal-page[data-sky-tone="light"],
+.personal-page[data-sky-tone="light"] * {
+  text-shadow: none;
+}
+
+/* This veil sits above the canvas text as well as the decorative field. */
+.personal-page .album-ascii canvas + div {
+  opacity: 0;
+}
+
+.now-playing {
+  @apply inline-flex items-center;
+  gap: 12px;
+  max-width: min(100%, 440px);
+  min-height: 68px;
+  padding: 10px 16px 10px 10px;
+  @apply text-left;
+  background: color-mix(in srgb, var(--album-surface) 65%, transparent);
+  border: 1px solid color-mix(in srgb, var(--album-secondary) 35%, transparent);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 35px
+    color-mix(
+      in srgb,
+      var(--album-color-4, var(--album-accent)) 8%,
+      transparent
+    );
+  opacity: 0;
+  transition:
+    opacity 0.24s ease,
+    background-color 0.8s,
+    border-color 0.8s;
+}
+.now-playing[data-visible="true"] {
+  opacity: 1;
+}
+.now-playing-art {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.now-playing-copy {
+  @apply flex flex-col min-w-0;
+  gap: 3px;
+}
+.now-playing-status {
+  font:
+    8px var(--font-jetbrains-mono),
+    monospace;
+  letter-spacing: 0.13em;
+  @apply uppercase;
+  color: var(--album-muted);
+}
+.now-playing-song {
+  font-size: 13px;
+  @apply font-medium;
+  line-height: 1.4;
+  color: var(--album-text);
+  overflow-wrap: anywhere;
+}
+.now-playing-artist {
+  font-size: 11px;
+  color: var(--album-secondary);
+}
+@keyframes name-cut {
+  from {
+    transform: translateY(105%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 700px) {
+  .personal-masthead,
+  .personal-main,
+  .personal-footer {
+    padding-inline: 22px;
+  }
+  .personal-masthead {
+    min-height: 80px;
+    gap: 12px;
+  }
+  .personal-wordmark {
+    font-size: 10px;
+  }
+  .personal-page .site-mode-navigation nav {
+    padding: 3px;
+  }
+  .personal-page .site-mode-navigation a,
+  .personal-page .site-mode-navigation button {
+    padding: 9px 8px;
+    font-size: 9px;
+  }
+  .personal-hero {
+    padding-top: 42px;
+  }
+  .personal-kicker {
+    gap: 14px;
+    font-size: 8px;
+  }
+  .personal-hero h1 {
+    font-size: clamp(55px, 12.8vw, 88px);
+    margin-top: 24px;
+  }
+  .personal-bio {
+    font-size: 14px;
+  }
+  .personal-projects {
+    grid-template-columns: 1fr;
+  }
+  .personal-project {
+    padding: 22px 18px;
+  }
+  .personal-section-title {
+    font-size: 8px;
+  }
+  .personal-section-title h2 {
+    font-size: 11px;
+  }
+  .personal-footer {
+    font-size: 8px;
+  }
+  .personal-experience {
+    font-size: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .name-reveal > span {
+    animation: none;
+  }
+  .personal-page *,
+  .personal-page *::before,
+  .personal-page *::after,
+  .now-playing {
+    transition: none !important;
+  }
+}
+
+@media screen {
+  .machine-screen > div,
+  .machine-cover-title,
+  .machine-mobile-input input,
+  .machine-mobile-input button,
+  .machine-foot a:hover,
+  .machine-ask a,
+  .machine-ask button:hover {
+    color: var(--album-text);
+  }
+  .machine-cover-line,
+  .machine-cover-fine,
+  .machine-foot,
+  .machine-resumed,
+  .machine-ask {
+    color: var(--album-muted);
+  }
+  .machine-intro,
+  .machine-cover,
+  .machine-intro.is-light {
+    background: var(--album-background);
+  }
+}
+
+@property --album-background {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #09090b;
+}
+@property --album-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #191919;
+}
+@property --album-text {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f4f4f5;
+}
+@property --album-muted {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #a1a1aa;
+}
+@property --album-border {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #3f3f46;
+}
+@property --album-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-on-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #000000;
+}
+@property --album-secondary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff8751;
+}
+@property --album-color-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-3 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-4 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-5 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-6 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-7 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+@property --album-color-8 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff5705;
+}
+:root {
+  transition:
+    --album-background 1.2s ease,
+    --album-surface 1.2s ease,
+    --album-text 1.2s ease,
+    --album-muted 1.2s ease,
+    --album-border 1.2s ease,
+    --album-accent 1.2s ease,
+    --album-on-accent 1.2s ease,
+    --album-secondary 1.2s ease,
+    --album-color-1 1.2s ease,
+    --album-color-2 1.2s ease,
+    --album-color-3 1.2s ease,
+    --album-color-4 1.2s ease,
+    --album-color-5 1.2s ease,
+    --album-color-6 1.2s ease,
+    --album-color-7 1.2s ease,
+    --album-color-8 1.2s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    transition: none;
+  }
+}
+
+.personal-listening {
+  min-height: 72px;
+}
+.profile-listening {
+  color: var(--album-secondary);
+  font-size: 12px;
+  margin: 16px 0;
+}
+
+/* Keep neon hues readable over the moving sky. */
+
+.name-reveal > span {
+  background-image: linear-gradient(
+    115deg,
+    var(--album-text) 16%,
+    color-mix(in srgb, var(--album-color-3) 55%, var(--album-text)) 48%,
+    color-mix(in srgb, var(--album-color-6) 55%, var(--album-text)) 70%,
+    var(--album-text) 94%
+  );
+}
+.personal-kicker span:first-child,
+.personal-bio a,
+.now-playing-artist {
+  color: color-mix(in srgb, var(--album-secondary) 55%, var(--album-text));
+}
+.personal-links a:nth-child(3n + 1) {
+  color: color-mix(in srgb, var(--album-color-3) 50%, var(--album-text));
+}
+.personal-links a:nth-child(3n + 2) {
+  color: color-mix(in srgb, var(--album-color-6) 50%, var(--album-text));
+}
+.personal-interests > span,
+.personal-experience span {
+  color: color-mix(in srgb, var(--album-color-7) 50%, var(--album-text));
+}
+.project-index,
+.project-arrow {
+  color: color-mix(in srgb, var(--project-color) 55%, var(--album-text));
+}
+
+/* Dot-matrix identity and restrained, tactile instrument controls. */
+.personal-hero h1 {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: clamp(60px, 9.5vw, 126px);
+  @apply font-medium;
+  letter-spacing: -0.085em;
+}
+.name-reveal > span {
+  @apply [background:none];
+  color: var(--album-text);
+  mask-image: radial-gradient(
+    circle at center,
+    #000 1.35px,
+    transparent 1.65px
+  );
+  mask-size: 4px 4px;
+}
+.name-dot {
+  color: var(--album-accent);
+}
+.personal-hero {
+  padding-top: 38px;
+}
+.personal-kicker {
+  letter-spacing: 0.04em;
+}
+.personal-kicker span:first-child {
+  color: var(--album-text);
+}
+.personal-wordmark {
+  letter-spacing: -0.06em;
+}
+.personal-page .site-mode-navigation nav {
+  border-radius: 8px;
+  padding: 5px;
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--album-background) 80%, #000);
+}
+.personal-page .site-mode-navigation a,
+.personal-page .site-mode-navigation button {
+  border-radius: 4px;
+}
+.personal-page .site-mode-navigation a:hover,
+.personal-page .site-mode-navigation button:hover {
+  background: color-mix(
+    in srgb,
+    var(--album-text) 12%,
+    var(--album-background)
+  );
+}
+.personal-links {
+  gap: 10px;
+}
+.personal-links a,
+.personal-links button {
+  min-height: 40px;
+  padding-inline: 18px;
+  border: 1px solid color-mix(in srgb, var(--album-text) 15%, transparent);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--album-background) 70%, transparent);
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--album-background) 90%, #000);
+  color: var(--album-text) !important;
+}
+.personal-links a:hover,
+.personal-links button:hover {
+  transform: translateY(-1px);
+  border-color: var(--album-accent);
+}
+.personal-links a:active,
+.personal-links button:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.personal-links a::after,
+.personal-links button::after {
+  @apply hidden;
+}
+.now-playing {
+  width: 340px;
+  max-width: 100%;
+  min-height: 84px;
+  padding: 10px;
+  border-radius: 6px;
+  border-color: color-mix(in srgb, var(--album-text) 25%, transparent);
+  background: color-mix(in srgb, var(--album-background) 85%, transparent);
+  box-shadow:
+    0 4px 0 color-mix(in srgb, var(--album-background) 90%, #000),
+    inset 0 1px color-mix(in srgb, var(--album-text) 12%, transparent);
+}
+.now-playing-art {
+  width: 60px;
+  height: 60px;
+  border-radius: 2px;
+}
+.now-playing-copy {
+  gap: 5px;
+}
+.now-playing-status {
+  color: var(--album-muted);
+}
+.now-playing-song {
+  font:
+    12px var(--font-jetbrains-mono),
+    monospace;
+}
+.personal-listening {
+  min-height: 88px;
+}
+.personal-projects {
+  @apply block [background:none] border-0;
+  border-top: 1px solid color-mix(in srgb, var(--album-text) 22%, transparent);
+}
+.personal-project {
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--album-text) 18%, transparent);
+  background: color-mix(in srgb, var(--album-background) 55%, transparent);
+  padding: 24px 18px;
+  gap: 24px;
+  @apply items-center;
+}
+.personal-project > div {
+  @apply grid;
+  grid-template-columns: 210px 1fr;
+  gap: 6px 24px;
+  @apply items-center w-full;
+}
+.project-kind {
+  grid-column: 1;
+  font-size: 8px;
+}
+.personal-project h3 {
+  grid-column: 1;
+  grid-row: 2;
+  @apply m-0;
+  font-size: 22px;
+}
+.personal-project p {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  max-width: none;
+}
+.project-index {
+  color: var(--album-muted);
+}
+
+@media (max-width: 700px) {
+  .personal-hero h1 {
+    font-size: clamp(47px, 11.5vw, 78px);
+  }
+  .name-reveal > span {
+    mask-size: 3px 3px;
+    mask-image: radial-gradient(circle at center, #000 1px, transparent 1.25px);
+  }
+  .personal-project {
+    gap: 14px;
+    padding: 22px 12px;
+    @apply items-start;
+  }
+  .personal-project > div {
+    @apply block;
+  }
+  .personal-project h3 {
+    margin: 8px 0;
+  }
+  .personal-project p {
+    margin-top: 8px;
+  }
+  .personal-links {
+    gap: 8px;
+  }
+  .personal-links a,
+  .personal-links button {
+    padding-inline: 13px;
+  }
+}
+.now-playing-palette {
+  @apply flex;
+  gap: 3px;
+  margin-top: 3px;
+}
+.now-playing-palette > span {
+  width: 14px;
+  height: 3px;
+  border-radius: 1px;
+}
+.machine-keyboard-hints {
+  @apply absolute;
+  z-index: 8;
+  left: 50%;
+  top: 80px;
+  transform: translateX(-50%);
+  @apply flex items-center;
+  gap: 16px;
+  padding: 10px 12px;
+  color: var(--album-muted);
+  background: color-mix(in srgb, var(--album-background) 85%, transparent);
+  border: 1px solid color-mix(in srgb, var(--album-text) 18%, transparent);
+  border-radius: 6px;
+  backdrop-filter: blur(15px);
+  font:
+    9px var(--font-jetbrains-mono),
+    monospace;
+}
+.machine-keyboard-hints > span {
+  @apply inline-flex items-center;
+  gap: 7px;
+}
+.machine-keyboard-hints kbd {
+  @apply inline-flex items-center justify-center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  background: color-mix(in srgb, var(--album-text) 8%, var(--album-background));
+  border: 1px solid color-mix(in srgb, var(--album-text) 22%, transparent);
+  border-bottom-width: 3px;
+  border-radius: 4px;
+  font:
+    10px var(--font-jetbrains-mono),
+    monospace;
+  color: var(--album-text);
+  transition:
+    transform 0.12s,
+    background-color 0.12s,
+    border-color 0.12s;
+}
+.machine-keyboard-hints kbd[data-pressed="true"] {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  background: var(--album-accent);
+  color: var(--album-on-accent);
+  border-color: var(--album-accent);
+}
+.machine-boot-spinner {
+  @apply relative;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 22px;
+  color: var(--album-accent);
+}
+.machine-boot-spinner > span {
+  @apply absolute;
+  width: 3px;
+  height: 8px;
+  top: 0;
+  left: 12px;
+  border-radius: 2px;
+  transform-origin: 1.5px 14px;
+  animation: boot-bars 1s linear infinite;
+}
+@keyframes boot-bars {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.15;
+  }
+}
+@media (pointer: coarse), (max-width: 700px) {
+  .machine-keyboard-hints {
+    @apply hidden;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .machine-boot-spinner > span {
+    animation: none;
+    opacity: 0.5;
+  }
+  .machine-keyboard-hints kbd {
+    transition: none;
+  }
+}
+
+.machine-boot-spinner > span {
+  background: currentColor;
+  transform: rotate(calc(var(--bar-index) * 45deg));
+  animation-delay: calc(var(--bar-index) * -0.125s);
+}
+
+/* Asymmetric bento: identity, current work, life, then four project tiles. */
+.personal-bento {
+  @apply grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 14px;
+  @apply items-stretch;
+  padding-top: 18px;
+  padding-bottom: 28px;
+}
+.bento-cell {
+  @apply min-w-0;
+  padding: 28px;
+  border: 1px solid color-mix(in srgb, var(--album-text) 22%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--album-background) 82%, transparent);
+  backdrop-filter: blur(22px);
+  box-shadow: inset 0 1px color-mix(in srgb, var(--album-text) 7%, transparent);
+}
+.personal-bento .personal-hero {
+  grid-column: span 8;
+  grid-row: span 2;
+  padding: 34px 28px 26px;
+}
+.personal-bento .personal-hero h1 {
+  font-size: clamp(49px, 6.2vw, 84px);
+  margin: 24px -8px 20px;
+  letter-spacing: -0.09em;
+}
+.personal-bento .personal-kicker {
+  font-size: 8px;
+  gap: 16px;
+}
+.personal-bento .personal-intro {
+  font-size: 25px;
+  margin-top: 22px;
+}
+.personal-bento .personal-bio {
+  font-size: 14px;
+  line-height: 1.75;
+}
+.personal-bento .personal-links {
+  gap: 8px;
+  margin-top: 22px;
+}
+.personal-bento .personal-links a,
+.personal-bento .personal-links button {
+  padding-inline: 12px;
+  font-size: 10px;
+}
+.bento-current,
+.bento-life {
+  grid-column: span 4;
+  @apply text-left relative overflow-hidden;
+}
+.bento-caption {
+  font:
+    9px var(--font-jetbrains-mono),
+    monospace;
+  letter-spacing: 0.04em;
+  color: var(--album-muted);
+  margin-bottom: 20px;
+}
+.bento-current h2,
+.bento-life h2 {
+  font-size: 23px;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  @apply font-medium;
+  margin-bottom: 22px;
+}
+.bento-job {
+  @apply flex flex-col;
+  gap: 7px;
+  padding: 17px 0;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--album-text) 15%, transparent);
+}
+.bento-job strong {
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  @apply font-medium;
+}
+.bento-job span,
+.bento-previous {
+  font:
+    9px var(--font-jetbrains-mono),
+    monospace;
+  color: var(--album-muted);
+}
+.bento-previous {
+  margin-top: 18px;
+}
+.bento-life {
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(
+        in srgb,
+        var(--album-color-5, var(--album-secondary)) 15%,
+        transparent
+      ),
+      transparent 75%
+    ),
+    color-mix(in srgb, var(--album-background) 86%, transparent);
+}
+.bento-life ul {
+  list-style: none;
+  @apply p-0 m-0;
+  font-size: 13px;
+  line-height: 2;
+  color: var(--album-muted);
+}
+.bento-life-mark {
+  @apply block text-right;
+  margin-top: 18px;
+  font-size: 45px;
+  color: color-mix(
+    in srgb,
+    var(--album-color-7, var(--album-secondary)) 60%,
+    var(--album-text)
+  );
+}
+.personal-bento .personal-work {
+  grid-column: 1 / -1;
+  @apply min-w-0;
+}
+.personal-bento .personal-section-title {
+  margin: 16px 0;
+  padding-inline: 4px;
+}
+.personal-bento .personal-projects {
+  @apply grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 14px;
+  @apply border-0 [background:none];
+}
+.personal-bento .personal-project {
+  grid-column: span 6;
+  @apply flex;
+  padding: 24px;
+  border: 1px solid color-mix(in srgb, var(--album-text) 22%, transparent);
+  border-radius: 12px;
+  min-height: 190px;
+  @apply items-start overflow-hidden;
+  background: color-mix(in srgb, var(--album-background) 82%, transparent);
+}
+.personal-bento .project-2 {
+  grid-column: span 5;
+}
+.personal-bento .project-3 {
+  grid-column: span 7;
+}
+.personal-bento .personal-project > div {
+  @apply block;
+}
+.personal-bento .personal-project h3 {
+  margin: 20px 0 12px;
+  font-size: 27px;
+}
+.personal-bento .personal-project p {
+  font-size: 12px;
+  line-height: 1.65;
+  max-width: 38em;
+}
+.personal-bento .project-arrow {
+  flex-shrink: 0;
+}
+.personal-bento .personal-project::before {
+  border-radius: inherit;
+}
+.personal-footer {
+  @apply border-0;
+  padding-top: 4px;
+}
+@media (max-width: 850px) {
+  .personal-bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .personal-bento .personal-hero {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    padding: 30px 22px;
+  }
+  .personal-bento .personal-hero h1 {
+    font-size: clamp(44px, 9.8vw, 76px);
+  }
+  .bento-current,
+  .bento-life {
+    grid-column: span 1;
+    padding: 22px;
+  }
+  .personal-bento .personal-projects {
+    gap: 12px;
+  }
+  .personal-bento .personal-project,
+  .personal-bento .project-2,
+  .personal-bento .project-3 {
+    grid-column: span 6;
+    padding: 20px;
+  }
+}
+@media (max-width: 520px) {
+  .personal-bento {
+    padding-inline: 14px;
+  }
+  .personal-bento .personal-hero {
+    padding: 24px 16px;
+  }
+  .personal-bento .personal-hero h1 {
+    font-size: clamp(40px, 10.6vw, 56px);
+  }
+  .personal-bento .personal-kicker {
+    font-size: 7px;
+    gap: 10px;
+  }
+  .personal-bento .personal-intro {
+    font-size: 22px;
+  }
+  .personal-bento .personal-bio {
+    font-size: 13px;
+  }
+  .bento-current,
+  .bento-life {
+    padding: 18px;
+  }
+  .bento-caption {
+    font-size: 8px;
+    min-height: 22px;
+    margin-bottom: 12px;
+  }
+  .bento-current h2,
+  .bento-life h2 {
+    font-size: 19px;
+  }
+  .bento-job strong {
+    font-size: 24px;
+  }
+  .bento-life ul {
+    font-size: 11px;
+  }
+  .bento-life-mark {
+    font-size: 32px;
+  }
+  .personal-bento .personal-project,
+  .personal-bento .project-2,
+  .personal-bento .project-3 {
+    grid-column: 1 / -1;
+    @apply min-h-0;
+    padding: 22px;
+  }
+  .personal-bento .personal-project h3 {
+    margin-top: 12px;
+  }
+}
+
+/* Solid industrial typography over borderless glass. */
+@font-face {
+  font-family: Barlow;
+  src: url("/fonts/barlow-latin-400.woff2") format("woff2");
+  @apply font-normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: Barlow;
+  src: url("/fonts/barlow-latin-600.woff2") format("woff2");
+  @apply font-semibold;
+  font-display: swap;
+}
+@font-face {
+  font-family: Barlow;
+  src: url("/fonts/barlow-latin-700.woff2") format("woff2");
+  @apply font-bold;
+  font-display: swap;
+}
+.personal-page {
+  font-family: Barlow, sans-serif;
+}
+.personal-masthead {
+  @apply justify-end;
+  min-height: 70px;
+}
+.personal-bento .personal-hero {
+  @apply text-left;
+}
+.personal-bento .personal-hero h1 {
+  font-family: Barlow, sans-serif;
+  @apply font-bold;
+  letter-spacing: -0.055em;
+  margin-left: 0;
+  margin-right: 0;
+}
+.personal-page .name-reveal > span {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+.personal-bento .personal-kicker,
+.personal-bento .personal-links,
+.personal-page .now-playing {
+  @apply justify-start;
+}
+.personal-page .bento-cell,
+.personal-bento .personal-project {
+  @apply border-0;
+  border-radius: 3px;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--album-text) 7%, transparent),
+      transparent 65%
+    ),
+    color-mix(in srgb, var(--album-background) 48%, transparent);
+  backdrop-filter: blur(24px) saturate(140%);
+  box-shadow: 0 12px 40px #00000024;
+}
+.personal-page .bento-job,
+.personal-page .personal-links a,
+.personal-page .personal-links button,
+.personal-page .personal-kicker,
+.personal-page .site-mode-navigation a,
+.personal-page .site-mode-navigation button,
+.personal-page .now-playing {
+  @apply border-0;
+}
+.personal-page .site-mode-navigation nav {
+  @apply border-0;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--album-background) 48%, transparent);
+  backdrop-filter: blur(24px);
+  box-shadow: none;
+}
+.personal-page .now-playing {
+  box-shadow: none;
+  background: color-mix(in srgb, var(--album-background) 40%, transparent);
+}
+/* Small physical responses without delaying navigation. */
+.personal-page .personal-project,
+.personal-page .personal-links a,
+.personal-page .personal-links button,
+.personal-page .site-mode-navigation a,
+.personal-page .site-mode-navigation button {
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+.personal-page .personal-project:is(:hover, :focus-visible) {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 45px #00000038;
+}
+.personal-page .project-arrow {
+  transition: transform 180ms ease;
+}
+.personal-page .personal-project:is(:hover, :focus-visible) .project-arrow {
+  transform: translate(3px, -3px);
+}
+.personal-page .personal-links :is(a, button):is(:hover, :focus-visible),
+.personal-page .site-mode-navigation :is(a, button):is(:hover, :focus-visible) {
+  transform: translateY(-2px);
+  background-color: color-mix(in srgb, var(--album-secondary) 15%, transparent);
+}
+.personal-page .personal-project:active,
+.personal-page .personal-links :is(a, button):active,
+.personal-page .site-mode-navigation :is(a, button):active {
+  transform: translateY(1px) scale(0.98);
+}
+@media (prefers-reduced-motion: reduce) {
+  .personal-page .personal-project,
+  .personal-page .personal-links :is(a, button),
+  .personal-page .site-mode-navigation :is(a, button),
+  .personal-page .project-arrow {
+    transition: none;
+    transform: none !important;
+  }
+}
+/* Translucent panels and iridescent type over the original sky. */
+.personal-page .bento-cell,
+.personal-bento .personal-project {
+  @apply relative isolate;
+  background: color-mix(in srgb, var(--album-background) 32%, transparent);
+}
+.personal-page .personal-hero h1 {
+  @apply uppercase;
+  font-size: clamp(45px, 5.6vw, 76px);
+  line-height: 0.92;
+  @apply font-bold;
+  letter-spacing: -0.065em;
+}
+.personal-page .name-reveal > span {
+  background: linear-gradient(
+    115deg,
+    var(--album-text) 30%,
+    color-mix(in srgb, var(--album-color-6) 24%, var(--album-text)) 60%,
+    var(--album-text) 80%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.personal-page .bento-caption,
+.personal-page .personal-section-title,
+.personal-page .project-index {
+  @apply uppercase;
+  letter-spacing: 0.13em;
+}
+.personal-page .personal-project h3 {
+  @apply font-semibold;
+  letter-spacing: -0.055em;
+}
+.personal-page .bento-life-mark {
+  transform: rotate(-8deg);
+  text-shadow: 3px 2px color-mix(in srgb, var(--album-color-3) 35%, transparent);
+}
+.personal-page .project-arrow {
+  font-size: 26px;
+}
+@media (max-width: 520px) {
+  .personal-page .personal-hero h1 {
+    font-size: clamp(40px, 11vw, 57px);
+  }
+}
+
+.personal-masthead {
+  @apply justify-between;
+}
+.personal-page .site-mode-navigation nav {
+  @apply [background:none];
+  backdrop-filter: none;
+  box-shadow: none;
+  @apply p-0;
+}
+.personal-page .personal-wordmark {
+  @apply inline-flex items-center;
+  gap: 10px;
+  font:
+    600 15px Barlow,
+    sans-serif;
+  letter-spacing: -0.025em;
+  color: var(--album-text);
+  text-decoration: none;
+  transition:
+    color 180ms ease,
+    letter-spacing 180ms ease;
+}
+.personal-page .personal-wordmark span {
+  @apply inline-block;
+  opacity: 0;
+  transform: translate(-5px, 5px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+.personal-page .personal-wordmark:is(:hover, :focus-visible) {
+  color: var(--album-secondary);
+  letter-spacing: 0.04em;
+}
+.personal-page .personal-wordmark:is(:hover, :focus-visible) span {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .personal-page .personal-wordmark,
+  .personal-page .personal-wordmark span {
+    transition: none;
+  }
+}
+.personal-page .personal-project::before {
+  @apply hidden;
+}
+.personal-page .personal-hero h1 {
+  line-height: 1.08;
+}
+/* Type embedded directly in the uninterrupted ASCII field. */
+.personal-page .personal-bento {
+  max-width: 1240px;
+  gap: 24px 2%;
+  padding-top: 24px;
+}
+.personal-page .bento-cell,
+.personal-page .personal-project,
+.personal-page .personal-project:is(:hover, :focus-visible),
+.personal-page .now-playing {
+  @apply [background:none];
+  backdrop-filter: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+.personal-page .personal-hero {
+  grid-column: 1 / -1;
+  grid-row: auto;
+  @apply grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 12%;
+  @apply p-0;
+}
+.personal-page .personal-kicker {
+  grid-column: 1 / -1;
+  @apply justify-between;
+}
+.personal-page .personal-hero h1 {
+  grid-column: 1 / -1;
+  font-size: clamp(72px, 12.8vw, 178px);
+  margin: 5px 0 10px;
+  letter-spacing: -0.075em;
+  transform: skewX(-7deg);
+}
+.personal-page .personal-intro {
+  grid-column: 1;
+  grid-row: 3;
+  font-size: clamp(28px, 3.3vw, 46px);
+  line-height: 1.05;
+  max-width: 10em;
+  @apply m-0;
+}
+.personal-page .personal-listening {
+  grid-column: 2;
+  grid-row: 3;
+  align-self: end;
+  @apply min-h-0;
+}
+.personal-page .personal-bio {
+  grid-column: 1;
+  margin: 25px 0 0;
+}
+.personal-page .personal-links {
+  grid-column: 2;
+  align-self: end;
+  @apply justify-start;
+}
+.personal-page .bento-current {
+  grid-column: 2 / span 5;
+  padding: 50px 0 0;
+}
+.personal-page .bento-life {
+  grid-column: 8 / span 5;
+  padding: 65px 0 0;
+  @apply overflow-visible;
+}
+.personal-page .bento-job strong {
+  font-size: clamp(38px, 5vw, 68px);
+  @apply font-semibold;
+}
+.personal-page .bento-life-mark {
+  font-size: 100px;
+  margin-top: 50px;
+}
+.personal-page .personal-work {
+  margin-top: 50px;
+}
+.personal-page .personal-projects {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px 8%;
+}
+.personal-page .personal-project {
+  padding: 35px 0;
+  min-height: 240px;
+  grid-column: span 1;
+}
+.personal-page .personal-project:nth-child(even) {
+  margin-top: 55px;
+}
+.personal-page .personal-project h3 {
+  font-size: clamp(32px, 4vw, 53px);
+}
+.personal-page .personal-project p {
+  font-size: 14px;
+}
+.personal-page .personal-footer {
+  margin-top: 80px;
+  padding-bottom: 40px;
+}
+.personal-page .personal-bio,
+.personal-page .personal-project p,
+.personal-page .bento-life ul {
+  color: var(--album-text);
+}
+@media (max-width: 850px) {
+  .personal-page .personal-bento {
+    gap: 50px 20px;
+    padding-top: 20px;
+  }
+  .personal-page .personal-hero {
+    gap: 24px;
+  }
+  .personal-page .personal-hero h1 {
+    font-size: clamp(46px, 12vw, 100px);
+    margin-bottom: 20px;
+  }
+  .personal-page .personal-listening,
+  .personal-page .personal-bio,
+  .personal-page .personal-links,
+  .personal-page .personal-intro {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    @apply m-0;
+  }
+  .personal-page .personal-intro {
+    grid-row: 3;
+  }
+  .personal-page .bento-current {
+    grid-column: 1;
+    padding: 10px 0;
+  }
+  .personal-page .bento-life {
+    grid-column: 2;
+    padding: 100px 0 0;
+  }
+  .personal-page .personal-project {
+    grid-column: 1 / -1;
+    @apply min-h-0;
+  }
+  .personal-page .personal-project:nth-child(even) {
+    margin-top: 0;
+  }
+}
+@media (max-width: 520px) {
+  .personal-page .bento-current,
+  .personal-page .bento-life {
+    grid-column: 1 / -1;
+    @apply p-0;
+  }
+  .personal-page .bento-life {
+    margin-left: 12%;
+  }
+}
+
+.personal-page .personal-main {
+  text-shadow:
+    0 2px 10px var(--album-background),
+    0 0 3px var(--album-background);
+}
+.personal-page .personal-links :is(a, button) {
+  @apply [background:none];
+}
+.personal-page .personal-hero h1 {
+  text-shadow: none;
+}
+
+.personal-page .personal-masthead,
+.personal-page .personal-footer {
+  max-width: 1240px;
+}
+.personal-page .personal-links :is(a, button) {
+  box-shadow: none;
+}
+/* The DOM keeps selection, links and focus; the canvas paints their characters. */
+.personal-page main,
+.personal-page header,
+.personal-page footer {
+  font-family: var(--font-jetbrains-mono), monospace;
+}
+.personal-page .personal-bio,
+.personal-page .personal-project p,
+.personal-page .bento-life ul {
+  font-size: 14px;
+  line-height: 20px;
+}
+.personal-page.unicode-content-ready :is(main, header, footer),
+.personal-page.unicode-content-ready :is(main, header, footer) * {
+  color: transparent !important;
+  text-shadow: none;
+  -webkit-text-fill-color: transparent;
+  background-image: none;
+}
+.personal-page.unicode-content-ready ::selection {
+  background: var(--album-accent);
+  -webkit-text-fill-color: var(--album-on-accent);
+}
+@media (min-width: 1024px) {
+  .personal-page
+    :is(
+      .personal-kicker,
+      .bento-caption,
+      .bento-job span,
+      .bento-previous,
+      .personal-links a,
+      .personal-links button,
+      .project-kind,
+      .project-index,
+      .personal-section-title,
+      .now-playing-song,
+      .now-playing-artist,
+      .now-playing-status,
+      .personal-footer,
+      .site-mode-navigation a,
+      .site-mode-navigation button
+    ) {
+    font:
+      14px/20px var(--font-jetbrains-mono),
+      monospace;
+    letter-spacing: 0;
+    @apply normal-case;
+  }
+  .personal-page.unicode-content-ready .album-ascii canvas + div {
+    opacity: 0;
+  }
+}
+@media (min-width: 1024px) {
+  .personal-page
+    :is(
+      .personal-wordmark,
+      .personal-kicker span,
+      .bento-current h2,
+      .bento-life h2,
+      .now-playing-copy,
+      .now-playing-copy *,
+      .personal-footer *
+    ) {
+    font-family: var(--font-jetbrains-mono), monospace;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0;
+  }
+}
+@media (min-width: 1024px) {
+  .personal-page main * {
+    font-family: var(--font-jetbrains-mono), monospace !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    letter-spacing: 0;
+  }
+  .personal-page #personal-name,
+  .personal-page #personal-name * {
+    font-family: Barlow, sans-serif !important;
+    font-size: clamp(72px, 12.8vw, 178px) !important;
+    @apply font-bold;
+    line-height: 1.08 !important;
+  }
+  .personal-page .personal-intro {
+    max-width: none;
+  }
+}
+/* Wait for the intended face and first character frame, without a font swap. */
+.personal-page:not(.site-fonts-ready) {
+  visibility: hidden;
+}
+.personal-font-loader {
+  @apply fixed inset-0 flex justify-center items-center;
+  gap: 4px;
+  background: #080808;
+  z-index: 100;
+  @apply pointer-events-none;
+}
+.personal-font-loader i {
+  width: 4px;
+  height: 20px;
+  background: #ff5705;
+  animation: type-wait 900ms ease-in-out infinite alternate;
+}
+.personal-font-loader i:nth-child(2) {
+  animation-delay: 150ms;
+}
+.personal-font-loader i:nth-child(3) {
+  animation-delay: 300ms;
+}
+.personal-font-loader i:nth-child(4) {
+  animation-delay: 450ms;
+}
+@keyframes type-wait {
+  to {
+    transform: scaleY(0.3);
+    opacity: 0.4;
+  }
+}
+body:has(.personal-page.unicode-content-ready) .personal-font-loader {
+  @apply hidden;
+}
+.personal-header-tools {
+  @apply grid justify-items-end;
+  gap: 16px;
+}
+.personal-masthead {
+  @apply items-start;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+.personal-clock {
+  max-width: 340px;
+}
+.personal-clock-reset {
+  margin-top: 10px;
+  @apply cursor-pointer;
+}
+.personal-now {
+  min-height: 60vh;
+}
+.personal-now-article {
+  max-width: 70ch;
+  font:
+    14px/1.7 var(--font-jetbrains-mono),
+    monospace;
+  white-space: pre-wrap;
+  padding-block: 30px;
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .personal-page.site-fonts-ready.character-field-enabled:not(
+      .unicode-content-ready
+    ) {
+    visibility: hidden;
+  }
+}
+@media (max-width: 1023px), (prefers-reduced-motion: reduce) {
+  body:has(.personal-page.site-fonts-ready) .personal-font-loader {
+    @apply hidden;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .personal-font-loader i {
+    animation: none;
+  }
+}
+@media (max-width: 650px) {
+  .personal-masthead {
+    @apply flex-wrap;
+  }
+  .personal-header-tools {
+    @apply w-full justify-items-start;
+  }
+  .personal-clock {
+    @apply w-full;
+    max-width: none;
+  }
+}
+
+body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
+  .personal-font-loader {
+  @apply hidden;
+}
+.personal-header-identity {
+  @apply grid justify-items-start;
+  gap: 18px;
+}
+.personal-clock [data-time-scrubber] > div > a > span:first-child {
+  width: 5.5rem;
+}
+@media (max-width: 650px) {
+  .personal-masthead {
+    @apply flex-nowrap;
+    gap: 10px;
+  }
+  .personal-header-tools {
+    width: auto;
+    @apply justify-items-end;
+  }
+  .personal-header-tools .site-mode-navigation nav {
+    @apply flex-wrap;
+    justify-content: end;
+  }
+}
+.personal-clock,
+.personal-clock * {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+.personal-header-identity {
+  @apply min-w-0;
+}
+.personal-clock [data-time-scrubber] > div {
+  @apply relative;
+  margin-top: 0;
+}
+.personal-clock [data-time-scrubber] > div > :is(span, button) {
+  @apply absolute;
+  left: 190px;
+  top: 0;
+  @apply whitespace-nowrap;
+}
+/* Keep related content together instead of reserving empty card-sized rows. */
+.personal-page .personal-project {
+  @apply min-h-0;
+  padding-block: 18px;
+}
+.personal-page .personal-project:nth-child(even) {
+  margin-top: 0;
+}
+.personal-page .personal-projects {
+  gap: 20px 8%;
+}
+.personal-page .personal-work {
+  margin-top: 12px;
+}
+.personal-page .personal-footer {
+  margin-top: 28px;
+}
+@media (min-width: 851px) {
+  .personal-page .personal-hero {
+    gap: 16px 8%;
+  }
+  .personal-page .personal-hero h1 {
+    font-size: clamp(72px, 11vw, 150px);
+  }
+  .personal-page .personal-bio {
+    grid-column: 1;
+    grid-row: 3 / span 2;
+    @apply m-0;
+  }
+  .personal-page .personal-listening {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: start;
+  }
+  .personal-page .personal-links {
+    grid-column: 2;
+    grid-row: 4;
+    align-self: start;
+    margin-top: 0;
+  }
+  .personal-page .bento-current {
+    grid-column: 1 / span 6;
+    @apply p-0;
+  }
+  .personal-page .bento-life {
+    grid-column: 7 / span 6;
+    @apply p-0;
+  }
+  .personal-page .bento-caption {
+    margin-bottom: 12px;
+  }
+  .personal-page :is(.bento-current, .bento-life) h2 {
+    margin-bottom: 12px;
+  }
+  .personal-page .bento-job {
+    padding-block: 8px;
+  }
+  .personal-page .bento-previous {
+    margin-top: 12px;
+  }
+}
+.personal-page .personal-bio .personal-intro {
+  margin: 0 0 16px;
+}
+@media (min-width: 1024px) {
+  .personal-page #personal-name,
+  .personal-page #personal-name * {
+    font-size: clamp(72px, 11vw, 150px) !important;
+  }
+  .personal-page .bento-life-mark {
+    @apply hidden;
+  }
+}
+@media (min-width: 851px) {
+  .personal-page .bento-job {
+    @apply flex-row items-baseline justify-between;
+  }
+  .personal-page .bento-job span {
+    @apply text-right;
+  }
+}

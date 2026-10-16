@@ -1,0 +1,97 @@
+/**
+ * Device certificates (AD-6)
+ *
+ * A root identity issues a certificate binding a device's signing
+ * and encryption public keys to a time window and capability set.
+ */
+import type { DeviceCertificate, IdentityId, PasskeyCredential, PublicKey, Signature } from "@nexnet/types";
+import { sign, verify } from "@nexnet/crypto";
+import { cdeEncode } from "./cde.js";
+
+/** Fields to sign in a device certificate (everything except rootSignature). */
+interface DeviceCertPreimage {
+  accountId: IdentityId;
+  deviceId: DeviceCertificate["deviceId"];
+  deviceSigningPublicKey: PublicKey;
+  deviceEncryptionPublicKey: PublicKey;
+  issuedAt: number;
+  expiresAt: number;
+  capabilities: number;
+}
+
+/** Issue a device certificate signed by the root identity key. */
+export function issueDeviceCert(
+  rootSk: Uint8Array,
+  devicePk: PublicKey,
+  deviceEncryptionPk: PublicKey,
+  deviceId: DeviceCertificate["deviceId"],
+  accountId: IdentityId,
+  issuedAt: number,
+  expiresAt: number,
+  capabilities: number,
+): DeviceCertificate {
+  const preimage: DeviceCertPreimage = {
+    accountId,
+    deviceId,
+    deviceSigningPublicKey: devicePk,
+    deviceEncryptionPublicKey: deviceEncryptionPk,
+    issuedAt,
+    expiresAt,
+    capabilities,
+  };
+  const rootSignature = sign(rootSk, cdeEncode(preimage));
+  return {
+    ...preimage,
+    rootSignature,
+  };
+}
+
+/** Verify a device certificate was signed by the given root public key. */
+export function verifyDeviceCert(cert: DeviceCertificate, rootPk: PublicKey): boolean {
+  const preimage: DeviceCertPreimage = {
+    accountId: cert.accountId,
+    deviceId: cert.deviceId,
+    deviceSigningPublicKey: cert.deviceSigningPublicKey,
+    deviceEncryptionPublicKey: cert.deviceEncryptionPublicKey,
+    issuedAt: cert.issuedAt,
+    expiresAt: cert.expiresAt,
+    capabilities: cert.capabilities,
+  };
+  return verify(rootPk, cdeEncode(preimage), cert.rootSignature);
+}
+
+function passkeyPreimage(
+  accountId: IdentityId,
+  credential: PasskeyCredential,
+): {
+  accountId: IdentityId;
+  credentialId: string;
+  publicKey: Uint8Array;
+  rpId: string;
+  origin: string;
+} {
+  return {
+    accountId,
+    credentialId: credential.credentialId,
+    publicKey: credential.publicKey,
+    rpId: credential.rpId,
+    origin: credential.origin,
+  };
+}
+
+export function authorizePasskeyCredential(
+  rootSk: Uint8Array,
+  accountId: IdentityId,
+  credential: PasskeyCredential,
+): Signature {
+  return sign(rootSk, cdeEncode(passkeyPreimage(accountId, credential)));
+}
+
+export function verifyPasskeyCredentialAuthorization(
+  rootPk: PublicKey,
+  accountId: IdentityId,
+  credential: PasskeyCredential,
+  rootSignature: Signature,
+): boolean {
+  return verify(rootPk, cdeEncode(passkeyPreimage(accountId, credential)), rootSignature);
+}

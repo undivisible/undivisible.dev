@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { contentCell } from "./ascii-content";
+import { layoutAsciiText } from "@/lib/visuals/ascii-text";
+import { createAsciiShader } from "@/lib/visuals/ascii-shader";
 import type { TrackInfo } from "@/lib/useLastFmVisualData";
 
 type ShapeType = "circle" | "triangle" | "square";
@@ -18,9 +19,6 @@ interface ShapeState {
 const DEFAULT_COLORS = ["#ffffff", "#cccccc", "#999999", "#666666", "#333333"];
 const FIELD_CHARS = ".,:;-=+*#%&";
 const SHAPE_CHARS = "@#MW8$&NBG";
-const SHADER_DPR_CAP = 1;
-const WEBGL_INTERVAL = 1000 / 20;
-const LOOP_INTERVAL = 1000 / 30;
 /** Ignore sub-pixel/layout-thrash resizes so mobile viewport bars do not wipe canvases each frame */
 const RESIZE_STABILITY_PX = 10;
 
@@ -126,43 +124,6 @@ function pointInsideShape(
   return Math.abs(total - (a1 + a2 + a3)) < 0.5;
 }
 
-function createShader(gl: WebGLRenderingContext, type: number, source: string) {
-  const shader = gl.createShader(type);
-  if (!shader) return null;
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.error("[webgl] shader compile failed", gl.getShaderInfoLog(shader));
-    gl.deleteShader(shader);
-    return null;
-  }
-  return shader;
-}
-
-function createProgram(
-  gl: WebGLRenderingContext,
-  vertexSource: string,
-  fragmentSource: string,
-) {
-  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexSource);
-  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
-  if (!vertexShader || !fragmentShader) return null;
-
-  const program = gl.createProgram();
-  if (!program) return null;
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error("[webgl] program link failed", gl.getProgramInfoLog(program));
-    gl.deleteProgram(program);
-    return null;
-  }
-
-  return program;
-}
-
 export default function Ascii({
   colors = DEFAULT_COLORS,
   track = null,
@@ -178,9 +139,6 @@ export default function Ascii({
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef<number>(0);
-  const webglRenderRef = useRef<
-    ((now: number, force?: boolean) => boolean) | null
-  >(null);
   const monoFontStackRef = useRef("monospace");
   const colorUniforms = useMemo(
     () =>
@@ -196,181 +154,6 @@ export default function Ascii({
   const colorUniformsRef = useRef(colorUniforms);
   colorUniformsRef.current = colorUniforms;
 
-  // WebGL shader — lifecycle keyed only to `ready`. Palette updates go through
-  // colorUniformsRef so Last.fm color changes do not tear down GL (Safari flash).
-  useEffect(() => {
-    if (!ready) return;
-
-    const canvas = bgCanvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container) return;
-
-    const gl = canvas.getContext("webgl", {
-      alpha: false,
-      antialias: false,
-      premultipliedAlpha: false,
-      // Safari clears the default back buffer after compositing; ASCII samples via drawImage.
-      preserveDrawingBuffer: true,
-    });
-    if (!gl) {
-      console.error("[webgl] unavailable");
-      return;
-    }
-
-    const vertexSource = `
-      attribute vec2 a_position;
-      varying vec2 v_uv;
-      void main() {
-        v_uv = a_position * 0.5 + 0.5;
-        gl_Position = vec4(a_position, 0.0, 1.0);
-      }
-    `;
-
-    const fragmentSource = `
-      precision mediump float;
-      varying vec2 v_uv;
-      uniform vec2 u_resolution;
-      uniform float u_time;
-      uniform vec3 u_colorA;
-      uniform vec3 u_colorB;
-      uniform vec3 u_colorC;
-      uniform vec3 u_colorD;
-      uniform vec3 u_colorE;
-
-      float hash(vec2 p) {
-        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
-      }
-
-      float noise(vec2 p) {
-        vec2 i = floor(p);
-        vec2 f = fract(p);
-        vec2 u = f * f * (3.0 - 2.0 * f);
-        return mix(
-          mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
-          mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
-          u.y
-        );
-      }
-
-      float fbm(vec2 p) {
-        float value = 0.0;
-        float amplitude = 0.5;
-        for (int i = 0; i < 2; i++) {
-          value += amplitude * noise(p);
-          p = p * 1.7 + vec2(1.7, 9.2);
-          amplitude *= 0.58;
-        }
-        return value;
-      }
-
-      vec3 palette(float t) {
-        if (t < 0.25) {
-          return mix(u_colorA, u_colorB, smoothstep(0.0, 0.25, t));
-        }
-        if (t < 0.5) {
-          return mix(u_colorB, u_colorC, smoothstep(0.25, 0.5, t));
-        }
-        if (t < 0.75) {
-          return mix(u_colorC, u_colorD, smoothstep(0.5, 0.75, t));
-        }
-        return mix(u_colorD, u_colorE, smoothstep(0.75, 1.0, t));
-      }
-
-      void main() {
-        vec2 uv = v_uv;
-        vec2 p = uv * vec2(u_resolution.x / max(u_resolution.y, 1.0), 1.0);
-        float t = u_time * 0.09;
-
-        vec2 flow = vec2(
-          fbm(p * 0.9 + vec2(t * 0.45, -t * 0.22)),
-          fbm(p * 0.95 + vec2(-t * 0.18, t * 0.34))
-        );
-
-        vec2 warped = p + (flow - 0.5) * 0.55;
-        float fluid = fbm(warped * 1.45 + vec2(t * 0.26, -t * 0.12));
-        fluid = clamp(fluid, 0.0, 1.0);
-
-        vec3 color = palette(fluid);
-        float alpha = clamp(0.52 + fluid * 0.9, 0.0, 1.0);
-        gl_FragColor = vec4(color * alpha, 1.0);
-      }
-    `;
-
-    const program = createProgram(gl, vertexSource, fragmentSource);
-    if (!program) return;
-
-    const positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-      gl.STATIC_DRAW,
-    );
-
-    const positionLocation = gl.getAttribLocation(program, "a_position");
-    const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
-    const timeLocation = gl.getUniformLocation(program, "u_time");
-    const colorALocation = gl.getUniformLocation(program, "u_colorA");
-    const colorBLocation = gl.getUniformLocation(program, "u_colorB");
-    const colorCLocation = gl.getUniformLocation(program, "u_colorC");
-    const colorDLocation = gl.getUniformLocation(program, "u_colorD");
-    const colorELocation = gl.getUniformLocation(program, "u_colorE");
-
-    // Keep the hidden shader canvas cheap; the visible ASCII layer samples it down.
-    let webglThrottleMs = WEBGL_INTERVAL;
-
-    const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, SHADER_DPR_CAP);
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      webglThrottleMs = width < 1024 ? 1000 / 12 : WEBGL_INTERVAL;
-      canvas.width = Math.max(1, Math.floor(width * dpr));
-      canvas.height = Math.max(1, Math.floor(height * dpr));
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      gl.viewport(0, 0, canvas.width, canvas.height);
-    };
-
-    const detachResize = attachStableResize(container, resize);
-
-    // Store render fn on a ref so the ASCII effect can call it each frame
-    let lastWebgl = -Infinity;
-    const renderWebGL = (now: number, force = false) => {
-      if (document.hidden) return false;
-      if (!force && now - lastWebgl < webglThrottleMs) return false;
-      lastWebgl = now;
-
-      const cu = colorUniformsRef.current;
-      gl.useProgram(program);
-      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      gl.enableVertexAttribArray(positionLocation);
-      gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-      gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
-      gl.uniform1f(timeLocation, now * 0.001);
-      gl.uniform3fv(colorALocation, cu[0]!);
-      gl.uniform3fv(colorBLocation, cu[1]!);
-      gl.uniform3fv(colorCLocation, cu[2]!);
-      gl.uniform3fv(colorDLocation, cu[3]!);
-      gl.uniform3fv(colorELocation, cu[4]!);
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
-      return true;
-    };
-
-    gl.useProgram(program);
-    gl.uniform3fv(colorALocation, colorUniformsRef.current[0]!);
-    gl.uniform3fv(colorBLocation, colorUniformsRef.current[1]!);
-    gl.uniform3fv(colorCLocation, colorUniformsRef.current[2]!);
-    gl.uniform3fv(colorDLocation, colorUniformsRef.current[3]!);
-    gl.uniform3fv(colorELocation, colorUniformsRef.current[4]!);
-
-    webglRenderRef.current = renderWebGL;
-
-    return () => {
-      detachResize();
-      webglRenderRef.current = null;
-    };
-  }, [ready]);
-
   // ASCII + physics effect — single rAF loop drives both WebGL and ASCII
   useEffect(() => {
     if (!ready) return;
@@ -380,14 +163,18 @@ export default function Ascii({
     const asciiCanvas = asciiCanvasRef.current;
     if (!container || !bgCanvas || !asciiCanvas) return;
 
+    const shader = createAsciiShader(bgCanvas, () => colorUniformsRef.current);
+    if (!shader) return;
+
     const ctx = asciiCanvas.getContext("2d", { alpha: true });
-    const frameCanvas = document.createElement("canvas");
-    const frameCtx = frameCanvas.getContext("2d", { alpha: true });
     const sampleCanvas = document.createElement("canvas");
     const sampleCtx = sampleCanvas.getContext("2d", {
       willReadFrequently: true,
     });
-    if (!ctx || !frameCtx || !sampleCtx) return;
+    if (!ctx || !sampleCtx) {
+      shader.dispose();
+      return;
+    }
 
     const page = container.closest(".personal-page");
     const inkCanvas = document.createElement("canvas");
@@ -395,8 +182,8 @@ export default function Ascii({
     let contentDirty = true;
     let contentColor = "#ffffff";
     let activeColor = "#ff5705";
-    const activeCells = new Set<string>();
-    const musicCells = new Set<string>();
+    let activeCells = new Set<number>();
+    let musicCells = new Set<number>();
     const invalidateContent = () => {
       contentDirty = true;
     };
@@ -423,7 +210,7 @@ export default function Ascii({
     window.addEventListener("site:album-palette", invalidateContent);
     window.addEventListener("site:sky-contrast", invalidateContent);
     void document.fonts.ready.then(invalidateContent);
-    let contentGlyphs = new Map<string, string>();
+    let contentGlyphs = new Map<number, string>();
     let inkPixels: Uint8ClampedArray | undefined;
 
     const shapes: ShapeState[] = [
@@ -462,15 +249,25 @@ export default function Ascii({
     let width = 0;
     let height = 0;
     let last = performance.now();
-    let asciiIntervalMs = 1000 / 24;
+    let asciiIntervalMs = 1000 / 15;
     let lastAscii = 0;
-    let lastLoop = 0;
 
     const resize = () => {
       width = container.clientWidth;
       height = container.clientHeight;
       const narrow = width < 1024;
-      asciiIntervalMs = narrow ? 1000 / 12 : 1000 / 24;
+      asciiIntervalMs = narrow ? 1000 / 12 : 1000 / 15;
+      const cell = Math.max(8, Math.min(width, height) / (narrow ? 32 : 56));
+      const columns = Math.max(
+        1,
+        page ? Math.ceil(width / 8.4) : Math.floor(width / (cell * 0.9)),
+      );
+      const rows = Math.max(
+        1,
+        page ? Math.ceil(height / 20) : Math.floor(height / cell),
+      );
+      shader.resize(width, height, columns, rows);
+      contentDirty = true;
       const size = Math.max(170, Math.min(width, height) * 0.31);
       shapes[0].x = width * 0.22;
       shapes[0].y = height * 0.22;
@@ -486,12 +283,7 @@ export default function Ascii({
       asciiCanvas.height = h;
       asciiCanvas.style.width = `${width}px`;
       asciiCanvas.style.height = `${height}px`;
-      if (frameCanvas.width !== w || frameCanvas.height !== h) {
-        frameCanvas.width = w;
-        frameCanvas.height = h;
-      }
       ctx.setTransform(1, 0, 0, 1, 0, 0);
-      frameCtx.setTransform(1, 0, 0, 1, 0, 0);
       monoFontStackRef.current =
         getComputedStyle(document.documentElement)
           .getPropertyValue("--font-jetbrains-mono")
@@ -507,17 +299,11 @@ export default function Ascii({
         return;
       }
 
-      if (now - lastLoop < LOOP_INTERVAL) {
-        return;
-      }
-      lastLoop = now;
-
-      webglRenderRef.current?.(now);
-
-      if (now - lastAscii < asciiIntervalMs) return;
+      // Decorative motion is capped; clocks, scrolling and focus repaint immediately.
+      if (!contentDirty && now - lastAscii < asciiIntervalMs) return;
       lastAscii = now;
 
-      const delta = Math.min((now - last) / 1000, 0.04);
+      const delta = Math.min((now - last) / 1000, 0.1);
       last = now;
 
       for (const shape of shapes) {
@@ -553,70 +339,23 @@ export default function Ascii({
       const cellHeight = page ? 20 : height / rows;
       if (contentDirty && page && ink) {
         contentDirty = false;
-        contentGlyphs = new Map();
-        activeCells.clear();
-        musicCells.clear();
-        activeColor =
-          getComputedStyle(page).getPropertyValue("--album-secondary").trim() ||
-          "#ff5705";
-        contentColor =
-          getComputedStyle(page).getPropertyValue("--album-text").trim() ||
-          "#ffffff";
-        inkCanvas.width = width;
-        inkCanvas.height = height;
-        ink.clearRect(0, 0, width, height);
-        ink.fillStyle = "white";
-        ink.textBaseline = "top";
-        const walker = document.createTreeWalker(page, NodeFilter.SHOW_TEXT);
-        while (walker.nextNode()) {
-          const node = walker.currentNode;
-          const parent = node.parentElement;
-          if (
-            !node.textContent?.trim() ||
-            !parent?.closest("main, header, footer") ||
-            parent.closest("[aria-hidden=true]")
-          )
-            continue;
-          const style = getComputedStyle(parent);
-          if (style.opacity === "0" && !parent.closest(".now-playing"))
-            continue;
-          const range = document.createRange();
-          let previousCell: { col: number; row: number } | undefined;
-          const large = parseFloat(style.fontSize) > 30;
-          ink.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-          for (let index = 0; index < node.textContent.length; index++) {
-            let char = node.textContent[index];
-            if (style.textTransform === "uppercase") char = char.toUpperCase();
-            range.setStart(node, index);
-            range.setEnd(node, index + 1);
-            const rect = range.getBoundingClientRect();
-            if (!rect.width || rect.bottom < 0 || rect.top > height) continue;
-            if (large) {
-              ink.fillText(char, rect.x, rect.y);
-            } else {
-              const point = contentCell(
-                rect.x,
-                rect.y + rect.height / 2,
-                cellWidth,
-                cellHeight,
-                previousCell,
-              );
-              previousCell = point;
-              if (point.row >= 0 && point.row < rows) {
-                const key = `${point.col},${point.row}`;
-                contentGlyphs.set(key, char);
-                if (parent.closest(".now-playing")) musicCells.add(key);
-                if (
-                  parent.closest(
-                    "a:hover, button:hover, a:focus-visible, button:focus-visible",
-                  )
-                )
-                  activeCells.add(key);
-              }
-            }
-          }
-        }
-        inkPixels = ink.getImageData(0, 0, width, height).data;
+        ({
+          contentGlyphs,
+          activeCells,
+          musicCells,
+          activeColor,
+          contentColor,
+          inkPixels,
+        } = layoutAsciiText({
+          page,
+          ink,
+          width,
+          height,
+          cols,
+          rows,
+          cellWidth,
+          cellHeight,
+        }));
         asciiCanvas.dataset.contentCells = String(contentGlyphs.size);
         page.classList.add("unicode-content-ready");
       }
@@ -626,19 +365,19 @@ export default function Ascii({
         sampleCanvas.height = rows;
       }
 
-      webglRenderRef.current?.(now, true);
+      shader.render(now);
 
       sampleCtx.clearRect(0, 0, cols, rows);
       sampleCtx.drawImage(bgCanvas, 0, 0, cols, rows);
       const pixels = sampleCtx.getImageData(0, 0, cols, rows).data;
 
-      frameCtx.clearRect(0, 0, width, height);
-      frameCtx.textBaseline = "middle";
-      frameCtx.textAlign = "center";
+      ctx.clearRect(0, 0, width, height);
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "center";
       const monoFont = monoFontStackRef.current;
       const font = `${page ? 14 : Math.max(12, cell * 0.72)}px ${monoFont}, monospace`;
-      frameCtx.font = font;
-      frameCtx.shadowColor = "transparent";
+      ctx.font = font;
+      ctx.shadowColor = "transparent";
 
       const music = page?.querySelector(".now-playing");
       const musicOpacity = music ? Number(getComputedStyle(music).opacity) : 1;
@@ -679,11 +418,11 @@ export default function Ascii({
             ),
           );
 
-          frameCtx.fillStyle = `rgb(${r},${g},${b})`;
-          frameCtx.globalAlpha = insideAnyShape
+          ctx.fillStyle = `rgb(${r},${g},${b})`;
+          ctx.globalAlpha = insideAnyShape
             ? clamp(0.86 + brightness * 0.1, 0.78, 0.94)
             : clamp(0.52 + brightness * 0.4, 0.52, 0.94);
-          const contentChar = contentGlyphs.get(`${col},${row}`);
+          const contentChar = contentGlyphs.get(row * cols + col);
           const inkIndex =
             (Math.min(height - 1, Math.floor(y)) * width +
               Math.min(width - 1, Math.floor(x))) *
@@ -691,16 +430,16 @@ export default function Ascii({
             3;
           const titleInk = (inkPixels?.[inkIndex] ?? 0) > 80;
           if (contentChar !== undefined || titleInk) {
-            frameCtx.fillStyle = activeCells.has(`${col},${row}`)
+            ctx.fillStyle = activeCells.has(row * cols + col)
               ? activeColor
               : contentColor;
-            frameCtx.globalAlpha = musicCells.has(`${col},${row}`)
+            ctx.globalAlpha = musicCells.has(row * cols + col)
               ? musicOpacity
               : 1;
           } else if (page) {
-            frameCtx.globalAlpha *= 0.35;
+            ctx.globalAlpha *= 0.35;
           }
-          frameCtx.fillText(
+          ctx.fillText(
             contentChar ?? (titleInk ? "▓" : charSet[charIndex]),
             x,
             y,
@@ -708,20 +447,20 @@ export default function Ascii({
         }
       }
 
-      frameCtx.globalAlpha = 1;
-      ctx.clearRect(0, 0, width, height);
-      ctx.drawImage(frameCanvas, 0, 0);
+      ctx.globalAlpha = 1;
     };
 
     frameRef.current = requestAnimationFrame(render);
 
     const visibilityHandler = () => {
+      cancelAnimationFrame(frameRef.current);
       if (!document.hidden) frameRef.current = requestAnimationFrame(render);
     };
     document.addEventListener("visibilitychange", visibilityHandler);
 
     return () => {
       detachResize();
+      shader.dispose();
       if (page)
         for (const event of [
           "pointerover",

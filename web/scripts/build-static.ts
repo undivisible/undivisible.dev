@@ -1,3 +1,4 @@
+import { buildStyles } from "./build-css";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
 import {
@@ -106,28 +107,12 @@ async function buildClient(): Promise<Record<string, string>> {
 }
 
 async function buildCss(): Promise<string> {
-  const target = join(assetsDir, "site.css");
-  const proc = Bun.spawn(
-    [
-      "bunx",
-      "@tailwindcss/cli",
-      "--input",
-      join(projectDir, "src/index.css"),
-      "--output",
-      target,
-      "--minify",
-    ],
-    { cwd: projectDir, stdout: "inherit", stderr: "inherit" },
-  );
-  const code = await proc.exited;
-  if (code !== 0) throw new Error(`tailwind build failed with code ${code}`);
-  const bytes = await Bun.file(target).bytes();
+  const bytes = await buildStyles(projectDir);
   const hasher = new Bun.CryptoHasher("sha256");
   hasher.update(bytes);
   const hash = hasher.digest("hex").slice(0, 8);
   const hashed = join(assetsDir, `site-${hash}.css`);
   await Bun.write(hashed, bytes);
-  await rm(target);
   return `/assets/site-${hash}.css`;
 }
 

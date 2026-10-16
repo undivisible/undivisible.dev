@@ -1,6 +1,6 @@
 # undivisible.dev web
 
-Moonshine, React 19, Tailwind v4 and Bun prerender the site to static HTML.
+Moonshine, React 19, UnoCSS and Bun prerender the site to static HTML.
 
 - `/` and `/lab/` — boot the full-screen Alpenglow browser desktop. Startup errors or 12 seconds without readiness fall back to `/main/`.
 - `/main/` — the regular animated portfolio. Startup errors or 5 seconds without hydration fall back to `/simple/`.
@@ -24,19 +24,55 @@ Selected project copy is curated in `src/data/profile.ts`; the full portfolio is
 | `bun run typecheck`               | TypeScript; also the lint gate                  |
 | `bun run format`                  | Prettier check                                  |
 
+## Styling and rendering
+
+`uno.config.ts` owns utility generation and the shared font theme. `src/index.css`
+imports feature styles from `src/styles/`; common layout declarations use UnoCSS
+`@apply`. Gradients, keyframes, print rules and canvas states remain explicit CSS.
+`styles/studies.css` preserves the retired layout studies without shipping them.
+`scripts/build-css.ts` compiles directives and utilities, then minifies and hashes
+one static stylesheet. There is no CSS engine in the browser.
+
+`src/lib/visuals/` separates the hidden artwork shader and DOM-to-character layout.
+The hidden shader renders one pixel per character cell, and a single animation
+loop repaints the visible field. Decorative frames are capped at 15 fps; content,
+focus and clock changes repaint without waiting for that interval. The sky stays
+at normal brightness and uses a 1× backing buffer, separate from the text canvas.
+Contrast sampling lives in `hooks/use-sky-contrast.ts` and pauses in hidden tabs.
+
+## Internal Nexnet
+
+The same Worker serves `/v1/*` through a SQLite-backed Durable Object. Static
+files continue through the assets binding. Preview and production each have their
+own Worker, storage, origin and WebAuthn RP ID. This uses Nexnet's existing signed
+protocol and a persistent site-backed authority, not its future consensus chain.
+See [the integration notes](os-image/NEXNET.md) for storage, passkeys and ownership.
+
+Local Worker development: `bun run dev:worker`, then open `http://localhost:8790`.
+Browser integration checks use an isolated browser and virtual authenticator:
+`python3 tests/nexnet-browser.py http://localhost:8790` (Playwright tooling required).
+The test refuses production and never registers a real user's passkey.
+
 ## Linux image
 
 `public/v86/` contains the committed kernel, initramfs, emulator, BIOS and WebAssembly files. The existing i686 Alpenglow kernel boots a Zig framebuffer desktop (`os-image/de/`) and packaged offline pages. Ordinary site releases do not need the full `scripts/build-de.sh` desktop rebuild.
 
 After a static build, run `bun run scripts/bake-os-content.ts`, then `sh scripts/build-os-initramfs.sh`. The latter repacks the upstream initramfs with the overlay and calls `prepare-os-web.ts` to use the static profile for both Home and Simple with guest-local stylesheet and navigation URLs. The guest has no network. Its `web` app opens NetSurf; `links` is the smaller fallback. The host browser escape control returns to the desktop.
 
-Type `nexnet` in the desktop launcher to open the Nexnet terminal chat. It reads Updates and Public chat from a gateway and lets you create an identity, sign in and post; set `NEXT_PUBLIC_NEXNET_GATEWAY_URL` at build time (unset means unconfigured and read/post stay off). Press q outside the editor or Ctrl+C to return to the desktop. See [the bridge, provenance and gateway notes](os-image/NEXNET.md).
+Type `nexnet` in the desktop launcher to open the Nexnet terminal chat. It reads Updates and Public chat from a gateway and lets you create an identity, sign in and post; set `NEXT_PUBLIC_NEXNET_GATEWAY_URL` at build time only to override the internal same-origin gateway (an empty string disables it). Press q outside the editor or Ctrl+C to return to the desktop. See [the bridge, provenance and gateway notes](os-image/NEXNET.md).
 
 ## Deployment
 
 `wrangler.production.jsonc` deploys `out/` to Worker `undivisible` in the personal Cloudflare account, serving `undivisible.dev/*`. `wrangler.jsonc` remains the separate `undivisible-next` preview at `next.undivisible.dev`.
 
-Production: `SITE_URL=https://undivisible.dev bun run build`, then `bunx wrangler deploy --config wrangler.production.jsonc`. Rebuild the native desktop and initramfs when their inputs change. Roll back with `bunx wrangler rollback <previous-version-id> --config wrangler.production.jsonc`.
+For a code-only release preserve the currently approved public Markdown snapshots
+and use `SITE_URL=https://undivisible.dev bun run scripts/build-static.ts`. A full
+content refresh remains `SITE_URL=https://undivisible.dev bun run build`.
+
+Deploy preview with `bunx wrangler deploy --config wrangler.jsonc`. Validate sign-in,
+posting and passkeys there before approving authentication changes for production.
+
+Production: prepare the static output, then `bunx wrangler deploy --config wrangler.production.jsonc`. Rebuild the native desktop and initramfs when their inputs change. Roll back with `bunx wrangler rollback <previous-version-id> --config wrangler.production.jsonc`.
 
 Kernel and initramfs URLs revalidate on every load. Hashed `/assets/` files are immutable. BIOS/emulator/WebAssembly caches stay unchanged when those files stay unchanged. Check live headers and verify the image after a release.
 

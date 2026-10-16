@@ -216,6 +216,7 @@ var matches: [MAXAPP]usize = [_]usize{0} ** MAXAPP;
 var nmatch: usize = 0;
 
 fn builtinDesc(n: []const u8) []const u8 {
+    if (std.mem.eql(u8, n, "nexnet")) return "chat, identity and public entries";
     if (std.mem.eql(u8, n, "about")) return "who this machine belongs to";
     if (std.mem.eql(u8, n, "works")) return "selected projects";
     if (std.mem.eql(u8, n, "route")) return "travel route and plans";
@@ -284,7 +285,7 @@ fn scanDir(dir: []const u8) void {
 }
 
 fn scanApps() void {
-    const names = [_][]const u8{ "about", "works", "route", "before17", "activity", "sites", "docs", "web", "history", "links", "term", "fetch", "sh", "quotes", "philosophy", "photos", "crepuscularity" };
+    const names = [_][]const u8{ "nexnet", "works", "about", "term", "web", "docs", "photos", "sites", "history", "route", "before17", "activity", "links", "fetch", "sh", "quotes", "philosophy", "crepuscularity" };
     for (names) |n| addApp(n, builtinDesc(n), true);
     scanDir("/bin");
     scanDir("/usr/bin");
@@ -433,7 +434,10 @@ fn composite(x: i32, y: i32, w: i32, h: i32) void {
     var have_bg = false;
     var i: usize = 0;
     while (i < nsurf) : (i += 1) {
-        if (surf[i].alive and surf[i].bg) { have_bg = true; break; }
+        if (surf[i].alive and surf[i].bg) {
+            have_bg = true;
+            break;
+        }
     }
     if (!have_bg) wallpaper();
     i = 0;
@@ -455,7 +459,10 @@ fn composite(x: i32, y: i32, w: i32, h: i32) void {
             @memcpy(fb[dst .. dst + len / 4], back.px[src .. src + len / 4]);
         }
     }
-    dx0 = 0; dy0 = 0; dx1 = W; dy1 = H;
+    dx0 = 0;
+    dy0 = 0;
+    dx1 = W;
+    dy1 = H;
 }
 
 fn compositeAll() void {
@@ -517,8 +524,14 @@ fn fitPosition(position: i32, extent: i32, available: i32) i32 {
 fn handleHello(s: *Surface, m: *const wire.AwMsg) void {
     var w = m.a;
     var h = m.b;
-    if (m.type == wire.AW_HELLO_BG) { w = W; h = H; }
-    if (w < 8 or h < 8 or w > MAXW or h > MAXH) { s.alive = false; return; }
+    if (m.type == wire.AW_HELLO_BG) {
+        w = W;
+        h = H;
+    }
+    if (w < 8 or h < 8 or w > MAXW or h > MAXH) {
+        s.alive = false;
+        return;
+    }
     const resizable = m.type != wire.AW_HELLO_BG and (m.e & wire.AW_F_RESIZE) != 0;
     if (resizable) {
         w = fitDimension(w, wire.AW_MIN_W, W, MAXW);
@@ -529,12 +542,22 @@ fn handleHello(s: *Surface, m: *const wire.AwMsg) void {
     var pz: [128]u8 = std.mem.zeroes([128]u8);
     @memcpy(pz[0..ps.len], ps);
     const f_raw = linux.open(@ptrCast(&pz), .{ .ACCMODE = .RDWR, .CREAT = true, .TRUNC = true }, 0o600);
-    if (linux.errno(f_raw) != .SUCCESS) { s.alive = false; return; }
+    if (linux.errno(f_raw) != .SUCCESS) {
+        s.alive = false;
+        return;
+    }
     const f: i32 = @intCast(f_raw);
-    if (linux.errno(linux.ftruncate(f, @as(i64, w) * h * 4)) != .SUCCESS) { _ = linux.close(f); s.alive = false; return; }
+    if (linux.errno(linux.ftruncate(f, @as(i64, w) * h * 4)) != .SUCCESS) {
+        _ = linux.close(f);
+        s.alive = false;
+        return;
+    }
     const px_raw = linux.mmap(null, @as(usize, @intCast(w * h * 4)), .{ .READ = true, .WRITE = true }, .{ .TYPE = .SHARED }, f, 0);
     _ = linux.close(f);
-    if (linux.errno(px_raw) != .SUCCESS) { s.alive = false; return; }
+    if (linux.errno(px_raw) != .SUCCESS) {
+        s.alive = false;
+        return;
+    }
     s.px = @ptrFromInt(px_raw);
     s.has_px = true;
     s.w = w;
@@ -582,7 +605,10 @@ fn resizeSurface(s: *Surface, w_in: i32, h_in: i32) bool {
     const f_raw = linux.open(@ptrCast(&pz), .{ .ACCMODE = .RDWR }, 0o600);
     if (linux.errno(f_raw) != .SUCCESS) return false;
     const f: i32 = @intCast(f_raw);
-    if (linux.errno(linux.ftruncate(f, @as(i64, w) * h * 4)) != .SUCCESS) { _ = linux.close(f); return false; }
+    if (linux.errno(linux.ftruncate(f, @as(i64, w) * h * 4)) != .SUCCESS) {
+        _ = linux.close(f);
+        return false;
+    }
     const px_raw = linux.mmap(null, @as(usize, @intCast(w * h * 4)), .{ .READ = true, .WRITE = true }, .{ .TYPE = .SHARED }, f, 0);
     _ = linux.close(f);
     if (linux.errno(px_raw) != .SUCCESS) return false;
@@ -644,6 +670,7 @@ fn handOver(cmd: []const u8) void {
 fn launch(app_index: usize) void {
     const a = &apps[app_index];
     const an = std.mem.sliceTo(&a.name, 0);
+    if (std.mem.eql(u8, an, "nexnet")) handOver("nexnet");
     if (std.mem.eql(u8, an, "sh") or std.mem.eql(u8, an, "term")) {
         spawn("/usr/bin/unterm", null);
         bar_on = false;
@@ -836,10 +863,16 @@ pub fn main() void {
             if (slot >= nfds or fds[slot].revents & linux.POLL.IN == 0) continue;
             var m: wire.AwMsg = undefined;
             const n = linux.read(surf[idx].fd, std.mem.asBytes(&m).ptr, @sizeOf(wire.AwMsg));
-            if (n != @sizeOf(wire.AwMsg)) { dropSurface(idx); continue; }
+            if (n != @sizeOf(wire.AwMsg)) {
+                dropSurface(idx);
+                continue;
+            }
             if (m.type == wire.AW_HELLO or m.type == wire.AW_HELLO_BG) {
                 handleHello(&surf[idx], &m);
-                if (!surf[idx].alive) { dropSurface(idx); continue; }
+                if (!surf[idx].alive) {
+                    dropSurface(idx);
+                    continue;
+                }
                 damageSurface(&surf[idx]);
             } else if (m.type == wire.AW_COMMIT) {
                 damageSurface(&surf[idx]);
@@ -859,7 +892,10 @@ pub fn main() void {
             if (focus >= 0) {
                 var fi2: i32 = -1;
                 var ii: usize = 0;
-                while (ii < nsurf) : (ii += 1) if (surf[ii].id == focus) { fi2 = @intCast(ii); break; };
+                while (ii < nsurf) : (ii += 1) if (surf[ii].id == focus) {
+                    fi2 = @intCast(ii);
+                    break;
+                };
                 if (fi2 < 0) {
                     focus = -1;
                 } else if (k == 27) {
@@ -990,14 +1026,20 @@ pub fn main() void {
                         focus = -1;
                         if (my > bar_y + 49 and nmatch > 0) {
                             const row: usize = @intCast(@divTrunc(my - bar_y - 49, 24));
-                            if (row < nmatch) { sel = row; launch(matches[sel]); }
+                            if (row < nmatch) {
+                                sel = row;
+                                launch(matches[sel]);
+                            }
                         }
                     } else {
                         var hit: i32 = -1;
                         var hi: i32 = @as(i32, @intCast(nsurf)) - 1;
                         while (hi >= 0) : (hi -= 1) {
                             const idx: usize = @intCast(hi);
-                            if (surf[idx].alive and !surf[idx].bg and mx >= surf[idx].x and mx < surf[idx].x + surf[idx].w and my >= surf[idx].y and my < surf[idx].y + surf[idx].h) { hit = hi; break; }
+                            if (surf[idx].alive and !surf[idx].bg and mx >= surf[idx].x and mx < surf[idx].x + surf[idx].w and my >= surf[idx].y and my < surf[idx].y + surf[idx].h) {
+                                hit = hi;
+                                break;
+                            }
                         }
                         if (hit < 0) {
                             focus = -1;
@@ -1044,7 +1086,10 @@ pub fn main() void {
                         }
                     }
                 }
-                if (btn == 0) { dragging = -1; resizing = -1; }
+                if (btn == 0) {
+                    dragging = -1;
+                    resizing = -1;
+                }
                 mbtn = btn;
             }
             if (moved) {
@@ -1083,7 +1128,10 @@ pub fn main() void {
                     var hi: i32 = @as(i32, @intCast(nsurf)) - 1;
                     while (hi >= 0) : (hi -= 1) {
                         const idx: usize = @intCast(hi);
-                        if (surf[idx].alive and !surf[idx].bg and mx >= surf[idx].x and mx < surf[idx].x + surf[idx].w and my >= surf[idx].y and my < surf[idx].y + surf[idx].h) { hs = hi; break; }
+                        if (surf[idx].alive and !surf[idx].bg and mx >= surf[idx].x and mx < surf[idx].x + surf[idx].w and my >= surf[idx].y and my < surf[idx].y + surf[idx].h) {
+                            hs = hi;
+                            break;
+                        }
                     }
                     const hid: i32 = if (hs >= 0) surf[@intCast(hs)].id else -1;
                     if (hovered_id != -1 and hovered_id != hid) {
@@ -1140,7 +1188,6 @@ pub fn main() void {
         }
     }
 }
-
 
 test "resizable windows fit mobile viewport at creation and resize" {
     const w = fitDimension(720, wire.AW_MIN_W, 390, MAXW);

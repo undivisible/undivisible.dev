@@ -203,13 +203,9 @@ export function Light({
       const fixed = getComputedStyle(canvas).position === "fixed";
       const width = fixed ? window.innerWidth : parent.clientWidth;
       const height = fixed ? window.innerHeight : parent.clientHeight;
-      const rawDpr = window.devicePixelRatio || 1;
-      const dpr =
-        width < 640
-          ? Math.min(rawDpr, 1)
-          : width < 1024
-            ? Math.min(rawDpr, 1.25)
-            : Math.min(rawDpr, 2);
+      // This layer contains soft sky gradients, never text. Retina-sized
+      // buffers quadruple its paint work without improving the character layer.
+      const dpr = 1;
       canvas.width = Math.max(1, Math.floor(width * dpr));
       canvas.height = Math.max(1, Math.floor(height * dpr));
       canvas.style.width = `${width}px`;

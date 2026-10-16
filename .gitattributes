@@ -5,3 +5,13 @@ web/public/v86/** linguist-generated
 web/os-image/overlay/usr/bin/** linguist-generated
 web/os-image/overlay/usr/local/** linguist-generated
 web/os-image/de/font_*.bin linguist-generated
+
+# Keep shell scripts available without counting them as the project language.
+*.sh linguist-detectable=false
+*.bash linguist-detectable=false
+*.zsh linguist-detectable=false
+web/os-image/overlay/init linguist-detectable=false
+web/os-image/overlay/usr/share/undesk/apps/* linguist-detectable=false
+
+# Upstream protocol sources are dependencies, not original language statistics.
+web/server/nexnet/vendor/** linguist-vendored
