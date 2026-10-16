@@ -1138,7 +1138,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
         window.cancelAnimationFrame(resetFrameRef.current);
         resetFrameRef.current = null;
       }
-      const step = shiftKey ? 12 : 3;
+      const step = shiftKey ? 48 : 12;
       const direction = deltaY > 0 ? step : -step;
       setIsScrubbing(true);
       setDisplayedMinute((current) => wrapMinutes(current + direction));
