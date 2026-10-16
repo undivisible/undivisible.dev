@@ -23,6 +23,8 @@ export function AlbumBackground({
     day.shader.weatherKind === "storm";
   const [colors, setColors] = useState<string[]>(DEFAULT_COLORS);
   const backgroundRef = useRef<HTMLDivElement>(null);
+  const skyBaseRef = useRef(day.shader.base);
+  skyBaseRef.current = day.shader.base;
 
   useEffect(() => {
     const background = backgroundRef.current;
@@ -30,6 +32,7 @@ export function AlbumBackground({
     const page = background.closest<HTMLElement>(".personal-page");
     if (!page) return;
     const update = () => {
+      const baseColor = skyBaseRef.current;
       const sky = background.querySelector<HTMLCanvasElement>(".album-sky");
       const context = sky?.getContext("2d");
       const samples: string[] = [];
@@ -44,7 +47,7 @@ export function AlbumBackground({
           const alpha = pixel[3]! / 255;
           const channels = [0, 1, 2].map((index) => {
             const base = parseInt(
-              day.shader.base.slice(1 + index * 2, 3 + index * 2),
+              baseColor.slice(1 + index * 2, 3 + index * 2),
               16,
             );
             return Math.round(pixel[index]! * alpha + base * (1 - alpha))
@@ -55,7 +58,7 @@ export function AlbumBackground({
         }
       }
       const tone =
-        skyTextColor(samples.length ? samples : [day.shader.base]) === "#000000"
+        skyTextColor(samples.length ? samples : [baseColor]) === "#000000"
           ? "light"
           : "dark";
       if (page.dataset.skyTone !== tone) {
@@ -69,7 +72,7 @@ export function AlbumBackground({
       window.clearInterval(timer);
       delete page.dataset.skyTone;
     };
-  }, [day.shader.base]);
+  }, []);
 
   useEffect(() => {
     const read = () => {
