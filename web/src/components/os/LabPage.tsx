@@ -14,11 +14,8 @@ export default function LabPage() {
   return (
     <div className={`lab-page${started ? " lab-running" : ""}`}>
       <nav className="lab-navigation" aria-label="Lab navigation">
-        <a href="/main/" aria-label="Return to website mode">
+        <a href="/" aria-label="Return to the portfolio">
           ← Website
-        </a>
-        <a href="/simple/" className="lab-simple-link">
-          Simple
         </a>
         {started ? (
           <button disabled={!interactive} onClick={() => setStarted(false)}>
@@ -47,13 +44,12 @@ export default function LabPage() {
             Start machine
           </button>
           <p>
-            The <a href="/simple/">simple version</a> has the profile, projects
-            and résumé without starting Linux.
+            Visit the <a href="/">portfolio</a> without starting Linux.
           </p>
           <noscript>
             <p>
-              JavaScript is needed only to start the machine. The profile pages
-              work without it.
+              JavaScript is needed only to start the machine. The portfolio
+              works without it.
             </p>
           </noscript>
         </main>

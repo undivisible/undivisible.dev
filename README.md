@@ -27,9 +27,9 @@ Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MA
 
 ## Current routes
 
-`/` and `/lab/` boot the full-screen Alpenglow browser desktop. `/main/` is the regular portfolio, with OS and Simple mode links. The OS falls back to Main on startup errors or after 12 seconds; Main falls back to `/simple/` on startup errors or after 5 seconds without hydration. JavaScript-disabled browsers go directly to Simple. Choosing a mode remembers it in this browser and skips automatic fallback checks; `/` always starts the OS. Optional third-party scripts cannot trigger fallback. Stop cancels automatic fallback until the machine is restarted. Both `sh` and `term` open a windowed PTY shell. All three modes use colors sampled from the latest Last.fm album artwork, with readable text and `#ff5705` as the offline fallback. Simple uses monospace type. Selected project copy is curated in `web/src/data/profile.ts`; employment details come from the published résumé.
+`/` is the canonical portfolio; `/main/` and `/simple/` permanently redirect there. Its semantic content is prerendered, with the ASCII wordmark and field enhancing the page after hydration. `/lab/` boots the full-screen Alpenglow browser desktop and returns to the portfolio if startup fails or does not become ready within 12 seconds. JavaScript-disabled browsers still see the portfolio. Optional third-party scripts cannot trigger the lab fallback. Stop cancels automatic fallback until the machine is restarted. Both `sh` and `term` open a windowed PTY shell. The portfolio and lab use colors sampled from the latest Last.fm album artwork, with `#ff5705` as the offline fallback. Selected project copy is curated in `web/src/data/profile.ts`; employment details come from the published résumé.
 
-The offline image uses the static profile for Home and Simple, with their styles and the published résumé. Guest-local navigation uses `file://` URLs.
+The offline image uses the static profile and published résumé. Guest-local navigation uses `file://` URLs.
 
 ## Historical Next.js to moonshine measurements
 
@@ -77,16 +77,18 @@ machine's internals.
 Both sites are Cloudflare Workers static-asset deploys (`bunx wrangler
 deploy`); GitHub Pages is retired and its workflow removed.
 
-| Site                                                 | Worker             | Config                          | Serves                                             |
-| ---------------------------------------------------- | ------------------ | ------------------------------- | -------------------------------------------------- |
-| [undivisible.dev](https://undivisible.dev)           | `undivisible`      | `web/wrangler.production.jsonc` | current three-mode site (zone route over the apex) |
-| [next.undivisible.dev](https://next.undivisible.dev) | `undivisible-next` | `web/wrangler.jsonc`            | v10, the machine redesign (custom domain)          |
+| Site                                                 | Worker             | Config                          | Serves                                                             |
+| ---------------------------------------------------- | ------------------ | ------------------------------- | ------------------------------------------------------------------ |
+| [undivisible.dev](https://undivisible.dev)           | `undivisible`      | `web/wrangler.production.jsonc` | canonical portfolio and `/lab/` desktop (zone route over the apex) |
+| [next.undivisible.dev](https://next.undivisible.dev) | `undivisible-next` | `web/wrangler.jsonc`            | v10, the machine redesign (custom domain)                          |
 
 The v86 kernel/initrd revalidate on every load (`max-age=0, must-revalidate`
 via `web/public/_headers`); the wasm/BIOS assets are immutable.
 
 `/agent` ships no JavaScript because nothing on it is interactive; under
-Next.js it still received the framework runtime. The main portfolio hydrates its interactive effects and project controls; the simple profile ships no JavaScript. `/lab/` hydrates its emulator controls.
+Next.js it still received the framework runtime. The portfolio hydrates its
+interactive effects while keeping its semantic content in the prerendered HTML.
+`/lab/` hydrates its emulator controls.
 
 Only four of the 60 source files imported from Next (`next/link` ×2,
 `next/font/google`, `next/dynamic`); the rest is plain React, which moonshine

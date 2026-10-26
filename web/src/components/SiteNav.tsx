@@ -11,7 +11,6 @@ export function SiteNav({ onPrintResume }: SiteNavProps) {
         <Link href="/lab/" aria-label="Open OS mode">
           OS
         </Link>
-        <Link href="/simple/">Simple</Link>
         <Link href="/agent">agent</Link>
         <button type="button" onClick={onPrintResume}>
           resume

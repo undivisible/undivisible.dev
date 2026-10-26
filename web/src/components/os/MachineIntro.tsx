@@ -28,9 +28,9 @@ export function MachineIntro({
         ) : null}
         <noscript>
           <p className="machine-cover-line">
-            JavaScript is needed for Linux. The simple version works without it.
+            JavaScript is needed for Linux. The portfolio works without it.
           </p>
-          <a href="/simple/">Open the simple version →</a>
+          <a href="/">Open the portfolio →</a>
         </noscript>
         <p className="machine-cover-line" role="status">
           {progress.message === "cold"
@@ -42,7 +42,7 @@ export function MachineIntro({
             Show boot screen
           </button>
         ) : (
-          <a href="/simple/">Continue to the simple version →</a>
+          <a href="/">Continue to the portfolio →</a>
         )}
       </div>
     </div>

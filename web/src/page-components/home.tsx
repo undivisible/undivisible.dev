@@ -23,9 +23,7 @@ const HomePrintRoot = dynamic(
   { ssr: false },
 );
 const selectedProjects = projects.filter((project) =>
-  ["Inauguration", "Crepuscularity", "Alpenglow", "Moonshine"].includes(
-    project.name,
-  ),
+  ["Inauguration", "Crepuscularity", "Alpenglow"].includes(project.name),
 );
 
 export default function Home({ readme }: { readme: ReadmeBundle }) {
@@ -90,6 +88,12 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
 
   return (
     <>
+      <noscript>
+        <style>{`
+          .personal-font-loader { display: none !important; }
+          .personal-page { visibility: visible !important; }
+        `}</style>
+      </noscript>
       <div
         className="personal-font-loader screen-only"
         role="status"
@@ -116,7 +120,7 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
             <a
               href="/"
               className="personal-wordmark"
-              aria-label="undivisible — open OS"
+              aria-label="undivisible home"
             >
               undivisible<span aria-hidden="true">↗</span>
             </a>
@@ -157,7 +161,7 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
               >
                 <p className="personal-kicker">
                   <span lang="zh">{profile.hanzi}</span>
-                  <span>software / systems / people</span>
+                  <span>systems</span>
                 </p>
                 <h1 id="personal-name" aria-label="Max Carter">
                   <span className="name-reveal">
@@ -172,37 +176,11 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
                 <div className="personal-bio">
                   <p className="personal-intro">i make things for people.</p>
                   <p>
-                    I’m a self-taught software engineer. I build compilers,
-                    operating systems, apps and the tools that connect them. I
-                    like understanding how the whole thing works, then making it
-                    easier to use.
+                    I build compilers, operating systems and useful software.
                   </p>
-                  <p>
-                    I started building software at eight and left school at
-                    seventeen to do it full time. My independent projects live
-                    at{" "}
-                    <a href="https://tsc.hk">
-                      the software company of hong kong ↗
-                    </a>
-                    .
+                  <p className="personal-intro">
+                    <a href="#contact">Reach out! ↘</a>
                   </p>
-                </div>
-                <div className="personal-links">
-                  <a href={`mailto:${profile.email}`}>
-                    <span>email ↗</span>
-                  </a>
-                  <a href={profile.github}>
-                    <span>github ↗</span>
-                  </a>
-                  <a href="https://x.com/makethings4ppl">
-                    <span>x ↗</span>
-                  </a>
-                  <a href="https://www.instagram.com/undivisible.dev/">
-                    <span>instagram ↗</span>
-                  </a>
-                  <button type="button" onClick={runPrint}>
-                    résumé ↓
-                  </button>
                 </div>
               </section>
               <section
@@ -219,19 +197,31 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
                   <strong>Twenify</strong>
                   <span>cto</span>
                 </div>
-                <p className="bento-previous">previously at Omi</p>
               </section>
               <section
                 className="bento-cell bento-life"
-                aria-labelledby="life-heading"
+                id="contact"
+                aria-labelledby="contact-heading"
               >
-                <p className="bento-caption">[ away from the keyboard ]</p>
-                <h2 id="life-heading">a few other things.</h2>
-                <ul>
-                  <li>philosophy</li>
-                  <li>cooking & photography</li>
-                  <li>languages & lifting</li>
-                </ul>
+                <p className="bento-caption">[ contact / social ]</p>
+                <h2 id="contact-heading">say hello.</h2>
+                <div
+                  className="personal-links"
+                  aria-label="Contact and social links"
+                >
+                  <a href={`mailto:${profile.email}`}>
+                    <span>email ↗</span>
+                  </a>
+                  <a href={profile.github}>
+                    <span>github ↗</span>
+                  </a>
+                  <a href="https://x.com/makethings4ppl">
+                    <span>x ↗</span>
+                  </a>
+                  <a href="https://www.instagram.com/undivisible.dev/">
+                    <span>instagram ↗</span>
+                  </a>
+                </div>
                 <span className="bento-life-mark" aria-hidden="true">
                   ( 祁 )
                 </span>
@@ -242,7 +232,7 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
               >
                 <div className="personal-section-title">
                   <h2 id="personal-work-heading">[ projects ]</h2>
-                  <span aria-hidden="true">[ 01 — 04 ]</span>
+                  <span aria-hidden="true">[ 01 — 03 ]</span>
                 </div>
                 <div className="personal-projects">
                   {selectedProjects.map((project, index) => (
@@ -254,7 +244,19 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
                       <span className="project-index">0{index + 1}</span>
                       <div>
                         <span className="project-kind">{project.kind}</span>
-                        <h3>{project.name}</h3>
+                        <h3>
+                          {project.name.length <= 12 ? (
+                            <>
+                              <span
+                                className="project-name-mark"
+                                aria-hidden="true"
+                              >
+                                &gt;
+                              </span>{" "}
+                            </>
+                          ) : null}
+                          {project.name}
+                        </h3>
                         <p>{project.description}</p>
                       </div>
                       <span className="project-arrow" aria-hidden="true">
@@ -272,7 +274,6 @@ export default function Home({ readme }: { readme: ReadmeBundle }) {
           <a href={`${profile.github}?tab=repositories`}>
             more things on github ↗
           </a>
-          <a href="/simple/">simple version ↗</a>
         </footer>
       </div>
       {printMounted ? (

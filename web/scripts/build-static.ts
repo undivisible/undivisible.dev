@@ -167,23 +167,18 @@ async function main(): Promise<void> {
   };
 
   const entryForRoute: Record<string, string | undefined> = {
-    index: clientBundles.lab,
-    main: clientBundles.home,
-    simple: undefined,
+    index: clientBundles.home,
+    lab: clientBundles.lab,
     agent: undefined,
     "not-found": clientBundles["not-found"],
   };
 
   const outputForRoute: Record<string, string> = {
     index: "index.html",
-    main: "main/index.html",
     agent: "agent.html",
     "not-found": "404.html",
     lab: "lab/index.html",
-    simple: "simple/index.html",
   };
-
-  entryForRoute.lab = clientBundles.lab;
 
   const routes: RouteArtifact[] = [];
   for (const route of [...discovered, notFoundRoute]) {

@@ -7,7 +7,7 @@ import {
 } from "react";
 import { renderToReadableStream } from "react-dom/server";
 import type { RenderContext, Renderer } from "@tschk/moonshine-framework";
-import { installModeFallback } from "@/lib/mode-fallback";
+import { installLabFallback } from "@/lib/mode-fallback";
 import { fontHrefs } from "@/moonshine/font-google";
 import type { Metadata } from "@/moonshine/next";
 
@@ -97,37 +97,28 @@ function head(
     }),
   ];
 
-  const mode =
-    routeId === "index" || routeId === "lab"
-      ? "os"
-      : routeId === "main"
-        ? "main"
-        : routeId === "simple"
-          ? "simple"
-          : null;
-  if (mode) {
+  if (routeId === "lab") {
     children.push(
       createElement("script", {
         key: "mode-fallback",
         dangerouslySetInnerHTML: {
-          __html: `(${installModeFallback.toString()})(${JSON.stringify(mode)});`,
+          __html: `(${installLabFallback.toString()})();`,
         },
       }),
     );
-    if (mode !== "simple")
-      children.push(
-        createElement(
-          "noscript",
-          { key: "no-js-fallback" },
-          createElement("meta", {
-            httpEquiv: "refresh",
-            content: "0;url=/simple/",
-          }),
-        ),
-      );
+    children.push(
+      createElement(
+        "noscript",
+        { key: "no-js-fallback" },
+        createElement("meta", {
+          httpEquiv: "refresh",
+          content: "0;url=/",
+        }),
+      ),
+    );
   }
 
-  if (mode && options.albumThemeEntry)
+  if ((routeId === "index" || routeId === "lab") && options.albumThemeEntry)
     children.push(
       createElement("script", {
         key: "album-theme",

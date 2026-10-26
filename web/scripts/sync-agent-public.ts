@@ -72,15 +72,15 @@ const agentMd = `# undivisible.dev — agent index
 
 Best first request for full context: \`curl -sL ${SITE}/llms-full.txt\`
 
-## Not available here
+## Routes
 
 - No \`Accept: text/markdown\` on HTML routes (unlike Cloudflare markdown for agents on dynamic hosts).
-- \`${SITE}/\` boots the Linux desktop, also available at \`${SITE}/lab/\` boots automatically. The portfolio is at \`${SITE}/main/\`. The profile at \`${SITE}/simple/\` is static HTML and works without JavaScript.
+- \`${SITE}/\` is the canonical interactive portfolio; its semantic content is prerendered and its ASCII field and live interactions hydrate in the browser. The Linux desktop is at \`${SITE}/lab/\` and boots automatically.
 
 ## Humans
 
 - ${SITE}/agent — this index as HTML
-- ${SITE}/ — portfolio
+- ${SITE}/ — the interactive portfolio
 `;
 
 await Bun.write(new URL("agent.md", PUBLIC_DIR), agentMd);
