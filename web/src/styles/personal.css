@@ -1330,6 +1330,9 @@
   @apply font-semibold;
   letter-spacing: -0.055em;
 }
+.personal-page .project-name-mark {
+  display: none;
+}
 .personal-page .bento-life-mark {
   transform: rotate(-8deg);
   text-shadow: 3px 2px color-mix(in srgb, var(--album-color-3) 35%, transparent);
@@ -1566,7 +1569,7 @@
 .personal-page .personal-links :is(a, button) {
   box-shadow: none;
 }
-/* The DOM keeps selection, links and focus; the canvas paints their characters. */
+/* Desktop keeps real DOM semantics while the canvas paints visible characters. */
 .personal-page main,
 .personal-page header,
 .personal-page footer {
@@ -1578,8 +1581,11 @@
   font-size: 14px;
   line-height: 20px;
 }
-.personal-page.unicode-content-ready :is(main, header, footer),
-.personal-page.unicode-content-ready :is(main, header, footer) * {
+.personal-page.unicode-content-ready.ascii-text-composed
+  :is(main, header, footer),
+.personal-page.unicode-content-ready.ascii-text-composed
+  :is(main, header, footer)
+  * {
   color: transparent !important;
   text-shadow: none;
   -webkit-text-fill-color: transparent;
@@ -1657,12 +1663,17 @@
 .personal-page:not(.site-fonts-ready) {
   visibility: hidden;
 }
+/* If startup or the first canvas frame stalls, reveal the server-rendered page. */
+.personal-page {
+  animation: personal-page-fail-open 0s 2500ms forwards;
+}
 .personal-font-loader {
   @apply fixed inset-0 flex justify-center items-center;
   gap: 4px;
   background: #080808;
   z-index: 100;
   @apply pointer-events-none;
+  animation: personal-loader-fail-open 0s 2500ms forwards;
 }
 .personal-font-loader i {
   width: 4px;
@@ -1683,6 +1694,16 @@
   to {
     transform: scaleY(0.3);
     opacity: 0.4;
+  }
+}
+@keyframes personal-page-fail-open {
+  to {
+    visibility: visible;
+  }
+}
+@keyframes personal-loader-fail-open {
+  to {
+    visibility: hidden;
   }
 }
 body:has(.personal-page.unicode-content-ready) .personal-font-loader {
@@ -1728,6 +1749,15 @@ body:has(.personal-page.unicode-content-ready) .personal-font-loader {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .personal-page:not(.site-fonts-ready),
+  .personal-page.site-fonts-ready.character-field-enabled:not(
+      .unicode-content-ready
+    ) {
+    visibility: visible;
+  }
+  .personal-font-loader {
+    display: none;
+  }
   .personal-font-loader i {
     animation: none;
   }
@@ -1869,4 +1899,192 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   .personal-page .bento-job span {
     @apply text-right;
   }
+}
+
+@media (min-width: 651px) and (any-pointer: coarse) {
+  .personal-page
+    :is(
+      .personal-bio,
+      .bento-current,
+      .bento-life,
+      .personal-section-title,
+      .personal-project
+    ) {
+    background: color-mix(in srgb, var(--page-background) 99%, transparent);
+    border: 1px solid color-mix(in srgb, var(--album-text) 18%, transparent);
+    border-radius: 3px;
+  }
+
+  .personal-page :is(.personal-bio, .bento-current, .bento-life) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .personal-page .bento-life {
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(
+          in srgb,
+          var(--album-color-5, var(--album-secondary)) 12%,
+          transparent
+        ),
+        transparent 75%
+      ),
+      color-mix(in srgb, var(--page-background) 99%, transparent);
+  }
+
+  .personal-page .site-mode-navigation nav {
+    background: color-mix(in srgb, var(--page-background) 92%, transparent);
+    border: 1px solid color-mix(in srgb, var(--album-text) 18%, transparent);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .personal-page.unicode-content-ready .album-ascii canvas + div {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 650px) {
+  .personal-page
+    :is(
+      .personal-bio,
+      .bento-current,
+      .bento-life,
+      .personal-section-title,
+      .personal-project
+    ) {
+    background: color-mix(in srgb, var(--page-background) 96%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid color-mix(in srgb, var(--album-text) 12%, transparent);
+    border-radius: 3px;
+  }
+
+  .personal-page .bento-life {
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(
+          in srgb,
+          var(--album-color-5, var(--album-secondary)) 15%,
+          transparent
+        ),
+        transparent 75%
+      ),
+      color-mix(in srgb, var(--page-background) 96%, transparent);
+  }
+
+  .personal-page .personal-bio,
+  .personal-page .bento-current,
+  .personal-page .bento-life {
+    padding: 14px;
+  }
+
+  .personal-page .personal-bio {
+    margin-top: 0;
+  }
+
+  .personal-page .personal-section-title {
+    padding: 8px 10px;
+  }
+
+  .personal-page .personal-section-title :is(h2, span) {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .personal-page .personal-project {
+    padding: 18px 12px;
+  }
+
+  .personal-page .personal-project h3 {
+    font-size: clamp(22px, 7vw, 30px);
+    line-height: 1.2;
+  }
+
+  .personal-page .project-name-mark {
+    display: inline;
+    color: var(--project-color);
+    font:
+      400 0.65em/1 var(--font-jetbrains-mono),
+      monospace;
+  }
+
+  .personal-page .project-index {
+    display: inline-flex;
+    min-width: 3ch;
+    justify-content: center;
+    padding: 0.35em 0.45em;
+    border: 1px solid color-mix(in srgb, var(--project-color) 45%, transparent);
+    font-size: 11px;
+    line-height: 1;
+  }
+
+  .personal-page .personal-links :is(a, button) {
+    font-size: 12px;
+  }
+
+  .personal-page .bento-life-mark {
+    margin-top: 8px;
+    font-size: 28px;
+    line-height: 1.25;
+  }
+
+  .personal-page .project-kind,
+  .personal-page .bento-caption,
+  .personal-page .personal-kicker {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .personal-page .personal-project p {
+    color: var(--album-text);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .personal-page .personal-footer {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .personal-page .personal-main {
+    text-shadow: none;
+  }
+
+  .personal-page .personal-hero h1 {
+    font-family: var(--font-jetbrains-mono), monospace;
+    font-size: clamp(32px, 9vw, 40px);
+    line-height: 1;
+    letter-spacing: 0;
+    transform: none;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 350px) {
+  .personal-page
+    .personal-clock
+    [data-time-scrubber]
+    > div
+    > span:not([aria-hidden="true"]) {
+    position: static;
+  }
+}
+
+/* Give the block wordmark a tall, uninterrupted hero band at every size. */
+.personal-page .personal-hero h1 {
+  line-height: 1.35;
+}
+
+.personal-page.ascii-name-ready #personal-name,
+.personal-page.ascii-name-ready #personal-name * {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent;
+  background: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+  text-shadow: none;
 }

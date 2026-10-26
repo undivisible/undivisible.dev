@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { layoutAsciiText } from "@/lib/visuals/ascii-text";
 import { createAsciiShader } from "@/lib/visuals/ascii-shader";
+import { personalAsciiGrid } from "@/components/ascii-content";
 import type { TrackInfo } from "@/lib/useLastFmVisualData";
 
 type ShapeType = "circle" | "triangle" | "square";
@@ -19,6 +20,8 @@ interface ShapeState {
 const DEFAULT_COLORS = ["#ffffff", "#cccccc", "#999999", "#666666", "#333333"];
 const FIELD_CHARS = ".,:;-=+*#%&";
 const SHAPE_CHARS = "@#MW8$&NBG";
+const TOUCH_FIELD_FOREGROUND_WEIGHT = 0.82;
+const TOUCH_FIELD_ALPHA = 0.68;
 /** Ignore sub-pixel/layout-thrash resizes so mobile viewport bars do not wipe canvases each frame */
 const RESIZE_STABILITY_PX = 10;
 
@@ -84,6 +87,13 @@ function hexToRgb(hex: string) {
     parseInt(value.slice(2, 4), 16) / 255,
     parseInt(value.slice(4, 6), 16) / 255,
   ];
+}
+
+function cssColorToRgb(color: string) {
+  const match = /^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i.exec(color);
+  return match
+    ? [Number(match[1]) / 255, Number(match[2]) / 255, Number(match[3]) / 255]
+    : hexToRgb(color);
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -177,10 +187,22 @@ export default function Ascii({
     }
 
     const page = container.closest(".personal-page");
+    const coarsePointer = window.matchMedia("(any-pointer: coarse)");
+    const skyCanvas = document.querySelector<HTMLCanvasElement>(".album-sky");
+    const skyCtx = skyCanvas?.getContext("2d");
+    const titleSampleCanvas = document.createElement("canvas");
+    titleSampleCanvas.width = 9;
+    titleSampleCanvas.height = 9;
+    const titleSampleCtx = titleSampleCanvas.getContext("2d", {
+      willReadFrequently: true,
+    });
+    const albumBackground =
+      document.querySelector<HTMLElement>(".album-background");
     const inkCanvas = document.createElement("canvas");
     const ink = inkCanvas.getContext("2d", { willReadFrequently: true });
     let contentDirty = true;
     let contentColor = "#ffffff";
+    let contentRgb = cssColorToRgb(contentColor);
     let activeColor = "#ff5705";
     let activeCells = new Set<number>();
     let musicCells = new Set<number>();
@@ -211,6 +233,15 @@ export default function Ascii({
     window.addEventListener("site:sky-contrast", invalidateContent);
     void document.fonts.ready.then(invalidateContent);
     let contentGlyphs = new Map<number, string>();
+    let contentAdvances = new Map<number, number>();
+    let contentArea = new Set<number>();
+    let titleCells = new Set<number>();
+    let titleBlocks: Array<{
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    }> = [];
     let inkPixels: Uint8ClampedArray | undefined;
 
     const shapes: ShapeState[] = [
@@ -251,21 +282,22 @@ export default function Ascii({
     let last = performance.now();
     let asciiIntervalMs = 1000 / 15;
     let lastAscii = 0;
+    let titleBackgroundColor = "";
+    let lastTitleBackgroundSample = Number.NEGATIVE_INFINITY;
 
     const resize = () => {
       width = container.clientWidth;
       height = container.clientHeight;
+      lastTitleBackgroundSample = Number.NEGATIVE_INFINITY;
       const narrow = width < 1024;
       asciiIntervalMs = narrow ? 1000 / 12 : 1000 / 15;
       const cell = Math.max(8, Math.min(width, height) / (narrow ? 32 : 56));
+      const pageGrid = page ? personalAsciiGrid(width, height) : null;
       const columns = Math.max(
         1,
-        page ? Math.ceil(width / 8.4) : Math.floor(width / (cell * 0.9)),
+        pageGrid?.columns ?? Math.floor(width / (cell * 0.9)),
       );
-      const rows = Math.max(
-        1,
-        page ? Math.ceil(height / 20) : Math.floor(height / cell),
-      );
+      const rows = Math.max(1, pageGrid?.rows ?? Math.floor(height / cell));
       shader.resize(width, height, columns, rows);
       contentDirty = true;
       const size = Math.max(170, Math.min(width, height) * 0.31);
@@ -276,14 +308,18 @@ export default function Ascii({
       shapes[2].x = width * 0.48;
       shapes[2].y = height * 0.74;
       for (const shape of shapes) shape.size = size;
-      // ASCII canvas at 1:1 — retina resolution is wasted on character art
-      const w = Math.max(1, width);
-      const h = Math.max(1, height);
+      // Keep mouse-desktop backing unchanged; touch text needs Retina sampling.
+      const pixelRatio =
+        width < 1024 || (page && coarsePointer.matches)
+          ? Math.min(Math.max(window.devicePixelRatio || 1, 1), 2)
+          : 1;
+      const w = Math.max(1, Math.round(width * pixelRatio));
+      const h = Math.max(1, Math.round(height * pixelRatio));
       asciiCanvas.width = w;
       asciiCanvas.height = h;
       asciiCanvas.style.width = `${width}px`;
       asciiCanvas.style.height = `${height}px`;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
       monoFontStackRef.current =
         getComputedStyle(document.documentElement)
           .getPropertyValue("--font-jetbrains-mono")
@@ -326,21 +362,24 @@ export default function Ascii({
 
       const cellDiv = width < 1024 ? 32 : 56;
       const cell = Math.max(8, Math.min(width, height) / cellDiv);
+      const pageGrid = page ? personalAsciiGrid(width, height) : null;
       const cols = Math.max(
         1,
-        page ? Math.ceil(width / 8.4) : Math.floor(width / (cell * 0.9)),
+        pageGrid?.columns ?? Math.floor(width / (cell * 0.9)),
       );
-      const rows = Math.max(
-        1,
-        page ? Math.ceil(height / 20) : Math.floor(height / cell),
-      );
-      // Keep the content grid on the DOM font metrics; stretching it can merge adjacent lines.
-      const cellWidth = page ? 8.4 : width / cols;
-      const cellHeight = page ? 20 : height / rows;
+      const rows = Math.max(1, pageGrid?.rows ?? Math.floor(height / cell));
+      const cellWidth = pageGrid?.cellWidth ?? width / cols;
+      const cellHeight = pageGrid?.cellHeight ?? height / rows;
+      const touchTablet = width >= 651 && coarsePointer.matches;
+      const foregroundText = width <= 650 || touchTablet;
       if (contentDirty && page && ink) {
         contentDirty = false;
         ({
           contentGlyphs,
+          contentAdvances,
+          contentArea,
+          titleCells,
+          titleBlocks,
           activeCells,
           musicCells,
           activeColor,
@@ -355,9 +394,14 @@ export default function Ascii({
           rows,
           cellWidth,
           cellHeight,
+          foregroundText,
         }));
-        asciiCanvas.dataset.contentCells = String(contentGlyphs.size);
+        contentRgb = cssColorToRgb(contentColor);
+        asciiCanvas.dataset.contentCells = String(
+          contentGlyphs.size + titleCells.size,
+        );
         page.classList.add("unicode-content-ready");
+        page.classList.toggle("ascii-text-composed", !foregroundText);
       }
 
       if (sampleCanvas.width !== cols || sampleCanvas.height !== rows) {
@@ -375,7 +419,7 @@ export default function Ascii({
       ctx.textBaseline = "middle";
       ctx.textAlign = "center";
       const monoFont = monoFontStackRef.current;
-      const font = `${page ? 14 : Math.max(12, cell * 0.72)}px ${monoFont}, monospace`;
+      const font = `${page ? (pageGrid?.mobile ? 7 : 14) : Math.max(12, cell * 0.72)}px ${monoFont}, monospace`;
       ctx.font = font;
       ctx.shadowColor = "transparent";
 
@@ -422,30 +466,171 @@ export default function Ascii({
           ctx.globalAlpha = insideAnyShape
             ? clamp(0.86 + brightness * 0.1, 0.78, 0.94)
             : clamp(0.52 + brightness * 0.4, 0.52, 0.94);
-          const contentChar = contentGlyphs.get(row * cols + col);
+          const cellIndex = row * cols + col;
+          if (titleCells.has(cellIndex)) continue;
+          const contentChar = contentGlyphs.get(cellIndex);
+          const contentAdvance = contentAdvances.get(cellIndex) ?? 1;
           const inkIndex =
             (Math.min(height - 1, Math.floor(y)) * width +
               Math.min(width - 1, Math.floor(x))) *
               4 +
             3;
-          const titleInk = (inkPixels?.[inkIndex] ?? 0) > 80;
-          if (contentChar !== undefined || titleInk) {
-            ctx.fillStyle = activeCells.has(row * cols + col)
+          const largeTextInk = (inkPixels?.[inkIndex] ?? 0) > 80;
+          if (
+            page &&
+            contentArea.has(cellIndex) &&
+            contentChar === undefined &&
+            !largeTextInk
+          )
+            continue;
+          if (contentChar !== undefined || largeTextInk) {
+            ctx.fillStyle = activeCells.has(cellIndex)
               ? activeColor
               : contentColor;
-            ctx.globalAlpha = musicCells.has(row * cols + col)
-              ? musicOpacity
-              : 1;
+            ctx.globalAlpha = musicCells.has(cellIndex) ? musicOpacity : 1;
           } else if (page) {
-            ctx.globalAlpha *= 0.35;
+            if (touchTablet) {
+              const sampleWeight = 1 - TOUCH_FIELD_FOREGROUND_WEIGHT;
+              ctx.fillStyle = `rgb(${Math.round(r * sampleWeight + contentRgb[0] * 255 * TOUCH_FIELD_FOREGROUND_WEIGHT)}, ${Math.round(g * sampleWeight + contentRgb[1] * 255 * TOUCH_FIELD_FOREGROUND_WEIGHT)}, ${Math.round(b * sampleWeight + contentRgb[2] * 255 * TOUCH_FIELD_FOREGROUND_WEIGHT)})`;
+              ctx.globalAlpha *= TOUCH_FIELD_ALPHA;
+            } else {
+              // Preserve the established phone and desktop field opacity.
+              ctx.globalAlpha *= pageGrid?.mobile ? 0.14 : 0.35;
+            }
           }
-          ctx.fillText(
-            contentChar ?? (titleInk ? "▓" : charSet[charIndex]),
-            x,
-            y,
-          );
+          if (contentChar !== undefined) {
+            const glyphX = x + ((contentAdvance - 1) * cellWidth) / 2;
+            ctx.fillText(contentChar, glyphX, y, cellWidth * contentAdvance);
+          } else {
+            ctx.fillText(charSet[charIndex], x, y);
+          }
         }
       }
+
+      if (page && titleCells.size) {
+        if (now - lastTitleBackgroundSample >= 750) {
+          const backgroundColor = albumBackground
+            ? getComputedStyle(albumBackground).backgroundColor
+            : getComputedStyle(document.documentElement).backgroundColor;
+          const base = cssColorToRgb(backgroundColor).map(
+            (channel) => channel * 255,
+          );
+          let red = base[0];
+          let green = base[1];
+          let blue = base[2];
+
+          if (
+            skyCanvas &&
+            skyCtx &&
+            skyCanvas.width > 0 &&
+            skyCanvas.height > 0
+          ) {
+            let left = width;
+            let top = height;
+            let right = 0;
+            let bottom = 0;
+            for (const block of titleBlocks) {
+              left = Math.min(left, block.x);
+              top = Math.min(top, block.y);
+              right = Math.max(right, block.x + block.width);
+              bottom = Math.max(bottom, block.y + block.height);
+            }
+            const scaleX = skyCanvas.width / Math.max(1, skyCanvas.clientWidth);
+            const scaleY =
+              skyCanvas.height / Math.max(1, skyCanvas.clientHeight);
+            try {
+              if (titleSampleCtx) {
+                const sampleX = clamp(
+                  Math.floor(left * scaleX),
+                  0,
+                  skyCanvas.width - 1,
+                );
+                const sampleY = clamp(
+                  Math.floor(top * scaleY),
+                  0,
+                  skyCanvas.height - 1,
+                );
+                const sampleWidth = Math.max(
+                  1,
+                  Math.min(
+                    skyCanvas.width - sampleX,
+                    Math.ceil((right - left) * scaleX),
+                  ),
+                );
+                const sampleHeight = Math.max(
+                  1,
+                  Math.min(
+                    skyCanvas.height - sampleY,
+                    Math.ceil((bottom - top) * scaleY),
+                  ),
+                );
+                titleSampleCtx.clearRect(0, 0, 9, 9);
+                titleSampleCtx.drawImage(
+                  skyCanvas,
+                  sampleX,
+                  sampleY,
+                  sampleWidth,
+                  sampleHeight,
+                  0,
+                  0,
+                  9,
+                  9,
+                );
+                const pixels = titleSampleCtx.getImageData(0, 0, 9, 9).data;
+                const channels: number[][] = [[], [], []];
+                for (let index = 0; index < pixels.length; index += 4) {
+                  const alpha = pixels[index + 3] / 255;
+                  for (let channel = 0; channel < 3; channel += 1) {
+                    channels[channel].push(
+                      pixels[index + channel] * alpha +
+                        base[channel] * (1 - alpha),
+                    );
+                  }
+                }
+                const median = channels.map((channel) => {
+                  channel.sort((a, b) => a - b);
+                  return channel[Math.floor(channel.length / 2)];
+                });
+                [red, green, blue] = median;
+              }
+            } catch {
+              // Keep the page background color if the decorative sky is unavailable.
+            }
+          }
+
+          titleBackgroundColor = `rgb(${Math.round(red)},${Math.round(green)},${Math.round(blue)})`;
+          lastTitleBackgroundSample = now;
+        }
+
+        // Use a median sky sample so moving bird strokes cannot tint the backing.
+        ctx.fillStyle = titleBackgroundColor;
+        ctx.globalAlpha = 1;
+        for (let row = 0; row < rows; row += 1) {
+          let runStart = -1;
+          for (let col = 0; col <= cols; col += 1) {
+            const quietCell = col < cols && titleCells.has(row * cols + col);
+            if (quietCell && runStart < 0) runStart = col;
+            if (!quietCell && runStart >= 0) {
+              ctx.fillRect(
+                runStart * cellWidth,
+                row * cellHeight,
+                (col - runStart) * cellWidth,
+                cellHeight,
+              );
+              runStart = -1;
+            }
+          }
+        }
+      }
+
+      if (page && titleBlocks.length) {
+        ctx.fillStyle = contentColor;
+        ctx.globalAlpha = 1;
+        for (const block of titleBlocks) {
+          ctx.fillRect(block.x, block.y, block.width, block.height);
+        }
+      }
+      page?.classList.toggle("ascii-name-ready", titleBlocks.length > 0);
 
       ctx.globalAlpha = 1;
     };
@@ -476,7 +661,11 @@ export default function Ascii({
       window.removeEventListener("resize", invalidateContent);
       window.removeEventListener("site:album-palette", invalidateContent);
       window.removeEventListener("site:sky-contrast", invalidateContent);
-      page?.classList.remove("unicode-content-ready");
+      page?.classList.remove(
+        "unicode-content-ready",
+        "ascii-name-ready",
+        "ascii-text-composed",
+      );
       document.removeEventListener("visibilitychange", visibilityHandler);
       cancelAnimationFrame(frameRef.current);
     };
@@ -495,6 +684,7 @@ export default function Ascii({
       />
       <canvas
         ref={asciiCanvasRef}
+        aria-hidden
         className="pointer-events-none absolute inset-0 z-[1] h-full w-full [transform:translateZ(0)]"
       />
 
