@@ -1901,6 +1901,12 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   }
 }
 
+@media (min-width: 851px) and (any-pointer: coarse) {
+  .personal-page :is(.bento-current, .bento-life) {
+    padding-inline: 16px;
+  }
+}
+
 @media (min-width: 651px) and (any-pointer: coarse) {
   .personal-page
     :is(
