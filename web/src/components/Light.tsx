@@ -203,13 +203,9 @@ export function Light({
       const fixed = getComputedStyle(canvas).position === "fixed";
       const width = fixed ? window.innerWidth : parent.clientWidth;
       const height = fixed ? window.innerHeight : parent.clientHeight;
-      const rawDpr = window.devicePixelRatio || 1;
-      const dpr =
-        width < 640
-          ? Math.min(rawDpr, 1)
-          : width < 1024
-            ? Math.min(rawDpr, 1.25)
-            : Math.min(rawDpr, 2);
+      // This layer contains soft sky gradients, never text. Retina-sized
+      // buffers quadruple its paint work without improving the character layer.
+      const dpr = 1;
       canvas.width = Math.max(1, Math.floor(width * dpr));
       canvas.height = Math.max(1, Math.floor(height * dpr));
       canvas.style.width = `${width}px`;
@@ -323,10 +319,10 @@ export function Light({
             height * 0.55,
             Math.max(width, height) * 0.8,
           );
-          wash.addColorStop(0, rgba(current.beam, 0.1 + colorStrength * 0.3));
+          wash.addColorStop(0, rgba(current.beam, 0.08 + colorStrength * 0.2));
           wash.addColorStop(
             0.5,
-            rgba(current.beamSecondary, 0.08 + colorStrength * 0.2),
+            rgba(current.beamSecondary, 0.06 + colorStrength * 0.14),
           );
           wash.addColorStop(1, rgba(current.accent, 0));
         }
@@ -342,7 +338,7 @@ export function Light({
             height,
           );
           streakA.addColorStop(0, rgba(current.beamSecondary, 0));
-          streakA.addColorStop(0.5, rgba(current.beam, streakWeight * 0.44));
+          streakA.addColorStop(0.5, rgba(current.beam, streakWeight * 0.34));
           streakA.addColorStop(1, rgba(current.beamSecondary, 0));
 
           streakB = ctx.createLinearGradient(
@@ -352,7 +348,7 @@ export function Light({
             height * 0.9,
           );
           streakB.addColorStop(0, rgba(current.accent, 0));
-          streakB.addColorStop(0.55, rgba(current.accent, streakWeight * 0.34));
+          streakB.addColorStop(0.55, rgba(current.accent, streakWeight * 0.26));
           streakB.addColorStop(1, rgba(current.accent, 0));
 
           twilightBand = ctx.createLinearGradient(0, 0, 0, height);

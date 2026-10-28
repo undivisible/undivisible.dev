@@ -1,22 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { Info } from "@/components/Info";
-import { formatNowMarkdown } from "@/lib/format-now-markdown";
-import Ascii from "@/components/Ascii";
-import { Light } from "@/components/Light";
-import { SiteNav } from "@/components/SiteNav";
-import { useNowMarkdown, useRemoteReadme } from "@/hooks/use-remote-content";
-import { useSiteVisualEffects } from "@/hooks/use-site-visual-effects";
-import {
-  clearSitePrintTarget,
-  printSitePdf,
-  type SitePrintTarget,
-} from "@/lib/site-print";
-import type { ReadmeBundle } from "@/lib/profile-readme";
+import { MainClock } from "@/components/MainClock";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
-import { useLastFmVisualData } from "@/lib/useLastFmVisualData";
+import { formatNowMarkdown } from "@/lib/format-now-markdown";
+import NowPlaying from "@/components/NowPlaying";
+import { AlbumBackground } from "@/components/AlbumBackground";
+import { SiteNav } from "@/components/SiteNav";
+import { profile, projects } from "@/data/profile";
+import { useSiteVisualEffects } from "@/hooks/use-site-visual-effects";
+import { useNowMarkdown, useRemoteReadme } from "@/hooks/use-remote-content";
+import { clearSitePrintTarget, printSitePdf } from "@/lib/site-print";
+import type { ReadmeBundle } from "@/lib/profile-readme";
 import { fetchResumeMarkdownCached } from "@/lib/remote-markdown";
 
 const HomePrintRoot = dynamic(
@@ -26,82 +22,28 @@ const HomePrintRoot = dynamic(
     ),
   { ssr: false },
 );
-export default function Home({
-  readme,
-  nowMarkdown,
-  initialHash,
-}: {
-  readme: ReadmeBundle;
-  nowMarkdown: string | null;
-  initialHash?: string | null;
-}) {
-  const { track, colors, ready, lastFmUsername } = useLastFmVisualData();
+const selectedProjects = projects.filter((project) =>
+  ["Inauguration", "Crepuscularity", "Alpenglow"].includes(project.name),
+);
+
+export default function Home({ readme }: { readme: ReadmeBundle }) {
+  const { readme: activeReadme, refreshReadme } = useRemoteReadme(readme);
+  const [printMounted, setPrintMounted] = useState(false);
+  const [fontsReady, setFontsReady] = useState(false);
   const dayTheme = useHongKongDayTheme();
   const visualEffects = useSiteVisualEffects();
-  const animateWeather =
-    visualEffects ||
-    dayTheme.shader.weatherKind === "rain" ||
-    dayTheme.shader.weatherKind === "storm";
   const now = useNowMarkdown();
-  const { readme: activeReadme, refreshReadme } = useRemoteReadme(readme);
   const [nowArticleOpen, setNowArticleOpen] = useState(false);
-  const [printMounted, setPrintMounted] = useState(false);
-
   const toggleNowArticle = useCallback(() => {
-    if (!now.article) return;
-    setNowArticleOpen((open) => !open);
+    if (now.article) setNowArticleOpen((open) => !open);
   }, [now.article]);
 
   useEffect(() => {
-    void import("@/components/home/print/HomePrintRoot");
-    setPrintMounted(true);
-  }, []);
-
-  const runPrint = useCallback(
-    async (target: SitePrintTarget) => {
-      // For resume print, force refresh to get latest content
-      if (target === "resume") {
-        await Promise.all([
-          fetchResumeMarkdownCached({ forceRefresh: true }),
-          refreshReadme({ forceRefresh: true }),
-        ]);
-      }
-      if (!printMounted) setPrintMounted(true);
-      await printSitePdf(target);
-    },
-    [printMounted, refreshReadme],
-  );
+    if (!now.article) setNowArticleOpen(false);
+  }, [now.article]);
 
   useEffect(() => {
-    const onAfterPrint = () => clearSitePrintTarget();
-    window.addEventListener("afterprint", onAfterPrint);
-    return () => window.removeEventListener("afterprint", onAfterPrint);
-  }, []);
-
-  const printLayers = printMounted ? (
-    <>
-      <div className="print-only print-layer-resume" aria-hidden>
-        <HomePrintRoot readme={activeReadme} />
-      </div>
-    </>
-  ) : null;
-
-  useLayoutEffect(() => {
-    document.documentElement.classList.add("snap-home");
-    return () => {
-      document.documentElement.classList.remove("snap-home");
-    };
-  }, []);
-
-  useLayoutEffect(() => {
-    if (!initialHash) return;
-    const el = document.getElementById(initialHash);
-    if (!el) return;
-    el.scrollIntoView({ block: "start", behavior: "auto" });
-  }, [initialHash]);
-
-  useEffect(() => {
-    if (!nowArticleOpen) return undefined;
+    if (!nowArticleOpen) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setNowArticleOpen(false);
     };
@@ -110,79 +52,235 @@ export default function Home({
   }, [nowArticleOpen]);
 
   useEffect(() => {
-    if (!now.article) setNowArticleOpen(false);
-  }, [now.article]);
+    let cancelled = false;
+    void Promise.all([
+      document.fonts.load('400 14px "JetBrains Mono"', "Alpenglow"),
+      document.fonts.load("700 160px Barlow", "MAX CARTER"),
+      document.fonts.load("400 14px Barlow"),
+    ])
+      .then(() => {
+        if (cancelled) return;
+        setFontsReady(true);
+        window.dispatchEvent(new Event("site:mode-ready"));
+      })
+      .catch(() => window.dispatchEvent(new Event("site:mode-failed")));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  const mainColumn =
-    nowArticleOpen && now.article ? (
-      <article
-        className="relative z-10 mx-auto max-w-lg px-5 pb-24 pt-6 text-sm leading-relaxed [font-family:var(--font-jetbrains-mono),monospace] sm:px-8 lg:px-10"
-        style={{ color: "var(--page-text)" }}
-      >
-        {formatNowMarkdown(now.article)}
-      </article>
-    ) : (
-      <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-24 pt-5 sm:px-8 sm:pt-8 lg:px-10 lg:pt-10">
-        <div className="min-w-0 space-y-0">
-          <Info
-            colors={colors}
-            dayTheme={dayTheme}
-            readme={activeReadme}
-            now={now}
-            nowArticleOpen={nowArticleOpen}
-            onToggleNowArticle={toggleNowArticle}
-            slice="intro"
-          />
-          <Info
-            getTransportStyle={dayTheme.getTransportStyle}
-            readme={activeReadme}
-            now={now}
-            slice="folio"
-          />
-          <Info
-            getTransportStyle={dayTheme.getTransportStyle}
-            readme={activeReadme}
-            now={now}
-            slice="bio"
-          />
-        </div>
-      </div>
-    );
+  useEffect(() => {
+    void import("@/components/home/print/HomePrintRoot");
+    setPrintMounted(true);
+    const onAfterPrint = () => clearSitePrintTarget();
+    window.addEventListener("afterprint", onAfterPrint);
+    return () => window.removeEventListener("afterprint", onAfterPrint);
+  }, []);
+
+  const runPrint = useCallback(async () => {
+    await Promise.all([
+      fetchResumeMarkdownCached({ forceRefresh: true }),
+      refreshReadme({ forceRefresh: true }),
+    ]);
+    if (!printMounted) setPrintMounted(true);
+    await printSitePdf("resume");
+  }, [printMounted, refreshReadme]);
 
   return (
     <>
-      {!nowArticleOpen ? (
-        <SiteNav onPrintResume={() => runPrint("resume")} />
-      ) : null}
+      <noscript>
+        <style>{`
+          .personal-font-loader { display: none !important; }
+          .personal-page { visibility: visible !important; }
+        `}</style>
+      </noscript>
       <div
-        className="screen-only site-shell relative min-h-dvh sm:min-h-dvh"
-        style={dayTheme.style}
+        className="personal-font-loader screen-only"
+        role="status"
+        aria-label="Loading type and character field"
       >
-        <Light
-          scene={dayTheme.shader}
-          animated={animateWeather}
-          className="pointer-events-none fixed inset-0 z-0 h-full w-full"
-        />
-
-        <div className="pointer-events-none fixed inset-0 z-[1] overflow-hidden">
-          {visualEffects ? (
-            <Ascii
-              colors={colors}
-              track={track}
-              ready={ready}
-              lastFmUsername={lastFmUsername}
-            />
-          ) : (
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-gradient-to-b from-black/[0.58] via-black/[0.5] to-black/[0.62]"
-            />
-          )}
-        </div>
-
-        {mainColumn}
+        <i />
+        <i />
+        <i />
+        <i />
       </div>
-      {printLayers}
+      <div
+        className={`personal-page screen-only${fontsReady ? " site-fonts-ready" : ""}${visualEffects ? " character-field-enabled" : ""}`}
+      >
+        <AlbumBackground
+          dayTheme={dayTheme}
+          fontsReady={fontsReady}
+          visualEffects={visualEffects}
+        />
+        <a className="profile-skip" href="#main-content">
+          Skip to content
+        </a>
+        <header className="personal-masthead">
+          <div className="personal-header-identity">
+            <a
+              href="/"
+              className="personal-wordmark"
+              aria-label="undivisible home"
+            >
+              undivisible<span aria-hidden="true">↗</span>
+            </a>
+            <MainClock
+              dayTheme={dayTheme}
+              now={now}
+              nowArticleOpen={nowArticleOpen}
+              onToggleNowArticle={toggleNowArticle}
+            />
+          </div>
+          <div className="personal-header-tools">
+            <SiteNav onPrintResume={runPrint} />
+          </div>
+        </header>
+        <main
+          id="main-content"
+          className={`personal-main ${nowArticleOpen && now.article ? "personal-now" : "personal-bento"}`}
+          tabIndex={-1}
+        >
+          {nowArticleOpen && now.article ? (
+            <article
+              className="personal-now-article"
+              aria-labelledby="now-heading"
+            >
+              <div className="personal-section-title">
+                <h2 id="now-heading">now</h2>
+                <button type="button" onClick={() => setNowArticleOpen(false)}>
+                  back to the page
+                </button>
+              </div>
+              {formatNowMarkdown(now.article)}
+            </article>
+          ) : (
+            <>
+              <section
+                className="personal-hero bento-cell"
+                aria-labelledby="personal-name"
+              >
+                <p className="personal-kicker">
+                  <span lang="zh">{profile.hanzi}</span>
+                  <span>systems</span>
+                </p>
+                <h1 id="personal-name" aria-label="Max Carter">
+                  <span className="name-reveal">
+                    <span>
+                      max carter<span className="name-dot">.</span>
+                    </span>
+                  </span>
+                </h1>
+                <div className="personal-listening">
+                  <NowPlaying />
+                </div>
+                <div className="personal-bio">
+                  <p className="personal-intro">i make things for people.</p>
+                  <p>
+                    I build compilers, operating systems and useful software.
+                  </p>
+                  <p className="personal-intro">
+                    <a href="#contact">Reach out! ↘</a>
+                  </p>
+                </div>
+              </section>
+              <section
+                className="bento-cell bento-current"
+                aria-labelledby="current-heading"
+              >
+                <p className="bento-caption">[ work / current ]</p>
+                <h2 id="current-heading">building with</h2>
+                <div className="bento-job">
+                  <strong>Chert</strong>
+                  <span>software engineer</span>
+                </div>
+                <div className="bento-job">
+                  <strong>Twenify</strong>
+                  <span>cto</span>
+                </div>
+              </section>
+              <section
+                className="bento-cell bento-life"
+                id="contact"
+                aria-labelledby="contact-heading"
+              >
+                <p className="bento-caption">[ contact / social ]</p>
+                <h2 id="contact-heading">say hello.</h2>
+                <div
+                  className="personal-links"
+                  aria-label="Contact and social links"
+                >
+                  <a href={`mailto:${profile.email}`}>
+                    <span>email ↗</span>
+                  </a>
+                  <a href={profile.github}>
+                    <span>github ↗</span>
+                  </a>
+                  <a href="https://x.com/makethings4ppl">
+                    <span>x ↗</span>
+                  </a>
+                  <a href="https://www.instagram.com/undivisible.dev/">
+                    <span>instagram ↗</span>
+                  </a>
+                </div>
+                <span className="bento-life-mark" aria-hidden="true">
+                  ( 祁 )
+                </span>
+              </section>
+              <section
+                className="personal-work"
+                aria-labelledby="personal-work-heading"
+              >
+                <div className="personal-section-title">
+                  <h2 id="personal-work-heading">[ projects ]</h2>
+                  <span aria-hidden="true">[ 01 — 03 ]</span>
+                </div>
+                <div className="personal-projects">
+                  {selectedProjects.map((project, index) => (
+                    <a
+                      className={`personal-project project-${index}`}
+                      href={project.href}
+                      key={project.name}
+                    >
+                      <span className="project-index">0{index + 1}</span>
+                      <div>
+                        <span className="project-kind">{project.kind}</span>
+                        <h3>
+                          {project.name.length <= 12 ? (
+                            <>
+                              <span
+                                className="project-name-mark"
+                                aria-hidden="true"
+                              >
+                                &gt;
+                              </span>{" "}
+                            </>
+                          ) : null}
+                          {project.name}
+                        </h3>
+                        <p>{project.description}</p>
+                      </div>
+                      <span className="project-arrow" aria-hidden="true">
+                        ↗
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </section>
+            </>
+          )}
+        </main>
+        <footer className="personal-footer">
+          <span>max carter / {profile.hanzi}</span>
+          <a href={`${profile.github}?tab=repositories`}>
+            more things on github ↗
+          </a>
+        </footer>
+      </div>
+      {printMounted ? (
+        <div className="print-only print-layer-resume" aria-hidden>
+          <HomePrintRoot readme={activeReadme} />
+        </div>
+      ) : null}
     </>
   );
 }

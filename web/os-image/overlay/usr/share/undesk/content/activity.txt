@@ -6,7 +6,7 @@
     [93m10,798[0m commits this year
     [93m91[0m repositories
 
-    150 closed without merging -- nearly all by me. not rejections.
+    150 closed without merging
 
   recent merged on BasedHardware/omi:
     [90m2026-08-04[0m  feat(chat): route managed desktop chat through GPT-5.6 Luna

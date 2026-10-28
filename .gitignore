@@ -76,3 +76,6 @@ replit.md
 !old/nine/.replit-artifact/**
 !old/nine/dist/
 !old/nine/dist/**
+
+# Generated for the installed Workers runtime by bun run types:worker.
+/web/server/worker-configuration.d.ts

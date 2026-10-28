@@ -8,10 +8,14 @@ export function cssToGuest(
   guestW: number,
   guestH: number,
 ): { x: number; y: number } {
-  if (rectW <= 0 || rectH <= 0) return { x: 0, y: 0 };
+  if (rectW <= 0 || rectH <= 0 || guestW <= 0 || guestH <= 0)
+    return { x: 0, y: 0 };
+  const scale = Math.min(rectW / guestW, rectH / guestH);
+  const left = (rectW - guestW * scale) / 2;
+  const top = (rectH - guestH * scale) / 2;
   return {
-    x: Math.max(0, Math.min(guestW, Math.round((xCss / rectW) * guestW))),
-    y: Math.max(0, Math.min(guestH, Math.round((yCss / rectH) * guestH))),
+    x: Math.max(0, Math.min(guestW, Math.round((xCss - left) / scale))),
+    y: Math.max(0, Math.min(guestH, Math.round((yCss - top) / scale))),
   };
 }
 

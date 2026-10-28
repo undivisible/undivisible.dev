@@ -54,13 +54,12 @@ export function PortfolioPillars({ readme }: { readme: ReadmeBundle }) {
             className="mb-3 text-[11px] uppercase tracking-[0.28em] text-white/40"
             style={{ fontFamily: mono }}
           >
-            Flagship systems
+            Selected projects
           </p>
           <h2
             className="max-w-3xl text-[clamp(1.85rem,4.8vw,3.25rem)] font-light leading-[1.06] tracking-[-0.035em] text-white"
             style={{ fontFamily: serif }}
           >
-            Deep work on{" "}
             <em
               className="not-italic"
               style={{
@@ -70,7 +69,7 @@ export function PortfolioPillars({ readme }: { readme: ReadmeBundle }) {
                 backgroundClip: "text",
               }}
             >
-              compilers & runtimes.
+              Compilers, systems & interfaces.
             </em>
           </h2>
         </motion.div>

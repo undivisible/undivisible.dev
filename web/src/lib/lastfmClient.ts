@@ -153,7 +153,10 @@ async function fetchSnapshotTrack(): Promise<LastFmRecentPayload["track"]> {
     return null;
   }
   try {
-    const res = await fetch(snapshotUrl(), { cache: "no-store" });
+    const res = await fetch(snapshotUrl(), {
+      cache: "no-store",
+      signal: AbortSignal.timeout(8000),
+    });
     if (!res.ok) {
       return null;
     }
@@ -180,6 +183,7 @@ export async function fetchLastFmRecent(): Promise<LastFmRecentPayload> {
 
       const res = await fetch(url.toString(), {
         cache: "no-store",
+        signal: AbortSignal.timeout(8000),
         headers: { Accept: "application/json" },
       });
 

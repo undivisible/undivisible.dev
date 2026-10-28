@@ -340,7 +340,7 @@ pub fn main() void {
             }
             drawAll(&c, name);
         } else if (in.a == wire.AW_IN_PRESS) {
-            if (in.b > c.buf.w - 30 and in.c < 24) linux.exit(0);
+            if (wire.closeHit(c.buf.w, in.b, in.c)) linux.exit(0);
             const vrow: i32 = @divTrunc(in.c - 28, 18) + scroll_row;
             var row: i32 = -1;
             if (vrow >= 0 and vrow < @as(i32, @intCast(nview))) row = vline[@intCast(vrow)];

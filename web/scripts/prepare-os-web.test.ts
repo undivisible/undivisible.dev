@@ -35,9 +35,13 @@ test("offline package contains the simple page, CSS and published résumé witho
       "favicon.svg",
     ])
       await writeFile(join(source, name), "published content\n");
+    await writeFile(join(source, "index.html"), "interactive portfolio");
     await writeFile(join(source, "assets/site.css"), "body { color: black; }");
     await writeFile(join(source, "assets/lab.js"), "not needed offline");
     await prepareOfflineWeb(source, destination);
+    expect(
+      await readFile(join(destination, "index.html"), "utf8"),
+    ).not.toContain("interactive portfolio");
     expect(
       await readFile(join(destination, "simple/index.html"), "utf8"),
     ).toContain("file:///usr/share/undesk/web/assets/site.css");

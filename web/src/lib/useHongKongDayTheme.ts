@@ -176,7 +176,25 @@ function logWeather(message: string, extra?: unknown) {
   console.info(`[hkt-weather] ${message}`, extra);
 }
 
-function formatTimeForZone(date: Date, timeZone: string) {
+const TRAVEL_CLOCK_ZONES = new Set([
+  "Asia/Hong_Kong",
+  "Asia/Kuala_Lumpur",
+  "Australia/Melbourne",
+  "America/New_York",
+  "Asia/Tokyo",
+  // Browsers may retain these IANA aliases instead of returning the city name.
+  "Hongkong",
+  "Asia/Singapore",
+  "Australia/Victoria",
+  "US/Eastern",
+  "Japan",
+]);
+
+export function isTravelClockZone(timeZone: string) {
+  return TRAVEL_CLOCK_ZONES.has(timeZone);
+}
+
+export function formatTimeForZone(date: Date, timeZone: string) {
   return new Intl.DateTimeFormat("en-AU", {
     timeZone,
     hour: "2-digit",
@@ -513,65 +531,65 @@ function buildThemeStops(solarTimes: SolarTimes): ThemeStop[] {
     {
       minute: solarTimes.sunrise,
       palette: {
-        background: "#5c7bb0",
-        text: "#fff8f2",
-        muted: "#ffe3cf",
-        soft: "#d9b8ad",
-        surface: "#6d87b8",
-        surfaceHover: "#7f98c8",
-        beam: "#ffb56b",
-        beamSecondary: "#ff7fae",
-        shadow: "#3d5583",
-        accent: "#ffc89a",
-        transportText: "#fff6ee",
+        background: "#667ea5",
+        text: "#f7f9ff",
+        muted: "#dce4f5",
+        soft: "#b6c2d9",
+        surface: "#758bb0",
+        surfaceHover: "#879cc2",
+        beam: "#ffce9d",
+        beamSecondary: "#f19ab5",
+        shadow: "#4c6185",
+        accent: "#b6d2ff",
+        transportText: "#f4f8ff",
       },
     },
     {
       minute: solarTimes.solarNoon,
       palette: {
-        background: "#79b0e6",
+        background: "#c8d8ed",
         text: "#ffffff",
-        muted: "#eaf4ff",
-        soft: "#cfe4fa",
-        surface: "#5d97d4",
-        surfaceHover: "#6ea6e0",
-        beam: "#fff3c4",
-        beamSecondary: "#9ed4ff",
-        shadow: "#33639c",
-        accent: "#cfeaff",
+        muted: "#ecf3ff",
+        soft: "#d1def2",
+        surface: "#97afcf",
+        surfaceHover: "#abc1de",
+        beam: "#e7f2ff",
+        beamSecondary: "#c6ddfb",
+        shadow: "#6d87ab",
+        accent: "#e5f0ff",
         transportText: "#ffffff",
       },
     },
     {
       minute: lateAfternoon,
       palette: {
-        background: "#7f9cc4",
-        text: "#fffdf6",
-        muted: "#ffe9c9",
-        soft: "#e0c9ab",
-        surface: "#6a88b2",
-        surfaceHover: "#7997c1",
-        beam: "#ffd489",
-        beamSecondary: "#f0a56e",
-        shadow: "#44608c",
-        accent: "#ffe3ae",
-        transportText: "#fffaf0",
+        background: "#93aac8",
+        text: "#ffffff",
+        muted: "#dde8f9",
+        soft: "#c2d3ea",
+        surface: "#738cac",
+        surfaceHover: "#819cbf",
+        beam: "#e7d4c7",
+        beamSecondary: "#a6bad7",
+        shadow: "#556b8a",
+        accent: "#d5e4f8",
+        transportText: "#ffffff",
       },
     },
     {
       minute: solarTimes.sunset,
       palette: {
-        background: "#4a3c63",
-        text: "#fbf2fb",
-        muted: "#e6c9d8",
-        soft: "#b39cbb",
-        surface: "#584a75",
-        surfaceHover: "#675788",
-        beam: "#ff8a55",
-        beamSecondary: "#e06fa8",
-        shadow: "#2b2342",
-        accent: "#c9a3e8",
-        transportText: "#faf1ff",
+        background: "#3f3f56",
+        text: "#f5f0fb",
+        muted: "#d2ccdd",
+        soft: "#a8a3b8",
+        surface: "#4c4d66",
+        surfaceHover: "#5b5d79",
+        beam: "#ff9c76",
+        beamSecondary: "#cc80b1",
+        shadow: "#26293a",
+        accent: "#9fb5d8",
+        transportText: "#f3f5ff",
       },
     },
     {
@@ -1120,7 +1138,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
         window.cancelAnimationFrame(resetFrameRef.current);
         resetFrameRef.current = null;
       }
-      const step = shiftKey ? 12 : 3;
+      const step = shiftKey ? 48 : 12;
       const direction = deltaY > 0 ? step : -step;
       setIsScrubbing(true);
       setDisplayedMinute((current) => wrapMinutes(current + direction));

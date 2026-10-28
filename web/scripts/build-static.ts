@@ -1,3 +1,4 @@
+import { buildStyles } from "./build-css";
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
 import {
@@ -66,6 +67,8 @@ function clientDefine(): Record<string, string> {
 type ClientEntry = { name: string; entry: string };
 
 const CLIENT_ENTRIES: ClientEntry[] = [
+  { name: "album-theme", entry: join(projectDir, "src/client/album-theme.ts") },
+  { name: "home", entry: join(projectDir, "src/client/home.tsx") },
   { name: "not-found", entry: join(projectDir, "src/client/not-found.tsx") },
   { name: "lab", entry: join(projectDir, "src/client/lab.tsx") },
 ];
@@ -104,28 +107,12 @@ async function buildClient(): Promise<Record<string, string>> {
 }
 
 async function buildCss(): Promise<string> {
-  const target = join(assetsDir, "site.css");
-  const proc = Bun.spawn(
-    [
-      "bunx",
-      "@tailwindcss/cli",
-      "--input",
-      join(projectDir, "src/index.css"),
-      "--output",
-      target,
-      "--minify",
-    ],
-    { cwd: projectDir, stdout: "inherit", stderr: "inherit" },
-  );
-  const code = await proc.exited;
-  if (code !== 0) throw new Error(`tailwind build failed with code ${code}`);
-  const bytes = await Bun.file(target).bytes();
+  const bytes = await buildStyles(projectDir);
   const hasher = new Bun.CryptoHasher("sha256");
   hasher.update(bytes);
   const hash = hasher.digest("hex").slice(0, 8);
   const hashed = join(assetsDir, `site-${hash}.css`);
   await Bun.write(hashed, bytes);
-  await rm(target);
   return `/assets/site-${hash}.css`;
 }
 
@@ -180,8 +167,8 @@ async function main(): Promise<void> {
   };
 
   const entryForRoute: Record<string, string | undefined> = {
-    index: undefined,
-    simple: undefined,
+    index: clientBundles.home,
+    lab: clientBundles.lab,
     agent: undefined,
     "not-found": clientBundles["not-found"],
   };
@@ -191,10 +178,7 @@ async function main(): Promise<void> {
     agent: "agent.html",
     "not-found": "404.html",
     lab: "lab/index.html",
-    simple: "simple/index.html",
   };
-
-  entryForRoute.lab = clientBundles.lab;
 
   const routes: RouteArtifact[] = [];
   for (const route of [...discovered, notFoundRoute]) {
@@ -225,6 +209,7 @@ async function main(): Promise<void> {
     lang: "en",
     fontVariableCss: layout.fontVariableCss,
     stylesheet,
+    albumThemeEntry: clientBundles["album-theme"],
     clientEntries,
     metadata,
   });

@@ -1,5 +1,6 @@
-import { Profile } from "@/components/Profile";
+import Home from "@/page-components/home";
+import { getProfileReadmeProjects } from "@/lib/profile-readme";
 
 export default function Page() {
-  return <Profile />;
+  return <Home readme={getProfileReadmeProjects()} />;
 }

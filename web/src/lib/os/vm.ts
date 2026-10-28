@@ -5,6 +5,7 @@ import {
   guestDelta,
   type MachineStage,
 } from "@/lib/os/machine-input";
+import { albumPaletteCommand, nowPlayingCommand } from "@/lib/os/album-palette";
 import { emulatorLifecycle } from "@/lib/os/emulator-lifecycle";
 import {
   attachNexnetBridge,
@@ -100,6 +101,8 @@ class VmManager {
   private guestW = 1024;
   private guestH = 700;
   private serialLine = "";
+  private albumCommand: string | null = null;
+  private trackCommand: string | null = null;
   private progressListeners = new Set<(progress: Progress) => void>();
   private progress: Progress = {
     message: "cold",
@@ -117,6 +120,20 @@ class VmManager {
   }
   get ready(): boolean {
     return this.progress.ready;
+  }
+
+  setAlbumColors(colors: unknown): void {
+    const command = albumPaletteCommand(colors);
+    if (!command) return;
+    this.albumCommand = command;
+    if (this.ready) this.emulator?.serial0_send(command);
+  }
+
+  setNowPlaying(track: unknown): void {
+    const command = nowPlayingCommand(track);
+    if (!command || command === this.trackCommand) return;
+    this.trackCommand = command;
+    if (this.ready) this.emulator?.serial0_send(command);
   }
 
   /** Power on, rendering into `screen` (a div holding a text div + canvas). */
@@ -261,6 +278,8 @@ class VmManager {
           // The desktop drew its first frame — now it's ready, not merely
           // when the emulator started (that still shows the boot log).
           if (line.includes("@@desktop")) {
+            if (this.albumCommand) emulator.serial0_send(this.albumCommand);
+            if (this.trackCommand) emulator.serial0_send(this.trackCommand);
             clearTimeout(this.startupTimeout);
             this.emit({
               message: "ready",
@@ -421,8 +440,9 @@ class VmManager {
    *  phone can move the machine's cursor. */
   touchDelta(dxCss: number, dyCss: number, rectW: number, rectH: number): void {
     if (rectW <= 0 || rectH <= 0) return;
-    const dx = Math.round((dxCss * this.guestW) / rectW);
-    const dy = Math.round((dyCss * this.guestH) / rectH);
+    const scale = Math.min(rectW / this.guestW, rectH / this.guestH);
+    const dx = Math.round(dxCss / scale);
+    const dy = Math.round(dyCss / scale);
     if (dx === 0 && dy === 0) return;
     this.sendGuestDelta(dx, dy);
   }

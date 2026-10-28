@@ -4,7 +4,8 @@
     "src/**/*",
     "scripts/build-static.ts",
     "scripts/serve-static.ts",
-    "moonshine.config.ts"
+    "moonshine.config.ts",
+    "uno.config.ts"
   ],
   "exclude": ["node_modules", "build", "dist", "out", "**/*.test.ts"],
   "compilerOptions": {
@@ -27,7 +28,10 @@
       "next/script": ["./node_modules/@tschk/moonshine-next/src/script.ts"],
       "next/headers": ["./node_modules/@tschk/moonshine-next/src/headers.ts"],
       "next/dynamic": ["./node_modules/@tschk/moonshine-next/src/dynamic.ts"],
-      "next/font/google": ["./src/moonshine/font-google.ts"]
+      "next/font/google": ["./src/moonshine/font-google.ts"],
+      "@nexnet/types": ["./server/nexnet/vendor/types/index.ts"],
+      "@nexnet/crypto": ["./server/nexnet/vendor/crypto/index.ts"],
+      "@nexnet/protocol": ["./server/nexnet/vendor/protocol/index.ts"]
     }
   },
   "references": [

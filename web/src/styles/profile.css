@@ -1,0 +1,561 @@
+/* Readable static profile; no canvas, animation or client data dependency. */
+.profile-page {
+  color: var(--album-text);
+  background: var(--album-background);
+  @apply min-h-screen;
+  padding: 0 max(24px, calc((100vw - 1120px) / 2));
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  line-height: 1.6;
+}
+.profile-page a {
+  color: inherit;
+  text-underline-offset: 5px;
+}
+.profile-page a:hover {
+  color: var(--album-secondary);
+  text-decoration: underline;
+}
+.profile-page :focus-visible,
+.lab-page :focus-visible {
+  outline: 3px solid var(--album-accent);
+  outline-offset: 5px;
+}
+.profile-skip {
+  @apply absolute;
+  top: -100px;
+  padding: 12px;
+  background: var(--album-background);
+  z-index: 100;
+}
+.profile-skip:focus {
+  top: 8px;
+}
+.profile-header,
+.profile-footer,
+.profile-section-heading,
+.profile-lab {
+  @apply flex justify-between items-center;
+  gap: 24px;
+}
+.profile-header {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--album-border);
+  @apply flex-wrap;
+}
+.profile-wordmark {
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.05em;
+}
+.profile-wordmark span {
+  color: var(--album-secondary);
+}
+.profile-header nav,
+.profile-links {
+  @apply flex;
+  gap: 24px;
+  @apply flex-wrap;
+}
+.profile-header nav a,
+.profile-links a,
+.profile-footer a {
+  @apply inline-flex items-center;
+  min-height: 44px;
+  gap: 8px;
+}
+.profile-header nav {
+  font-size: 14px;
+}
+.profile-intro {
+  padding: 92px 0 72px;
+  max-width: 830px;
+}
+.profile-eyebrow,
+.profile-kind {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  @apply uppercase;
+  color: var(--album-secondary);
+}
+.profile-intro h1 {
+  margin: 16px 0 24px;
+  font-size: clamp(52px, 8vw, 96px);
+  letter-spacing: -0.065em;
+  @apply font-medium;
+  line-height: 1.08;
+}
+.profile-intro h1 span {
+  @apply inline-block;
+  font-size: 20px;
+  color: var(--album-muted);
+  margin-left: 22px;
+  letter-spacing: 0.12em;
+  vertical-align: middle;
+}
+.profile-description {
+  font-size: clamp(20px, 2.4vw, 27px);
+  max-width: 30em;
+  color: var(--album-text);
+  line-height: 1.5;
+}
+.profile-links {
+  margin-top: 28px;
+  font-size: 15px;
+}
+.profile-section {
+  padding: 36px 0 52px;
+  border-top: 1px solid var(--album-border);
+}
+.profile-section-heading {
+  @apply flex-wrap;
+  margin-bottom: 32px;
+}
+.profile-section-heading h2,
+.profile-lab h2 {
+  font-size: 22px;
+  @apply font-medium;
+  letter-spacing: -0.03em;
+}
+.profile-section-heading p,
+.profile-section-heading > a {
+  color: var(--album-muted);
+  font-size: 14px;
+}
+.profile-projects {
+  @apply grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+  @apply p-0;
+  gap: 40px 36px;
+}
+.profile-projects h3 {
+  font-size: 24px;
+  letter-spacing: -0.04em;
+  @apply font-medium;
+  margin: 10px 0;
+}
+.profile-projects h3 a {
+  @apply inline-block;
+  padding: 4px 0;
+}
+.profile-projects h3 span {
+  color: var(--album-muted);
+  font-size: 18px;
+}
+.profile-projects li > p:last-child {
+  font-size: 15px;
+  color: var(--album-muted);
+  max-width: 34em;
+}
+.profile-more {
+  @apply inline-block;
+  margin-top: 36px;
+  padding: 10px 0;
+  font-size: 14px;
+  text-decoration: underline;
+}
+.profile-experience {
+  list-style: none;
+  @apply p-0;
+}
+.profile-experience li {
+  @apply grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 24px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--album-border);
+}
+.profile-experience h3 {
+  font-size: 19px;
+  font-weight: 550;
+}
+.profile-experience p {
+  color: var(--album-muted);
+  font-size: 15px;
+}
+.profile-experience .profile-date {
+  font-size: 13px;
+  padding-top: 5px;
+}
+.profile-job-description {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+}
+.profile-lab {
+  padding: 30px;
+  background: var(--album-surface);
+  border: 1px solid var(--album-border);
+  @apply flex-wrap;
+}
+.profile-lab p {
+  color: var(--album-muted);
+  font-size: 15px;
+  margin-top: 5px;
+}
+.profile-lab > a {
+  padding: 12px 0;
+}
+.profile-footer {
+  padding: 40px 0;
+  color: var(--album-muted);
+  font-size: 13px;
+  @apply flex-wrap;
+}
+.profile-simple {
+  font-family: var(--font-jetbrains-mono, ui-monospace), monospace;
+  background: var(--album-background);
+  font-size: 13px;
+  color: var(--album-text);
+  padding: 0 max(24px, calc((100vw - 760px) / 2));
+}
+.profile-simple a {
+  text-decoration: none;
+  color: var(--album-text);
+}
+.profile-simple a:hover {
+  color: var(--album-secondary);
+}
+.profile-simple .profile-header {
+  border-color: var(--album-border);
+}
+.profile-simple .profile-intro {
+  padding: 48px 0;
+}
+.profile-simple .profile-intro h1 {
+  color: var(--album-heading, var(--album-text));
+  font-size: clamp(26px, 5vw, 32px);
+  letter-spacing: -0.04em;
+}
+.profile-simple .profile-intro h1 span {
+  font-size: 16px;
+}
+.profile-simple .profile-description {
+  font-size: 14px;
+}
+.profile-simple .profile-eyebrow,
+.profile-simple .profile-kind {
+  @apply hidden;
+}
+.profile-simple .profile-projects {
+  @apply block;
+}
+.profile-simple .profile-projects li {
+  margin-bottom: 24px;
+}
+.profile-simple .profile-projects h3 {
+  color: var(--album-secondary);
+  font-size: 14px;
+}
+.profile-simple .profile-projects li > p:last-child {
+  max-width: none;
+  color: var(--album-muted);
+}
+.profile-simple .profile-section-heading p,
+.profile-simple .profile-lab p {
+  color: var(--album-muted);
+}
+.profile-simple p,
+.profile-simple .profile-footer,
+.profile-simple .profile-date,
+.profile-simple h1 span {
+  color: var(--album-muted);
+}
+.profile-simple .profile-section {
+  border-color: var(--album-border);
+  padding-bottom: 32px;
+}
+.profile-simple .profile-experience li {
+  border-color: var(--album-border);
+}
+.profile-simple .profile-lab {
+  padding: 24px 0;
+  @apply [background:none] border-0;
+  border-top: 1px solid var(--album-border);
+}
+.profile-simple .profile-wordmark span,
+.profile-simple .profile-links a,
+.profile-simple .profile-projects h3 span {
+  color: var(--album-accent);
+}
+.profile-simple .profile-section-heading h2,
+.profile-simple .profile-lab h2 {
+  color: var(--album-tertiary, var(--album-secondary));
+  font-size: 16px;
+  letter-spacing: 0;
+}
+.profile-simple .profile-projects li {
+  padding-bottom: 20px;
+  border-bottom: 1px dashed var(--album-border);
+}
+.profile-simple .profile-projects li > p:last-child {
+  font-size: 13px;
+}
+.profile-simple :focus-visible {
+  outline-color: var(--album-accent);
+}
+.profile-simple .profile-projects h3 a {
+  color: var(--album-secondary);
+}
+.profile-simple .profile-header nav a,
+.profile-simple .profile-lab > a {
+  color: var(--album-tertiary, var(--album-accent));
+}
+.profile-simple .profile-intro h1 span,
+.profile-simple .profile-section-heading > p {
+  color: var(--album-label, var(--album-muted));
+}
+.profile-simple .profile-projects a:hover,
+.profile-simple .profile-header nav a:hover,
+.profile-simple .profile-lab > a:hover {
+  color: var(--album-text);
+  text-decoration: underline;
+}
+.site-mode-navigation {
+  @apply fixed;
+  z-index: 90;
+  top: 20px;
+  right: 24px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+.site-mode-navigation nav {
+  @apply flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--album-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--album-surface) 94%, transparent);
+}
+.site-mode-navigation a,
+.site-mode-navigation button {
+  @apply inline-flex items-center justify-center;
+  min-height: 44px;
+  padding: 0 12px;
+  color: var(--album-text);
+  font-size: 11px;
+  @apply cursor-pointer;
+  border-radius: 4px;
+}
+.site-mode-navigation a:first-child {
+  color: var(--album-accent);
+}
+.site-mode-navigation a:hover,
+.site-mode-navigation button:hover {
+  background: color-mix(in srgb, var(--album-text) 7%, transparent);
+  color: var(--album-secondary);
+}
+.site-mode-navigation :focus-visible {
+  outline: 2px solid var(--album-accent);
+  outline-offset: 2px;
+}
+@media (max-width: 639px) {
+  .site-mode-navigation {
+    top: auto;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    right: 12px;
+  }
+}
+.lab-page {
+  background: var(--album-background);
+  color: var(--album-text);
+  @apply min-h-dvh;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+.lab-navigation {
+  @apply fixed;
+  top: max(14px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  @apply flex items-center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--album-border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--album-surface) 93%, transparent);
+  box-shadow: 0 8px 28px #0003;
+  backdrop-filter: blur(16px);
+}
+.lab-navigation a,
+.lab-navigation button {
+  @apply inline-flex items-center justify-center;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 6px;
+  color: var(--album-text);
+  font-size: 12px;
+  @apply whitespace-nowrap cursor-pointer;
+}
+.lab-navigation a:hover,
+.lab-navigation button:hover {
+  background: color-mix(in srgb, var(--album-text) 7%, transparent);
+  color: var(--album-accent);
+}
+.lab-navigation button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.lab-welcome {
+  max-width: 700px;
+  padding: 80px 24px;
+  margin: auto;
+}
+.lab-welcome h1 {
+  font-size: clamp(36px, 7vw, 64px);
+  @apply font-medium;
+  letter-spacing: -0.04em;
+  margin: 16px 0 24px;
+}
+.lab-welcome p {
+  line-height: 1.6;
+  margin: 16px 0;
+}
+.lab-welcome a,
+.machine-intro a {
+  text-decoration: underline;
+}
+.lab-welcome button {
+  @apply block;
+  padding: 12px 22px;
+  margin: 32px 0;
+  color: var(--album-background);
+  background: var(--album-accent);
+  border-radius: 4px;
+  @apply cursor-pointer;
+}
+.lab-welcome button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.lab-running {
+  @apply h-dvh overflow-hidden;
+}
+.lab-page .machine-root {
+  @apply h-dvh;
+}
+.lab-page .machine-foot {
+  @apply absolute;
+  inset: auto max(14px, env(safe-area-inset-right))
+    max(14px, env(safe-area-inset-bottom)) auto;
+  z-index: 25;
+  @apply block;
+  max-width: min(420px, calc(100vw - 28px));
+  @apply p-0;
+  border: 1px solid var(--album-border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--album-surface) 93%, transparent);
+  box-shadow: 0 8px 28px #0003;
+  backdrop-filter: blur(16px);
+  color: var(--album-muted);
+  font:
+    12px/1.6 var(--font-jetbrains-mono),
+    ui-monospace,
+    monospace;
+  letter-spacing: 0;
+  @apply pointer-events-auto;
+}
+.machine-foot summary {
+  min-height: 44px;
+  padding: 12px 16px;
+  color: var(--album-text);
+  @apply cursor-pointer;
+}
+.machine-controls {
+  @apply grid;
+  gap: 12px;
+  padding: 4px 16px 16px;
+}
+.lab-page .machine-foot a,
+.lab-page .machine-foot button {
+  color: var(--album-secondary);
+}
+.lab-page .machine-foot button {
+  min-height: 44px;
+}
+.lab-page .machine-mobile-input {
+  padding: 8px 12px 76px;
+  background: var(--album-background);
+}
+.lab-page .machine-cover-line {
+  white-space: normal;
+  max-width: 42ch;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.lab-page .machine-intro button {
+  min-height: 44px;
+  font-size: 12px;
+}
+@media (max-width: 700px) {
+  .profile-header {
+    gap: 8px;
+    padding: 16px 0;
+  }
+  .profile-header nav {
+    gap: 20px;
+  }
+  .profile-intro {
+    padding: 52px 0 48px;
+  }
+  .profile-intro h1 span {
+    @apply block;
+    margin: 14px 0 0;
+    font-size: 18px;
+  }
+  .profile-projects {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .profile-experience li {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .profile-lab {
+    padding: 24px;
+  }
+  .profile-section-heading {
+    gap: 8px;
+  }
+  .lab-simple-link {
+    display: none !important;
+  }
+  .lab-navigation {
+    inset: auto auto max(14px, env(safe-area-inset-bottom)) 14px;
+    transform: none;
+  }
+}
+@media print {
+  .profile-page {
+    background: white;
+    color: black;
+    @apply p-0;
+  }
+  .profile-page p,
+  .profile-page a,
+  .profile-page span {
+    color: black !important;
+  }
+  .profile-header,
+  .profile-footer,
+  .profile-lab,
+  .profile-skip,
+  .profile-links {
+    @apply hidden;
+  }
+  .profile-intro {
+    padding: 16px 0 24px;
+  }
+  .profile-intro h1 {
+    font-size: 32px;
+  }
+  .profile-description {
+    font-size: 16px;
+  }
+  .profile-section,
+  .profile-experience li {
+    border-color: #aaa;
+  }
+  .profile-projects li,
+  .profile-experience li {
+    break-inside: avoid;
+  }
+}

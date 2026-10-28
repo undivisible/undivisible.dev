@@ -36,3 +36,18 @@ pub const AwMsg = extern struct {
 comptime {
     if (@sizeOf(AwMsg) != 104) @compileError("AwMsg must be 104 bytes");
 }
+
+pub fn closeHit(width: i32, x: i32, y: i32) bool {
+    return x >= @max(0, width - 32) and x < width and y >= 0 and y < 28;
+}
+
+test "window close target includes titlebar and rejects adjacent drag area" {
+    const testing = @import("std").testing;
+    try testing.expect(closeHit(720, 688, 0));
+    try testing.expect(closeHit(720, 719, 27));
+    try testing.expect(closeHit(720, 698, 6));
+    try testing.expect(!closeHit(720, 687, 6));
+    try testing.expect(!closeHit(720, 720, 6));
+    try testing.expect(!closeHit(720, 698, 28));
+    try testing.expect(!closeHit(720, 698, -1));
+}

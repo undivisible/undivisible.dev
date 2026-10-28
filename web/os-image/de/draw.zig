@@ -121,21 +121,21 @@ pub fn textLg(b: *AwBuf, x: i32, y: i32, s: []const u8, c: u32) i32 {
 }
 
 pub fn frame(b: *AwBuf, title: ?[]const u8) void {
-    fill(b, 0, 0, b.w, b.h, 0x10131c);
+    fill(b, 0, 0, b.w, b.h, 0x0d1118);
     // A visible title bar — the top strip is the drag handle, so it should
     // look like one instead of being an invisible 20px zone.
     if (title != null) {
-        fill(b, 0, 0, b.w, 24, 0x161b28);
-        fill(b, 0, 24, b.w, 1, 0x2c3345);
+        fill(b, 0, 0, b.w, 24, 0x111722);
+        fill(b, 0, 24, b.w, 1, 0x23313d);
     }
     // 1px outer rim: brighter top/left catch light, darker bottom/right —
     // reads as a hard edge instead of a soft muddy box.
-    fill(b, 0, 0, b.w, 1, 0x3a4258);
-    fill(b, 0, b.h - 1, b.w, 1, 0x0c0e16);
-    fill(b, 0, 0, 1, b.h, 0x2a3144);
-    fill(b, b.w - 1, 0, 1, b.h, 0x0c0e16);
+    fill(b, 0, 0, b.w, 1, 0x23313d);
+    fill(b, 0, b.h - 1, b.w, 1, 0x080b10);
+    fill(b, 0, 0, 1, b.h, 0x18222c);
+    fill(b, b.w - 1, 0, 1, b.h, 0x080b10);
     if (title) |t| {
-        fill(b, 10, 9, 6, 6, 0x7ec8e8);
-        _ = text(b, 24, 5, t, 0xa8b0c4, 1);
+        fill(b, 10, 9, 6, 6, 0xff5705);
+        _ = text(b, 24, 5, t, 0x9aa3b2, 1);
     }
 }

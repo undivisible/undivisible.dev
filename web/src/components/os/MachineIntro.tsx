@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import type { VmProgress } from "@/lib/os/vm";
 
 export function MachineIntro({
@@ -15,11 +16,21 @@ export function MachineIntro({
     <div className={`machine-intro is-light${exiting ? " is-exit" : ""}`}>
       <div className="machine-intro-copy">
         <p className="machine-cover-title">Alpenglow</p>
+        {!progress.ready && progress.stage !== "failed" && !exiting ? (
+          <div className="machine-boot-spinner" aria-hidden="true">
+            {Array.from({ length: 8 }, (_, index) => (
+              <span
+                key={index}
+                style={{ "--bar-index": index } as CSSProperties}
+              />
+            ))}
+          </div>
+        ) : null}
         <noscript>
           <p className="machine-cover-line">
-            JavaScript is needed for Linux. The simple version works without it.
+            JavaScript is needed for Linux. The portfolio works without it.
           </p>
-          <a href="/simple/">Open the simple version →</a>
+          <a href="/">Open the portfolio →</a>
         </noscript>
         <p className="machine-cover-line" role="status">
           {progress.message === "cold"
@@ -31,7 +42,7 @@ export function MachineIntro({
             Show boot screen
           </button>
         ) : (
-          <a href="/simple/">Continue to the simple version →</a>
+          <a href="/">Continue to the portfolio →</a>
         )}
       </div>
     </div>

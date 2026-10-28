@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
+import {
+  formatTimeForZone,
+  isTravelClockZone,
+  type HongKongDayTheme,
+} from "@/lib/useHongKongDayTheme";
 import type { NowContent } from "@/lib/parse-now-markdown";
 
 export function ClockPanel({
@@ -10,12 +14,14 @@ export function ClockPanel({
   nowArticleOpen,
   onToggleNowArticle,
   hydrated,
+  travelClocks = false,
 }: {
   dayTheme: HongKongDayTheme;
   now: NowContent;
   nowArticleOpen: boolean;
   onToggleNowArticle?: () => void;
   hydrated: boolean;
+  travelClocks?: boolean;
 }) {
   const clockRef = useRef<HTMLDivElement>(null);
   const [clockHovered, setClockHovered] = useState(false);
@@ -31,7 +37,14 @@ export function ClockPanel({
     hydrated && dayTheme ? dayTheme.weatherDisplay : "--°C --";
   const hkgText = hydrated && dayTheme ? dayTheme.hkgTime : "--:--:--";
   const melText = hydrated && dayTheme ? dayTheme.melTime : "--:--:--";
-  const localText = hydrated && dayTheme ? dayTheme.localTime : "--:--:--";
+  const localZone = hydrated
+    ? Intl.DateTimeFormat().resolvedOptions().timeZone
+    : "UTC";
+  const localText = hydrated
+    ? travelClocks
+      ? formatTimeForZone(dayTheme.displayedDate, localZone)
+      : dayTheme.localTime
+    : "--:--:--";
 
   const statusInteractive = Boolean(now.article && onToggleNowArticle);
   const showStatus = Boolean(now.status);
@@ -80,7 +93,7 @@ export function ClockPanel({
             className="w-[3.2rem] shrink-0"
             style={{ color: "var(--page-text-soft)" }}
           >
-            HKG
+            {travelClocks ? "HKG/KUL" : "HKG"}
           </span>
           <span>{hkgText}</span>
         </a>
@@ -140,10 +153,45 @@ export function ClockPanel({
           scroll to change time
         </span>
       </div>
-      {dayTheme.showLocalTime && (
+      {travelClocks &&
+        [
+          {
+            label: "NYC",
+            zone: "America/New_York",
+            href: "https://www.timeanddate.com/worldclock/usa/new-york",
+          },
+          {
+            label: "TYO",
+            zone: "Asia/Tokyo",
+            href: "https://www.timeanddate.com/worldclock/japan/tokyo",
+          },
+        ].map(({ label, zone, href }) => (
+          <div className="mt-1" key={zone}>
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
+            >
+              <span className="w-[3.2rem] shrink-0">{label}</span>
+              <span>
+                {hydrated
+                  ? formatTimeForZone(dayTheme.displayedDate, zone)
+                  : "--:--:--"}
+              </span>
+            </a>
+          </div>
+        ))}
+      {(travelClocks
+        ? hydrated && !isTravelClockZone(localZone)
+        : dayTheme.showLocalTime) && (
         <div className="mt-1">
           <a
-            href={dayTheme.localClockHref}
+            href={
+              travelClocks
+                ? `https://www.timeanddate.com/worldclock/results.html?query=${encodeURIComponent(localZone)}`
+                : dayTheme.localClockHref
+            }
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex flex-wrap items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
@@ -153,7 +201,7 @@ export function ClockPanel({
               className="w-[3.2rem] shrink-0"
               style={{ color: "var(--page-text-soft)" }}
             >
-              {dayTheme.localLabel}
+              {travelClocks ? "LOCAL" : dayTheme.localLabel}
             </span>
             <span>{localText}</span>
           </a>

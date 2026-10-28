@@ -22,7 +22,7 @@ const FETCH_PATHS = [
   {
     href: "/now.md",
     label: "now.md",
-    note: "Now status only (not projects); live clock fetches upstream now.md",
+    note: "Current status",
   },
   { href: "/resume.md", label: "resume.md", note: "CV and contact" },
 ] as const;
@@ -38,14 +38,8 @@ export default function AgentPage() {
       </p>
       <h1 className="mt-2 text-lg text-white">Fetch markdown directly</h1>
       <p className="mt-4 text-white/70">
-        This site is static on Cloudflare Workers. Agents should{" "}
-        <strong className="font-medium text-white/90">
-          GET the .md / .txt URLs
-        </strong>
-        , not parse the visual home page. There is no{" "}
-        <code className="text-white/85">Accept: text/markdown</code> negotiation
-        (that needs an edge like Cloudflare Workers); paths below are already
-        plain text files in the deploy output.
+        Read the Markdown and text files below for projects, experience and
+        contact details.
       </p>
       <ul className="mt-8 space-y-4 border-t border-white/15 pt-8">
         {FETCH_PATHS.map((p) => (
@@ -61,7 +55,7 @@ export default function AgentPage() {
         ))}
       </ul>
       <p className="mt-10 text-white/50">
-        Human UI:{" "}
+        Website:{" "}
         <Link href="/" className="underline underline-offset-2 text-white/70">
           /
         </Link>

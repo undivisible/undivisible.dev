@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { KeyboardHints } from "@/components/os/KeyboardHints";
 import { MachineIntro } from "@/components/os/MachineIntro";
 import { coverVisible } from "@/lib/os/machine-input";
 import { vm, type VmProgress } from "@/lib/os/vm";
@@ -85,6 +86,10 @@ export default function MachineRoot() {
     });
     const detach = vm.attachProgress((next) => {
       setProgress(next);
+      if (next.stage === "ready")
+        window.dispatchEvent(new Event("site:mode-ready"));
+      if (next.stage === "failed")
+        window.dispatchEvent(new Event("site:mode-failed"));
       // Keep progress until the guest signals its first desktop frame.
     });
     // A hidden tab has its timers clamped, so the machine stops dead —
@@ -212,18 +217,13 @@ export default function MachineRoot() {
             event.currentTarget.focus();
             void vm.lockMouse().then((locked) => setMouseUnavailable(!locked));
           }}
-          title="click to give the machine your mouse — esc gives it back"
+          title="Click to capture the mouse. Escape releases it."
         >
           <div className="machine-text" style={{ whiteSpace: "pre" }} />
           <canvas style={{ display: "none" }} />
         </div>
 
-        {resumed ? (
-          <p className="machine-resumed">
-            the machine was paused while this tab was in the background — it
-            picks up where it stopped
-          </p>
-        ) : null}
+        {resumed ? <p className="machine-resumed">Resumed.</p> : null}
 
         {introMounted ? (
           <MachineIntro
@@ -246,7 +246,7 @@ export default function MachineRoot() {
           <input
             value={mobileLine}
             onChange={(event) => setMobileLine(event.target.value)}
-            placeholder="type here — tap places the pointer, drag follows your finger"
+            placeholder="Type a command"
             aria-label="machine keyboard"
             disabled={!progress.ready}
             autoCapitalize="off"
@@ -293,64 +293,67 @@ export default function MachineRoot() {
         </div>
       ) : null}
 
-      <footer className="machine-foot">
-        {mouseUnavailable ? (
-          <span role="status">
-            Mouse capture is unavailable. Keyboard and touch controls still
-            work.
+      {progress.ready && !coarse ? <KeyboardHints /> : null}
+
+      <details className="machine-foot">
+        <summary>Controls</summary>
+        <div className="machine-controls">
+          {mouseUnavailable ? (
+            <span role="status">
+              Mouse capture is unavailable. Keyboard and touch controls still
+              work.
+            </span>
+          ) : null}
+          <span>
+            linux 7.1.3 i686 · v86 · image built from{" "}
+            <a
+              href="https://github.com/tschk/alpenglow"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              tschk/alpenglow
+            </a>
           </span>
-        ) : null}
-        <span>
-          linux 7.1.3 i686 · v86 · image built from{" "}
-          <a
-            href="https://github.com/tschk/alpenglow"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            tschk/alpenglow
-          </a>
-        </span>
-        <span className="machine-foot-hint">
-          Nexnet: type <code>nexnet</code> in the launcher. Read Updates and
-          Public chat; create an identity and sign in on the Identity page (3).
-          Press q outside the editor or Ctrl+C to return to the desktop.{" "}
-          <button
-            type="button"
-            className="machine-foot-escape"
-            disabled={!progress.ready || !vm.nexnetPasskeyAvailable()}
-            onClick={() => {
-              setPasskeyNote("waiting for your authenticator…");
-              vm.registerNexnetPasskey().then(
-                () =>
-                  setPasskeyNote(
-                    "passkey added; restart nexnet to pick it on the Identity page",
-                  ),
-                (error: unknown) =>
-                  setPasskeyNote(
-                    error instanceof Error ? error.message : "passkey failed",
-                  ),
-              );
-            }}
-            title="Register a passkey for your Nexnet identity (create the identity in the terminal first)"
-          >
-            add a passkey
-          </button>
-          {passkeyNote ? <span role="status"> {passkeyNote}</span> : null}
-        </span>
-        <span className="machine-foot-hint">
-          click the screen to hand it your mouse (esc takes it back) · type to
-          launch · esc or the corner chip hides the launcher · tab cycles
-          windows · drag the widgets · `sh` is the real console ·{" "}
-          <button
-            type="button"
-            className="machine-foot-escape"
-            onClick={() => vm.exitBrowser()}
-            title="netsurf and links have no quit key — this kills them and the desktop comes back"
-          >
-            stuck in the browser? click here
-          </button>
-        </span>
-      </footer>
+          <span className="machine-foot-hint">
+            Nexnet: type <code>nexnet</code> in the launcher. Read Updates and
+            Public chat; create an identity and sign in on the Identity page
+            (3). Press q outside the editor or Ctrl+C to return to the desktop.{" "}
+            <button
+              type="button"
+              className="machine-foot-escape"
+              disabled={!progress.ready || !vm.nexnetPasskeyAvailable()}
+              onClick={() => {
+                setPasskeyNote("waiting for your authenticator…");
+                vm.registerNexnetPasskey().then(
+                  () =>
+                    setPasskeyNote(
+                      "passkey added; restart nexnet to pick it on the Identity page",
+                    ),
+                  (error: unknown) =>
+                    setPasskeyNote(
+                      error instanceof Error ? error.message : "passkey failed",
+                    ),
+                );
+              }}
+              title="Register a passkey for your Nexnet identity (create the identity in the terminal first)"
+            >
+              add a passkey
+            </button>
+            {passkeyNote ? <span role="status"> {passkeyNote}</span> : null}
+          </span>
+          <span className="machine-foot-hint">
+            Type to launch · Escape releases the mouse · Tab switches windows ·{" "}
+            <button
+              type="button"
+              className="machine-foot-escape"
+              onClick={() => vm.exitBrowser()}
+              title="Close the browser and return to the desktop"
+            >
+              Return to desktop
+            </button>
+          </span>
+        </div>
+      </details>
     </main>
   );
 }

@@ -7,16 +7,19 @@ export default function LabPage() {
   const [started, setStarted] = useState(true);
   const [interactive, setInteractive] = useState(false);
   useEffect(() => setInteractive(true), []);
+  useEffect(() => {
+    if (!started) window.dispatchEvent(new Event("site:mode-ready"));
+  }, [started]);
 
   return (
     <div className={`lab-page${started ? " lab-running" : ""}`}>
       <nav className="lab-navigation" aria-label="Lab navigation">
-        <a href="/">undivisible.</a>
-        <a href="/simple/">Simple version</a>
-        <a href="/resume.md">Résumé</a>
+        <a href="/" aria-label="Return to the portfolio">
+          ← Website
+        </a>
         {started ? (
           <button disabled={!interactive} onClick={() => setStarted(false)}>
-            Stop machine
+            Stop
           </button>
         ) : null}
       </nav>
@@ -25,23 +28,28 @@ export default function LabPage() {
       ) : (
         <main className="lab-welcome">
           <p className="profile-eyebrow">Linux desktop</p>
-          <h1>Alpenglow lab</h1>
-          <p>A Linux desktop running locally in your browser with v86.</p>
+          <h1>Alpenglow</h1>
+          <p>A Linux desktop in your browser.</p>
           <p>
             Starting it downloads the machine image and uses about 512 MB of
             memory. A desktop keyboard works best.
           </p>
-          <button disabled={!interactive} onClick={() => setStarted(true)}>
+          <button
+            disabled={!interactive}
+            onClick={() => {
+              window.dispatchEvent(new Event("site:mode-start"));
+              setStarted(true);
+            }}
+          >
             Start machine
           </button>
           <p>
-            The <a href="/simple/">simple version</a> has the profile, projects
-            and résumé without starting Linux.
+            Visit the <a href="/">portfolio</a> without starting Linux.
           </p>
           <noscript>
             <p>
-              JavaScript is needed only to start the machine. The profile pages
-              work without it.
+              JavaScript is needed only to start the machine. The portfolio
+              works without it.
             </p>
           </noscript>
         </main>

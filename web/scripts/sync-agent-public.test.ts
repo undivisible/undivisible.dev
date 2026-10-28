@@ -46,7 +46,10 @@ test("sync-agent-public writes fetchable markdown without changing deploy conten
     expect(llms).toContain("Cloudflare Workers");
     expect(llms).not.toContain("GitHub Pages");
     const agent = await Bun.file(path.join(pub, "agent.md")).text();
-    expect(agent).toContain("https://example.test/simple/");
+    expect(agent).toContain("canonical interactive portfolio");
+    expect(agent).toContain("live interactions hydrate in the browser");
+    expect(agent).not.toContain("/simple/");
+    expect(agent).not.toContain("/main/");
     expect(agent).not.toContain("GitHub Pages");
     expect(await Bun.file(path.join(pub, "llms-full.txt")).text()).toContain(
       "# Test résumé",

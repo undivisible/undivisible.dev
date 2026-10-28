@@ -11,13 +11,11 @@ import {
   COUNTRIES,
   GHOST_SOURCE,
   GHOST_SUFFIXES,
-  HEADLINE_WORKS,
   IDENTITY,
   LAB_LINKS,
   MILESTONES,
   STOPS_THIS_YEAR,
   TERRY,
-  TSCHK,
   QUOTES,
   PHILOSOPHY,
 } from "../src/data/lab-facts";
@@ -64,24 +62,23 @@ const write = (name: string, text: string) =>
 await write(
   "about.txt",
   `
-  \x1b[1;37m${IDENTITY.name}\x1b[0m  (qi ming si; the console font cannot draw the hanzi)
+  \x1b[1;37m${IDENTITY.name}\x1b[0m  (qi ming si)
 
   ${profile.description}
 
-  experience and skills: the published resume.md in the offline web folder
+  experience and skills: open resume.md in the web app
 
   links
 ${LAB_LINKS.map((l) => `    ${l.name.padEnd(10)} ${"href" in l ? l.href : ""}`).join("\n")}
 
-  this machine is a real i686 linux, emulated on your cpu by v86,
-  booting the real alpenglow browser image. the whole site is inside it.
+  Alpenglow Linux. Type works for projects, or web to browse the site.
 `,
 );
 
 await write(
   "works.txt",
   `
-  \x1b[1;37mheadline works\x1b[0m — all under ${TSCHK.name}, ${TSCHK.full}
+  \x1b[1;37mselected projects\x1b[0m
 
 ${projects
   .map(
@@ -95,7 +92,7 @@ ${projects
 await write(
   "route.txt",
   `
-  \x1b[1;37mthis year, at seventeen\x1b[0m
+  \x1b[1;37m2026 travels and plans\x1b[0m
 
   ${STOPS_THIS_YEAR.map((s) => `\x1b[93m${s.code}\x1b[0m`).join(" \x1b[90m->\x1b[0m ")}
 
@@ -131,7 +128,7 @@ await write(
     \x1b[93m${GITHUB_ACTIVITY.account.commitsThisYear.toLocaleString("en-US")}\x1b[0m commits this year
     \x1b[93m${GITHUB_ACTIVITY.account.repos}\x1b[0m repositories
 
-    ${GITHUB_ACTIVITY.account.closedUnmerged} closed without merging — nearly all by me. not rejections.
+    ${GITHUB_ACTIVITY.account.closedUnmerged} closed without merging
 
   recent merged on ${GITHUB_ACTIVITY.repo}:
 ${GITHUB_ACTIVITY.recentMerged
@@ -161,7 +158,7 @@ const SITES: Array<[string, string]> = [
 await write(
   "sites.txt",
   `
-  \x1b[1;37mthe software, deployed\x1b[0m
+  \x1b[1;37mproject websites\x1b[0m
 
 ${SITES.map(([label, url], index) => `  \x1b[93m${String(index + 1).padStart(2)})\x1b[0m \x1b[96m${label.split(" — ")[0]}\x1b[0m${label.includes(" — ") ? ` — ${label.split(" — ")[1]}` : ""}  \x1b[90m${url}\x1b[0m`).join("\n")}
 `,
@@ -199,7 +196,7 @@ ${PHILOSOPHY.favourites.map((f) => `    \x1b[93m${f.name}\x1b[0m      \x1b[90m${
 ${PHILOSOPHY.next.map((n) => `    \x1b[96m${n.name}\x1b[0m  \x1b[90m-- ${n.work}\x1b[0m`).join("\n")}
 
 
-  \x1b[90m????? ??? -- investigate things, extend knowledge\x1b[0m
+  \x1b[90minvestigate things, extend knowledge\x1b[0m
 
   \x1b[90m  arrow keys scroll  |  q to close\x1b[0m
 `,
@@ -209,26 +206,8 @@ await write(
   `
   \x1b[1;37mphotos\x1b[0m
 
-  \x1b[90mInstagram has no public highlight API. The photos feed loads
-   from a local source instead.\x1b[0m
-
-  \x1b[93mupdate path\x1b[0m
-
-  \x1b[90mDrop a JSON array into\x1b[0m
-  \x1b[96m  photos/feed.json\x1b[0m
-  \x1b[90mat the site root, with each entry:\x1b[0m
-
-  \x1b[90m  { "src": "url", "alt": "description", "date": "2026-01-01" }\x1b[0m
-
-  \x1b[90mThe app reads it and renders the roll. No build step needed.\x1b[0m
-
-
-  \x1b[1;37minstagram\x1b[0m
-
-  \x1b[90mFollow\x1b[0m \x1b[96m@undivisible.dev\x1b[0m \x1b[90mon instagram for the live feed.
-   The highlight archive is not scraped -- this app uses the same
-   local-feed convention the rest of the site does for dynamic data.\x1b[0m
-
+  Photos and travel: \x1b[96m@undivisible.dev\x1b[0m on Instagram.
+  \x1b[90mhttps://instagram.com/undivisible.dev\x1b[0m
 
   \x1b[90m  arrow keys scroll  |  q to close\x1b[0m
 `,
@@ -244,10 +223,7 @@ await write(
   and browser extension surfaces. Mobile backends are in development.\x1b[0m
 
 
-  \x1b[93mthe host browser is opening\x1b[0m \x1b[96mcrepuscularity.tsc.hk\x1b[0m
-
-  \x1b[90m(Framebuffer graphics on this machine cannot render a modern web
-  app. The site opens in your real browser as a host tab.)\x1b[0m
+  \x1b[96mhttps://crepuscularity.undivisible.dev\x1b[0m
 
   \x1b[90m  arrow keys scroll  |  q to close\x1b[0m
 `,

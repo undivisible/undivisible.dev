@@ -2,6 +2,8 @@ const std = @import("std");
 const linux = std.os.linux;
 const draw = @import("draw.zig");
 const wire = @import("wire.zig");
+const album = @import("album-palette.zig");
+var album_palette: album.Palette = .{};
 
 const MAXW: i32 = 1920;
 const MAXH: i32 = 1200;
@@ -122,12 +124,25 @@ fn hkMin() i32 {
 }
 
 fn skyStops(hour: i32, top: *u32, bot: *u32) void {
-    if (hour >= 5 and hour < 8) { top.* = 0x2a1e33; bot.* = 0xc96f4a; }
-    else if (hour < 12) { top.* = 0x1d3a5f; bot.* = 0x7fb2d9; }
-    else if (hour < 15) { top.* = 0x2456a0; bot.* = 0x9fc7e8; }
-    else if (hour < 18) { top.* = 0x27436e; bot.* = 0xd99a5b; }
-    else if (hour < 20) { top.* = 0x1d1230; bot.* = 0xc4586e; }
-    else { top.* = 0x05060e; bot.* = 0x141b2e; }
+    if (hour >= 5 and hour < 8) {
+        top.* = 0x2a1e33;
+        bot.* = 0xc96f4a;
+    } else if (hour < 12) {
+        top.* = 0x1d3a5f;
+        bot.* = 0x7fb2d9;
+    } else if (hour < 15) {
+        top.* = 0x2456a0;
+        bot.* = 0x9fc7e8;
+    } else if (hour < 18) {
+        top.* = 0x27436e;
+        bot.* = 0xd99a5b;
+    } else if (hour < 20) {
+        top.* = 0x1d1230;
+        bot.* = 0xc4586e;
+    } else {
+        top.* = 0x05060e;
+        bot.* = 0x141b2e;
+    }
 }
 
 fn wallpaper() void {
@@ -201,22 +216,23 @@ var matches: [MAXAPP]usize = [_]usize{0} ** MAXAPP;
 var nmatch: usize = 0;
 
 fn builtinDesc(n: []const u8) []const u8 {
+    if (std.mem.eql(u8, n, "nexnet")) return "chat, identity and public entries";
     if (std.mem.eql(u8, n, "about")) return "who this machine belongs to";
-    if (std.mem.eql(u8, n, "works")) return "headline projects + the index";
-    if (std.mem.eql(u8, n, "route")) return "airports, this year, at 17";
-    if (std.mem.eql(u8, n, "before17")) return "the dial, in plain text";
-    if (std.mem.eql(u8, n, "activity")) return "github, baked into the image";
+    if (std.mem.eql(u8, n, "works")) return "selected projects";
+    if (std.mem.eql(u8, n, "route")) return "travel route and plans";
+    if (std.mem.eql(u8, n, "before17")) return "early timeline";
+    if (std.mem.eql(u8, n, "activity")) return "github activity (2026-08-08)";
     if (std.mem.eql(u8, n, "sites")) return "the software; click to open a tab";
     if (std.mem.eql(u8, n, "docs")) return "alpenglow's own documentation";
-    if (std.mem.eql(u8, n, "web")) return "netsurf, the site with real css";
+    if (std.mem.eql(u8, n, "web")) return "browse the site";
     if (std.mem.eql(u8, n, "term")) return "bash, in a window";
     if (std.mem.eql(u8, n, "history")) return "every old undivisible.dev, v1-v6";
     if (std.mem.eql(u8, n, "links")) return "links, the small fallback browser";
-    if (std.mem.eql(u8, n, "fetch")) return "fastfetch, the real one";
-    if (std.mem.eql(u8, n, "sh")) return "the real console (exit returns)";
+    if (std.mem.eql(u8, n, "fetch")) return "system information";
+    if (std.mem.eql(u8, n, "sh")) return "shell in a window";
     if (std.mem.eql(u8, n, "quotes")) return "six quotes by bjork through heidegger";
     if (std.mem.eql(u8, n, "philosophy")) return "reading, favourites, next";
-    if (std.mem.eql(u8, n, "photos")) return "photo feed (local + instagram)";
+    if (std.mem.eql(u8, n, "photos")) return "photos";
     if (std.mem.eql(u8, n, "crepuscularity")) return "the framework, in the host browser";
     return "";
 }
@@ -269,7 +285,7 @@ fn scanDir(dir: []const u8) void {
 }
 
 fn scanApps() void {
-    const names = [_][]const u8{ "about", "works", "route", "before17", "activity", "sites", "docs", "web", "history", "links", "term", "fetch", "sh", "quotes", "philosophy", "photos", "crepuscularity" };
+    const names = [_][]const u8{ "nexnet", "works", "about", "term", "web", "docs", "photos", "sites", "history", "route", "before17", "activity", "links", "fetch", "sh", "quotes", "philosophy", "crepuscularity" };
     for (names) |n| addApp(n, builtinDesc(n), true);
     scanDir("/bin");
     scanDir("/usr/bin");
@@ -323,29 +339,29 @@ fn drawBar() void {
         const cx: i32 = 10;
         const cy: i32 = H - CHIP_H - 10;
         draw.blend(&back, cx + 2, cy + 2, CHIP_W, CHIP_H, 0x000000, 56);
-        draw.blend(&back, cx, cy, CHIP_W, CHIP_H, 0x10131c, 242);
-        draw.fill(&back, cx, cy, CHIP_W, 1, 0x3a4258);
+        draw.blend(&back, cx, cy, CHIP_W, CHIP_H, 0x0d1118, 242);
+        draw.fill(&back, cx, cy, CHIP_W, 1, 0x23313d);
         draw.fill(&back, cx, cy + CHIP_H - 1, CHIP_W, 1, 0x0c0e16);
-        draw.fill(&back, cx, cy, 1, CHIP_H, 0x2a3144);
+        draw.fill(&back, cx, cy, 1, CHIP_H, 0x18222c);
         draw.fill(&back, cx + CHIP_W - 1, cy, 1, CHIP_H, 0x0c0e16);
-        _ = draw.textLg(&back, cx + 15, cy + 2, ">", 0x7ec8e8);
+        _ = draw.textLg(&back, cx + 15, cy + 2, ">", 0xff5705);
         return;
     }
     const h = barH();
     draw.blend(&back, bar_x + 2, bar_y + 3, bar_w, h, 0x000000, 56);
-    draw.blend(&back, bar_x, bar_y, bar_w, h, 0x10131c, 230);
-    draw.fill(&back, bar_x, bar_y, bar_w, 1, 0x3a4258);
+    draw.blend(&back, bar_x, bar_y, bar_w, h, 0x0d1118, 230);
+    draw.fill(&back, bar_x, bar_y, bar_w, 1, 0x23313d);
     draw.fill(&back, bar_x, bar_y + h - 1, bar_w, 1, 0x0c0e16);
-    draw.fill(&back, bar_x, bar_y, 1, h, 0x2a3144);
+    draw.fill(&back, bar_x, bar_y, 1, h, 0x18222c);
     draw.fill(&back, bar_x + bar_w - 1, bar_y, 1, h, 0x0c0e16);
 
-    _ = draw.textLg(&back, bar_x + 12, bar_y + 8, ">", 0x7ec8e8);
+    _ = draw.textLg(&back, bar_x + 12, bar_y + 8, ">", 0xff5705);
     const room = bar_w - 46;
     const shown: usize = @intCast(@divTrunc(room, 16));
     var q = query[0..qlen];
     if (qlen > shown) q = query[qlen - shown .. qlen];
     if (qlen == 0) {
-        _ = draw.textLg(&back, bar_x + 34, bar_y + 8, "type to launch", 0x596074);
+        _ = draw.textLg(&back, bar_x + 34, bar_y + 8, "type to launch", 0x6b7384);
     } else {
         _ = draw.textLg(&back, bar_x + 34, bar_y + 8, q, 0xffffff);
     }
@@ -359,8 +375,8 @@ fn drawBar() void {
         const a = &apps[matches[m]];
         const ry = bar_y + 52 + @as(i32, @intCast(m)) * 24;
         if (m == sel) draw.blend(&back, bar_x + 6, ry - 3, bar_w - 12, 22, 0xffffff, 26);
-        _ = draw.text(&back, bar_x + 16, ry, std.mem.sliceTo(&a.name, 0), if (m == sel) 0xffffff else 0x7ec8e8, 1);
-        _ = draw.text(&back, bar_x + 180, ry, std.mem.sliceTo(&a.desc, 0), 0x767e92, 1);
+        _ = draw.text(&back, bar_x + 16, ry, std.mem.sliceTo(&a.name, 0), if (m == sel) 0xffffff else 0xff5705, 1);
+        _ = draw.text(&back, bar_x + 180, ry, std.mem.sliceTo(&a.desc, 0), 0x9aa3b2, 1);
     }
 }
 
@@ -418,7 +434,10 @@ fn composite(x: i32, y: i32, w: i32, h: i32) void {
     var have_bg = false;
     var i: usize = 0;
     while (i < nsurf) : (i += 1) {
-        if (surf[i].alive and surf[i].bg) { have_bg = true; break; }
+        if (surf[i].alive and surf[i].bg) {
+            have_bg = true;
+            break;
+        }
     }
     if (!have_bg) wallpaper();
     i = 0;
@@ -434,9 +453,16 @@ fn composite(x: i32, y: i32, w: i32, h: i32) void {
         const src = @as(usize, @intCast(j * W + dx0));
         const dst = @as(usize, @intCast(@as(usize, @intCast(j)) * @as(usize, @intCast(stride)) + @as(usize, @intCast(dx0))));
         const len = @as(usize, @intCast(dx1 - dx0)) * 4;
-        @memcpy(fb[dst .. dst + len / 4], back.px[src .. src + len / 4]);
+        if (album_palette.active()) {
+            for (0..len / 4) |offset| fb[dst + offset] = album_palette.color(back.px[src + offset]);
+        } else {
+            @memcpy(fb[dst .. dst + len / 4], back.px[src .. src + len / 4]);
+        }
     }
-    dx0 = 0; dy0 = 0; dx1 = W; dy1 = H;
+    dx0 = 0;
+    dy0 = 0;
+    dx1 = W;
+    dy1 = H;
 }
 
 fn compositeAll() void {
@@ -486,22 +512,52 @@ fn surfacePath(buf: *[128]u8, id: i32) []const u8 {
     return ps;
 }
 
+fn fitDimension(requested: i32, minimum: i32, available: i32, maximum: i32) i32 {
+    const limit = @max(8, @min(available, maximum));
+    return std.math.clamp(requested, @min(minimum, limit), limit);
+}
+
+fn fitPosition(position: i32, extent: i32, available: i32) i32 {
+    return std.math.clamp(position, 0, @max(0, available - extent));
+}
+
 fn handleHello(s: *Surface, m: *const wire.AwMsg) void {
     var w = m.a;
     var h = m.b;
-    if (m.type == wire.AW_HELLO_BG) { w = W; h = H; }
-    if (w < 8 or h < 8 or w > MAXW or h > MAXH) { s.alive = false; return; }
+    if (m.type == wire.AW_HELLO_BG) {
+        w = W;
+        h = H;
+    }
+    if (w < 8 or h < 8 or w > MAXW or h > MAXH) {
+        s.alive = false;
+        return;
+    }
+    const resizable = m.type != wire.AW_HELLO_BG and (m.e & wire.AW_F_RESIZE) != 0;
+    if (resizable) {
+        w = fitDimension(w, wire.AW_MIN_W, W, MAXW);
+        h = fitDimension(h, wire.AW_MIN_H, H, MAXH);
+    }
     var pbuf: [128]u8 = std.mem.zeroes([128]u8);
     const ps = surfacePath(&pbuf, s.id);
     var pz: [128]u8 = std.mem.zeroes([128]u8);
     @memcpy(pz[0..ps.len], ps);
     const f_raw = linux.open(@ptrCast(&pz), .{ .ACCMODE = .RDWR, .CREAT = true, .TRUNC = true }, 0o600);
-    if (linux.errno(f_raw) != .SUCCESS) { s.alive = false; return; }
+    if (linux.errno(f_raw) != .SUCCESS) {
+        s.alive = false;
+        return;
+    }
     const f: i32 = @intCast(f_raw);
-    if (linux.errno(linux.ftruncate(f, @as(i64, w) * h * 4)) != .SUCCESS) { _ = linux.close(f); s.alive = false; return; }
+    if (linux.errno(linux.ftruncate(f, @as(i64, w) * h * 4)) != .SUCCESS) {
+        _ = linux.close(f);
+        s.alive = false;
+        return;
+    }
     const px_raw = linux.mmap(null, @as(usize, @intCast(w * h * 4)), .{ .READ = true, .WRITE = true }, .{ .TYPE = .SHARED }, f, 0);
     _ = linux.close(f);
-    if (linux.errno(px_raw) != .SUCCESS) { s.alive = false; return; }
+    if (linux.errno(px_raw) != .SUCCESS) {
+        s.alive = false;
+        return;
+    }
     s.px = @ptrFromInt(px_raw);
     s.has_px = true;
     s.w = w;
@@ -514,11 +570,15 @@ fn handleHello(s: *Surface, m: *const wire.AwMsg) void {
         s.x = if (m.c == wire.AW_CENTER) @divTrunc(W - w, 2) else (if (m.c < 0) W + m.c - w else m.c);
         s.y = if (m.d == wire.AW_CENTER) @divTrunc(H - h, 2) else (if (m.d < 0) H + m.d - h else m.d);
     }
+    if (resizable) {
+        s.x = fitPosition(s.x, w, W);
+        s.y = fitPosition(s.y, h, H);
+    }
     // Near-opaque: at 215 the sky bled ~16% into every pixel and washed the
     // panel colors into the same slate blue. A whisper of translucency keeps
     // the glass feel without killing contrast.
     s.alpha = if (s.bg) 255 else 246;
-    s.resizable = (m.e & wire.AW_F_RESIZE) != 0;
+    s.resizable = resizable;
     s.kbd = (m.e & wire.AW_F_KEYBOARD) != 0;
     // A window that asked for the keyboard gets focus at birth — a terminal
     // is useless if its first keystrokes land in the launcher instead.
@@ -535,12 +595,8 @@ fn handleHello(s: *Surface, m: *const wire.AwMsg) void {
 }
 
 fn resizeSurface(s: *Surface, w_in: i32, h_in: i32) bool {
-    var w = w_in;
-    var h = h_in;
-    if (w < wire.AW_MIN_W) w = wire.AW_MIN_W;
-    if (h < wire.AW_MIN_H) h = wire.AW_MIN_H;
-    if (w > MAXW) w = MAXW;
-    if (h > MAXH) h = MAXH;
+    const w = fitDimension(w_in, wire.AW_MIN_W, W - @max(0, s.x), MAXW);
+    const h = fitDimension(h_in, wire.AW_MIN_H, H - @max(0, s.y), MAXH);
     if (w == s.w and h == s.h) return true;
     var pbuf: [128]u8 = std.mem.zeroes([128]u8);
     const ps = surfacePath(&pbuf, s.id);
@@ -549,7 +605,10 @@ fn resizeSurface(s: *Surface, w_in: i32, h_in: i32) bool {
     const f_raw = linux.open(@ptrCast(&pz), .{ .ACCMODE = .RDWR }, 0o600);
     if (linux.errno(f_raw) != .SUCCESS) return false;
     const f: i32 = @intCast(f_raw);
-    if (linux.errno(linux.ftruncate(f, @as(i64, w) * h * 4)) != .SUCCESS) { _ = linux.close(f); return false; }
+    if (linux.errno(linux.ftruncate(f, @as(i64, w) * h * 4)) != .SUCCESS) {
+        _ = linux.close(f);
+        return false;
+    }
     const px_raw = linux.mmap(null, @as(usize, @intCast(w * h * 4)), .{ .READ = true, .WRITE = true }, .{ .TYPE = .SHARED }, f, 0);
     _ = linux.close(f);
     if (linux.errno(px_raw) != .SUCCESS) return false;
@@ -611,8 +670,8 @@ fn handOver(cmd: []const u8) void {
 fn launch(app_index: usize) void {
     const a = &apps[app_index];
     const an = std.mem.sliceTo(&a.name, 0);
-    if (std.mem.eql(u8, an, "sh")) linux.exit(42);
-    if (std.mem.eql(u8, an, "term")) {
+    if (std.mem.eql(u8, an, "nexnet")) handOver("nexnet");
+    if (std.mem.eql(u8, an, "sh") or std.mem.eql(u8, an, "term")) {
         spawn("/usr/bin/unterm", null);
         bar_on = false;
         qlen = 0;
@@ -717,6 +776,8 @@ pub fn main() void {
 
     _ = linux.tcgetattr(0, &saved_tio);
     var tio = saved_tio;
+    // Forward Ctrl+C to the focused PTY instead of interrupting the compositor.
+    tio.lflag.ISIG = false;
     tio.lflag.ICANON = false;
     tio.lflag.ECHO = false;
     tio.cc[@intFromEnum(linux.V.MIN)] = 0;
@@ -756,6 +817,7 @@ pub fn main() void {
     var drag_dx: i32 = 0;
     var drag_dy: i32 = 0;
     var last_tick: i64 = 0;
+    var last_palette_frame = album.nowMs();
 
     while (true) {
         var fds: [3 + MAXSURF]linux.pollfd = undefined;
@@ -776,7 +838,7 @@ pub fn main() void {
             fds[nfds] = .{ .fd = surf[i].fd, .events = linux.POLL.IN, .revents = 0 };
             nfds += 1;
         }
-        _ = linux.poll(&fds, nfds, 250);
+        _ = linux.poll(&fds, nfds, if (album_palette.progress < 255) 70 else 250);
 
         if (fds[1].revents & linux.POLL.IN != 0) {
             const cfd = linux.accept(lfd, null, null);
@@ -801,10 +863,16 @@ pub fn main() void {
             if (slot >= nfds or fds[slot].revents & linux.POLL.IN == 0) continue;
             var m: wire.AwMsg = undefined;
             const n = linux.read(surf[idx].fd, std.mem.asBytes(&m).ptr, @sizeOf(wire.AwMsg));
-            if (n != @sizeOf(wire.AwMsg)) { dropSurface(idx); continue; }
+            if (n != @sizeOf(wire.AwMsg)) {
+                dropSurface(idx);
+                continue;
+            }
             if (m.type == wire.AW_HELLO or m.type == wire.AW_HELLO_BG) {
                 handleHello(&surf[idx], &m);
-                if (!surf[idx].alive) { dropSurface(idx); continue; }
+                if (!surf[idx].alive) {
+                    dropSurface(idx);
+                    continue;
+                }
                 damageSurface(&surf[idx]);
             } else if (m.type == wire.AW_COMMIT) {
                 damageSurface(&surf[idx]);
@@ -824,7 +892,10 @@ pub fn main() void {
             if (focus >= 0) {
                 var fi2: i32 = -1;
                 var ii: usize = 0;
-                while (ii < nsurf) : (ii += 1) if (surf[ii].id == focus) { fi2 = @intCast(ii); break; };
+                while (ii < nsurf) : (ii += 1) if (surf[ii].id == focus) {
+                    fi2 = @intCast(ii);
+                    break;
+                };
                 if (fi2 < 0) {
                     focus = -1;
                 } else if (k == 27) {
@@ -955,14 +1026,20 @@ pub fn main() void {
                         focus = -1;
                         if (my > bar_y + 49 and nmatch > 0) {
                             const row: usize = @intCast(@divTrunc(my - bar_y - 49, 24));
-                            if (row < nmatch) { sel = row; launch(matches[sel]); }
+                            if (row < nmatch) {
+                                sel = row;
+                                launch(matches[sel]);
+                            }
                         }
                     } else {
                         var hit: i32 = -1;
                         var hi: i32 = @as(i32, @intCast(nsurf)) - 1;
                         while (hi >= 0) : (hi -= 1) {
                             const idx: usize = @intCast(hi);
-                            if (surf[idx].alive and !surf[idx].bg and mx >= surf[idx].x and mx < surf[idx].x + surf[idx].w and my >= surf[idx].y and my < surf[idx].y + surf[idx].h) { hit = hi; break; }
+                            if (surf[idx].alive and !surf[idx].bg and mx >= surf[idx].x and mx < surf[idx].x + surf[idx].w and my >= surf[idx].y and my < surf[idx].y + surf[idx].h) {
+                                hit = hi;
+                                break;
+                            }
                         }
                         if (hit < 0) {
                             focus = -1;
@@ -980,7 +1057,7 @@ pub fn main() void {
                                 resizing = hit;
                                 drag_dx = s.x + s.w - mx;
                                 drag_dy = s.y + s.h - my;
-                            } else if (my < s.y + 20) {
+                            } else if (my < s.y + 20 and !(s.resizable and wire.closeHit(s.w, mx - s.x, my - s.y))) {
                                 dragging = hit;
                                 drag_dx = mx - s.x;
                                 drag_dy = my - s.y;
@@ -1009,7 +1086,10 @@ pub fn main() void {
                         }
                     }
                 }
-                if (btn == 0) { dragging = -1; resizing = -1; }
+                if (btn == 0) {
+                    dragging = -1;
+                    resizing = -1;
+                }
                 mbtn = btn;
             }
             if (moved) {
@@ -1048,7 +1128,10 @@ pub fn main() void {
                     var hi: i32 = @as(i32, @intCast(nsurf)) - 1;
                     while (hi >= 0) : (hi -= 1) {
                         const idx: usize = @intCast(hi);
-                        if (surf[idx].alive and !surf[idx].bg and mx >= surf[idx].x and mx < surf[idx].x + surf[idx].w and my >= surf[idx].y and my < surf[idx].y + surf[idx].h) { hs = hi; break; }
+                        if (surf[idx].alive and !surf[idx].bg and mx >= surf[idx].x and mx < surf[idx].x + surf[idx].w and my >= surf[idx].y and my < surf[idx].y + surf[idx].h) {
+                            hs = hi;
+                            break;
+                        }
                     }
                     const hid: i32 = if (hs >= 0) surf[@intCast(hs)].id else -1;
                     if (hovered_id != -1 and hovered_id != hid) {
@@ -1085,13 +1168,36 @@ pub fn main() void {
             }
         }
 
+        const palette_now = album.nowMs();
+        if (palette_now - last_palette_frame >= 70) {
+            const changed = album_palette.advance(palette_now - last_palette_frame);
+            last_palette_frame = palette_now;
+            if (changed) compositeAll();
+        }
         const now = nowSec();
         if (now != last_tick) {
             last_tick = now;
+            if (album_palette.reload()) {
+                last_palette_frame = album.nowMs();
+                compositeAll();
+            }
             // The caret blink only needs the bar strip; when the launcher is
             // hidden nothing on screen blinks, so skip the copy entirely.
             if (bar_on) composite(bar_x, bar_y, bar_w, 44);
             if (@mod(now, 60) == 0) compositeAll();
         }
     }
+}
+
+test "resizable windows fit mobile viewport at creation and resize" {
+    const w = fitDimension(720, wire.AW_MIN_W, 390, MAXW);
+    const h = fitDimension(440, wire.AW_MIN_H, 360, MAXH);
+    try std.testing.expectEqual(@as(i32, 390), w);
+    try std.testing.expectEqual(@as(i32, 360), h);
+    try std.testing.expectEqual(@as(i32, 0), fitPosition(@divTrunc(390 - w, 2), w, 390));
+    try std.testing.expectEqual(@as(i32, 0), fitPosition(140, h, 360));
+    try std.testing.expectEqual(@as(i32, 300), fitDimension(720, wire.AW_MIN_W, 390 - 90, MAXW));
+    try std.testing.expectEqual(@as(i32, 240), fitDimension(100, wire.AW_MIN_W, 390, MAXW));
+    try std.testing.expectEqual(@as(i32, 200), fitDimension(720, wire.AW_MIN_W, 200, MAXW));
+    try std.testing.expectEqual(@as(i32, 720), fitDimension(720, wire.AW_MIN_W, 1440, MAXW));
 }

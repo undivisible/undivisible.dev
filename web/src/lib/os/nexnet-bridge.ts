@@ -28,7 +28,7 @@ const CHUNK_GAP_MS = 2;
 
 export function nexnetGatewayUrl(
   configured: string | undefined,
-  location: Pick<Location, "hostname" | "search">,
+  location: Pick<Location, "hostname" | "search" | "origin">,
 ): string | null {
   const local =
     location.hostname === "localhost" ||
@@ -37,7 +37,7 @@ export function nexnetGatewayUrl(
   const override = local
     ? new URLSearchParams(location.search).get("nexnet")
     : null;
-  const value = override ?? configured ?? null;
+  const value = override ?? configured ?? location.origin;
   if (!value) return null;
   try {
     const url = new URL(value);

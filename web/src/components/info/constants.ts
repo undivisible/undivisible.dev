@@ -8,9 +8,15 @@ export const hoverNames = [
   "מאקסימ קרתר",
 ];
 
-export const thingWords = ["things", "software", "systems", "products", "tools"];
+export const thingWords = [
+  "things",
+  "software",
+  "systems",
+  "products",
+  "tools",
+];
 
-export const introText = `my favorite thing is chasing new experiences and sharing them with others. i do that through software, which i've been building since i was 8. i'm drawn to the frontier, i started making money online and playing with crypto at 11, and i was one of the first to try gpt-3 in 2021. since then, i dropped out of high school and founded tsc.hk, where i make the frontier. outside of that, i adore philosophy, cooking, photography, and gym.`;
+export const introText = `i build software, from compilers and operating systems to web and desktop apps. i'm self-taught and work across systems, applications, and developer tools. outside of software, i enjoy philosophy, cooking, photography, and the gym.`;
 
 export const transport = [
   "cantonese",
