@@ -371,7 +371,8 @@ export default function Ascii({
       const cellWidth = pageGrid?.cellWidth ?? width / cols;
       const cellHeight = pageGrid?.cellHeight ?? height / rows;
       const touchTablet = width >= 651 && coarsePointer.matches;
-      const foregroundText = width <= 650 || touchTablet;
+      // Keep semantic homepage copy in the DOM; only the name is bitmap-rendered.
+      const foregroundText = Boolean(page);
       if (contentDirty && page && ink) {
         contentDirty = false;
         ({
@@ -494,8 +495,8 @@ export default function Ascii({
               ctx.fillStyle = `rgb(${Math.round(r * sampleWeight + contentRgb[0] * 255 * TOUCH_FIELD_FOREGROUND_WEIGHT)}, ${Math.round(g * sampleWeight + contentRgb[1] * 255 * TOUCH_FIELD_FOREGROUND_WEIGHT)}, ${Math.round(b * sampleWeight + contentRgb[2] * 255 * TOUCH_FIELD_FOREGROUND_WEIGHT)})`;
               ctx.globalAlpha *= TOUCH_FIELD_ALPHA;
             } else {
-              // Preserve the established phone and desktop field opacity.
-              ctx.globalAlpha *= pageGrid?.mobile ? 0.14 : 0.35;
+              // Keep the field atmospheric; semantic copy stays in the DOM.
+              ctx.globalAlpha *= pageGrid?.mobile ? 0.14 : 0.12;
             }
           }
           if (contentChar !== undefined) {
