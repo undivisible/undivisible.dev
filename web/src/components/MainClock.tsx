@@ -14,7 +14,7 @@ export function MainClock({
   dayTheme: HongKongDayTheme;
   now: NowContent;
   nowArticleOpen: boolean;
-  onToggleNowArticle: () => void;
+  onToggleNowArticle?: () => void;
 }) {
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);

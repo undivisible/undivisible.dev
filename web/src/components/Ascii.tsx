@@ -186,7 +186,7 @@ export default function Ascii({
       return;
     }
 
-    const page = container.closest(".personal-page");
+    const page = container.closest(".personal-page, .landing");
     const coarsePointer = window.matchMedia("(any-pointer: coarse)");
     const skyCanvas = document.querySelector<HTMLCanvasElement>(".album-sky");
     const skyCtx = skyCanvas?.getContext("2d");
@@ -285,6 +285,19 @@ export default function Ascii({
     let titleBackgroundColor = "";
     let lastTitleBackgroundSample = Number.NEGATIVE_INFINITY;
 
+    const grid = () => {
+      if (!page) return null;
+      if (!page.classList.contains("landing"))
+        return personalAsciiGrid(width, height);
+      return {
+        mobile: false,
+        cellWidth: 8.4,
+        cellHeight: 20,
+        columns: Math.ceil(width / 8.4),
+        rows: Math.ceil(height / 20),
+      };
+    };
+
     const resize = () => {
       width = container.clientWidth;
       height = container.clientHeight;
@@ -292,7 +305,7 @@ export default function Ascii({
       const narrow = width < 1024;
       asciiIntervalMs = narrow ? 1000 / 12 : 1000 / 15;
       const cell = Math.max(8, Math.min(width, height) / (narrow ? 32 : 56));
-      const pageGrid = page ? personalAsciiGrid(width, height) : null;
+      const pageGrid = grid();
       const columns = Math.max(
         1,
         pageGrid?.columns ?? Math.floor(width / (cell * 0.9)),
@@ -362,7 +375,7 @@ export default function Ascii({
 
       const cellDiv = width < 1024 ? 32 : 56;
       const cell = Math.max(8, Math.min(width, height) / cellDiv);
-      const pageGrid = page ? personalAsciiGrid(width, height) : null;
+      const pageGrid = grid();
       const cols = Math.max(
         1,
         pageGrid?.columns ?? Math.floor(width / (cell * 0.9)),
@@ -372,7 +385,9 @@ export default function Ascii({
       const cellHeight = pageGrid?.cellHeight ?? height / rows;
       const touchTablet = width >= 651 && coarsePointer.matches;
       // Keep semantic homepage copy in the DOM; only the name is bitmap-rendered.
-      const foregroundText = Boolean(page);
+      const foregroundText = Boolean(
+        page && !page.classList.contains("landing"),
+      );
       if (contentDirty && page && ink) {
         contentDirty = false;
         ({
@@ -496,7 +511,11 @@ export default function Ascii({
               ctx.globalAlpha *= TOUCH_FIELD_ALPHA;
             } else {
               // Keep the field atmospheric; semantic copy stays in the DOM.
-              ctx.globalAlpha *= pageGrid?.mobile ? 0.14 : 0.12;
+              ctx.globalAlpha *= page.classList.contains("landing")
+                ? 0.35
+                : pageGrid?.mobile
+                  ? 0.14
+                  : 0.12;
             }
           }
           if (contentChar !== undefined) {
