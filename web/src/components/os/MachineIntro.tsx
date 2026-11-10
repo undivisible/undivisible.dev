@@ -30,7 +30,7 @@ export function MachineIntro({
           <p className="machine-cover-line">
             JavaScript is needed for Linux. The portfolio works without it.
           </p>
-          <a href="/">Open the portfolio →</a>
+          <a href="https://undivisible.dev/">Open the portfolio →</a>
         </noscript>
         <p className="machine-cover-line" role="status">
           {progress.message === "cold"
@@ -42,7 +42,7 @@ export function MachineIntro({
             Show boot screen
           </button>
         ) : (
-          <a href="/">Continue to the portfolio →</a>
+          <a href="https://undivisible.dev/">Continue to the portfolio →</a>
         )}
       </div>
     </div>

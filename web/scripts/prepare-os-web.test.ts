@@ -7,21 +7,21 @@ import { offlineHtml, prepareOfflineWeb } from "./prepare-os-web";
 test("offline pages resolve navigation and styles inside the guest", () => {
   expect(
     offlineHtml(
-      '<a href="/simple/">Simple</a><link href="/assets/site.css"><a href="https://example.com">External</a>',
+      '<a href="/">Home</a><link href="/assets/site.css"><a href="https://example.com">External</a>',
     ),
   ).toBe(
-    '<a href="file:///usr/share/undesk/web/simple/index.html">Simple</a><link href="file:///usr/share/undesk/web/assets/site.css"><a href="https://example.com">External</a>',
+    '<a href="file:///usr/share/undesk/web/index.html">Home</a><link href="file:///usr/share/undesk/web/assets/site.css"><a href="https://example.com">External</a>',
   );
 });
 
-test("offline package contains the simple page, CSS and published résumé without client JavaScript", async () => {
+test("offline package contains the homepage, CSS and published résumé without client JavaScript", async () => {
   const temporary = await mkdtemp(join(tmpdir(), "undesk-offline-"));
   try {
     const source = join(temporary, "source");
     const destination = join(temporary, "guest");
-    for (const folder of ["simple", "assets", "fonts"])
+    for (const folder of ["assets", "fonts"])
       await mkdir(join(source, folder), { recursive: true });
-    for (const name of ["index.html", "agent.html", "simple/index.html"])
+    for (const name of ["index.html", "agent.html"])
       await writeFile(
         join(source, name),
         '<link href="/assets/site.css"><a href="/">Home</a>',
@@ -35,16 +35,22 @@ test("offline package contains the simple page, CSS and published résumé witho
       "favicon.svg",
     ])
       await writeFile(join(source, name), "published content\n");
-    await writeFile(join(source, "index.html"), "interactive portfolio");
+    await writeFile(
+      join(source, "index.html"),
+      '<link href="/assets/site.css"><main>portfolio</main><script src="/assets/lab.js"></script>',
+    );
     await writeFile(join(source, "assets/site.css"), "body { color: black; }");
     await writeFile(join(source, "assets/lab.js"), "not needed offline");
     await prepareOfflineWeb(source, destination);
+    expect(await readFile(join(destination, "index.html"), "utf8")).toContain(
+      "<main>portfolio</main>",
+    );
+    expect(await readFile(join(destination, "index.html"), "utf8")).toContain(
+      "file:///usr/share/undesk/web/assets/site.css",
+    );
     expect(
       await readFile(join(destination, "index.html"), "utf8"),
-    ).not.toContain("interactive portfolio");
-    expect(
-      await readFile(join(destination, "simple/index.html"), "utf8"),
-    ).toContain("file:///usr/share/undesk/web/assets/site.css");
+    ).not.toContain("<script");
     expect(await readFile(join(destination, "resume.md"), "utf8")).toBe(
       "published content\n",
     );

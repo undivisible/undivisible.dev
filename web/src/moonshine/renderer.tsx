@@ -112,7 +112,7 @@ function head(
         { key: "no-js-fallback" },
         createElement("meta", {
           httpEquiv: "refresh",
-          content: "0;url=/",
+          content: "0;url=https://undivisible.dev/",
         }),
       ),
     );

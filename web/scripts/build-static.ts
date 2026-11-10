@@ -228,6 +228,10 @@ async function main(): Promise<void> {
     await writeFile(target, html);
   }
 
+  if (process.env.SITE_MODE === "os") {
+    await cp(join(outDir, "lab/index.html"), join(outDir, "index.html"));
+  }
+
   await cp(join(projectDir, "public"), outDir, { recursive: true });
 
   const manifest: MoonshineManifest = {

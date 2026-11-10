@@ -79,7 +79,7 @@ export default function Home() {
           easier to use.
         </p>
         <nav aria-label="Links">
-          <a href="/lab/">[ enter the OS ↗ ]</a>{" "}
+          <a href="https://next.undivisible.dev/">[ enter the OS ↗ ]</a>{" "}
           <a href="mailto:max@tsc.hk">[ email ↗ ]</a>{" "}
           <a href="https://github.com/undivisible">[ github ↗ ]</a>{" "}
           <a href="https://x.com/makethings4ppl">[ x ↗ ]</a>{" "}

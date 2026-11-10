@@ -45,10 +45,10 @@ test("a slow lab returns to the static portfolio after twelve seconds", () => {
   b.advance(11999);
   expect(b.visits).toEqual([]);
   b.advance(1);
-  expect(b.visits).toEqual(["/"]);
+  expect(b.visits).toEqual(["https://undivisible.dev/"]);
   b.emit("site:mode-ready");
   b.advance(12000);
-  expect(b.visits).toEqual(["/"]);
+  expect(b.visits).toEqual(["https://undivisible.dev/"]);
 });
 
 test("ready cancels fallback and restarting the lab rearms it", () => {
@@ -58,7 +58,7 @@ test("ready cancels fallback and restarting the lab rearms it", () => {
   expect(b.visits).toEqual([]);
   b.emit("site:mode-start");
   b.advance(12000);
-  expect(b.visits).toEqual(["/"]);
+  expect(b.visits).toEqual(["https://undivisible.dev/"]);
 });
 
 test("a critical local asset or explicit startup failure returns home", () => {
@@ -69,11 +69,11 @@ test("a critical local asset or explicit startup failure returns home", () => {
       src: "https://undivisible.dev/assets/client.js",
     },
   });
-  expect(assetFailure.visits).toEqual(["/"]);
+  expect(assetFailure.visits).toEqual(["https://undivisible.dev/"]);
 
   const startupFailure = browserFor();
   startupFailure.emit("site:mode-failed");
-  expect(startupFailure.visits).toEqual(["/"]);
+  expect(startupFailure.visits).toEqual(["https://undivisible.dev/"]);
 });
 
 test("optional analytics and images do not eject the visitor", () => {
@@ -98,5 +98,5 @@ test("optional analytics and images do not eject the visitor", () => {
 test("unhandled startup rejections return to the portfolio", () => {
   const b = browserFor();
   b.emit("unhandledrejection");
-  expect(b.visits).toEqual(["/"]);
+  expect(b.visits).toEqual(["https://undivisible.dev/"]);
 });

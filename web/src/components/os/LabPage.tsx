@@ -14,7 +14,7 @@ export default function LabPage() {
   return (
     <div className={`lab-page${started ? " lab-running" : ""}`}>
       <nav className="lab-navigation" aria-label="Lab navigation">
-        <a href="/" aria-label="Return to the portfolio">
+        <a href="https://undivisible.dev/" aria-label="Return to the portfolio">
           ← Website
         </a>
         {started ? (
@@ -44,7 +44,8 @@ export default function LabPage() {
             Start machine
           </button>
           <p>
-            Visit the <a href="/">portfolio</a> without starting Linux.
+            Visit the <a href="https://undivisible.dev/">portfolio</a> without
+            starting Linux.
           </p>
           <noscript>
             <p>

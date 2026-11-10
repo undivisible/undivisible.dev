@@ -8,7 +8,7 @@ export function installLabFallback(browser: Window = window) {
     if (navigating) return;
     navigating = true;
     browser.clearTimeout(timer);
-    browser.location.replace("/");
+    browser.location.replace("https://undivisible.dev/");
   };
 
   const start = () => {
