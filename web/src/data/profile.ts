@@ -35,7 +35,7 @@ export const projects = [
     kind: "Linux · Testing releases",
     href: "https://github.com/tschk/alpenglow",
     description:
-      "A musl Linux distribution with an immutable root filesystem, dinit and Oil packages.",
+      "A small, diskless musl Linux distribution. Its historical fast build booted in 0.6 seconds, with a 4.4 MB kernel and about 17 MB RAM.",
   },
   {
     name: "Cupboard",

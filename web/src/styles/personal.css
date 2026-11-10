@@ -2099,6 +2099,7 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
 .landing {
   position: relative;
   isolation: isolate;
+  display: grid;
   min-height: 100dvh;
   overflow: hidden;
   background: #0a0b0e;
@@ -2132,6 +2133,9 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
     0 0 12px #000;
 }
 .landing-status {
+  grid-area: 1 / 1;
+  align-self: start;
+  justify-self: start;
   padding: 24px 32px;
 }
 .landing .personal-clock,
@@ -2169,8 +2173,10 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   text-transform: none;
 }
 .landing-content {
-  width: min(57ch, calc(100% - 64px));
-  margin: clamp(70px, 14vh, 150px) auto 80px;
+  grid-area: 1 / 1;
+  align-self: center;
+  width: min(55ch, calc(100% - 64px));
+  margin: 24px auto;
 }
 .landing-content p {
   margin: 0 0 20px;
@@ -2243,12 +2249,17 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   font: inherit;
   cursor: pointer;
 }
-@media (max-width: 650px) {
+@media (max-width: 370px), (max-width: 1000px) and (max-height: 819px) {
+  .landing {
+    grid-template-rows: auto 1fr;
+  }
   .landing-status {
+    grid-area: 1 / 1;
     padding: 20px;
   }
   .landing-content {
+    grid-area: 2 / 1;
     width: calc(100% - 40px);
-    margin: 60px auto 60px;
+    margin: 40px auto;
   }
 }

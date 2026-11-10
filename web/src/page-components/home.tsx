@@ -12,9 +12,25 @@ export default function Home() {
   const dayTheme = useHongKongDayTheme();
   const now = useNowMarkdown();
   const [preview, setPreview] = useState<string | null>(null);
+  const [colors, setColors] = useState<string[] | undefined>();
 
   useEffect(() => {
     window.dispatchEvent(new Event("site:mode-ready"));
+  }, []);
+
+  useEffect(() => {
+    const readPalette = () => {
+      const next = document.documentElement.dataset.albumColors?.split(" ");
+      if (
+        next?.length === 5 &&
+        next.every((color) => /^#[0-9a-f]{6}$/i.test(color))
+      ) {
+        setColors(next);
+      }
+    };
+    readPalette();
+    window.addEventListener("site:album-palette", readPalette);
+    return () => window.removeEventListener("site:album-palette", readPalette);
   }, []);
 
   useEffect(() => {
@@ -30,7 +46,7 @@ export default function Home() {
   return (
     <div className="landing">
       <div className="landing-field" aria-hidden="true">
-        <Ascii ready />
+        <Ascii colors={colors} ready />
       </div>
       <header className="landing-status">
         <MainClock dayTheme={dayTheme} now={now} nowArticleOpen={false} />
@@ -43,9 +59,9 @@ export default function Home() {
         <p>
           i’m a self-taught software engineer and i’ve been building things
           since i was nine. lately that includes{" "}
-          {["Inauguration", "Space", "Alpenglow"].map((name, index) => (
+          {["Inauguration", "Space", "Alpenglow", "Crepuscularity", "Moonshine"].map((name, index) => (
             <span key={name}>
-              {index === 1 ? ", " : index === 2 ? " and " : ""}
+              {index === 0 ? "" : index === 4 ? ", and " : ", "}
               <button
                 type="button"
                 className="landing-project"

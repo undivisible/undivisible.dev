@@ -505,17 +505,15 @@ export default function Ascii({
               : contentColor;
             ctx.globalAlpha = musicCells.has(cellIndex) ? musicOpacity : 1;
           } else if (page) {
-            if (touchTablet) {
+            if (page.classList.contains("landing")) {
+              ctx.globalAlpha *= 0.5;
+            } else if (touchTablet) {
               const sampleWeight = 1 - TOUCH_FIELD_FOREGROUND_WEIGHT;
               ctx.fillStyle = `rgb(${Math.round(r * sampleWeight + contentRgb[0] * 255 * TOUCH_FIELD_FOREGROUND_WEIGHT)}, ${Math.round(g * sampleWeight + contentRgb[1] * 255 * TOUCH_FIELD_FOREGROUND_WEIGHT)}, ${Math.round(b * sampleWeight + contentRgb[2] * 255 * TOUCH_FIELD_FOREGROUND_WEIGHT)})`;
               ctx.globalAlpha *= TOUCH_FIELD_ALPHA;
             } else {
               // Keep the field atmospheric; semantic copy stays in the DOM.
-              ctx.globalAlpha *= page.classList.contains("landing")
-                ? 0.35
-                : pageGrid?.mobile
-                  ? 0.14
-                  : 0.12;
+              ctx.globalAlpha *= pageGrid?.mobile ? 0.14 : 0.12;
             }
           }
           if (contentChar !== undefined) {
