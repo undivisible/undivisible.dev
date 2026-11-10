@@ -8,7 +8,7 @@
   links
     github     https://github.com/undivisible
     twitter    https://x.com/makethings4ppl
-    instagram  https://instagram.com/undivisible.dev
+    instagram  https://www.instagram.com/ihatemaxcarter/
     email      mailto:max@tsc.hk
     resume     /resume.md
 

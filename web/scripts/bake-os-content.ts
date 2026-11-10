@@ -206,8 +206,8 @@ await write(
   `
   \x1b[1;37mphotos\x1b[0m
 
-  Photos and travel: \x1b[96m@undivisible.dev\x1b[0m on Instagram.
-  \x1b[90mhttps://instagram.com/undivisible.dev\x1b[0m
+  Photos and travel: \x1b[96m@ihatemaxcarter\x1b[0m on Instagram.
+  \x1b[90mhttps://www.instagram.com/ihatemaxcarter/\x1b[0m
 
   \x1b[90m  arrow keys scroll  |  q to close\x1b[0m
 `,

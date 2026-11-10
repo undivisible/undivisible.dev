@@ -18,8 +18,8 @@ import { RandomizedText } from "./randomized-text";
 const socials = [
   {
     name: "instagram",
-    username: "@undivisible.dev",
-    href: "https://instagram.com/undivisible.dev",
+    username: "@ihatemaxcarter",
+    href: "https://www.instagram.com/ihatemaxcarter/",
   },
   {
     name: "twitter",
@@ -680,7 +680,7 @@ export function Info({
                       : label === "Phone"
                         ? `tel:${value.replace(/\s/g, "")}`
                         : label === "Instagram"
-                          ? "https://instagram.com/undivisible.dev"
+                          ? "https://www.instagram.com/ihatemaxcarter/"
                           : label === "Twitter"
                             ? "https://twitter.com/makethings4ppl"
                             : label === "GitHub"

@@ -30,7 +30,7 @@ function detailFor(name: string, github: LiveGithub): Detail {
       };
     case "instagram":
       return {
-        title: "@undivisible.dev",
+        title: "@ihatemaxcarter",
         body: "photographs from wherever the passport last got stamped. no code.",
         stats: [["countries", "10"]],
       };

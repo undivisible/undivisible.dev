@@ -18,10 +18,10 @@ export type ResumeProject = {
 export const resumeContact: ResumeContactRow[] = [
   ["Email", "max@undivisible.dev"],
   ["Phone", "+61 481 729 894"],
-  ["Instagram", "@undivisible.dev"],
+  ["Instagram", "https://www.instagram.com/ihatemaxcarter/"],
   ["Twitter", "@makethings4ppl"],
   ["GitHub", "github.com/undivisible"],
-  ["LinkedIn", "linkedin.com/in/undivisible"],
+  ["LinkedIn", "https://www.linkedin.com/in/ihatemaxcarter/"],
   ["Location", "Melbourne / Hong Kong"],
 ];
 

@@ -16,5 +16,6 @@ test("the landing page introduces Max and links to the existing OS", () => {
   expect(html).toContain("[Crepuscularity]");
   expect(html).toContain("[Moonshine]");
   expect(html).toContain('href="https://github.com/undivisible"');
+  expect(html).toContain('href="https://www.instagram.com/ihatemaxcarter/"');
   expect(html).toContain('href="mailto:max@tsc.hk"');
 });

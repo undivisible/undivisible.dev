@@ -340,8 +340,8 @@ export const LAB_LINKS = [
   },
   {
     name: "instagram",
-    href: "https://instagram.com/undivisible.dev",
-    handle: "undivisible.dev",
+    href: "https://www.instagram.com/ihatemaxcarter/",
+    handle: "ihatemaxcarter",
   },
   { name: "email", href: "mailto:max@tsc.hk", handle: "max@tsc.hk" },
   { name: "resume", href: "/resume.md", handle: "resume.md" },

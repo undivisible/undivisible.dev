@@ -161,7 +161,7 @@ tag App
 						<a.fancy-link[color:white td:underline transition:all_0.3s d:inline-block] href="https://github.com/undivisible" @mouseenter=animateLetters>
 							for char in "see more at my github"
 								<span.letter[d:inline-block transition:all_0.3s]> char
-						<a.fancy-link[color:white td:underline transition:all_0.3s d:inline-block] href="https://instagram.com/undivisible.dev" @mouseenter=animateLetters>
+						<a.fancy-link[color:white td:underline transition:all_0.3s d:inline-block] href="https://www.instagram.com/ihatemaxcarter/" @mouseenter=animateLetters>
 							for char in "instagram"
 								<span.letter[d:inline-block transition:all_0.3s]> char
 						<a.fancy-link[color:white td:underline transition:all_0.3s d:inline-block] href="#" @mouseenter=animateLetters>

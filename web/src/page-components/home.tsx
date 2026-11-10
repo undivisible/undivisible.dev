@@ -83,7 +83,7 @@ export default function Home() {
           <a href="mailto:max@tsc.hk">[ email ↗ ]</a>{" "}
           <a href="https://github.com/undivisible">[ github ↗ ]</a>{" "}
           <a href="https://x.com/makethings4ppl">[ x ↗ ]</a>{" "}
-          <a href="https://www.instagram.com/undivisible.dev/">
+          <a href="https://www.instagram.com/ihatemaxcarter/">
             [ instagram ↗ ]
           </a>
         </nav>

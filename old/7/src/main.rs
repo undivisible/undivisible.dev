@@ -433,7 +433,7 @@ fn App() -> impl IntoView {
                             let t = get_translation_nav(&current_lang.get());
                             let nav_links = vec![
                                 (t.see_more_github.clone(), "https://github.com/undivisible".to_string(), false),
-                                (t.instagram.clone(), "https://instagram.com/undivisible.dev".to_string(), false),
+                                (t.instagram.clone(), "https://www.instagram.com/ihatemaxcarter/".to_string(), false),
                                 (t.read_philosophy.clone(), "https://undivisible.notion.site/eudaimonia-total-latitude-2b45f9801be4805ba030d510404673c6".to_string(), false),
                                 (t.gizzmo_electronics.clone(), "https://gizzmoelectronics.com".to_string(), false),
                                 (t.technology_company.clone(), "https://atechnology.company".to_string(), true),

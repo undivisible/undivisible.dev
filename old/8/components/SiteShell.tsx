@@ -234,12 +234,12 @@ export default function SiteShell() {
               github/semitechnological
             </a>
             <a
-              href="https://instagram.com/undivisible.dev"
+              href="https://www.instagram.com/ihatemaxcarter/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[24px] leading-[30px] text-right opacity-50 hover:opacity-100 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] shrink-0 no-underline transition-opacity duration-300"
             >
-              instagram@undivisible.dev
+              instagram@ihatemaxcarter
             </a>
           </motion.div>
         </div>
@@ -379,12 +379,12 @@ export default function SiteShell() {
               github
             </a>
             <a
-              href="https://instagram.com/undivisible.dev"
+              href="https://www.instagram.com/ihatemaxcarter/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-base opacity-50 text-[#FFF8E6] font-['Space_Grotesk',system-ui,sans-serif] no-underline transition-opacity duration-300"
             >
-              @undivisible.dev
+              @ihatemaxcarter
             </a>
             <a
               href="https://github.com/undivisible"

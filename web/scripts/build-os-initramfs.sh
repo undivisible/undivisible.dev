@@ -39,8 +39,8 @@ cat > "$OLD/index.html" <<'HTML'
 <title>undivisible.dev — history</title>
 <body bgcolor="#10131c" text="#c4cad6" link="#7ec8e8" vlink="#7ec8e8">
 <h1>every undivisible.dev</h1>
-<p>The site's whole history, baked into this machine. Versions 1-6 are the
-static originals, byte for byte.</p>
+<p>The site's history, baked into this machine. Versions 1-6 are the
+static originals with current personal profile links.</p>
 <ul>
   <li><a href="1/index.html">v1</a> — where it started</li>
   <li><a href="2/index.html">v2</a></li>
