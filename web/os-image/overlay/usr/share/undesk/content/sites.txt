@@ -1,7 +1,7 @@
 
   [1;37mproject websites[0m
 
-  [93m 1)[0m [96mtsc.hk[0m -- the software company of hong kong  [90mhttps://tsc.hk[0m
+  [93m 1)[0m [96mtsc.hk[0m -- software corporation (hong kong)  [90mhttps://tsc.hk[0m
   [93m 2)[0m [96mcrepuscularity[0m -- UI language and runtime  [90mhttps://crepuscularity.undivisible.dev[0m
   [93m 3)[0m [96mmoonshine[0m -- renders the host site  [90mhttps://moonshine.tsc.hk[0m
   [93m 4)[0m [96minauguration[0m -- compiler infrastructure  [90mhttps://inauguration.tsc.hk[0m

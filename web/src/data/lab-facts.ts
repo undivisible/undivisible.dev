@@ -321,10 +321,10 @@ export const MILESTONES: Milestone[] = [
 
 export const TSCHK = {
   name: "tsc.hk",
-  full: "the software company of hong kong",
+  full: "software corporation (hong kong)",
   href: "https://tsc.hk",
   blurb:
-    "the software company of hong kong — a compiler, two operating systems, a browser engine, a linux distribution, two web frameworks and an agent runtime.",
+    "software corporation (hong kong) — a compiler, two operating systems, a browser engine, a linux distribution, two web frameworks and an agent runtime.",
 } as const;
 
 export const LAB_LINKS = [

@@ -36,7 +36,7 @@ export const resumeExperience: ResumeExperience[] = [
   },
   {
     role: "Founder and Systems Architect",
-    org: "The Software Company of Hong Kong",
+    org: "Software Corporation (Hong Kong)",
     time: "2024-present",
     points: [
       "Freelance developer since 2024.",

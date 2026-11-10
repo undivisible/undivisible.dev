@@ -139,7 +139,7 @@ ${GITHUB_ACTIVITY.recentMerged
 );
 
 const SITES: Array<[string, string]> = [
-  ["tsc.hk — the software company of hong kong", "https://tsc.hk"],
+  ["tsc.hk — software corporation (hong kong)", "https://tsc.hk"],
   [
     "crepuscularity — UI language and runtime",
     "https://crepuscularity.undivisible.dev",
