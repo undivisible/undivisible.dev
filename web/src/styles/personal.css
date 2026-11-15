@@ -2110,7 +2110,7 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   --page-text-soft: #ddd;
   --page-text-muted: #ccc;
   font:
-    14px/20px var(--font-jetbrains-mono),
+    14px/20px "JetBrains Mono",
     monospace;
 }
 .landing-field {
@@ -2213,6 +2213,16 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
 .landing-project:focus-visible {
   outline: 1px solid #fff;
   outline-offset: 2px;
+}
+.landing.ascii-text-composed :is(.landing-status, .landing-content),
+.landing.ascii-text-composed :is(.landing-status, .landing-content) * {
+  color: transparent !important;
+  text-shadow: none;
+  text-decoration-color: transparent;
+}
+.landing.ascii-text-composed ::selection {
+  color: #000 !important;
+  background: #fff;
 }
 .landing-preview {
   position: fixed;

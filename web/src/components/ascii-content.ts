@@ -38,14 +38,16 @@ export function fitContentLine<T extends { col: number; advance?: number }>(
   cells: readonly T[],
   columns: number,
 ) {
-  const last = cells.at(-1);
-  const lastCol = last?.col;
-  const lastAdvance = last?.advance ?? 1;
-  const shift =
-    lastCol === undefined
-      ? 0
-      : Math.max(0, lastCol - Math.max(0, columns - 1 - lastAdvance));
-  return cells.map((cell) => ({ ...cell, col: cell.col - shift }));
+  let nextCol = 0;
+  const line = [...cells]
+    .sort((a, b) => a.col - b.col)
+    .map((cell) => {
+      const col = Math.max(cell.col, nextCol);
+      nextCol = col + (cell.advance ?? 1);
+      return { ...cell, col };
+    });
+  const shift = Math.max(0, nextCol - columns);
+  return line.map((cell) => ({ ...cell, col: cell.col - shift }));
 }
 
 export function personalAsciiGrid(width: number, height: number) {

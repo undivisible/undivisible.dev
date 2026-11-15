@@ -32,6 +32,16 @@ export function layoutAsciiText({
   const contentArea = new Set<number>();
   const activeCells = new Set<number>();
   const musicCells = new Set<number>();
+  const cellsByRow = new Map<
+    number,
+    Array<{
+      col: number;
+      char: string;
+      advance: number;
+      active: boolean;
+      music: boolean;
+    }>
+  >();
   const activeColor =
     getComputedStyle(page).getPropertyValue("--album-secondary").trim() ||
     "#ff5705";
@@ -55,13 +65,6 @@ export function layoutAsciiText({
     const style = getComputedStyle(parent);
     if (style.opacity === "0" && !parent.closest(".now-playing")) continue;
     const range = document.createRange();
-    let previousCell:
-      | { col: number; row: number; advance?: number }
-      | undefined;
-    const cellsByRow = new Map<
-      number,
-      Array<{ col: number; char: string; advance: number }>
-    >();
     const large = parseFloat(style.fontSize) > 30;
     const font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
     const active = Boolean(
@@ -111,35 +114,31 @@ export function layoutAsciiText({
           rect.y + rect.height / 2,
           cellWidth,
           cellHeight,
-          previousCell,
         );
         const advance = asciiCellAdvance(char);
-        previousCell = { ...point, advance };
         if (point.row >= 0 && point.row < rows) {
           const cells = cellsByRow.get(point.row) ?? [];
-          cells.push({ col: point.col, char, advance });
+          cells.push({ col: point.col, char, advance, active, music });
           cellsByRow.set(point.row, cells);
         }
       }
       index = nextIndex;
     }
-    for (const [row, cells] of cellsByRow) {
-      for (const { col, char, advance } of fitContentLine(cells, cols)) {
-        if (col < 0 || col + advance > cols) continue;
-        const key = row * cols + col;
-        contentGlyphs.set(key, char);
-        contentAdvances.set(key, advance);
-        for (let offset = 0; offset < advance; offset++) {
-          contentArea.add(key + offset);
-        }
-        if (parent.closest(".now-playing")) musicCells.add(key);
-        if (
-          parent.closest(
-            "a:hover, button:hover, a:focus-visible, button:focus-visible",
-          )
-        )
-          activeCells.add(key);
+  }
+  for (const [row, cells] of cellsByRow) {
+    for (const { col, char, advance, active, music } of fitContentLine(
+      cells,
+      Math.floor(width / cellWidth),
+    )) {
+      if (col < 0 || col + advance > cols) continue;
+      const key = row * cols + col;
+      contentGlyphs.set(key, char);
+      contentAdvances.set(key, advance);
+      for (let offset = 0; offset < advance; offset++) {
+        contentArea.add(key + offset);
       }
+      if (music) musicCells.add(key);
+      if (active) activeCells.add(key);
     }
   }
   const titleCells = new Set<number>();

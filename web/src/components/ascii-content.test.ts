@@ -38,7 +38,7 @@ test("full-width CJK glyphs reserve two cells without splitting code points", ()
     ["B", 5],
   ]);
   expect(fitContentLine([{ char: "格", col: 9, advance: 2 }], 10)).toEqual([
-    { char: "格", col: 7, advance: 2 },
+    { char: "格", col: 8, advance: 2 },
   ]);
 });
 
@@ -70,7 +70,20 @@ test("text at the right edge stays on its rendered row", () => {
   }));
 
   expect(fitContentLine(line, 38)).toEqual(
-    [..."systems"].map((char, index) => ({ char, col: 30 + index })),
+    [..."systems"].map((char, index) => ({ char, col: 31 + index })),
+  );
+});
+
+test("adjacent DOM fragments share one collision-free row without losing brackets", () => {
+  const first = [..."[ x ↗ ]"].map((char, index) => ({ char, col: 2 + index }));
+  const second = [..."[ email ↗ ]"].map((char, index) => ({
+    char,
+    col: 8 + index,
+  }));
+  const line = fitContentLine([...first, ...second], 20);
+  expect(line.map(({ char }) => char).join("")).toBe("[ x ↗ ][ email ↗ ]");
+  expect(line.map(({ col }) => col)).toEqual(
+    Array.from({ length: 18 }, (_, index) => index + 2),
   );
 });
 

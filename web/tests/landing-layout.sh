@@ -4,30 +4,36 @@
 set -euo pipefail
 export AGENT_BROWSER_SESSION="landing-layout-$$"
 trap 'agent-browser close >/dev/null 2>&1 || true' EXIT
-agent-browser open "${1:-http://localhost:4321}" >/dev/null
+agent-browser --init-script "$(dirname "$(realpath "$0")")/landing-canvas.js" open "${1:-http://localhost:4321}" >/dev/null
 agent-browser wait '.landing.unicode-content-ready' >/dev/null
+agent-browser eval 'document.fonts.ready' >/dev/null
 
 for viewport in '320 700' '412 740' '430 932' '768 1024' '1440 900'; do
   read -r width height <<< "$viewport"
   agent-browser set viewport "$width" "$height" 2 >/dev/null
-  for size in 14 12 18; do
+  for metrics in '14 primary' '12 primary' '18 primary' '14 fallback' '12 fallback' '18 fallback'; do
+    read -r size family <<< "$metrics"
     agent-browser eval "(() => {
       const page = document.querySelector('.landing');
+      page.style.fontFamily = '${family}' === 'fallback' ? 'monospace' : '\"JetBrains Mono\", monospace';
       page.style.fontSize = '${size}px';
       page.style.lineHeight = '${size}' === '18' ? '28px' : '20px';
       window.dispatchEvent(new Event('resize'));
       return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     })()" >/dev/null
-    agent-browser eval '(() => {
+    agent-browser eval '(async () => {
+      for (const selector of [".landing-content p:first-child", ".landing-content p:nth-child(2)", ".landing-content nav"]) {
+        document.querySelector(selector).scrollIntoView({ block: "center" });
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        checkLandingCanvas(selector);
+      }
+      window.scrollTo(0, 0);
       const main = document.querySelector(".landing-content");
       const bounds = main.getBoundingClientRect();
       const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
       while (walker.nextNode()) {
         const node = walker.currentNode;
         if (!node.textContent.trim()) continue;
-        const style = getComputedStyle(node.parentElement);
-        if (style.color === "transparent" || /rgba\([^)]*, 0\)$/.test(style.color))
-          throw new Error("Readable text was hidden in favor of canvas glyphs");
         const range = document.createRange();
         range.selectNodeContents(node);
         for (const rect of range.getClientRects()) {
@@ -53,8 +59,8 @@ for viewport in '320 700' '412 740' '430 932' '768 1024' '1440 900'; do
       }
       if (document.documentElement.scrollWidth > innerWidth)
         throw new Error("Horizontal overflow");
-      return "Text visible, contained, and controls complete without overlap";
+      return "Canvas text and DOM hit targets are complete and contained without overlap";
     })()' >/dev/null
-    printf 'PASS %sx%s, %spx text\n' "$width" "$height" "$size"
+    printf 'PASS %sx%s, %spx text, %s font\n' "$width" "$height" "$size" "$family"
   done
 done

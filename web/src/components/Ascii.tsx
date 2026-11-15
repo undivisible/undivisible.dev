@@ -284,17 +284,32 @@ export default function Ascii({
     let lastAscii = 0;
     let titleBackgroundColor = "";
     let lastTitleBackgroundSample = Number.NEGATIVE_INFINITY;
+    let landingMetrics = { font: "", cellWidth: 0, cellHeight: 0 };
 
     const grid = () => {
       if (!page) return null;
       if (!page.classList.contains("landing"))
         return personalAsciiGrid(width, height);
+      const style = getComputedStyle(page);
+      const font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      ctx.font = font;
+      const cellWidth = ctx.measureText("M").width;
+      const cellHeight = parseFloat(style.lineHeight);
+      if (
+        font !== landingMetrics.font ||
+        cellWidth !== landingMetrics.cellWidth ||
+        cellHeight !== landingMetrics.cellHeight
+      ) {
+        contentDirty = true;
+        landingMetrics = { font, cellWidth, cellHeight };
+      }
       return {
         mobile: false,
-        cellWidth: 8.4,
-        cellHeight: 20,
-        columns: Math.ceil(width / 8.4),
-        rows: Math.ceil(height / 20),
+        font,
+        cellWidth,
+        cellHeight,
+        columns: Math.ceil(width / cellWidth),
+        rows: Math.ceil(height / cellHeight),
       };
     };
 
@@ -384,8 +399,9 @@ export default function Ascii({
       const cellWidth = pageGrid?.cellWidth ?? width / cols;
       const cellHeight = pageGrid?.cellHeight ?? height / rows;
       const touchTablet = width >= 651 && coarsePointer.matches;
-      // Browser text owns wrapping and hit targets; the grid only clears space behind it.
-      const foregroundText = Boolean(page);
+      const foregroundText = Boolean(
+        page && !page.classList.contains("landing"),
+      );
       if (contentDirty && page && ink) {
         contentDirty = false;
         ({
@@ -421,6 +437,7 @@ export default function Ascii({
       if (sampleCanvas.width !== cols || sampleCanvas.height !== rows) {
         sampleCanvas.width = cols;
         sampleCanvas.height = rows;
+        shader.resize(width, height, cols, rows);
       }
 
       shader.render(now);
@@ -433,7 +450,10 @@ export default function Ascii({
       ctx.textBaseline = "middle";
       ctx.textAlign = "center";
       const monoFont = monoFontStackRef.current;
-      const font = `${page ? (pageGrid?.mobile ? 7 : 14) : Math.max(12, cell * 0.72)}px ${monoFont}, monospace`;
+      const font =
+        pageGrid && "font" in pageGrid
+          ? pageGrid.font
+          : `${page ? (pageGrid?.mobile ? 7 : 14) : Math.max(12, cell * 0.72)}px ${monoFont}, monospace`;
       ctx.font = font;
       ctx.shadowColor = "transparent";
 
