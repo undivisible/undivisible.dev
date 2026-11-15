@@ -384,10 +384,8 @@ export default function Ascii({
       const cellWidth = pageGrid?.cellWidth ?? width / cols;
       const cellHeight = pageGrid?.cellHeight ?? height / rows;
       const touchTablet = width >= 651 && coarsePointer.matches;
-      // Keep semantic homepage copy in the DOM; only the name is bitmap-rendered.
-      const foregroundText = Boolean(
-        page && !page.classList.contains("landing"),
-      );
+      // Browser text owns wrapping and hit targets; the grid only clears space behind it.
+      const foregroundText = Boolean(page);
       if (contentDirty && page && ink) {
         contentDirty = false;
         ({

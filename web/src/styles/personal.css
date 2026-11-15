@@ -2214,16 +2214,6 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   outline: 1px solid #fff;
   outline-offset: 2px;
 }
-.landing.ascii-text-composed :is(.landing-status, .landing-content),
-.landing.ascii-text-composed :is(.landing-status, .landing-content) * {
-  color: transparent !important;
-  text-shadow: none;
-  text-decoration-color: transparent;
-}
-.landing.ascii-text-composed ::selection {
-  color: #000 !important;
-  background: #fff;
-}
 .landing-preview {
   position: fixed;
   z-index: 3;
