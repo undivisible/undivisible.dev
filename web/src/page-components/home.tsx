@@ -1,18 +1,55 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Ascii from "@/components/Ascii";
+import { useEffect, useRef, useState } from "react";
+import Ascii, { type LandingView } from "@/components/Ascii";
 import { MainClock } from "@/components/MainClock";
 import NowPlaying from "@/components/NowPlaying";
 import { useNowMarkdown } from "@/hooks/use-remote-content";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
-import { projects } from "@/data/profile";
+import { landingProjectsFromReadme } from "@/data/readme-projects.generated";
+
+const projects = [
+  ...new Map(
+    landingProjectsFromReadme.map((project) => [project.key, project]),
+  ).values(),
+];
+const entries: Array<(typeof projects)[number] | "back"> = [
+  ...projects,
+  "back",
+];
+entries.sort((a, b) =>
+  (typeof a === "string" ? a : a.name).localeCompare(
+    typeof b === "string" ? b : b.name,
+    "en",
+    { sensitivity: "base" },
+  ),
+);
 
 export default function Home() {
   const dayTheme = useHongKongDayTheme();
   const now = useNowMarkdown();
   const [preview, setPreview] = useState<string | null>(null);
   const [colors, setColors] = useState<string[] | undefined>();
+  const [view, setView] = useState<LandingView>("home");
+  const [requestedView, setRequestedView] = useState<LandingView>("home");
+  const pageRef = useRef<HTMLDivElement>(null);
+  const focusAfterView = useRef(false);
+  const previewTrigger = useRef<HTMLButtonElement | null>(null);
+
+  const changeView = (next: LandingView) => {
+    setPreview(null);
+    setRequestedView(next);
+  };
+
+  useEffect(() => {
+    if (!focusAfterView.current) return;
+    focusAfterView.current = false;
+    pageRef.current
+      ?.querySelector<HTMLButtonElement>(
+        view === "projects" ? "[data-back]" : "[data-more]",
+      )
+      ?.focus({ preventScroll: true });
+  }, [view]);
 
   useEffect(() => {
     window.dispatchEvent(new Event("site:mode-ready"));
@@ -35,18 +72,69 @@ export default function Home() {
 
   useEffect(() => {
     const close = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setPreview(null);
+      if (event.key === "Escape") {
+        setPreview(null);
+        if (document.activeElement?.closest(".landing-preview"))
+          previewTrigger.current?.focus();
+      }
     };
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, []);
 
-  const project = projects.find((item) => item.name === preview);
+  const project = projects.find((item) => item.key === preview);
+  const projectButton = (
+    item: (typeof projects)[number],
+    label = item.name,
+  ) => (
+    <button
+      type="button"
+      className="landing-project"
+      data-project-key={item.key}
+      aria-expanded={preview === item.key}
+      aria-controls="project-preview"
+      onPointerMove={(event) => {
+        // Scrolling a label under a stationary pointer must not replace a keyboard preview.
+        if (event.pointerType !== "mouse") return;
+        previewTrigger.current = event.currentTarget;
+        setPreview(item.key);
+      }}
+      onFocus={(event) => {
+        if (
+          event.relatedTarget instanceof Element &&
+          event.relatedTarget.closest(".landing-preview")
+        )
+          return;
+        previewTrigger.current = event.currentTarget;
+        setPreview(item.key);
+      }}
+      onClick={(event) => {
+        previewTrigger.current = event.currentTarget;
+        setPreview(item.key);
+      }}
+    >
+      [{label}]
+    </button>
+  );
 
   return (
-    <div className="landing">
+    <div
+      ref={pageRef}
+      className="landing"
+      data-view={view}
+      aria-busy={view !== requestedView}
+    >
       <div className="landing-field" aria-hidden="true">
-        <Ascii colors={colors} ready />
+        <Ascii
+          colors={colors}
+          ready
+          view={requestedView}
+          onViewChange={(next) => {
+            focusAfterView.current = true;
+            setView(next);
+            window.scrollTo(0, 0);
+          }}
+        />
       </div>
       <header className="landing-status">
         <MainClock dayTheme={dayTheme} now={now} nowArticleOpen={false} />
@@ -55,47 +143,80 @@ export default function Home() {
         </div>
       </header>
       <main className="landing-content">
-        <p>hi, i’m max carter. i make things for people.</p>
-        <p>
-          i’m a self-taught software engineer and i’ve been building things
-          since i was nine. lately that includes{" "}
-          {[
-            "Inauguration",
-            "Space",
-            "Alpenglow",
-            "Crepuscularity",
-            "Moonshine",
-          ].map((name, index) => (
-            <span key={name}>
-              {index === 0 ? "" : index === 4 ? " and " : " "}
+        {view === "projects" ? (
+          <p className="landing-all-projects" aria-label="All projects">
+            {entries.map((entry, index) => (
+              <span key={typeof entry === "string" ? entry : entry.key}>
+                {index > 0 ? " " : ""}
+                <span className="landing-project-label">
+                  {typeof entry === "string" ? (
+                    <button
+                      type="button"
+                      className="landing-project"
+                      data-back
+                      onClick={() => changeView("home")}
+                    >
+                      [Back]
+                    </button>
+                  ) : (
+                    projectButton(entry)
+                  )}
+                  {index < entries.length - 1 ? "," : "."}
+                </span>
+              </span>
+            ))}
+          </p>
+        ) : (
+          <>
+            <p>hi, i’m max carter. i make things for people.</p>
+            <p>
+              i’m a self-taught software engineer and i’ve been building things
+              since i was nine. lately that includes{" "}
+              {[
+                "Inauguration",
+                "Space",
+                "Alpenglow",
+                "Crepuscularity",
+                "Moonshine",
+              ].map((name, index) => (
+                <span key={name}>
+                  {index === 0 ? "" : " "}
+                  <span className="landing-project-label">
+                    {projects
+                      .filter((item) => item.key === name.toLowerCase())
+                      .map((item) => (
+                        <span key={item.key}>{projectButton(item, name)}</span>
+                      ))}
+                    ,
+                  </span>
+                </span>
+              ))}{" "}
+              and{" "}
               <span className="landing-project-label">
                 <button
                   type="button"
                   className="landing-project"
-                  aria-expanded={preview === name}
-                  aria-controls="project-preview"
-                  onMouseEnter={() => setPreview(name)}
-                  onFocus={() => setPreview(name)}
-                  onClick={() => setPreview(name)}
+                  data-more
+                  onClick={() => changeView("projects")}
                 >
-                  [{name}]
+                  [more]
                 </button>
-                {index < 4 ? "," : "."}
-              </span>
-            </span>
-          ))}{" "}
-          i like understanding how the whole thing works, then making it easier
-          to use.
-        </p>
-        <nav aria-label="Links">
-          <a href="https://next.undivisible.dev/">[ enter the OS ↗ ]</a>{" "}
-          <a href="mailto:max@tsc.hk">[ email ↗ ]</a>{" "}
-          <a href="https://github.com/undivisible">[ github ↗ ]</a>{" "}
-          <a href="https://x.com/makethings4ppl">[ x ↗ ]</a>{" "}
-          <a href="https://www.instagram.com/ihatemaxcarter/">
-            [ instagram ↗ ]
-          </a>
-        </nav>
+                .
+              </span>{" "}
+              i like understanding how the whole thing works, then making it
+              easier to use.
+            </p>
+            <nav aria-label="Links">
+              <a href="https://next.undivisible.dev/">[ enter the OS ↗ ]</a>{" "}
+              <a href="mailto:max@tsc.hk">[ email ↗ ]</a>{" "}
+              <a href="https://github.com/undivisible">[ github ↗ ]</a>{" "}
+              <a href="https://x.com/makethings4ppl">[ x ↗ ]</a>{" "}
+              <a href="https://www.instagram.com/ihatemaxcarter/">
+                [ instagram ↗ ]
+              </a>
+            </nav>
+          </>
+        )}
       </main>
       {project && (
         <aside
@@ -106,14 +227,17 @@ export default function Home() {
           <button
             type="button"
             className="landing-preview-close"
-            onClick={() => setPreview(null)}
+            onClick={() => {
+              setPreview(null);
+              previewTrigger.current?.focus();
+            }}
             aria-label="Close preview"
           >
             ×
           </button>
           <strong>{project.name}</strong>
-          <p>{project.description}</p>
-          <a href={project.href}>view project ↗</a>
+          <p>{project.desc}</p>
+          {project.href !== "#" && <a href={project.href}>view project ↗</a>}
         </aside>
       )}
     </div>

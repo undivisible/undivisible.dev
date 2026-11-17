@@ -2113,6 +2113,7 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   font:
     14px/20px "JetBrains Mono",
     monospace;
+  font-variant-ligatures: none;
 }
 .landing-field {
   position: fixed;
@@ -2234,6 +2235,10 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   right: 24px;
   bottom: 24px;
   width: min(360px, calc(100% - 48px));
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  font-size: 14px;
+  line-height: 20px;
   padding: 18px;
   background: #f4f1e8;
   color: #161616;
@@ -2252,6 +2257,29 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   color: inherit;
   font: inherit;
   cursor: pointer;
+}
+.landing[data-view="projects"] {
+  display: block;
+  font-size: 24px;
+  line-height: 36px;
+}
+.landing[data-view="projects"] .landing-status {
+  display: none;
+}
+.landing[data-view="projects"] .landing-content {
+  width: calc(100% - 64px);
+  margin: 32px;
+  text-align: left;
+}
+@media (max-width: 650px) {
+  .landing[data-view="projects"] {
+    font-size: 16px;
+    line-height: 24px;
+  }
+  .landing[data-view="projects"] .landing-content {
+    width: calc(100% - 40px);
+    margin: 20px;
+  }
 }
 @media (max-width: 370px), (max-width: 1000px) and (max-height: 819px) {
   .landing {

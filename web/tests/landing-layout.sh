@@ -6,6 +6,7 @@ export AGENT_BROWSER_SESSION="landing-layout-$$"
 trap 'agent-browser close >/dev/null 2>&1 || true' EXIT
 agent-browser --init-script "$(dirname "$(realpath "$0")")/landing-canvas.js" open "${1:-http://localhost:4321}" >/dev/null
 agent-browser wait '.landing.unicode-content-ready' >/dev/null
+agent-browser wait --fn '!!document.querySelector("canvas[data-reveal-state=complete]")' >/dev/null
 agent-browser eval 'document.fonts.ready' >/dev/null
 
 for viewport in '320 700' '412 740' '430 932' '768 1024' '1440 900'; do
@@ -43,7 +44,7 @@ for viewport in '320 700' '412 740' '430 932' '768 1024' '1440 900'; do
             throw new Error("Text escapes its content bounds: " + node.textContent);
         }
       }
-      const projects = [...main.querySelectorAll("button")];
+      const projects = [...main.querySelectorAll("button[data-project-key]")];
       const links = [...main.querySelectorAll("nav a")];
       if (projects.length !== 5 || links.length !== 5)
         throw new Error("Missing project or navigation control");

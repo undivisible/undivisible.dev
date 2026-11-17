@@ -7,6 +7,7 @@ import {
   normalizeReadmeBundle,
   profileMarkdownUrls,
   type ReadmeBundle,
+  type ReadmeProject,
 } from "../src/lib/profile-readme.ts";
 
 const OUT_FILE = new URL(
@@ -42,7 +43,10 @@ function previousBundle(): Promise<ReadmeBundle | undefined> {
   }
 }
 
-function emitTs(bundle: ReadmeBundle): string {
+function emitTs(
+  bundle: ReadmeBundle,
+  landingProjects: ReadmeProject[],
+): string {
   return `export type ReadmeProject = {
   key: string;
   name: string;
@@ -61,6 +65,8 @@ export const utilitiesFromReadme: ReadmeProject[] = ${JSON.stringify(bundle.util
 export const miniappsFromReadme: ReadmeProject[] = ${JSON.stringify(bundle.miniapps, null, 2)};
 
 export const librariesFromReadme: ReadmeProject[] = ${JSON.stringify(bundle.libraries, null, 2)};
+
+export const landingProjectsFromReadme: ReadmeProject[] = ${JSON.stringify(landingProjects, null, 2)};
 `;
 }
 
@@ -90,7 +96,30 @@ const withFallbacks = previous
   : freshBundle;
 const bundle = await fillReadmeBundleMissingStacks(withFallbacks);
 
-await Bun.write(OUT_FILE, emitTs(bundle));
+// The landing page's full inventory follows the user's profile README, not curated highlights.
+let landingReadme: ReadmeBundle;
+try {
+  landingReadme = parseReadme(
+    await fetchProfileMarkdown({
+      urls: [
+        "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md",
+      ],
+    }),
+  );
+} catch {
+  console.warn(
+    "Profile README unavailable; using the local project-copy fallback",
+  );
+  landingReadme = parseReadme(md);
+}
+const landingProjects = [
+  ...landingReadme.mainProjects,
+  ...landingReadme.utilities,
+  ...landingReadme.miniapps,
+  ...landingReadme.libraries,
+];
+
+await Bun.write(OUT_FILE, emitTs(bundle, landingProjects));
 
 // Patch email: upstream README still has old address
 const generated = await Bun.file(OUT_FILE.pathname).text();

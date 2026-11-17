@@ -20,6 +20,12 @@ interface ShapeState {
 const DEFAULT_COLORS = ["#ffffff", "#cccccc", "#999999", "#666666", "#333333"];
 const FIELD_CHARS = ".,:;-=+*#%&";
 const SHAPE_CHARS = "@#MW8$&NBG";
+const TYPE_DURATION = 1600;
+const NUMBER_DURATION = 600;
+const COLOR_START = TYPE_DURATION + NUMBER_DURATION;
+const REVEAL_DURATION = COLOR_START + 1000;
+const DISSOLVE_DURATION = 450;
+export type LandingView = "home" | "projects";
 const TOUCH_FIELD_FOREGROUND_WEIGHT = 0.82;
 const TOUCH_FIELD_ALPHA = 0.68;
 /** Ignore sub-pixel/layout-thrash resizes so mobile viewport bars do not wipe canvases each frame */
@@ -139,17 +145,23 @@ export default function Ascii({
   track = null,
   ready = false,
   lastFmUsername = "undivisible",
+  view = "home",
+  onViewChange,
 }: {
   colors?: string[];
   track?: TrackInfo | null;
   ready?: boolean;
   lastFmUsername?: string;
+  view?: LandingView;
+  onViewChange?: (view: LandingView) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef<number>(0);
   const monoFontStackRef = useRef("monospace");
+  const viewRef = useRef({ view, onViewChange });
+  viewRef.current = { view, onViewChange };
   const colorUniforms = useMemo(
     () =>
       [
@@ -187,6 +199,17 @@ export default function Ascii({
     }
 
     const page = container.closest(".personal-page, .landing");
+    const landing = Boolean(page?.classList.contains("landing"));
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let revealStart: number | undefined;
+    let contentRanks = new Map<number, number>();
+    let contentOwners = new Map<number, number>();
+    let numberCells = new Map<
+      number,
+      { value: number; digits: number; index: number; rank: number }
+    >();
+    let currentView = viewRef.current.view;
+    let dissolveStart: number | undefined;
     const coarsePointer = window.matchMedia("(any-pointer: coarse)");
     const skyCanvas = document.querySelector<HTMLCanvasElement>(".album-sky");
     const skyCtx = skyCanvas?.getContext("2d");
@@ -249,6 +272,7 @@ export default function Ascii({
     window.addEventListener("resize", invalidateContent);
     window.addEventListener("site:album-palette", invalidateContent);
     window.addEventListener("site:sky-contrast", invalidateContent);
+    reducedMotion.addEventListener("change", invalidateContent);
     void document.fonts.ready.then(invalidateContent);
     let contentGlyphs = new Map<number, string>();
     let contentAdvances = new Map<number, number>();
@@ -381,10 +405,42 @@ export default function Ascii({
         return;
       }
 
+      if (landing && currentView !== viewRef.current.view) {
+        dissolveStart ??= now;
+        if (reducedMotion.matches || now - dissolveStart >= DISSOLVE_DURATION) {
+          currentView = viewRef.current.view;
+          viewRef.current.onViewChange?.(currentView);
+          dissolveStart = undefined;
+          revealStart = undefined;
+          contentDirty = true;
+          return;
+        }
+      }
+      if (revealStart === undefined && document.fonts.status === "loaded")
+        revealStart = now;
+      const elapsed =
+        !landing || reducedMotion.matches
+          ? REVEAL_DURATION
+          : revealStart === undefined
+            ? 0
+            : now - revealStart;
+      const dissolving = dissolveStart !== undefined;
+      const revealing = elapsed < REVEAL_DURATION || dissolving;
+      const colorProgress = clamp((elapsed - COLOR_START) / 1000, 0, 1);
+      const colorMix = colorProgress * colorProgress * (3 - 2 * colorProgress);
+      asciiCanvas.dataset.revealState = dissolving
+        ? "dissolving"
+        : elapsed < COLOR_START
+          ? "typing"
+          : revealing
+            ? "color"
+            : "complete";
+
       // Decorative motion is capped; clocks, scrolling and focus repaint immediately.
       if (
         !contentDirty &&
         !musicTransition &&
+        !revealing &&
         now - lastAscii < asciiIntervalMs
       )
         return;
@@ -394,6 +450,7 @@ export default function Ascii({
       last = now;
 
       for (const shape of shapes) {
+        if (landing && reducedMotion.matches) continue;
         const padding = shape.size * 0.55 + 12;
         shape.x += shape.vx * delta;
         shape.y += shape.vy * delta;
@@ -449,6 +506,44 @@ export default function Ascii({
           cellHeight,
           foregroundText,
         }));
+        contentRanks = new Map(
+          [...contentGlyphs]
+            .filter(([, char]) => !/\s/.test(char))
+            .sort(([a], [b]) => a - b)
+            .map(([key], rank) => [key, rank]),
+        );
+        contentOwners = new Map();
+        for (const [key, advance] of contentAdvances)
+          for (let offset = 1; offset < advance; offset++)
+            contentOwners.set(key + offset, key);
+        numberCells = new Map();
+        const keys = [...contentRanks.keys()];
+        for (let index = 0; index < keys.length; ) {
+          const first = keys[index];
+          let digits = "";
+          let end = index;
+          while (
+            end < keys.length &&
+            keys[end] === first + end - index &&
+            Math.floor(keys[end] / cols) === Math.floor(first / cols) &&
+            /^\d$/.test(contentGlyphs.get(keys[end]) ?? "")
+          ) {
+            digits += contentGlyphs.get(keys[end]);
+            end++;
+          }
+          if (!digits) {
+            index++;
+            continue;
+          }
+          for (let digit = index; digit < end; digit++)
+            numberCells.set(keys[digit], {
+              value: Number(digits),
+              digits: digits.length,
+              index: digit - index,
+              rank: index,
+            });
+          index = end;
+        }
         contentRgb = cssColorToRgb(contentColor);
         asciiCanvas.dataset.contentCells = String(
           contentGlyphs.size + titleCells.size,
@@ -463,7 +558,7 @@ export default function Ascii({
         shader.resize(width, height, cols, rows);
       }
 
-      shader.render(now);
+      shader.render(landing && reducedMotion.matches ? 0 : now);
 
       sampleCtx.clearRect(0, 0, cols, rows);
       sampleCtx.drawImage(bgCanvas, 0, 0, cols, rows);
@@ -507,6 +602,10 @@ export default function Ascii({
             g = 255 - g;
             b = 255 - b;
           }
+          const gray = r * 0.299 + g * 0.587 + b * 0.114;
+          r = gray + (r - gray) * colorMix;
+          g = gray + (g - gray) * colorMix;
+          b = gray + (b - gray) * colorMix;
 
           const charSet = insideAnyShape ? SHAPE_CHARS : FIELD_CHARS;
           const colorWeight = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
@@ -525,7 +624,34 @@ export default function Ascii({
             : clamp(0.52 + brightness * 0.4, 0.52, 0.94);
           const cellIndex = row * cols + col;
           if (titleCells.has(cellIndex)) continue;
-          const contentChar = contentGlyphs.get(cellIndex);
+          const owner = contentOwners.get(cellIndex) ?? cellIndex;
+          const sourceChar = contentGlyphs.get(owner);
+          let contentChar =
+            landing && sourceChar !== undefined && /\s/.test(sourceChar)
+              ? undefined
+              : sourceChar;
+          if (landing && contentChar !== undefined) {
+            const rank = contentRanks.get(owner) ?? 0;
+            const number = numberCells.get(owner);
+            const start =
+              ((number?.rank ?? rank) / Math.max(1, contentRanks.size)) *
+              TYPE_DURATION;
+            if (dissolveStart !== undefined) {
+              if (
+                rank / Math.max(1, contentRanks.size) <
+                (now - dissolveStart) / DISSOLVE_DURATION
+              )
+                contentChar = undefined;
+            } else if (elapsed < start) {
+              contentChar = undefined;
+            } else if (number) {
+              const progress = clamp((elapsed - start) / NUMBER_DURATION, 0, 1);
+              contentChar = String(
+                Math.floor(number.value * progress),
+              ).padStart(number.digits, "0")[number.index];
+            }
+          }
+          if (owner !== cellIndex && contentChar !== undefined) continue;
           const contentAdvance = contentAdvances.get(cellIndex) ?? 1;
           const inkIndex =
             (Math.min(height - 1, Math.floor(y)) * width +
@@ -535,6 +661,7 @@ export default function Ascii({
           const largeTextInk = (inkPixels?.[inkIndex] ?? 0) > 80;
           if (
             page &&
+            !landing &&
             contentArea.has(cellIndex) &&
             contentChar === undefined &&
             !largeTextInk
@@ -726,6 +853,7 @@ export default function Ascii({
       window.removeEventListener("resize", invalidateContent);
       window.removeEventListener("site:album-palette", invalidateContent);
       window.removeEventListener("site:sky-contrast", invalidateContent);
+      reducedMotion.removeEventListener("change", invalidateContent);
       page?.classList.remove(
         "unicode-content-ready",
         "ascii-name-ready",

@@ -94,16 +94,20 @@
         throw new Error(
           "Project punctuation is orphaned at the start of a line",
         );
-      for (const draw of frames.get(canvas) ?? []) {
+      for (let index = 1; index < row.length; index++) {
+        const previous = row[index - 1];
+        const current = row[index];
+        if (current.x - previous.x < current.maxWidth * 1.5) continue;
         if (
-          draw.y === y &&
-          draw.alpha !== 1 &&
-          draw.x >= row[0].x &&
-          draw.x <= row.at(-1).x
+          !(frames.get(canvas) ?? []).some(
+            (draw) =>
+              draw.y === y &&
+              draw.alpha < 1 &&
+              draw.x > previous.x &&
+              draw.x < current.x,
+          )
         )
-          throw new Error(
-            "Background ASCII occupies whitespace inside a text row",
-          );
+          throw new Error("Text whitespace must contain the background field");
       }
       return text;
     });
@@ -160,17 +164,17 @@
             "Clock label/time gap was collapsed: " + label.textContent,
           );
         if (
-          draws.some(
+          !draws.some(
             (draw) =>
               Math.floor(draw.y / lineHeight) === row &&
               draw.x > right &&
               draw.x < left,
           )
         )
-          throw new Error("ASCII occupies the clock label/time gap");
+          throw new Error("Clock gap is missing its background field");
         return {
           label: label.textContent,
-          blankCells: Math.round(gap / firstTime.maxWidth),
+          gapCells: Math.round(gap / firstTime.maxWidth),
         };
       });
   };

@@ -56,13 +56,42 @@ CanvasRenderingContext2D.prototype.fillText = function (text, x, y) {
   }
   return fillText.apply(this, arguments);
 };
-window.checkMusicFade = () => {
+window.checkMusicFade = async () => {
+  const original = JSON.parse(document.documentElement.dataset.albumTrack);
+  window.musicFadeFrames.length = 0;
+  window.dispatchEvent(
+    new CustomEvent("site:album-track", {
+      detail: { ...original, track: original.track + " (fade check)" },
+    }),
+  );
+  await new Promise((resolve) => {
+    const wait = () => {
+      if (
+        !document
+          .querySelector(".now-playing-song")
+          ?.textContent.endsWith(" (fade check)")
+      )
+        window.musicFadeFrames.length = 0;
+      if (
+        document
+          .querySelector(".now-playing-song")
+          ?.textContent.endsWith(" (fade check)") &&
+        getComputedStyle(document.querySelector(".now-playing")).opacity === "1"
+      )
+        resolve();
+      else requestAnimationFrame(wait);
+    };
+    requestAnimationFrame(wait);
+  });
   const steps = window.musicFadeFrames.filter(
     (alpha) => alpha > 0 && alpha < 1,
   );
   if (steps.length < 4 || steps[0] > 0.4)
     throw new Error("Canvas skips the music fade: " + JSON.stringify(steps));
-  return "PASS actual canvas music glyphs fade progressively from low opacity";
+  window.dispatchEvent(
+    new CustomEvent("site:album-track", { detail: original }),
+  );
+  return "PASS actual canvas music glyphs fade progressively on track updates";
 };
 window.checkVisibleAlbumColor = async () => {
   document.documentElement.dataset.albumColors =

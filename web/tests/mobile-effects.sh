@@ -9,6 +9,7 @@ trap 'agent-browser close >/dev/null 2>&1 || true' EXIT
 agent-browser --init-script "$bundle" open about:blank >/dev/null
 agent-browser set viewport 412 740 2 >/dev/null
 agent-browser open "${1:-http://localhost:4321}" >/dev/null
+agent-browser wait --fn '!!document.querySelector("canvas[data-reveal-state=complete]")' >/dev/null
 agent-browser wait --fn 'document.querySelector(".now-playing") && getComputedStyle(document.querySelector(".now-playing")).opacity === "1"' >/dev/null
 agent-browser eval 'checkMobileShader()'
 agent-browser eval 'checkMusicFade()'
