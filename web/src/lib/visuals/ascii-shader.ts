@@ -70,7 +70,7 @@ export function createAsciiShader(
     `;
 
   const fragmentSource = `
-      precision mediump float;
+      precision highp float;
       varying vec2 v_uv;
       uniform vec2 u_resolution;
       uniform float u_time;

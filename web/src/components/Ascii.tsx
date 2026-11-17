@@ -206,8 +206,20 @@ export default function Ascii({
     let activeColor = "#ff5705";
     let activeCells = new Set<number>();
     let musicCells = new Set<number>();
+    let musicTransition = false;
     const invalidateContent = () => {
       contentDirty = true;
+    };
+    const onMusicTransition = (event: Event) => {
+      if (
+        event instanceof TransitionEvent &&
+        event.propertyName === "opacity" &&
+        event.target instanceof Element &&
+        event.target.matches(".now-playing")
+      ) {
+        musicTransition = event.type === "transitionrun";
+        invalidateContent();
+      }
     };
     const contentObserver = new MutationObserver(invalidateContent);
     const contentResize = new ResizeObserver(invalidateContent);
@@ -218,6 +230,12 @@ export default function Ascii({
         subtree: true,
       });
       contentResize.observe(page);
+      for (const event of [
+        "transitionrun",
+        "transitionend",
+        "transitioncancel",
+      ])
+        page.addEventListener(event, onMusicTransition);
       for (const event of [
         "pointerover",
         "pointerout",
@@ -364,7 +382,12 @@ export default function Ascii({
       }
 
       // Decorative motion is capped; clocks, scrolling and focus repaint immediately.
-      if (!contentDirty && now - lastAscii < asciiIntervalMs) return;
+      if (
+        !contentDirty &&
+        !musicTransition &&
+        now - lastAscii < asciiIntervalMs
+      )
+        return;
       lastAscii = now;
 
       const delta = Math.min((now - last) / 1000, 0.1);
@@ -682,6 +705,12 @@ export default function Ascii({
     return () => {
       detachResize();
       shader.dispose();
+      for (const event of [
+        "transitionrun",
+        "transitionend",
+        "transitioncancel",
+      ])
+        page?.removeEventListener(event, onMusicTransition);
       if (page)
         for (const event of [
           "pointerover",
