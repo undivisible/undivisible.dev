@@ -32,6 +32,10 @@ export function layoutAsciiText({
   const contentArea = new Set<number>();
   const activeCells = new Set<number>();
   const musicCells = new Set<number>();
+  const flowCells = new Map<
+    Element,
+    { col: number; row: number; advance: number }
+  >();
   const cellsByRow = new Map<
     number,
     Array<{
@@ -57,7 +61,7 @@ export function layoutAsciiText({
     const node = walker.currentNode;
     const parent = node.parentElement;
     if (
-      !node.textContent?.trim() ||
+      !node.textContent ||
       !parent?.closest("main, header, footer") ||
       parent.closest("[aria-hidden=true], #personal-name")
     )
@@ -73,6 +77,7 @@ export function layoutAsciiText({
       ),
     );
     const music = Boolean(parent.closest(".now-playing"));
+    const flow = parent.closest("p") ?? parent;
     ink.font = font;
     for (let index = 0; index < node.textContent.length; ) {
       const charLength = String.fromCodePoint(
@@ -114,8 +119,10 @@ export function layoutAsciiText({
           rect.y + rect.height / 2,
           cellWidth,
           cellHeight,
+          flowCells.get(flow),
         );
         const advance = asciiCellAdvance(char);
+        flowCells.set(flow, { ...point, advance });
         if (point.row >= 0 && point.row < rows) {
           const cells = cellsByRow.get(point.row) ?? [];
           cells.push({ col: point.col, char, advance, active, music });
@@ -126,17 +133,23 @@ export function layoutAsciiText({
     }
   }
   for (const [row, cells] of cellsByRow) {
-    for (const { col, char, advance, active, music } of fitContentLine(
-      cells,
-      Math.floor(width / cellWidth),
-    )) {
+    const line = fitContentLine(cells, Math.floor(width / cellWidth));
+    const first = line[0];
+    const last = line.at(-1);
+    if (first && last) {
+      for (
+        let col = Math.max(0, first.col);
+        col < Math.min(cols, last.col + last.advance);
+        col++
+      ) {
+        contentArea.add(row * cols + col);
+      }
+    }
+    for (const { col, char, advance, active, music } of line) {
       if (col < 0 || col + advance > cols) continue;
       const key = row * cols + col;
       contentGlyphs.set(key, char);
       contentAdvances.set(key, advance);
-      for (let offset = 0; offset < advance; offset++) {
-        contentArea.add(key + offset);
-      }
       if (music) musicCells.add(key);
       if (active) activeCells.add(key);
     }

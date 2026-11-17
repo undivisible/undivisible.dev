@@ -1,5 +1,5 @@
 import { buildStyles } from "./build-css";
-import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
 import {
   analyzeModule,
@@ -15,9 +15,9 @@ import {
 import { createStaticRenderer } from "@/moonshine/renderer";
 import type { Metadata } from "@/moonshine/next";
 import config from "../moonshine.config";
+import { loadRootEnv } from "./load-root-env";
 
 const projectDir = resolve(import.meta.dir, "..");
-const rootDir = resolve(projectDir, "..");
 const outDir = join(projectDir, "out");
 const assetsDir = join(outDir, "assets");
 const moonshineDir = join(projectDir, ".moonshine");
@@ -30,27 +30,6 @@ const PUBLIC_ENV = [
   "NEXT_PUBLIC_PROFILE_README_URL",
   "NEXT_PUBLIC_RESUME_MARKDOWN_URL",
 ] as const;
-
-async function loadRootEnv(): Promise<void> {
-  let text: string;
-  try {
-    text = await readFile(join(rootDir, ".env"), "utf8");
-  } catch {
-    return;
-  }
-  for (const line of text.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const eq = trimmed.indexOf("=");
-    if (eq === -1) continue;
-    const name = trimmed.slice(0, eq).trim();
-    if (process.env[name] !== undefined) continue;
-    process.env[name] = trimmed
-      .slice(eq + 1)
-      .trim()
-      .replace(/^['"]|['"]$/g, "");
-  }
-}
 
 function clientDefine(): Record<string, string> {
   const define: Record<string, string> = {

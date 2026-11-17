@@ -2100,6 +2100,7 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   position: relative;
   isolation: isolate;
   display: grid;
+  grid-template-rows: minmax(max-content, 1fr) auto 1fr;
   min-height: 100dvh;
   overflow: hidden;
   background: #0a0b0e;
@@ -2173,7 +2174,7 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   text-transform: none;
 }
 .landing-content {
-  grid-area: 1 / 1;
+  grid-area: 2 / 1;
   align-self: center;
   width: min(55ch, calc(100% - 64px));
   margin: 24px auto;
@@ -2200,6 +2201,9 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
 .landing-content a:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 4px;
+}
+.landing-project-label {
+  white-space: nowrap;
 }
 .landing-project {
   display: inline;

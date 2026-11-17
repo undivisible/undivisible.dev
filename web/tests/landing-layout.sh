@@ -11,16 +11,18 @@ agent-browser eval 'document.fonts.ready' >/dev/null
 for viewport in '320 700' '412 740' '430 932' '768 1024' '1440 900'; do
   read -r width height <<< "$viewport"
   agent-browser set viewport "$width" "$height" 2 >/dev/null
-  for metrics in '14 primary' '12 primary' '18 primary' '14 fallback' '12 fallback' '18 fallback'; do
+  for metrics in '14 primary' '12 primary' '18 primary' '14 fallback' '12 fallback' '18 fallback' '14 tracked'; do
     read -r size family <<< "$metrics"
     agent-browser eval "(() => {
       const page = document.querySelector('.landing');
       page.style.fontFamily = '${family}' === 'fallback' ? 'monospace' : '\"JetBrains Mono\", monospace';
       page.style.fontSize = '${size}px';
       page.style.lineHeight = '${size}' === '18' ? '28px' : '20px';
+      page.style.letterSpacing = '${family}' === 'tracked' ? '0.4px' : '0px';
       window.dispatchEvent(new Event('resize'));
       return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     })()" >/dev/null
+    agent-browser eval 'checkLandingClocks()' >/dev/null
     agent-browser eval '(async () => {
       for (const selector of [".landing-content p:first-child", ".landing-content p:nth-child(2)", ".landing-content nav"]) {
         document.querySelector(selector).scrollIntoView({ block: "center" });

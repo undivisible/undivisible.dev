@@ -59,24 +59,33 @@ export default function Home() {
         <p>
           i’m a self-taught software engineer and i’ve been building things
           since i was nine. lately that includes{" "}
-          {["Inauguration", "Space", "Alpenglow", "Crepuscularity", "Moonshine"].map((name, index) => (
+          {[
+            "Inauguration",
+            "Space",
+            "Alpenglow",
+            "Crepuscularity",
+            "Moonshine",
+          ].map((name, index) => (
             <span key={name}>
-              {index === 0 ? "" : index === 4 ? ", and " : ", "}
-              <button
-                type="button"
-                className="landing-project"
-                aria-expanded={preview === name}
-                aria-controls="project-preview"
-                onMouseEnter={() => setPreview(name)}
-                onFocus={() => setPreview(name)}
-                onClick={() => setPreview(name)}
-              >
-                [{name}]
-              </button>
+              {index === 0 ? "" : index === 4 ? " and " : " "}
+              <span className="landing-project-label">
+                <button
+                  type="button"
+                  className="landing-project"
+                  aria-expanded={preview === name}
+                  aria-controls="project-preview"
+                  onMouseEnter={() => setPreview(name)}
+                  onFocus={() => setPreview(name)}
+                  onClick={() => setPreview(name)}
+                >
+                  [{name}]
+                </button>
+                {index < 4 ? "," : "."}
+              </span>
             </span>
-          ))}
-          . i like understanding how the whole thing works, then making it
-          easier to use.
+          ))}{" "}
+          i like understanding how the whole thing works, then making it easier
+          to use.
         </p>
         <nav aria-label="Links">
           <a href="https://next.undivisible.dev/">[ enter the OS ↗ ]</a>{" "}

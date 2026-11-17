@@ -3,6 +3,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { normalizeLastFmTrack } from "../src/lib/lastfmClient.ts";
+import { loadRootEnv } from "./load-root-env";
+
+await loadRootEnv();
 
 const USERNAME = process.env.NEXT_PUBLIC_LASTFM_USERNAME ?? "undivisible";
 const apiKey = process.env.NEXT_PUBLIC_LASTFM_API_KEY ?? "";
@@ -14,8 +17,9 @@ const outFile = path.join(publicDir, "lastfm-recent.json");
 type TrackOut = ReturnType<typeof normalizeLastFmTrack>;
 
 if (!apiKey) {
-  console.info("[lastfm-snapshot] skip: NEXT_PUBLIC_LASTFM_API_KEY unset");
-  process.exit(0);
+  throw new Error(
+    "NEXT_PUBLIC_LASTFM_API_KEY is required: refusing to build without the Last.fm integration",
+  );
 }
 
 const url = new URL("https://ws.audioscrobbler.com/2.0/");
@@ -30,6 +34,7 @@ let track: TrackOut = null;
 try {
   const res = await fetch(url.toString(), {
     headers: { Accept: "application/json" },
+    signal: AbortSignal.timeout(8000),
   });
   const data = (await res.json()) as {
     recenttracks?: { track?: unknown | unknown[] };
@@ -37,13 +42,15 @@ try {
     error?: number;
   };
 
-  if (res.ok && data?.error === undefined) {
-    const rawTracks = data.recenttracks?.track;
-    const first = Array.isArray(rawTracks) ? rawTracks[0] : rawTracks;
-    track = normalizeLastFmTrack(first);
-  }
-} catch (error) {
-  console.warn("[lastfm-snapshot] fetch failed", error);
+  if (!res.ok || data?.error !== undefined)
+    throw new Error("Last.fm rejected the snapshot request");
+  const rawTracks = data.recenttracks?.track;
+  const first = Array.isArray(rawTracks) ? rawTracks[0] : rawTracks;
+  track = normalizeLastFmTrack(first);
+} catch {
+  throw new Error(
+    "Could not refresh the Last.fm snapshot; existing snapshot was not overwritten",
+  );
 }
 
 mkdirSync(publicDir, { recursive: true });
