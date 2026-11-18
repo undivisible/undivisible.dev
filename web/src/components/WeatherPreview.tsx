@@ -25,7 +25,6 @@ export function WeatherPreview({
       id="weather-preview"
       label={label}
       title="Kuala Lumpur weather"
-      href={dayTheme.weatherHref}
     >
       <div aria-live="polite">
         {dayTheme.weatherStatus === "loading" ? (

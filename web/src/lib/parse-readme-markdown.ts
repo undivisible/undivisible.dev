@@ -266,6 +266,7 @@ export function parseReadme(md: string): ReadmeBundle {
     | "semitech"
     | "semiother"
     | "miniapps"
+    | "purpose"
     | "libraries" = "idle";
   let currentCategory = "";
 
@@ -277,6 +278,33 @@ export function parseReadme(md: string): ReadmeBundle {
   while (i < lines.length) {
     const line = lines[i]!.replace(/^\s*[–—]\s*/, "- ");
     const trimmed = line.trim();
+
+    if (
+      trimmed.startsWith("## ") &&
+      !trimmed.includes("[") &&
+      !["miniapps", "libraries"].includes(trimmed.slice(3).toLowerCase())
+    ) {
+      if (mode === "framework_body")
+        mainHeroQuote = assignFrameworkDescriptions(
+          mainProjects,
+          frameworkBodyLines,
+        );
+      mode = "purpose";
+      currentCategory = trimmed.slice(3).trim();
+      i++;
+      continue;
+    }
+    if (mode === "purpose") {
+      if (trimmed.startsWith("## ")) {
+        mode = "idle";
+        continue;
+      }
+      const linked = parseLinkedLine(line);
+      if (linked)
+        pushUnique(utilities, { ...linked, category: currentCategory });
+      i++;
+      continue;
+    }
 
     if (mode === "framework_body") {
       if (trimmed.startsWith("## ")) {
@@ -521,7 +549,7 @@ export function parseReadme(md: string): ReadmeBundle {
   return { mainHeroQuote, mainProjects, utilities, miniapps, libraries };
 }
 
-/** Include owned projects mentioned in prose, not just headings and list items. */
+/** Portfolio membership is explicit curation, never inferred from prose or repository access. */
 export function parseLandingReadme(md: string): ReadmeProject[] {
   const bundle = parseReadme(md);
   const projects = [
@@ -530,42 +558,6 @@ export function parseLandingReadme(md: string): ReadmeProject[] {
     ...bundle.miniapps,
     ...bundle.libraries,
   ];
-  const owners = new Set(
-    projects.flatMap(({ href }) => {
-      const match = /^https:\/\/github\.com\/([^/]+)\//i.exec(href);
-      return match ? [match[1]!.toLowerCase()] : [];
-    }),
-  );
-  for (const paragraph of md.split(/\n\s*\n/)) {
-    for (const match of paragraph.matchAll(
-      /\[([^\]\n]+)\]\((https:\/\/github\.com\/([^/\s]+)\/([^/)\s]+)\/?)(?:\s+[^)]*)?\)/g,
-    )) {
-      const [, name, href, owner, repo] = match;
-      if (!name || !href || !owner || !repo || !owners.has(owner.toLowerCase()))
-        continue;
-      const identity = projectKey(name).replace(/[-_]/g, "");
-      if (
-        projects.some(
-          (project) =>
-            project.href.replace(/\/$/, "") === href.replace(/\/$/, "") ||
-            project.key.replace(/[-_]/g, "") === identity ||
-            project.key.replace(/[-_]/g, "") ===
-              projectKey(repo).replace(/[-_]/g, ""),
-        )
-      )
-        continue;
-      const sentence =
-        paragraph
-          .split(/(?<=[.!?])\s+(?![^(]*\))/)
-          .find((part) => part.includes(match[0])) ?? paragraph;
-      projects.push({
-        key: projectKey(name),
-        name,
-        href: safeExternalHref(href),
-        desc: collapseWs(stripMdLinks(sentence)),
-      });
-    }
-  }
   return projects.map((project) => ({
     ...project,
     href: normalizeProjectHref(project.href),

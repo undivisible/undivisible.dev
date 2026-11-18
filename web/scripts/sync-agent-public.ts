@@ -1,5 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { DEFAULT_PROFILE_MARKDOWN_URL } from "../src/lib/profile-readme.ts";
+import { normalizeProjectHref } from "../src/lib/parse-readme-markdown.ts";
+import { createPublicPortfolioFilter } from "../src/lib/public-portfolio.ts";
+import { landingProjectsFromReadme } from "../src/data/readme-projects.generated.ts";
 import { fetchResumeMarkdown } from "./fetch-resume-markdown.ts";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -7,9 +10,26 @@ import { pathToFileURL } from "node:url";
 const PUBLIC_DIR = process.env.AGENT_PUBLIC_DIR
   ? pathToFileURL(resolve(process.env.AGENT_PUBLIC_DIR) + "/")
   : new URL("../public/", import.meta.url);
-const projects = await readFile(
-  new URL("../../projects.md", import.meta.url),
-  "utf8",
+const associations = new Map<string, string>();
+for (const project of landingProjectsFromReadme) {
+  if (project.github && URL.canParse(project.href)) {
+    associations.set(
+      normalizeProjectHref(project.href),
+      project.github.repository,
+    );
+    associations.set(
+      normalizeProjectHref(project.href).replace(/\/$/, ""),
+      project.github.repository,
+    );
+    associations.set(
+      new URL(normalizeProjectHref(project.href)).href,
+      project.github.repository,
+    );
+  }
+}
+const projects = await createPublicPortfolioFilter()(
+  await readFile(new URL("../../projects.md", import.meta.url), "utf8"),
+  associations,
 );
 await Bun.write(new URL("projects.md", PUBLIC_DIR), projects);
 

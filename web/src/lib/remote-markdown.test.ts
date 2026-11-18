@@ -120,7 +120,34 @@ test("empty text replaces old text, 404 clears it, and malformed/future cache ti
     { body: 4, at: Date.now() },
     { body: "bad", at: "now" },
   ]) {
-    storage.set("undivisible-remote-md:v3:/test", JSON.stringify(entry));
+    storage.set("undivisible-remote-md:v4:/test", JSON.stringify(entry));
     expect(readRemoteMarkdownCache("/test")).toBeNull();
   }
+});
+
+test("portfolio ignores and deletes legacy caches, rejects unverified responses and fails closed offline", async () => {
+  browser();
+  const url = "/api/profile/README.md";
+  storage.set(
+    `undivisible-remote-md:v3:${url}`,
+    JSON.stringify({ body: "private cached copy", at: Date.now() }),
+  );
+  const fetchMock = spyOn(globalThis, "fetch").mockImplementation(
+    async () => new Response("unverified copy"),
+  );
+  mocks.push(fetchMock);
+  expect(await fetchReadmeMarkdown()).toBeNull();
+  expect(storage.size).toBe(0);
+  fetchMock.mockImplementation(
+    async () =>
+      new Response("verified public", {
+        headers: { "X-Portfolio-Policy": "public-v1" },
+      }),
+  );
+  expect(await fetchReadmeMarkdown()).toBe("verified public");
+  expect(storage.size).toBe(0);
+  fetchMock.mockImplementation(async () => {
+    throw new Error("offline");
+  });
+  expect(await fetchReadmeMarkdown()).toBeNull();
 });

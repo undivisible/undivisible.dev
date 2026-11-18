@@ -1,12 +1,10 @@
 export const NOW_STATUS_URL =
   process.env.NEXT_PUBLIC_NOW_STATUS_URL ?? "/api/profile/now.md";
-export const REMOTE_README_URLS = [
-  process.env.NEXT_PUBLIC_PROFILE_README_URL ?? "/api/profile/README.md",
-];
+export const REMOTE_README_URLS = ["/api/profile/README.md"];
 
 export const REMOTE_MARKDOWN_FRESH_MS = 60_000;
 export const REMOTE_MARKDOWN_MAX_AGE_MS = 5 * 60_000;
-const CACHE_PREFIX = "undivisible-remote-md:v3:";
+const CACHE_PREFIX = "undivisible-remote-md:v4:";
 type CacheEntry = { body: string; at: number };
 
 function readCache(url: string, maxAgeMs: number): string | null {
@@ -48,12 +46,21 @@ export async function fetchRemoteMarkdown(
   url: string,
   options?: { signal?: AbortSignal; forceRefresh?: boolean },
 ): Promise<string | null> {
-  if (!options?.forceRefresh) {
+  const portfolio = url === REMOTE_README_URLS[0];
+  if (portfolio && typeof window !== "undefined") {
+    try {
+      for (const version of ["v3", "v4"])
+        localStorage.removeItem(`undivisible-remote-md:${version}:${url}`);
+    } catch {
+      /* Storage is optional. */
+    }
+  }
+  if (!portfolio && !options?.forceRefresh) {
     const cached = readCache(url, REMOTE_MARKDOWN_FRESH_MS);
     if (cached !== null) return cached;
   }
   try {
-    const timeout = AbortSignal.timeout(7000);
+    const timeout = AbortSignal.timeout(portfolio ? 20_000 : 7000);
     const signal = options?.signal
       ? AbortSignal.any([options.signal, timeout])
       : timeout;
@@ -63,6 +70,8 @@ export async function fetchRemoteMarkdown(
       return null;
     }
     if (!response.ok) throw new Error(`Markdown fetch ${response.status}`);
+    if (portfolio && response.headers.get("X-Portfolio-Policy") !== "public-v1")
+      return null;
     const body = (await response.text()).trim();
     const upstreamAt = response.headers.get("X-Profile-Fetched-At");
     const at = upstreamAt === null ? Date.now() : Number(upstreamAt);
@@ -74,10 +83,10 @@ export async function fetchRemoteMarkdown(
       storeCache(url, null);
       return null;
     }
-    storeCache(url, { body, at });
+    if (!portfolio) storeCache(url, { body, at });
     return body;
   } catch {
-    return readCache(url, REMOTE_MARKDOWN_MAX_AGE_MS);
+    return portfolio ? null : readCache(url, REMOTE_MARKDOWN_MAX_AGE_MS);
   }
 }
 

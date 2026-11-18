@@ -3,7 +3,13 @@ set -euo pipefail
 export AGENT_BROWSER_SESSION="landing-reveal-$$"
 trap 'agent-browser close >/dev/null 2>&1 || true' EXIT
 root="$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
-expected=$(bun --cwd "$root/web" -e 'import { landingProjectsFromReadme } from "./src/data/readme-projects.generated"; console.log(JSON.stringify(landingProjectsFromReadme))')
+expected=$(SITE_URL="${1:-http://localhost:4321}" bun --cwd "$root/web" -e '
+  import { landingProjectsFromReadme } from "./src/data/readme-projects.generated";
+  import { landingProjectsFromMarkdown } from "./src/hooks/use-remote-content";
+  const response = await fetch(new URL("/api/profile/README.md", process.env.SITE_URL));
+  if (!response.ok) throw new Error(`Runtime README failed: ${response.status}`);
+  console.log(JSON.stringify(landingProjectsFromMarkdown(await response.text(), landingProjectsFromReadme)));
+')
 agent-browser --init-script "$(dirname "$(realpath "$0")")/landing-reveal.js" open about:blank >/dev/null
 for viewport in '412 740' '1440 900'; do
   read -r width height <<< "$viewport"

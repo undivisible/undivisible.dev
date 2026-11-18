@@ -2317,13 +2317,11 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   font: inherit;
   cursor: pointer;
 }
-.status-preview-trigger > :is(a, button) {
+.status-preview-trigger > button {
   color: inherit;
   font: inherit;
   text-decoration: underline dotted;
   text-underline-offset: 3px;
-}
-.status-preview-trigger > button {
   padding: 0;
   border: 0;
   background: none;

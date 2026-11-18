@@ -11,10 +11,22 @@ test("sync-agent-public writes fetchable markdown without changing deploy conten
     const resume = path.join(pub, "input-resume.md");
     await Bun.write(now, "Working on software.");
     await Bun.write(resume, "# Test résumé\n\nTest experience and contact.");
+    const preload = path.join(pub, "public-repositories.ts");
+    await Bun.write(
+      preload,
+      `
+      const originalFetch = fetch;
+      globalThis.fetch = (input, init) =>
+        String(input).startsWith("https://github.com/") && init?.method === "HEAD"
+          ? Promise.resolve(new Response(null, { status: 200 }))
+          : originalFetch(input, init);
+    `,
+    );
     const proc = Bun.spawn({
       cmd: [
         "bun",
-        "run",
+        "--preload",
+        preload,
         path.join(import.meta.dirname, "sync-agent-public.ts"),
       ],
       cwd: path.join(import.meta.dirname, ".."),

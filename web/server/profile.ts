@@ -2,6 +2,8 @@ import {
   DEFAULT_PROFILE_MARKDOWN_URL,
   DEFAULT_RESUME_MARKDOWN_URL,
 } from "../src/lib/parse-readme-markdown";
+import { createPublicPortfolioFilter } from "../src/lib/public-portfolio";
+import { landingProjectsFromReadme } from "../src/data/readme-projects.generated";
 
 const sources = new Map([
   [
@@ -28,6 +30,18 @@ export function createProfileHandler({
 } = {}) {
   const cache = new Map<string, Entry>();
   const pending = new Map<string, Promise<Entry>>();
+  const publicPortfolio = createPublicPortfolioFilter({
+    fetchUpstream,
+    now,
+    timeoutMs,
+  });
+  const associations = new Map(
+    landingProjectsFromReadme.flatMap((project) =>
+      project.github
+        ? [[project.href, project.github.repository] as const]
+        : [],
+    ),
+  );
 
   return async (request: Request): Promise<Response> => {
     const path = new URL(request.url).pathname;
@@ -64,8 +78,12 @@ export function createProfileHandler({
             cache.delete(path);
             if (path !== "/api/profile/now.md") throw new Error("not-found");
           } else if (!response.ok) throw new Error("upstream-failed");
+          const body = response.status === 404 ? "" : await response.text();
           const fresh = {
-            body: response.status === 404 ? "" : await response.text(),
+            body:
+              path === "/api/profile/README.md"
+                ? await publicPortfolio(body, associations)
+                : body,
             at: now(),
           };
           cache.set(path, fresh);
@@ -89,7 +107,11 @@ export function createProfileHandler({
           status = 404;
         } else {
           entry = cache.get(path);
-          if (!entry || now() - entry.at >= PROFILE_MAX_AGE_MS) {
+          if (
+            path === "/api/profile/README.md" ||
+            !entry ||
+            now() - entry.at >= PROFILE_MAX_AGE_MS
+          ) {
             cache.delete(path);
             entry = undefined;
             status = 503;
@@ -100,6 +122,8 @@ export function createProfileHandler({
       }
     }
     if (entry) {
+      if (path === "/api/profile/README.md")
+        headers.set("X-Portfolio-Policy", "public-v1");
       headers.set("X-Profile-Fetched-At", String(entry.at));
       headers.set(
         "X-Profile-Stale",

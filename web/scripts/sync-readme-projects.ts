@@ -1,13 +1,15 @@
-import { readFile } from "node:fs/promises";
-import { parseLandingReadme } from "../src/lib/parse-readme-markdown.ts";
+import { readFile, stat } from "node:fs/promises";
+import {
+  parseLandingReadme,
+  normalizeProjectHref,
+} from "../src/lib/parse-readme-markdown.ts";
+import { createPublicPortfolioFilter } from "../src/lib/public-portfolio.ts";
 import {
   parseGithubLanguageBytes,
   type GithubLanguageStats,
 } from "../src/lib/github-repo-languages.ts";
 import {
   parseReadme,
-  applyReadmeStackFallbacks,
-  fillReadmeBundleMissingStacks,
   fetchProfileMarkdown,
   normalizeReadmeBundle,
   profileMarkdownUrls,
@@ -20,33 +22,69 @@ const OUT_FILE = new URL(
   "../src/data/readme-projects.generated.ts",
   import.meta.url,
 );
+const METADATA_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
-function previousBundle(): Promise<ReadmeBundle | undefined> {
-  try {
-    // eslint-disable-next-line unicorn/no-require-postinstall
-    // @ts-expect-error - dynamic require
-    const mod = require(OUT_FILE.pathname);
-    return Promise.resolve({
-      mainHeroQuote:
-        typeof mod.mainHeroQuoteFromReadme === "string"
-          ? mod.mainHeroQuoteFromReadme
-          : "",
-      mainProjects: Array.isArray(mod.mainProjectsFromReadme)
-        ? mod.mainProjectsFromReadme
-        : [],
-      utilities: Array.isArray(mod.utilitiesFromReadme)
-        ? mod.utilitiesFromReadme
-        : [],
-      miniapps: Array.isArray(mod.miniappsFromReadme)
-        ? mod.miniappsFromReadme
-        : [],
-      libraries: Array.isArray(mod.librariesFromReadme)
-        ? mod.librariesFromReadme
-        : [],
-    });
-  } catch {
-    return Promise.resolve(undefined);
+// Previous output supplies source associations and recent public bytes, never membership or copy.
+const associations = new Map<string, string>();
+const recentLanguages = new Map<string, NonNullable<GithubLanguageStats>>();
+const languageFetchedAt = new Map<string, number>();
+try {
+  const previous: unknown = await import(OUT_FILE.href);
+  const legacyFetchedAt = (await stat(OUT_FILE)).mtimeMs;
+  const timestamps =
+    previous &&
+    typeof previous === "object" &&
+    "githubLanguagesFetchedAt" in previous
+      ? previous.githubLanguagesFetchedAt
+      : undefined;
+  if (
+    previous &&
+    typeof previous === "object" &&
+    "landingProjectsFromReadme" in previous &&
+    Array.isArray(previous.landingProjectsFromReadme)
+  ) {
+    for (const project of previous.landingProjectsFromReadme) {
+      if (
+        !project ||
+        typeof project !== "object" ||
+        typeof project.href !== "string" ||
+        !project.github ||
+        typeof project.github.repository !== "string"
+      )
+        continue;
+      const repository = project.github.repository;
+      if (!/^[\w.-]+\/[\w.-]+$/.test(repository)) continue;
+      if (!URL.canParse(project.href)) continue;
+      associations.set(normalizeProjectHref(project.href), repository);
+      associations.set(
+        normalizeProjectHref(project.href).replace(/\/$/, ""),
+        repository,
+      );
+      associations.set(
+        new URL(normalizeProjectHref(project.href)).href,
+        repository,
+      );
+      const languages = parseGithubLanguageBytes(project.github.languages);
+      const timestamp =
+        timestamps && typeof timestamps === "object" && repository in timestamps
+          ? Reflect.get(timestamps, repository)
+          : legacyFetchedAt;
+      if (
+        typeof timestamp === "number" &&
+        timestamp <= Date.now() &&
+        Date.now() - timestamp < METADATA_MAX_AGE_MS &&
+        languages
+      ) {
+        recentLanguages.set(repository.toLowerCase(), {
+          repository,
+          languages,
+        });
+        languageFetchedAt.set(repository, timestamp);
+      }
+    }
   }
+} catch {
+  // A first sync has no previous metadata to reuse.
 }
 
 function emitTs(
@@ -75,123 +113,67 @@ export const miniappsFromReadme: ReadmeProject[] = ${JSON.stringify(bundle.minia
 export const librariesFromReadme: ReadmeProject[] = ${JSON.stringify(bundle.libraries, null, 2)};
 
 export const landingProjectsFromReadme: Array<ReadmeProject & { github: GithubLanguageStats }> = ${JSON.stringify(landingProjects, null, 2)};
+
+export const githubLanguagesFetchedAt: Record<string, number> = ${JSON.stringify(Object.fromEntries(landingProjects.flatMap((project) => (project.github ? [[project.github.repository, languageFetchedAt.get(project.github.repository)]] : []))), null, 2)};
 `;
 }
 
-async function withGithubLanguages(
-  projects: ReadmeProject[],
-  markdown: string,
-) {
-  let token = process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN;
-  if (!token) {
-    try {
-      const auth = Bun.spawnSync(["gh", "auth", "token"], {
-        stdout: "pipe",
-        stderr: "ignore",
-      });
-      if (auth.exitCode === 0) token = auth.stdout.toString().trim();
-    } catch {
-      /* Public API access still works without a local gh installation. */
-    }
-  }
-  const api = async (path: string): Promise<unknown> => {
-    try {
-      const response = await fetch(`https://api.github.com/${path}`, {
+const languageRequests = new Map<
+  string,
+  Promise<NonNullable<GithubLanguageStats>>
+>();
+function publicLanguages(
+  repository: string,
+): Promise<NonNullable<GithubLanguageStats>> {
+  const key = repository.toLowerCase();
+  const cached = recentLanguages.get(key);
+  if (cached) return Promise.resolve(cached);
+  const pending = languageRequests.get(key);
+  if (pending) return pending;
+  const request = (async () => {
+    const response = await fetch(
+      `https://api.github.com/repos/${repository}/languages`,
+      {
         headers: {
           "User-Agent": "undivisible.dev-sync/1.0",
           Accept: "application/vnd.github+json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        signal: AbortSignal.timeout(15000),
-      });
-      return response.ok ? await response.json() : null;
-    } catch {
-      return null;
-    }
-  };
-  const repositories: Array<{ path: string; homepage: string }> = [];
-  for (const owner of ["undivisible", "softwarecorporation"]) {
-    for (let page = 1; ; page++) {
-      const data = await api(`users/${owner}/repos?per_page=100&page=${page}`);
-      if (!Array.isArray(data)) break;
-      for (const repo of data) {
-        if (
-          repo &&
-          typeof repo === "object" &&
-          "full_name" in repo &&
-          typeof repo.full_name === "string" &&
-          "homepage" in repo &&
-          typeof repo.homepage === "string"
-        )
-          repositories.push({ path: repo.full_name, homepage: repo.homepage });
-      }
-      if (data.length < 100) break;
-    }
-  }
-  const identity = (name: string) =>
-    name.toLowerCase().replace(/[^a-z0-9]/g, "");
-  const site = (href: string) => {
-    try {
-      const url = new URL(href);
-      return url.host + url.pathname.replace(/\/$/, "");
-    } catch {
-      return null;
-    }
-  };
-  const readmeRepos = [
-    ...markdown.matchAll(
-      /https:\/\/github\.com\/([^/\s)]+\/[^/\s)]+)(?=[/)\s])/g,
-    ),
-  ].flatMap((match) => {
-    const path = githubRepoPathFromHref(`https://github.com/${match[1]!}`);
-    return path ? [path] : [];
-  });
+        credentials: "omit",
+        signal: AbortSignal.timeout(15_000),
+      },
+    );
+    if (!response.ok)
+      throw new Error(
+        `Public languages unavailable for ${repository}: ${response.status}`,
+      );
+    const languages = parseGithubLanguageBytes(await response.json());
+    if (!languages)
+      throw new Error(`Invalid public language bytes for ${repository}`);
+    const canonical =
+      /^\/repos\/([^/]+\/[^/]+)\/languages$/.exec(
+        new URL(response.url).pathname,
+      )?.[1] ?? repository;
+    languageFetchedAt.set(canonical, Date.now());
+    return { repository: canonical, languages };
+  })();
+  languageRequests.set(key, request);
+  return request;
+}
+
+async function withGithubLanguages(projects: ReadmeProject[]) {
   const enriched: Array<ReadmeProject & { github: GithubLanguageStats }> = [];
   for (let start = 0; start < projects.length; start += 4) {
     enriched.push(
       ...(await Promise.all(
         projects.slice(start, start + 4).map(async (project) => {
-          // Verified site mappings take precedence over README links and GitHub homepages.
           const repository =
             githubRepoPathFromHref(project.href) ??
-            readmeRepos.find(
-              (path) =>
-                identity(path.split("/")[1] ?? "") === identity(project.key),
-            ) ??
-            repositories.find(
-              (repo) =>
-                identity(repo.path.split("/")[1] ?? "") ===
-                  identity(project.key) &&
-                site(repo.homepage) !== null &&
-                site(repo.homepage) === site(project.href),
-            )?.path;
-          const metadata = repository ? await api(`repos/${repository}`) : null;
-          const publicRepository =
-            metadata &&
-            typeof metadata === "object" &&
-            "private" in metadata &&
-            metadata.private === false;
-          const canonicalRepository =
-            !repository?.startsWith("tschk/") &&
-            metadata &&
-            typeof metadata === "object" &&
-            "full_name" in metadata &&
-            typeof metadata.full_name === "string"
-              ? metadata.full_name
-              : repository;
-          return {
-            ...project,
-            github: canonicalRepository
-              ? {
-                  repository: canonicalRepository,
-                  languages: publicRepository
-                    ? parseGithubLanguageBytes(
-                        await api(`repos/${canonicalRepository}/languages`),
-                      )
-                    : null,
-                }
-              : null,
-          };
+            associations.get(normalizeProjectHref(project.href)) ??
+            associations.get(
+              normalizeProjectHref(project.href).replace(/\/$/, ""),
+            );
+          if (!repository) return { ...project, github: null };
+          return { ...project, github: await publicLanguages(repository) };
         }),
       )),
     );
@@ -199,67 +181,37 @@ async function withGithubLanguages(
   return enriched;
 }
 
-const LOCAL_NOW = new URL("../public/now.md", import.meta.url);
+const filterPublicPortfolio = createPublicPortfolioFilter();
 const profileReadmeUrl = process.env.PROFILE_README_URL;
+const source = profileReadmeUrl
+  ? await fetchProfileMarkdown({ urls: profileMarkdownUrls() })
+  : await readFile(new URL("../../projects.md", import.meta.url), "utf8");
+const md = await filterPublicPortfolio(source, associations);
+const bundle = normalizeReadmeBundle(parseReadme(md));
 
-let md: string;
-try {
-  md = profileReadmeUrl
-    ? await fetchProfileMarkdown({ urls: profileMarkdownUrls() })
-    : await readFile(new URL("../../projects.md", import.meta.url), "utf8");
-} catch (error) {
-  if (profileReadmeUrl) throw error;
-  try {
-    md = await Bun.file(LOCAL_NOW).text();
-    console.warn(
-      `profile fetch failed (${error}); using ${LOCAL_NOW.pathname}`,
-    );
-  } catch {
-    console.error(error);
-    process.exit(1);
-  }
-}
-
-const freshBundle = normalizeReadmeBundle(parseReadme(md));
-const previous = await previousBundle();
-const withFallbacks = previous
-  ? applyReadmeStackFallbacks(freshBundle, previous)
-  : freshBundle;
-const bundle = await fillReadmeBundleMissingStacks(withFallbacks);
-
-// The landing page's full inventory follows the user's profile README, not curated highlights.
-let landingProjects: ReadmeProject[];
-let landingMarkdown: string;
-try {
-  landingMarkdown = profileReadmeUrl
-    ? md
-    : await fetchProfileMarkdown({
-        urls: [
-          "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md",
-        ],
-      });
-  landingProjects = parseLandingReadme(landingMarkdown);
-} catch (error) {
-  if (profileReadmeUrl) throw error;
-  console.warn(
-    "Profile README unavailable; using the local project-copy fallback",
-  );
-  landingMarkdown = md;
-  landingProjects = parseLandingReadme(md);
-}
+// README curation owns membership; unavailable upstream data must not revive a local snapshot.
+const landingSource = profileReadmeUrl
+  ? source
+  : await fetchProfileMarkdown({
+      urls: [
+        "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md",
+      ],
+    });
+const landingMarkdown = await filterPublicPortfolio(
+  landingSource,
+  associations,
+);
+const landingProjects = await withGithubLanguages(
+  parseLandingReadme(landingMarkdown),
+);
 
 await Bun.write(
   OUT_FILE,
-  emitTs(bundle, await withGithubLanguages(landingProjects, landingMarkdown)),
+  emitTs(bundle, landingProjects).replaceAll(
+    "max@undivisible.dev",
+    "max@tsc.hk",
+  ),
 );
-
-// Patch email: upstream README still has old address
-const generated = await Bun.file(OUT_FILE.pathname).text();
-await Bun.write(
-  OUT_FILE,
-  generated.replaceAll("max@undivisible.dev", "max@tsc.hk"),
-);
-
 console.log(
   `wrote ${OUT_FILE.pathname} (${bundle.mainProjects.length} main, ${bundle.utilities.length} utilities, ${bundle.miniapps.length} miniapps, ${bundle.libraries.length} libraries)`,
 );

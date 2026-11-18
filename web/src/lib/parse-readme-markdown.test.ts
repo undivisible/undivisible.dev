@@ -135,7 +135,7 @@ test("standard Markdown separators preserve project categories", () => {
   expect(bundle.libraries.map((project) => project.name)).toEqual(["lib"]);
 });
 
-test("landing includes inline README projects without duplicate aliases or outside references", () => {
+test("landing membership is explicit, not inferred from related projects or repository owner", () => {
   const projects = parseLandingReadme(`
 [hardware](https://github.com/undivisible/undivisible/blob/main/hardware.md)
 ### [alpenglow](https://alpenglow.tsc.hk)
@@ -149,19 +149,12 @@ A Linux distro. Its [alpenglowed](https://github.com/tschk/alpenglowed) shell an
 `);
   expect(projects.map((project) => project.key).sort()).toEqual([
     "alpenglow",
-    "alpenglowed",
     "crates-download-history",
     "rs_poke",
     "rv8",
-    "soliloquy",
     "telekinesis",
   ]);
-  expect(projects.find((project) => project.key === "soliloquy")).toEqual({
-    key: "soliloquy",
-    name: "soliloquy",
-    href: "https://github.com/softwarecorporation/soliloquy",
-    desc: "Its alpenglowed shell and soliloquy variant.",
-  });
+  expect(projects.some((project) => project.key === "soliloquy")).toBe(false);
 });
 
 test("project links use only verified GitHub migrations and preserve URL suffixes", () => {
@@ -304,61 +297,31 @@ test("public landing parser retains games, private-source links and distinct sub
   );
 });
 
-test("reviewed project source retains all 44 published inventory additions", async () => {
+test("reviewed public source is explicitly curated, categorized and free of rejected projects", async () => {
   const projects = parseLandingReadme(
     await Bun.file(new URL("../../../projects.md", import.meta.url)).text(),
   );
-  const names = [
-    "lyceus",
-    "roundhouse",
-    "sdkkit",
-    "mono",
-    "ark",
-    "arkie",
-    "cupboard",
-    "tofu",
-    "alpenglow rescue",
-    "qr-forge",
-    "atzel",
-    "currant",
-    "experiences",
-    "unthought",
-    "diplomap",
-    "neptune",
-    "arcanbar",
-    "graft mail",
-    "tangent",
-    "hermes-workspaces",
-    "perplexity-mcp-poke",
-    "opencode desktop gpui",
-    "context",
-    "kairo",
-    "tile",
-    "tabyrus",
-    "rover",
-    "unelaborate",
-    "omi v4",
-    "plates",
-    "subspace notes",
-    "bluetooth terminal",
-    "rs_ice",
-    "fridge-agent",
-    "autophobia",
-    "kyu",
-    "strangers",
-    "together",
-    "duplex",
-    "silhouette shader",
-    "tree-sitter-crystal",
-    "tree-sitter-lolcode",
-    "tree-sitter-nim",
+  expect(new Set(projects.map((project) => project.key)).size).toBe(
+    projects.length,
+  );
+  for (const name of [
     "chertlabs engine",
-  ];
-  expect(names).toHaveLength(44);
-  for (const name of names) {
-    const matches = projects.filter((project) => project.name === name);
-    expect(matches).toHaveLength(1);
-    expect(matches[0]?.desc).not.toBe("");
-    expect(matches[0]?.href).toStartWith("https://github.com/");
+    "kairo",
+    "omi v4",
+    "lyceus",
+    "subspace notes",
+    "atmosphere",
+  ])
+    expect(projects.some((project) => project.name === name)).toBe(false);
+  for (const project of projects) {
+    expect(project.desc).not.toBe("");
+    expect(project.category).toBeTruthy();
+    expect(project.href).toStartWith("https://");
+  }
+  for (const category of new Set(projects.map((project) => project.category))) {
+    const names = projects
+      .filter((project) => project.category === category)
+      .map((project) => project.name.toLowerCase());
+    expect(names).toEqual([...names].sort());
   }
 });

@@ -8,6 +8,35 @@ import {
 const request = (file = "now.md", init?: RequestInit) =>
   new Request(`https://site.test/api/profile/${file}`, init);
 
+test("portfolio responses exclude private copy and never revive last-good data on verification failure", async () => {
+  let now = 1_000_000;
+  let status = 200;
+  const handle = createProfileHandler({
+    now: () => now,
+    fetchUpstream: async (input, init) => {
+      if (new URL(String(input)).hostname === "github.com") {
+        expect(new Headers(init?.headers).get("Authorization")).toBeNull();
+        return new Response(null, {
+          status: String(input).endsWith("/private") ? 404 : status,
+        });
+      }
+      return new Response(
+        "## tools\n- **[visible](https://github.com/example/public)** — visible.\n- **[private](https://github.com/example/private)** — hidden.",
+      );
+    },
+  });
+  const first = await handle(request("README.md"));
+  expect(first.headers.get("X-Portfolio-Policy")).toBe("public-v1");
+  expect(await first.text()).not.toContain("hidden");
+  now += PROFILE_FRESH_MS;
+  status = 429;
+  const failed = await handle(request("README.md"));
+  expect(failed.status).toBe(503);
+  expect(await failed.text()).not.toContain("visible");
+  status = 200;
+  expect((await handle(request("README.md"))).status).toBe(200);
+});
+
 test("only fixed public files are fetched, without forwarding caller credentials or query URLs", async () => {
   const calls: Array<{ url: string; init?: RequestInit }> = [];
   const handle = createProfileHandler({

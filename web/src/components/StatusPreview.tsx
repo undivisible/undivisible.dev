@@ -15,14 +15,12 @@ export function StatusPreview({
   id,
   label,
   title,
-  href,
   className = "",
   children,
 }: {
   id: string;
   label: string;
   title: string;
-  href?: string;
   className?: string;
   children: ReactNode;
 }) {
@@ -183,26 +181,19 @@ export function StatusPreview({
         }
       }}
     >
-      {href && (
-        <a href={href} target="_blank" rel="noopener noreferrer">
-          {label}
-        </a>
-      )}
-      {href ? " " : null}
       <button
         ref={disclosure}
         type="button"
         aria-expanded={Boolean(mode)}
         aria-controls={id}
         aria-haspopup="dialog"
-        aria-label={href ? `Show ${title}` : undefined}
         onClick={(event) => {
           if (mode === "pinned") dismiss();
           else if (event.detail === 0) openFromKeyboard();
           else setMode("pinned");
         }}
       >
-        {href ? "[forecast]" : label}
+        {label}
       </button>
       {mode &&
         createPortal(
