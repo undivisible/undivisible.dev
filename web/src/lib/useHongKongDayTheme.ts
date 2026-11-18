@@ -810,7 +810,12 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   const [location, setLocation] = useState<LocationInfo>(
     () => initialCachedLocation ?? getFallbackLocationInfo(),
   );
-  const [weather, setWeather] = useState<WeatherInfo | null>(null);
+  const [weatherState, setWeatherState] = useState<
+    | { status: "loading" }
+    | { status: "ready"; weather: WeatherInfo }
+    | { status: "unavailable" }
+  >({ status: "loading" });
+  const weather = weatherState.status === "ready" ? weatherState.weather : null;
   const [displayedMinute, setDisplayedMinute] = useState(() =>
     minuteInZone(new Date(), HONG_KONG_TIME_ZONE),
   );
@@ -839,29 +844,49 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     const controller = new AbortController();
     const url = buildKualaLumpurWeatherUrl();
     logWeather("requesting Kuala Lumpur weather api", url);
-
-    const refresh = () =>
-      void fetch(url, { signal: controller.signal })
-        .then((response) => {
-          if (!response.ok) throw new Error(`Weather HTTP ${response.status}`);
-          return response.json() as Promise<unknown>;
-        })
-        .then((payload) => {
-          if (controller.signal.aborted) return;
-          const parsed = parseWeather(payload);
-          setWeather(parsed);
-        })
-        .catch((error: unknown) => {
-          if (controller.signal.aborted) return;
-          setWeather(null);
-          logWeather("Kuala Lumpur weather unavailable", error);
+    let timer: number | undefined;
+    let pending = false;
+    const refresh = async () => {
+      if (pending || controller.signal.aborted) return;
+      pending = true;
+      window.clearTimeout(timer);
+      let delay = 30_000;
+      try {
+        const response = await fetch(url, {
+          signal: AbortSignal.any([
+            controller.signal,
+            AbortSignal.timeout(10_000),
+          ]),
         });
+        if (!response.ok) throw new Error(`Weather HTTP ${response.status}`);
+        const payload: unknown = await response.json();
+        const parsed = parseWeather(payload);
+        if (!parsed) throw new Error("Weather response missing current data");
+        if (controller.signal.aborted) return;
+        setWeatherState({ status: "ready", weather: parsed });
+        delay = 15 * 60_000;
+      } catch (error: unknown) {
+        if (controller.signal.aborted) return;
+        setWeatherState({ status: "unavailable" });
+        logWeather("Kuala Lumpur weather unavailable", error);
+      } finally {
+        pending = false;
+        if (!controller.signal.aborted)
+          timer = window.setTimeout(refresh, delay);
+      }
+    };
+    const resume = () => {
+      if (!document.hidden) void refresh();
+    };
     refresh();
-    const timer = window.setInterval(refresh, 15 * 60 * 1000);
+    window.addEventListener("online", resume);
+    document.addEventListener("visibilitychange", resume);
 
     return () => {
       controller.abort();
-      window.clearInterval(timer);
+      window.clearTimeout(timer);
+      window.removeEventListener("online", resume);
+      document.removeEventListener("visibilitychange", resume);
     };
   }, []);
 
@@ -1189,9 +1214,12 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     showLocalTime:
       location.timeZone !== HONG_KONG_TIME_ZONE &&
       location.timeZone !== MELBOURNE_TIME_ZONE,
-    weatherDisplay: weather
-      ? formatWeatherDisplay(weather)
-      : "KUL WEATHER UNAVAILABLE",
+    weatherDisplay:
+      weatherState.status === "loading"
+        ? "KUL WEATHER LOADING"
+        : weather
+          ? formatWeatherDisplay(weather)
+          : "KUL WEATHER UNAVAILABLE",
     weather,
     displayedDate,
     weatherHref: KUALA_LUMPUR_WEATHER_HREF,

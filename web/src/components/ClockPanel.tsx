@@ -36,7 +36,7 @@ export function ClockPanel({
   }, [dayTheme.onClockWheel]);
 
   const weatherText =
-    hydrated && dayTheme ? dayTheme.weatherDisplay : "--°C --";
+    hydrated && dayTheme ? dayTheme.weatherDisplay : "KUL WEATHER LOADING";
   const hkgText = hydrated && dayTheme ? dayTheme.hkgTime : "--:--:--";
   const melText = hydrated && dayTheme ? dayTheme.melTime : "--:--:--";
   const localZone = hydrated

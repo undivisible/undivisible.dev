@@ -5,7 +5,12 @@ trap 'agent-browser close >/dev/null 2>&1 || true' EXIT
 agent-browser open "${1:-http://localhost:4321}" >/dev/null
 agent-browser set viewport 1280 800 2 >/dev/null
 for motion in no-preference reduce; do
-  agent-browser set media --reduced-motion "$motion" >/dev/null
+  if [ "$motion" = reduce ]; then
+    agent-browser set media dark reduced-motion >/dev/null
+  else
+    agent-browser set media dark >/dev/null
+  fi
+  agent-browser eval "if(matchMedia('(prefers-reduced-motion: reduce)').matches !== $([ "$motion" = reduce ] && echo true || echo false))throw new Error('Motion preference not configured')" >/dev/null
   agent-browser reload >/dev/null
   agent-browser mouse move 1200 750 >/dev/null
   agent-browser wait 'canvas[data-reveal-state=complete]' >/dev/null
