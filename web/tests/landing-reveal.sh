@@ -16,10 +16,12 @@ for viewport in '412 740' '1440 900'; do
   agent-browser set viewport "$width" "$height" 2 >/dev/null
   agent-browser open "${1:-http://localhost:4321}" >/dev/null
   agent-browser wait --fn 'window.landingRevealReady?.()' >/dev/null
+  agent-browser wait '[data-project-key=moonshine]' >/dev/null
   agent-browser eval 'checkLandingReveal()'
   sample=$(agent-browser eval 'resolvedCellSample()' --json | jq -c '.data.result')
   agent-browser reload >/dev/null
   agent-browser wait --fn 'window.landingRevealReady?.()' >/dev/null
+  agent-browser wait '[data-project-key=moonshine]' >/dev/null
   agent-browser eval "(() => { const before = $sample; const after = resolvedCellSample(); if (before.length !== 40 || after.length !== 40 || after.filter(cell => before.includes(cell)).length > 28) throw new Error('Reveal order repeats between loads'); return 'PASS fresh randomized cell order'; })()"
   agent-browser hover '[data-project-key=moonshine]' >/dev/null
   agent-browser wait '#project-preview' >/dev/null
