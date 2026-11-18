@@ -16,7 +16,7 @@ agent-browser eval '(() => {
 })()'
 agent-browser hover '[data-time-scrubber]' >/dev/null
 agent-browser wait '.landing-solar canvas' >/dev/null
-agent-browser eval 'window.pendingSky = document.querySelector(".landing-solar canvas").toDataURL(); weatherFixture.complete(200, {current: {temperature_2m: 29.4,weather_code: 95,rain: 3.2}})' >/dev/null
+agent-browser eval 'window.pendingSky = document.querySelector(".landing-solar canvas").toDataURL(); weatherFixture.complete(200, {current: {time:1795011300,interval:900,temperature_2m:29.4,weather_code:95,rain:3.2,apparent_temperature:32.1,relative_humidity_2m:87,wind_speed_10m:4.8},hourly:{time:[1795010400,1795014000,1795017600],temperature_2m:[29.4,27.3,26.1],precipitation_probability:[90,75,58],precipitation:[3.2,0.4,0.1],weather_code:[95,55,3]}})' >/dev/null
 agent-browser wait --fn 'document.querySelector(".personal-clock a").textContent === "KUL 29°C STORMY"' >/dev/null
 agent-browser eval '(async()=>{
   await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
@@ -25,6 +25,21 @@ agent-browser eval '(async()=>{
   return "PASS delayed success updates label and active static solar/weather scene";
 })()'
 agent-browser mouse move 1200 750 >/dev/null
+agent-browser focus '[aria-controls=weather-preview]' >/dev/null
+agent-browser press Enter >/dev/null
+agent-browser wait '#weather-preview table' >/dev/null
+agent-browser eval '(() => {
+  const card=document.querySelector("#weather-preview");
+  if(document.activeElement!==card)throw new Error("Keyboard entry did not reach forecast");
+  const rows=[...card.querySelectorAll("tbody tr")].map(row=>[...row.querySelectorAll("td")].map(cell=>cell.textContent));
+  if(rows[0].join()!=="27.3,26.1"||rows[2].join()!=="75,58"||rows[3].join()!=="0.40,0.10")throw new Error("Forecast values misaligned");
+  if(card.querySelector("time").textContent!=="Wed 23:00")throw new Error("Forecast not in Kuala Lumpur time");
+  if(!card.textContent.includes("last 15 min")||!card.textContent.includes("4.8 km/h"))throw new Error("Stats units missing");
+  if(document.querySelector(".landing-solar"))throw new Error("Forecast activated clock scene");
+  return "PASS forecast values, MYT timestamps, accumulation units and keyboard entry";
+})()'
+agent-browser press Escape >/dev/null
+agent-browser eval 'if(document.querySelector("#weather-preview")||document.activeElement?.getAttribute("aria-controls")!=="weather-preview")throw new Error("Escape failed to dismiss and restore focus")' >/dev/null
 agent-browser reload >/dev/null
 agent-browser wait --fn 'window.weatherFixture?.pending.length === 1' >/dev/null
 agent-browser eval 'weatherFixture.complete(503, {error:true})' >/dev/null

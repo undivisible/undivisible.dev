@@ -1,32 +1,21 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { resumeFromMarkdown } from "@/data/resume-from-markdown.generated";
+import { useMemo } from "react";
 import {
   parseResumeMarkdown,
   type ResumeDocument,
 } from "@/lib/parse-resume-markdown";
 import { fetchResumeMarkdownCached } from "@/lib/remote-markdown";
-
-const seedDoc = resumeFromMarkdown as unknown as ResumeDocument;
+import { useProfileMarkdown } from "@/hooks/use-remote-content";
 
 export function useResumeDocument(): ResumeDocument {
-  const [raw, setRaw] = useState<string | null>(null);
-
-  useEffect(() => {
-    const ac = new AbortController();
-    void fetchResumeMarkdownCached({ signal: ac.signal, forceRefresh: true }).then((md) => {
-      if (md) setRaw(md);
-    });
-    return () => ac.abort();
-  }, []);
+  const { raw } = useProfileMarkdown(fetchResumeMarkdownCached);
 
   return useMemo(() => {
-    if (!raw) return seedDoc;
     try {
-      return parseResumeMarkdown(raw) as ResumeDocument;
+      return parseResumeMarkdown(raw ?? "");
     } catch {
-      return seedDoc;
+      return parseResumeMarkdown("");
     }
   }, [raw]);
 }

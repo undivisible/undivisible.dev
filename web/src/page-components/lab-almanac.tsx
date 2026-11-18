@@ -32,15 +32,9 @@ import {
   TSCHK,
   WEBRING,
 } from "@/data/lab-facts";
-import {
-  librariesFromReadme,
-  mainProjectsFromReadme,
-  miniappsFromReadme,
-  utilitiesFromReadme,
-} from "@/data/readme-projects.generated";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { useLiveGithub } from "@/hooks/use-live-github";
-import { useNowMarkdown } from "@/hooks/use-remote-content";
+import { useNowMarkdown, useRemoteReadme } from "@/hooks/use-remote-content";
 import { useTimeArrival } from "@/hooks/use-time-arrival";
 import { organiseProjects } from "@/lib/organise-projects";
 import { fetchResumeMarkdownCached } from "@/lib/remote-markdown";
@@ -50,7 +44,9 @@ import { useLastFmVisualData } from "@/lib/useLastFmVisualData";
 
 const HomePrintRoot = dynamic(
   () =>
-    import("@/components/home/print/HomePrintRoot").then((m) => m.HomePrintRoot),
+    import("@/components/home/print/HomePrintRoot").then(
+      (m) => m.HomePrintRoot,
+    ),
   { ssr: false },
 );
 
@@ -129,15 +125,16 @@ export default function LabAlmanac() {
     return () => clearTimeout(id);
   }, []);
 
+  const { readme, refreshReadme } = useRemoteReadme();
   const categories = useMemo(
     () =>
       organiseProjects([
-        ...mainProjectsFromReadme,
-        ...utilitiesFromReadme,
-        ...miniappsFromReadme,
-        ...librariesFromReadme,
+        ...readme.mainProjects,
+        ...readme.utilities,
+        ...readme.miniapps,
+        ...readme.libraries,
       ]),
-    [],
+    [readme],
   );
 
   // The sun lights the page — a cast here, not a stamp.
@@ -180,10 +177,13 @@ export default function LabAlmanac() {
   }, []);
 
   const printResume = useCallback(async () => {
-    await fetchResumeMarkdownCached({ forceRefresh: true }).catch(() => null);
+    await Promise.all([
+      fetchResumeMarkdownCached({ forceRefresh: true }),
+      refreshReadme({ forceRefresh: true }),
+    ]);
     setPrintMounted(true);
     await printSitePdf("resume");
-  }, []);
+  }, [refreshReadme]);
 
   const doy = dayOfYear();
   const perDay = Math.round(github.commitsThisYear / doy);
@@ -234,7 +234,7 @@ export default function LabAlmanac() {
 
       {printMounted ? (
         <div className="print-only print-layer-resume" aria-hidden>
-          <HomePrintRoot />
+          <HomePrintRoot readme={readme} />
         </div>
       ) : null}
 
@@ -287,8 +287,7 @@ export default function LabAlmanac() {
               <RandomizedText delay={0.55}>
                 {`${IDENTITY.role} at ${IDENTITY.org}.`}
               </RandomizedText>{" "}
-              <OmiCard github={github}>{IDENTITY.product}</OmiCard>
-              .
+              <OmiCard github={github}>{IDENTITY.product}</OmiCard>.
             </p>
 
             <LinkPills github={github} onResume={printResume} />

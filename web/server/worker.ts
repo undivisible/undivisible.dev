@@ -6,6 +6,7 @@ import { Store } from "./nexnet/store";
 import { Challenges } from "./nexnet/challenges";
 import { boundedRequest } from "./nexnet/request";
 import { renderOgImage } from "./og";
+import { handleProfile } from "./profile";
 
 type Env = {
   BROWSER: BrowserRun;
@@ -134,6 +135,7 @@ export class NexnetNetwork extends DurableObject<Env> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const path = new URL(request.url).pathname;
+    if (path.startsWith("/api/profile/")) return handleProfile(request);
     if (path === "/og/home.png") return renderOgImage(request, env);
     if (path.startsWith("/v1/")) {
       if (env.NEXNET_ENABLED === "false")

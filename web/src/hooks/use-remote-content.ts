@@ -1,86 +1,159 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { flushSync } from "react-dom";
 import {
-  normalizeReadmeBundle,
+  parseLandingReadme,
   parseReadme,
-  readmeBundleProjectCount,
   type ReadmeBundle,
+  type ReadmeProject,
 } from "@/lib/parse-readme-markdown";
 import {
   fetchNowStatus,
   fetchReadmeMarkdown,
   REMOTE_README_URLS,
+  REMOTE_MARKDOWN_FRESH_MS,
 } from "@/lib/remote-markdown";
-import { nowMarkdownFromRepo } from "@/data/now-markdown.generated";
 import { parseNowMarkdown } from "@/lib/parse-now-markdown";
+import type { GithubLanguageStats } from "@/lib/github-repo-languages";
 
-export function useNowMarkdown() {
-  const [raw, setRaw] = useState<string | null>(null);
+type MarkdownLoader = (options: {
+  signal: AbortSignal;
+  forceRefresh: boolean;
+}) => Promise<string | null>;
 
+/** Undefined is loading; null is an unavailable/expired runtime document. */
+export function useProfileMarkdown(load: MarkdownLoader) {
+  const [raw, setRaw] = useState<string | null | undefined>(undefined);
+  const refresh = useCallback(
+    async (signal?: AbortSignal) => {
+      const md = await load({
+        signal: signal ?? new AbortController().signal,
+        forceRefresh: true,
+      });
+      if (!signal?.aborted) setRaw(md);
+    },
+    [load],
+  );
   useEffect(() => {
     const ac = new AbortController();
-    void fetchNowStatus({ signal: ac.signal }).then(setRaw);
-    return () => ac.abort();
-  }, []);
+    let pending = false;
+    const poll = async () => {
+      if (pending || document.visibilityState === "hidden") return;
+      pending = true;
+      try {
+        await refresh(ac.signal);
+      } finally {
+        pending = false;
+      }
+    };
+    void poll();
+    const timer = window.setInterval(
+      () => void poll(),
+      REMOTE_MARKDOWN_FRESH_MS,
+    );
+    const visible = () => void poll();
+    document.addEventListener("visibilitychange", visible);
+    return () => {
+      ac.abort();
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", visible);
+    };
+  }, [refresh]);
+  return { raw, setRaw, refresh };
+}
 
-  const seed = nowMarkdownFromRepo;
-  return useMemo(
-    () => parseNowMarkdown(raw ?? seed),
-    [raw, seed],
-  );
+export function useNowMarkdown() {
+  const { raw } = useProfileMarkdown(fetchNowStatus);
+  return useMemo(() => parseNowMarkdown(raw), [raw]);
 }
 
 export async function loadRemoteReadmeBundle(
   signal?: AbortSignal,
   options?: { forceRefresh?: boolean },
 ): Promise<ReadmeBundle | null> {
-  const bundles = await Promise.all(
-    REMOTE_README_URLS.map(async (url) => {
-      const md = await fetchReadmeMarkdown({
-        signal,
-        url,
-        forceRefresh: options?.forceRefresh,
-      });
-      if (!md) return null;
-      return normalizeReadmeBundle(parseReadme(md));
-    }),
-  );
-  let best: ReadmeBundle | null = null;
-  let bestCount = 0;
-  for (const bundle of bundles) {
-    if (!bundle) continue;
-    const count = readmeBundleProjectCount(bundle);
-    if (count > bestCount) {
-      best = bundle;
-      bestCount = count;
-    }
+  for (const url of REMOTE_README_URLS) {
+    const md = await fetchReadmeMarkdown({
+      signal,
+      url,
+      forceRefresh: options?.forceRefresh,
+    });
+    if (md !== null) return parseReadme(md);
   }
-  return bestCount > 0 ? best : null;
+  return null;
 }
 
-export function useRemoteReadme(seed: ReadmeBundle) {
-  const [readme, setReadme] = useState<ReadmeBundle>(seed);
-
+export function useRemoteReadme(_seed?: ReadmeBundle) {
+  const { raw, setRaw } = useProfileMarkdown(fetchReadmeMarkdown);
+  const readme = useMemo(() => parseReadme(raw ?? ""), [raw]);
   const refreshReadme = useCallback(
     async (options?: { forceRefresh?: boolean }) => {
-      const best = await loadRemoteReadmeBundle(undefined, options);
-      if (best) {
-        flushSync(() => setReadme(best));
-      }
-      return best;
+      const md = await fetchReadmeMarkdown(options);
+      setRaw(md);
+      return md === null ? null : parseReadme(md);
     },
-    [],
+    [setRaw],
   );
-
-  useEffect(() => {
-    const ac = new AbortController();
-    void loadRemoteReadmeBundle(ac.signal).then((best) => {
-      if (best) setReadme(best);
-    });
-    return () => ac.abort();
-  }, []);
-
   return { readme, refreshReadme };
+}
+
+export type LandingProject = ReadmeProject & { github: GithubLanguageStats };
+
+function repositoryFromHref(href: string): string | null {
+  const match = /^https:\/\/github\.com\/([\w.-]+)\/([\w.-]+)(?:[/?#]|$)/i.exec(
+    href,
+  );
+  return match ? `${match[1]}/${match[2]!.replace(/\.git$/i, "")}` : null;
+}
+
+/** Only unchanged source associations or explicit repository links may reuse statistics. */
+export function landingProjectsFromMarkdown(
+  md: string,
+  seed: readonly LandingProject[],
+): LandingProject[] {
+  const sameHref = (a: string, b: string) =>
+    a !== "#" && a.replace(/\/$/, "") === b.replace(/\/$/, "");
+  return parseLandingReadme(md).map((project) => {
+    const repository =
+      repositoryFromHref(project.href) ??
+      seed.find((previous) => sameHref(previous.href, project.href))?.github
+        ?.repository ??
+      null;
+    const previous = repository
+      ? seed.find(
+          (item) =>
+            item.github?.repository.toLowerCase() === repository.toLowerCase(),
+        )
+      : undefined;
+    return {
+      ...project,
+      github: repository
+        ? {
+            repository: previous?.github?.repository ?? repository,
+            languages: previous?.github?.languages ?? null,
+          }
+        : null,
+    };
+  });
+}
+
+export function useLandingProjects(seed: readonly LandingProject[]): {
+  projects: LandingProject[];
+  status: "loading" | "ready" | "unavailable";
+  refreshProjects: () => Promise<void>;
+} {
+  const { raw, refresh, setRaw } = useProfileMarkdown(fetchReadmeMarkdown);
+  const refreshProjects = useCallback(async () => {
+    setRaw(undefined);
+    await refresh();
+  }, [refresh, setRaw]);
+  const projects = useMemo(
+    () => landingProjectsFromMarkdown(raw ?? "", seed),
+    [raw, seed],
+  );
+  return {
+    projects,
+    status:
+      raw === undefined ? "loading" : raw === null ? "unavailable" : "ready",
+    refreshProjects,
+  };
 }

@@ -1,6 +1,6 @@
-import { resumeDoc } from "@/data/resume-document";
 import {
   parseResumeMarkdown,
+  type ResumeDocument,
   type ResumeListItem,
 } from "@/lib/parse-resume-markdown";
 import type { ReadmeProject } from "@/lib/profile-readme";
@@ -17,13 +17,15 @@ export type PrintProjectSection = {
   items: PrintProject[];
 };
 
-export function getCachedResumeDocument() {
+export function getCachedResumeDocument(
+  fallback: ResumeDocument = parseResumeMarkdown(""),
+) {
   const cached = readRemoteMarkdownCache(resumeMarkdownCacheUrl());
-  if (!cached) return resumeDoc;
+  if (cached === null) return fallback;
   try {
     return parseResumeMarkdown(cached);
   } catch {
-    return resumeDoc;
+    return fallback;
   }
 }
 

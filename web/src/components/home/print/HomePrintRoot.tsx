@@ -1,7 +1,5 @@
 import { Tb } from "@/components/brief/ui/Tb";
 import {
-  applyReadmeStackFallbacks,
-  getReadmeBundleFromGenerated,
   resumePrintProjectSections,
   type ReadmeBundle,
 } from "@/lib/profile-readme";
@@ -17,6 +15,8 @@ import {
 } from "@/components/home/print/print-metrics";
 import { PrintPage } from "@/components/home/print/print-page";
 import { ProjectsPage } from "@/components/home/print/print-projects-page";
+import { useResumeDocument } from "@/hooks/use-resume-document";
+import { useRemoteReadme } from "@/hooks/use-remote-content";
 
 import { Bullet, SectionTitle } from "@/components/home/print/print-primitives";
 import {
@@ -56,18 +56,12 @@ function resumePrintSectionsWithAssessmentProjects(
   );
 }
 
-export function HomePrintRoot({
-  readme = getReadmeBundleFromGenerated(),
-}: {
-  readme?: ReadmeBundle;
-}) {
-  const doc = getCachedResumeDocument();
-  const readmeForPrint = applyReadmeStackFallbacks(
-    readme,
-    getReadmeBundleFromGenerated(),
-  );
+export function HomePrintRoot({ readme }: { readme?: ReadmeBundle }) {
+  const { readme: liveReadme } = useRemoteReadme();
+  const currentReadme = readme ?? liveReadme;
+  const doc = getCachedResumeDocument(useResumeDocument());
   const projectSections = resumePrintSectionsWithAssessmentProjects(
-    resumePrintProjectSections(readmeForPrint),
+    resumePrintProjectSections(currentReadme),
   );
   const totalPages = 2;
 
@@ -217,7 +211,7 @@ export function HomePrintRoot({
           }
           fontSize={CHROME.tb}
         />
-        <ProjectsPage sections={projectSections} readme={readme} />
+        <ProjectsPage sections={projectSections} readme={currentReadme} />
       </PrintPage>
     </div>
   );

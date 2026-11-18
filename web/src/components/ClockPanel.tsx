@@ -7,6 +7,8 @@ import {
   type HongKongDayTheme,
 } from "@/lib/useHongKongDayTheme";
 import type { NowContent } from "@/lib/parse-now-markdown";
+import { StatusPreview } from "./StatusPreview";
+import { WeatherPreview } from "./WeatherPreview";
 
 export function ClockPanel({
   dayTheme,
@@ -51,6 +53,7 @@ export function ClockPanel({
   const statusInteractive = Boolean(now.article && onToggleNowArticle);
   const showStatus = Boolean(now.status);
   const statusActive = nowArticleOpen && statusInteractive;
+  const translatedStatus = now.status === "格物致知" || now.status === "格致";
 
   const statusClass = statusActive
     ? "pointer-events-auto opacity-100 text-white"
@@ -66,15 +69,7 @@ export function ClockPanel({
       style={{ color: "var(--page-text)" }}
     >
       <div className="mb-2">
-        <a
-          href={dayTheme.weatherHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline decoration-dotted underline-offset-2 transition-opacity hover:opacity-90"
-          style={{ color: "var(--page-text-soft)" }}
-        >
-          {weatherText}
-        </a>
+        <WeatherPreview dayTheme={dayTheme} label={weatherText} />
       </div>
       <div
         ref={clockRef}
@@ -107,7 +102,26 @@ export function ClockPanel({
             <span>{hkgText}</span>
           </a>
           {showStatus ? (
-            statusInteractive ? (
+            translatedStatus ? (
+              <StatusPreview
+                id="status-translation"
+                title={now.status ?? ""}
+                label={now.status ?? ""}
+                className={statusClass}
+              >
+                <p lang="en">Investigate things to gain knowledge.</p>
+                <p className="weather-note">
+                  {now.status === "格致" ? "格致 is short for 格物致知. " : ""}A
+                  classical Chinese idea: understanding grows from studying
+                  things closely.
+                </p>
+                {statusInteractive && (
+                  <button type="button" onClick={onToggleNowArticle}>
+                    read update
+                  </button>
+                )}
+              </StatusPreview>
+            ) : statusInteractive ? (
               <button
                 type="button"
                 className={`max-w-full cursor-pointer border-none bg-transparent p-0 text-left lg:underline lg:decoration-dotted lg:underline-offset-4 ${statusClass}`}

@@ -48,16 +48,27 @@ for motion in no-preference reduce; do
     const sky = document.querySelector(".landing-solar canvas");
     const pixels = () => sky.toDataURL();
     const beforePixels = pixels();
-    for (const [deltaY, shiftKey, step] of [[100, false, 12], [-100, true, -48]]) {
+    for (const [deltaY, shiftKey, step, deltaMode] of [[100, false, 5, 0], [-100, true, -20, 0], [1.25, false, 1, 1], [20 / innerHeight, false, 1, 2], [0, false, 0, 0]]) {
       const start = minute();
-      const event = new WheelEvent("wheel", { deltaY, shiftKey, bubbles: true, cancelable: true });
+      const event = new WheelEvent("wheel", { deltaY, shiftKey, deltaMode, bubbles: true, cancelable: true });
       if (clock.dispatchEvent(event)) throw new Error("Clock wheel did not prevent page scroll");
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      if ((minute() - start + 1440) % 1440 !== (step + 1440) % 1440) throw new Error("Clock wheel changed the original scrub step");
+      if ((minute() - start + 1440) % 1440 !== (step + 1440) % 1440) throw new Error("Clock wheel normalization or sensitivity is wrong");
     }
+    const beforeBurst = minute();
+    for (let i=0;i<9;i++) clock.dispatchEvent(new WheelEvent("wheel", {deltaY:2,bubbles:true,cancelable:true}));
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    if(minute()!==beforeBurst)throw new Error("Small deltas jumped before the threshold");
+    clock.dispatchEvent(new WheelEvent("wheel", {deltaY:2,bubbles:true,cancelable:true}));
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    if((minute()-beforeBurst+1440)%1440!==1)throw new Error("Small deltas were lost instead of accumulated");
+    const contrastMinute = minute() < 360 || minute() > 1080 ? 720 : 0;
+    clock.dispatchEvent(new WheelEvent("wheel", {deltaY:(contrastMinute-minute())*20,bubbles:true,cancelable:true}));
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    if(minute()!==contrastMinute)throw new Error("Large scrub did not reach the contrasting day/night time");
     if (pixels() === beforePixels) throw new Error("Solar canvas did not repaint after scrubbing");
     if (window.solarAscii !== document.querySelector(".landing-field canvas:not(.invisible)")) throw new Error("Scrubbing replaced persistent ASCII canvas");
-    return "PASS idle, scoped wheel, original 12/48 minute steps, solar paint and persistent ASCII";
+    return "PASS scoped wheel, 5/20 minute notches, pixel/line/page normalization, small-delta accumulation, solar paint and persistent ASCII";
   })()'
   agent-browser mouse move 1200 750 >/dev/null
   agent-browser wait --fn '!document.querySelector(".landing-solar") && document.querySelector(".personal-clock").dataset.timePreview === "false"' >/dev/null

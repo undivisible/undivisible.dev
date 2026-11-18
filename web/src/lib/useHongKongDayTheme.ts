@@ -118,6 +118,8 @@ export type HongKongDayTheme = {
   weatherDisplay: string;
   weatherHref: string;
   weather: WeatherInfo | null;
+  weatherStatus: "loading" | "ready" | "unavailable";
+  retryWeather: () => void;
   /**
    * The wall-clock instant currently being displayed — live, or shifted while
    * the clock is being scrubbed. Format it against any zone or fixed UTC
@@ -816,11 +818,17 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     | { status: "unavailable" }
   >({ status: "loading" });
   const weather = weatherState.status === "ready" ? weatherState.weather : null;
+  const [weatherRequest, setWeatherRequest] = useState(0);
+  const retryWeather = useCallback(
+    () => setWeatherRequest((request) => request + 1),
+    [],
+  );
   const [displayedMinute, setDisplayedMinute] = useState(() =>
     minuteInZone(new Date(), HONG_KONG_TIME_ZONE),
   );
   const [isScrubbing, setIsScrubbing] = useState(false);
   const resetFrameRef = useRef<number | null>(null);
+  const wheelRef = useRef({ pixels: 0, started: false, shift: false });
 
   const minuteKey = Math.floor(clockMs / 60_000);
 
@@ -843,6 +851,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   useEffect(() => {
     const controller = new AbortController();
     const url = buildKualaLumpurWeatherUrl();
+    setWeatherState({ status: "loading" });
     logWeather("requesting Kuala Lumpur weather api", url);
     let timer: number | undefined;
     let pending = false;
@@ -888,7 +897,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
       window.removeEventListener("online", resume);
       document.removeEventListener("visibilitychange", resume);
     };
-  }, []);
+  }, [weatherRequest]);
 
   useEffect(() => {
     return () => {
@@ -1116,35 +1125,50 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   const style = useMemo<CSSProperties>(() => ({}), []);
 
   const bumpMinuteFromWheel = useCallback(
-    (deltaY: number, shiftKey: boolean) => {
+    (deltaY: number, deltaMode: number, shiftKey: boolean) => {
+      const pixels =
+        deltaY *
+        (deltaMode === 1 ? 16 : deltaMode === 2 ? window.innerHeight : 1);
+      if (!Number.isFinite(pixels) || pixels === 0) return;
+      const wheel = wheelRef.current;
+      if (wheel.shift !== shiftKey) wheel.pixels = 0;
+      wheel.shift = shiftKey;
+      wheel.pixels += pixels;
+      const pixelsPerMinute = shiftKey ? 5 : 20;
+      const minutes = Math.trunc(wheel.pixels / pixelsPerMinute);
+      wheel.pixels -= minutes * pixelsPerMinute;
+      if (!minutes) return;
+      const fromLive = !isScrubbing && !wheel.started;
+      wheel.started = true;
       if (resetFrameRef.current !== null) {
         window.cancelAnimationFrame(resetFrameRef.current);
         resetFrameRef.current = null;
       }
-      const step = shiftKey ? 48 : 12;
-      const direction = deltaY > 0 ? step : -step;
       setIsScrubbing(true);
-      setDisplayedMinute((current) => wrapMinutes(current + direction));
+      setDisplayedMinute((current) =>
+        wrapMinutes((fromLive ? liveMinute : current) + minutes),
+      );
     },
-    [],
+    [isScrubbing, liveMinute],
   );
 
   const onScrubWheel = (event: ReactWheelEvent<HTMLElement>) => {
     event.preventDefault();
     event.stopPropagation();
-    bumpMinuteFromWheel(event.deltaY, event.shiftKey);
+    bumpMinuteFromWheel(event.deltaY, event.deltaMode, event.shiftKey);
   };
 
   const onClockWheel = useCallback(
     (event: WheelEvent) => {
       event.preventDefault();
       event.stopPropagation();
-      bumpMinuteFromWheel(event.deltaY, event.shiftKey);
+      bumpMinuteFromWheel(event.deltaY, event.deltaMode, event.shiftKey);
     },
     [bumpMinuteFromWheel],
   );
 
   const scrubToMinute = useCallback((minute: number) => {
+    wheelRef.current = { pixels: 0, started: true, shift: false };
     if (resetFrameRef.current !== null) {
       window.cancelAnimationFrame(resetFrameRef.current);
       resetFrameRef.current = null;
@@ -1154,6 +1178,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   }, []);
 
   const resetScrub = () => {
+    wheelRef.current = { pixels: 0, started: false, shift: false };
     if (!isScrubbing) {
       return;
     }
@@ -1221,6 +1246,8 @@ export function useHongKongDayTheme(): HongKongDayTheme {
           ? formatWeatherDisplay(weather)
           : "KUL WEATHER UNAVAILABLE",
     weather,
+    weatherStatus: weatherState.status,
+    retryWeather,
     displayedDate,
     weatherHref: KUALA_LUMPUR_WEATHER_HREF,
     hkgClockHref: "https://www.timeanddate.com/worldclock/hong-kong/hong-kong",

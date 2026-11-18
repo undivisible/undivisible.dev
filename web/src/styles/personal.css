@@ -2317,6 +2317,159 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   font: inherit;
   cursor: pointer;
 }
+.status-preview-trigger > :is(a, button) {
+  color: inherit;
+  font: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+.status-preview-trigger > button {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.status-preview-trigger:has(> button[aria-expanded="true"]) {
+  opacity: 1;
+  pointer-events: auto;
+}
+.status-preview {
+  position: fixed;
+  z-index: 20;
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  box-sizing: border-box;
+  padding: 18px;
+  background: #f4f1e8;
+  color: #161616;
+  box-shadow: 0 4px 24px #0008;
+  font:
+    13px/1.5 var(--font-jetbrains-mono),
+    monospace;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+  text-shadow: none;
+  scrollbar-color: #77746c #e5e1d7;
+}
+.status-preview :is(h2, h3, p, dl) {
+  margin: 0;
+}
+.status-preview h2 {
+  padding-right: 24px;
+  font: inherit;
+  font-weight: 600;
+}
+.status-preview p {
+  margin-top: 14px;
+}
+.status-preview :is(a, button) {
+  color: #183e80;
+  font: inherit;
+  cursor: pointer;
+  text-underline-offset: 3px;
+}
+.status-preview button {
+  background: none;
+  border: 0;
+  padding: 0;
+  text-decoration: underline;
+}
+.status-preview button:disabled {
+  color: #59564f;
+  cursor: wait;
+}
+.status-preview :focus-visible,
+.status-preview-trigger :focus-visible {
+  outline: 2px solid #467abf;
+  outline-offset: 3px;
+}
+.status-preview::selection,
+.status-preview ::selection {
+  background: #183e80;
+  color: #fff;
+}
+.status-preview .status-preview-close {
+  float: right;
+  min-width: 24px;
+  min-height: 24px;
+  color: inherit;
+  font-size: 20px;
+  line-height: 1;
+  text-decoration: none;
+}
+.weather-current {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.weather-current strong {
+  font-size: 32px;
+  line-height: 1.3;
+  font-weight: 500;
+}
+.weather-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 18px;
+  padding-block: 18px;
+}
+.weather-stats dt,
+.status-preview .weather-note {
+  color: #59564f;
+  font-size: 11px;
+}
+.weather-stats dd {
+  margin: 2px 0 0;
+}
+.status-preview h3 {
+  margin-top: 6px;
+  font: inherit;
+  font-weight: 600;
+}
+.status-preview h3 span {
+  float: right;
+  font-size: 11px;
+  font-weight: 400;
+}
+.weather-timeline {
+  margin-top: 12px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-color: #77746c #e5e1d7;
+  border-block: 1px solid #ccc7bc;
+}
+.weather-timeline table {
+  border-collapse: collapse;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.weather-timeline :is(th, td) {
+  min-width: 78px;
+  padding: 7px 6px;
+  text-align: right;
+  font-weight: 400;
+}
+.weather-timeline tr > th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: #f4f1e8;
+  text-align: left;
+}
+.weather-temperatures td {
+  font-size: 18px;
+  line-height: 1.4;
+}
+.weather-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
 .landing[data-view="projects"] {
   display: block;
 }
