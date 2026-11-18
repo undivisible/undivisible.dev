@@ -12,7 +12,6 @@
     "sync:agent": "bun run scripts/sync-agent-public.ts",
     "prebuild": "bun run sync:readme && bun run sync:now && bun run sync:resume && bun run sync:lastfm && bun run sync:agent",
     "build": "bun run scripts/build-static.ts",
-    "generate:og": "bun run scripts/generate-og.ts",
     "format": "bunx prettier --check .",
     "lint": "bun run typecheck",
     "serve": "bun run scripts/serve-static.ts",
@@ -34,7 +33,7 @@
     "magic-string": "^1.4.3",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "wrangler": "4.151.0"
+    "wrangler": "4.164.0"
   },
   "dependencies": {
     "@noble/ciphers": "1.3.0",

@@ -2115,6 +2115,29 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
     monospace;
   font-variant-ligatures: none;
 }
+.landing[data-solar-tone="light"] {
+  color: #000;
+  --album-text: #000;
+  --album-secondary: #00385d;
+  --page-text: #000;
+  --page-text-soft: #17212d;
+  --page-text-muted: #17212d;
+}
+.landing[data-solar-tone="light"] :is(.landing-content a, .landing-project) {
+  color: #000;
+}
+.landing-solar {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.landing-solar canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
 .landing-field {
   position: fixed;
   inset: 0;
@@ -2248,8 +2271,21 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   font-size: 11px;
   line-height: 16px;
 }
-.landing-preview-language-share {
-  white-space: nowrap;
+.github-languages {
+  display: block;
+}
+.github-language-bar {
+  display: flex;
+  width: 100%;
+  height: 6px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+}
+.github-language-bar > span {
+  display: block;
+  flex-shrink: 0;
+  height: 100%;
 }
 .landing-preview p {
   margin: 12px 0;

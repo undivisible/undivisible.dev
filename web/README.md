@@ -65,24 +65,29 @@ Type `nexnet` in the desktop launcher to open the Nexnet terminal chat. It reads
 
 ### Social banner
 
-Every static build renders `out/og/home.png` at 1200×630 using the site's real
-`Ascii` component and local JetBrains Mono font: a 67×15 grid with 30px/42px
-regular text. The introduction is composed into the background cells, not overlaid.
-Generation requires `agent-browser` (validated with 0.38.1) and its Chromium
-installation (`agent-browser install`). Missing browser tooling fails the build.
+Every GET or HEAD of `/og/home.png` invokes the Worker's Browser Run binding to
+render a new 1200×630 PNG. The image is not a build artifact. Builds compile only
+the rendering page (`/og/render.html`), using the site's real `Ascii` component
+and local JetBrains Mono font: a 67×15 grid with 30px/42px regular text. Text is
+composed into background cells, not overlaid.
 
-The generator freezes artwork from `public/lastfm-recent.json`, samples it with
-the site's album-palette extractor, and captures a completed reduced-motion frame.
-Missing snapshot, unavailable artwork or extraction failure uses the renderer's
-deterministic default palette. After building, `bun run generate:og --fallback`
-can reproduce that fallback; `bun run generate:og` restores the album version.
-No runtime browser, crawler-side JavaScript or scheduled refresh is required.
+Each render makes a fresh uncached Last.fm request, samples the returned cover
+with the site's album-palette extractor, and captures the completed static frame.
+The page's saved-snapshot fallback is disabled for OG. Unavailable live music or
+artwork uses the renderer's deterministic default palette; a browser-rendering
+failure returns an uncached 503, never an old PNG. The fixed rendering destination
+does not accept caller-supplied URLs or palette overrides.
+
+Both the response and rendering page use `Cache-Control: no-store`; Browser Run's
+image-result cache is disabled with `cacheTTL: 0`. `X-OG-Render-Id` and
+`X-OG-Generated-At` identify each successful generation. Requests consume Browser
+Run usage and incur rendering latency; no schedule, image store or rebuild is
+involved. Social crawlers receive a finished PNG without running JavaScript,
+although social platforms can still cache cards externally.
 
 Homepage HTML serializes OG and Twitter large-image tags pointing directly at
-`https://undivisible.dev/og/home.png`. Refresh the snapshot and rebuild/deploy to
-update the palette; code-only builds retain the saved snapshot. The stable image
-URL revalidates at the origin, but social platforms maintain their own caches and
-may require a re-scrape before showing a replacement.
+`https://undivisible.dev/og/home.png`. Test the Worker route through Wrangler, not
+the static-only Bun server. Both Wrangler configs declare the browser binding.
 
 `wrangler.production.jsonc` deploys `out/` to Worker `undivisible` in the personal Cloudflare account, serving `undivisible.dev/*`. `wrangler.jsonc` remains the separate `undivisible-next` preview at `next.undivisible.dev`.
 

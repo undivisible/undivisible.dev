@@ -5,8 +5,10 @@ import { DevChainClient } from "./nexnet/chain";
 import { Store } from "./nexnet/store";
 import { Challenges } from "./nexnet/challenges";
 import { boundedRequest } from "./nexnet/request";
+import { renderOgImage } from "./og";
 
 type Env = {
+  BROWSER: BrowserRun;
   ASSETS: Fetcher;
   NEXNET: DurableObjectNamespace;
   NEXNET_ORIGIN: string;
@@ -132,6 +134,7 @@ export class NexnetNetwork extends DurableObject<Env> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const path = new URL(request.url).pathname;
+    if (path === "/og/home.png") return renderOgImage(request, env);
     if (path.startsWith("/v1/")) {
       if (env.NEXNET_ENABLED === "false")
         return Response.json(

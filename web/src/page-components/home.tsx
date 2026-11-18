@@ -3,11 +3,22 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Ascii, { type LandingView } from "@/components/Ascii";
 import { MainClock } from "@/components/MainClock";
+import { Light } from "@/components/Light";
 import NowPlaying from "@/components/NowPlaying";
 import { useNowMarkdown } from "@/hooks/use-remote-content";
+import { useSiteVisualEffects } from "@/hooks/use-site-visual-effects";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
+import { skyTextColor } from "@/lib/album-theme";
 import { landingProjectsFromReadme } from "@/data/readme-projects.generated";
-import { githubLanguageLabel } from "@/lib/github-repo-languages";
+import { GithubLanguageBar } from "@/components/GithubLanguageBar";
+import { prepareGithubLanguages } from "@/lib/github-repo-languages";
+
+function distanceToPreview(point: { x: number; y: number }, bounds: DOMRect) {
+  return Math.hypot(
+    point.x - (bounds.left + bounds.right) / 2,
+    point.y - (bounds.top + bounds.bottom) / 2,
+  );
+}
 
 function inPreviewCorridor(
   x: number,
@@ -54,7 +65,10 @@ const projects = [
   ...new Map(
     landingProjectsFromReadme.map((project) => [project.key, project]),
   ).values(),
-];
+].map((project) => ({
+  ...project,
+  githubLanguages: prepareGithubLanguages(project.github),
+}));
 const entries: Array<(typeof projects)[number] | "back"> = [
   ...projects,
   "back",
@@ -69,6 +83,8 @@ entries.sort((a, b) =>
 
 export default function Home() {
   const dayTheme = useHongKongDayTheme();
+  const visualEffects = useSiteVisualEffects();
+  const [solarPreview, setSolarPreview] = useState(false);
   const now = useNowMarkdown();
   const [preview, setPreview] = useState<string | null>(null);
   const [previewInteractive, setPreviewInteractive] = useState(false);
@@ -83,6 +99,8 @@ export default function Home() {
   const navigationPending = useRef(false);
   const hoverOrigin = useRef<{ x: number; y: number } | null>(null);
   const hoverPoint = useRef({ x: 0, y: 0 });
+  const hoverTarget = useRef<HTMLButtonElement | null>(null);
+  const hoverApproachDistance = useRef(Infinity);
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
@@ -96,6 +114,8 @@ export default function Home() {
 
   const changeView = (next: LandingView) => {
     navigationPending.current = true;
+    setSolarPreview(false);
+    dayTheme.resetScrub();
     dismissPreview();
     previewTrigger.current = null;
     setRequestedView(next);
@@ -254,7 +274,11 @@ export default function Home() {
           ),
         );
         if (!approaching) hoverOrigin.current = null;
-        hoverPoint.current = { x: event.clientX, y: event.clientY };
+        const point = { x: event.clientX, y: event.clientY };
+        const distance = bounds ? distanceToPreview(point, bounds) : Infinity;
+        const movingTowardPreview =
+          approaching && distance < hoverApproachDistance.current - 0.5;
+        hoverPoint.current = point;
         if (
           preview === item.key &&
           previewTrigger.current === event.currentTarget
@@ -264,12 +288,16 @@ export default function Home() {
         }
         if (
           hoverTimer.current &&
-          previewTrigger.current === event.currentTarget &&
-          !approaching
+          ((previewTrigger.current === event.currentTarget && !approaching) ||
+            (hoverTarget.current === event.currentTarget &&
+              approaching &&
+              !movingTowardPreview))
         )
           return;
         clearTimeout(hoverTimer.current);
         const trigger = event.currentTarget;
+        hoverTarget.current = trigger;
+        hoverApproachDistance.current = distance;
         if (!approaching) {
           previewTrigger.current = trigger;
           setPreview(null);
@@ -332,6 +360,11 @@ export default function Home() {
       ref={pageRef}
       className="landing"
       data-view={view}
+      data-solar-tone={
+        solarPreview && skyTextColor([dayTheme.shader.base]) === "#000000"
+          ? "light"
+          : undefined
+      }
       aria-busy={view !== requestedView}
       onBlurCapture={(event) => {
         const target = event.relatedTarget;
@@ -343,12 +376,23 @@ export default function Home() {
           dismissPreview();
       }}
     >
+      {solarPreview && (
+        <div
+          className="landing-solar"
+          aria-hidden="true"
+          style={{ background: dayTheme.shader.base }}
+        >
+          <Light scene={dayTheme.shader} animated={visualEffects} />
+        </div>
+      )}
       <div className="landing-field" aria-hidden="true">
         <Ascii
           colors={colors}
           ready
           view={requestedView}
           onViewChange={(next) => {
+            setSolarPreview(false);
+            dayTheme.resetScrub();
             dismissPreview();
             previewTrigger.current = null;
             focusAfterView.current = true;
@@ -358,7 +402,12 @@ export default function Home() {
         />
       </div>
       <header className="landing-status">
-        <MainClock dayTheme={dayTheme} now={now} nowArticleOpen={false} />
+        <MainClock
+          dayTheme={dayTheme}
+          now={now}
+          nowArticleOpen={false}
+          onTimeHoverChange={setSolarPreview}
+        />
         <div className="landing-music">
           <NowPlaying />
         </div>
@@ -463,31 +512,7 @@ export default function Home() {
             ×
           </button>
           <div className="landing-preview-languages">
-            {project.github ? (
-              <a
-                href={`https://github.com/${project.github.repository}#languages`}
-                title="GitHub Linguist language shares"
-              >
-                {githubLanguageLabel(project.github)
-                  .split(" · ")
-                  .map((share, index) => (
-                    <span key={share}>
-                      {index > 0 && " · "}
-                      <span
-                        className={
-                          share.endsWith("%")
-                            ? "landing-preview-language-share"
-                            : undefined
-                        }
-                      >
-                        {share}
-                      </span>
-                    </span>
-                  ))}
-              </a>
-            ) : (
-              githubLanguageLabel(null)
-            )}
+            <GithubLanguageBar languages={project.githubLanguages} />
           </div>
           <strong>{project.name}</strong>
           <p>{project.desc}</p>

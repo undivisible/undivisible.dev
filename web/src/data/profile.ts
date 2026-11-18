@@ -12,28 +12,28 @@ export const projects = [
   {
     name: "Inauguration",
     kind: "Compiler",
-    href: "https://github.com/tschk/inauguration",
+    href: "https://github.com/softwarecorporation/inauguration",
     description:
       "A compiler toolchain that brings multiple languages into a shared intermediate representation.",
   },
   {
     name: "Space",
     kind: "Operating system · Experimental",
-    href: "https://github.com/tschk/space",
+    href: "https://github.com/softwarecorporation/space",
     description:
       "A component-based operating system built with Inauguration. Boots and runs its own desktop under QEMU.",
   },
   {
     name: "Crepuscularity",
     kind: "UI toolkit · In development",
-    href: "https://github.com/tschk/crepuscularity",
+    href: "https://github.com/softwarecorporation/crepuscularity",
     description:
       "A Rust UI toolkit for desktop, web, terminal and browser extensions, with native mobile backends in development.",
   },
   {
     name: "Alpenglow",
     kind: "Linux · Testing releases",
-    href: "https://github.com/tschk/alpenglow",
+    href: "https://github.com/softwarecorporation/alpenglow",
     description:
       "A small, diskless musl Linux distribution. Its historical fast build booted in 0.6 seconds, with a 4.4 MB kernel and about 17 MB RAM.",
   },
@@ -47,21 +47,21 @@ export const projects = [
   {
     name: "Moonshine",
     kind: "Web framework",
-    href: "https://github.com/tschk/moonshine",
+    href: "https://github.com/softwarecorporation/moonshine",
     description:
       "A Bun-first UI runtime with a signal kernel and optional compiler, routing, rendering and deployment layers.",
   },
   {
     name: "eqts",
     kind: "Language interoperability",
-    href: "https://github.com/tschk/eqts",
+    href: "https://github.com/softwarecorporation/eqts",
     description:
       "One Rust API for TypeScript across Node, Bun, Deno and WebAssembly.",
   },
   {
     name: "Telekinesis",
     kind: "Developer tool",
-    href: "https://github.com/tschk/telekinesis",
+    href: "https://github.com/softwarecorporation/telekinesis",
     description:
       "A terminal coding agent built on Rotary, with provider login, persistent sessions and an ACP server.",
   },

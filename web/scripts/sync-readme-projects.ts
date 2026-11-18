@@ -110,7 +110,7 @@ async function withGithubLanguages(
     }
   };
   const repositories: Array<{ path: string; homepage: string }> = [];
-  for (const owner of ["undivisible", "tschk"]) {
+  for (const owner of ["undivisible", "softwarecorporation"]) {
     for (let page = 1; ; page++) {
       const data = await api(`users/${owner}/repos?per_page=100&page=${page}`);
       if (!Array.isArray(data)) break;
@@ -142,7 +142,10 @@ async function withGithubLanguages(
     ...markdown.matchAll(
       /https:\/\/github\.com\/([^/\s)]+\/[^/\s)]+)(?=[/)\s])/g,
     ),
-  ].map((match) => match[1]!);
+  ].flatMap((match) => {
+    const path = githubRepoPathFromHref(`https://github.com/${match[1]!}`);
+    return path ? [path] : [];
+  });
   const enriched: Array<ReadmeProject & { github: GithubLanguageStats }> = [];
   for (let start = 0; start < projects.length; start += 4) {
     enriched.push(
@@ -168,14 +171,22 @@ async function withGithubLanguages(
             typeof metadata === "object" &&
             "private" in metadata &&
             metadata.private === false;
+          const canonicalRepository =
+            !repository?.startsWith("tschk/") &&
+            metadata &&
+            typeof metadata === "object" &&
+            "full_name" in metadata &&
+            typeof metadata.full_name === "string"
+              ? metadata.full_name
+              : repository;
           return {
             ...project,
-            github: repository
+            github: canonicalRepository
               ? {
-                  repository,
+                  repository: canonicalRepository,
                   languages: publicRepository
                     ? parseGithubLanguageBytes(
-                        await api(`repos/${repository}/languages`),
+                        await api(`repos/${canonicalRepository}/languages`),
                       )
                     : null,
                 }

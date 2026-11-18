@@ -167,8 +167,10 @@ async function fetchSnapshotTrack(): Promise<LastFmRecentPayload["track"]> {
   }
 }
 
-/** Browser fetch — Last.fm allows CORS on ws.audioscrobbler.com; falls back to same-origin snapshot when live API is blocked or fails. */
-export async function fetchLastFmRecent(): Promise<LastFmRecentPayload> {
+/** Browser fetch; durable images can disable the page's saved-snapshot fallback. */
+export async function fetchLastFmRecent({
+  snapshotFallback = true,
+}: { snapshotFallback?: boolean } = {}): Promise<LastFmRecentPayload> {
   const apiKey = process.env.NEXT_PUBLIC_LASTFM_API_KEY ?? "";
   let fallback: LastFmRecentPayload | undefined;
 
@@ -226,7 +228,7 @@ export async function fetchLastFmRecent(): Promise<LastFmRecentPayload> {
     }
   }
 
-  const snapTrack = await fetchSnapshotTrack();
+  const snapTrack = snapshotFallback ? await fetchSnapshotTrack() : null;
   if (snapTrack) {
     return {
       configured: true,

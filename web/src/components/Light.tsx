@@ -110,6 +110,7 @@ export function Light({
 
   const birdGroupsRef = useRef<BirdGroup[]>([]);
   const rainDropsRef = useRef<RainDrop[]>([]);
+  const staticScene = animated ? null : scene;
 
   useEffect(() => {
     if (!animated || typeof window === "undefined") return;
@@ -213,11 +214,15 @@ export function Light({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const observer = new ResizeObserver(resize);
+    const resizeAndPaint = () => {
+      resize();
+      if (!animated) render(performance.now());
+    };
+    const observer = new ResizeObserver(resizeAndPaint);
     if (canvas.parentElement) {
       observer.observe(canvas.parentElement);
     }
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize", resizeAndPaint);
     resize();
 
     const render = (timeMs: number) => {
@@ -516,10 +521,10 @@ export function Light({
 
     return () => {
       observer.disconnect();
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", resizeAndPaint);
       window.cancelAnimationFrame(animFrameId);
     };
-  }, [animated]);
+  }, [animated, staticScene]);
 
   return <canvas ref={canvasRef} className={className} style={{ opacity }} />;
 }

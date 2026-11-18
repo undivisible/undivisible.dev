@@ -155,14 +155,14 @@ export const HEADLINE_WORKS: HeadlineWork[] = [
   },
   {
     name: "rotary · apollo",
-    href: "https://github.com/tschk/rotary",
+    href: "https://github.com/softwarecorporation/rotary",
     what: "agent stack",
     line: "rotary owns the loop — tools, providers, sessions, permissions, computer-use. apollo is the runtime on top: 14 mb, 20+ llm providers, 10+ messaging channels. zkr remembers, praefectus verifies, darash searches.",
     stat: "all rust",
   },
   {
     name: "rv8",
-    href: "https://github.com/tschk/rv8",
+    href: "https://github.com/softwarecorporation/rv8",
     what: "browser engine",
     line: "servo for rendering, v8 for javascript, rust holding it together.",
     stat: "servo + v8",

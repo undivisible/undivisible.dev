@@ -17,6 +17,45 @@ export type ReadmeBundle = {
   libraries: ReadmeProject[];
 };
 
+// Canonical full_names verified through the GitHub API; unknown repositories stay untouched.
+const MIGRATED_TSCHK_REPOSITORIES = new Set([
+  "alpenglow",
+  "alpenglowed",
+  "apollo",
+  "aurorality",
+  "crepuscularity",
+  "darash",
+  "eqswift",
+  "eqts",
+  "equilibrium",
+  "inauguration",
+  "moonshine",
+  "nexnet",
+  "praefectus",
+  "rig",
+  "rotary",
+  "rv8",
+  "soliloquy",
+  "space",
+  "subspace",
+  "telekinesis",
+  "wax",
+  "zkr",
+]);
+
+export function normalizeProjectHref(href: string): string {
+  const safe = safeExternalHref(href);
+  if (safe === "#") return safe;
+  const url = new URL(safe);
+  if (url.hostname !== "github.com") return href.trim();
+  const match = /^\/tschk\/([^/]+)(\/.*)?$/i.exec(url.pathname);
+  if (!match) return href.trim();
+  const repo = match[1]!.replace(/\.git$/i, "").toLowerCase();
+  if (!MIGRATED_TSCHK_REPOSITORIES.has(repo)) return href.trim();
+  url.pathname = `/softwarecorporation/${repo}${/\.git$/i.test(match[1]!) ? ".git" : ""}${match[2] ?? ""}`;
+  return url.href;
+}
+
 export function projectKey(name: string): string {
   return name
     .replace(/\s*\((wip|shelved|archived)\)\s*/gi, "")
@@ -485,7 +524,10 @@ export function parseLandingReadme(md: string): ReadmeProject[] {
       });
     }
   }
-  return projects;
+  return projects.map((project) => ({
+    ...project,
+    href: normalizeProjectHref(project.href),
+  }));
 }
 
 /** Upstream now line / article — not the GitHub project list (see PROFILE_PROJECT_LIST_MARKDOWN_URL). */
@@ -531,7 +573,7 @@ export function promoteAuroralityToUtilities(
 const EQSWIFT: ReadmeProject = {
   key: "eqswift",
   name: "eqswift",
-  href: "https://github.com/tschk/eqswift",
+  href: "https://github.com/softwarecorporation/eqswift",
   desc: "Rust-to-Swift binding tooling designed to reduce UniFFI boilerplate and make interop practical.",
 };
 
@@ -580,7 +622,10 @@ function applyHardcodedStacksToBundle(bundle: ReadmeBundle): ReadmeBundle {
 
 function withSafeHrefs(bundle: ReadmeBundle): ReadmeBundle {
   const map = (projects: ReadmeProject[]) =>
-    projects.map((p) => ({ ...p, href: safeExternalHref(p.href) }));
+    projects.map((p) => ({
+      ...p,
+      href: safeExternalHref(normalizeProjectHref(p.href)),
+    }));
   return {
     ...bundle,
     mainProjects: map(bundle.mainProjects),

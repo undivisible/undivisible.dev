@@ -150,6 +150,7 @@ export default function Ascii({
   lastFmUsername = "undivisible",
   view = "home",
   onViewChange,
+  staticFrame = false,
 }: {
   colors?: string[];
   track?: TrackInfo | null;
@@ -157,6 +158,7 @@ export default function Ascii({
   lastFmUsername?: string;
   view?: LandingView;
   onViewChange?: (view: LandingView) => void;
+  staticFrame?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -413,6 +415,7 @@ export default function Ascii({
     const detachResize = attachStableResize(container, resize);
 
     const render = (timestamp: number) => {
+      const motionReduced = staticFrame || reducedMotion.matches;
       frameRef.current = requestAnimationFrame(render);
 
       if (
@@ -436,7 +439,7 @@ export default function Ascii({
           dissolveStart = now;
           contentScatter.clear();
         }
-        if (reducedMotion.matches || now - dissolveStart >= DISSOLVE_DURATION) {
+        if (motionReduced || now - dissolveStart >= DISSOLVE_DURATION) {
           currentView = viewRef.current.view;
           viewRef.current.onViewChange?.(currentView);
           dissolveStart = undefined;
@@ -451,7 +454,7 @@ export default function Ascii({
         revealStart = now;
       backgroundStart ??= revealStart;
       const elapsed =
-        !landing || reducedMotion.matches
+        !landing || motionReduced
           ? REVEAL_DURATION
           : revealStart === undefined
             ? 0
@@ -460,16 +463,16 @@ export default function Ascii({
       const colorStart = Math.max(COLOR_START, initialNumberEnd);
       const revealing =
         landing &&
-        !reducedMotion.matches &&
+        !motionReduced &&
         (elapsed < colorStart + 1000 || dissolving);
       const fieldElapsed =
-        !landing || reducedMotion.matches
+        !landing || motionReduced
           ? REVEAL_DURATION
           : backgroundStart === undefined
             ? 0
             : now - backgroundStart;
       const colorProgress =
-        !landing || reducedMotion.matches
+        !landing || motionReduced
           ? 1
           : clamp((fieldElapsed - colorStart) / 1000, 0, 1);
       const colorMix = colorProgress * colorProgress * (3 - 2 * colorProgress);
@@ -499,7 +502,7 @@ export default function Ascii({
       last = now;
 
       for (const shape of shapes) {
-        if (landing && reducedMotion.matches) continue;
+        if (landing && motionReduced) continue;
         const padding = shape.size * 0.55 + 12;
         shape.x += shape.vx * delta;
         shape.y += shape.vy * delta;
@@ -607,7 +610,7 @@ export default function Ascii({
         shader.resize(width, height, cols, rows);
       }
 
-      shader.render(landing ? (reducedMotion.matches ? 0 : fieldElapsed) : now);
+      shader.render(landing ? (motionReduced ? 0 : fieldElapsed) : now);
 
       sampleCtx.clearRect(0, 0, cols, rows);
       sampleCtx.drawImage(bgCanvas, 0, 0, cols, rows);
@@ -715,7 +718,7 @@ export default function Ascii({
               contentChar = undefined;
             } else if (scatter > resolveMix) {
               contentChar = scatter <= glyphMix ? randomGlyph() : undefined;
-            } else if (number && !reducedMotion.matches) {
+            } else if (number && !motionReduced) {
               if (!numberStarts.has(identity)) {
                 numberStarts.set(identity, now);
                 if (fieldElapsed < COLOR_START)
@@ -946,7 +949,7 @@ export default function Ascii({
       document.removeEventListener("visibilitychange", visibilityHandler);
       cancelAnimationFrame(frameRef.current);
     };
-  }, [ready]);
+  }, [ready, staticFrame]);
 
   return (
     <div

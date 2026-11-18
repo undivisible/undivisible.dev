@@ -1,3 +1,5 @@
+import { githubLanguageColors } from "./github-language-colors";
+
 const GITHUB_LANG_RE =
   /<span class="color-fg-default text-bold mr-1">([^<]+)<\/span>\s*<span>([0-9.]+)%<\/span>/g;
 
@@ -46,6 +48,32 @@ export function githubLanguageLabel(stats: GithubLanguageStats): string {
     })
     .join(" · ");
 }
+
+export function prepareGithubLanguages(stats: GithubLanguageStats) {
+  const entries = Object.entries(stats?.languages ?? {})
+    .filter(([, bytes]) => bytes > 0)
+    .sort((a, b) => b[1] - a[1]);
+  const total = entries.reduce((sum, [, bytes]) => sum + bytes, 0);
+  const segments = entries.map(([name, bytes]) => {
+    const color = Object.hasOwn(githubLanguageColors, name)
+      ? (githubLanguageColors[name] ?? null)
+      : null;
+    const percentage = (bytes / total) * 100;
+    const label = `${name} ${percentage < 0.1 ? "<0.1" : percentage.toFixed(1)}% (${bytes} bytes)${color ? "" : "; neutral fallback colour"}`;
+    return { name, bytes, percentage, color, label };
+  });
+  const label = githubLanguageLabel(stats);
+  return {
+    repository: stats?.repository ?? null,
+    label,
+    accessibleLabel: segments.length
+      ? `GitHub languages: ${segments.map((segment) => segment.label).join("; ")}`
+      : label,
+    segments,
+  };
+}
+
+export type PreparedGithubLanguages = ReturnType<typeof prepareGithubLanguages>;
 
 export function parseGithubLanguageHtml(html: string): string | undefined {
   const langs: Array<{ name: string; pct: number }> = [];

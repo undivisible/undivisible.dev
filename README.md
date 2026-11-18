@@ -12,7 +12,7 @@ Override sync URLs with `PROFILE_README_URL` (project-list source) or `RESUME_MA
 
 ## Structure
 
-- `web/` - the production site, built on [moonshine](https://github.com/tschk/moonshine) (React renderer, prerendered to static HTML, hydrated islands); see `web/README.md` for shipped features and env vars
+- `web/` - the production site, built on [moonshine](https://github.com/softwarecorporation/moonshine) (React renderer, prerendered to static HTML, hydrated islands); see `web/README.md` for shipped features and env vars
 - `old/` - every previous version of the site, numbered (linguist-vendored):
   - `1/`-`6/` - the static HTML/CSS originals; these are also baked into the
     `/lab` machine's initramfs and browsable in-OS via the `history` app
@@ -61,7 +61,7 @@ components — still an order of magnitude under Next.js.)
 
 The site is now also a computer. `/lab` boots a real 32-bit i686 Linux in the
 browser under [v86](https://github.com/copy/v86) — the real
-[alpenglow](https://github.com/tschk/alpenglow) image — and its screen is the
+[alpenglow](https://github.com/softwarecorporation/alpenglow) image — and its screen is the
 page: a hand-written **Zig 0.16** framebuffer desktop (compositor, bar,
 draggable widgets with wikipedia-style hover cards, resizable panels) plus a
 real browser ([NetSurf](https://www.netsurf-browser.org/), framebuffer, real

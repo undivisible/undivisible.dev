@@ -10,11 +10,11 @@ i made this widget! - [github](https://github.com/undivisible/cratesdownloadhist
 
 ---
 
-## [crepuscularity](https://crepuscularity.tsc.hk) · [aurorality](https://github.com/tschk/aurorality)
+## [crepuscularity](https://crepuscularity.tsc.hk) · [aurorality](https://github.com/softwarecorporation/aurorality)
 
 > a cross-platform UI toolkit in active development.
 
-crepuscularity compiles .crepus templates and frontend input syntaxes to GPUI desktop, HTML, Ratatui terminals and MV3 extensions. SwiftUI and Jetpack Compose shells use View IR; native mobile support is in development. [aurorality](https://github.com/tschk/aurorality) builds native SwiftUI macOS and iOS interfaces with JavaScript/TypeScript or Rust backends.
+crepuscularity compiles .crepus templates and frontend input syntaxes to GPUI desktop, HTML, Ratatui terminals and MV3 extensions. SwiftUI and Jetpack Compose shells use View IR; native mobile support is in development. [aurorality](https://github.com/softwarecorporation/aurorality) builds native SwiftUI macOS and iOS interfaces with JavaScript/TypeScript or Rust backends.
 
 ### [moonshine](https://moonshine.tsc.hk)
 
@@ -26,7 +26,7 @@ a compiler toolchain that brings multiple source languages into Core IR and targ
 
 ### [alpenglow](https://alpenglow.tsc.hk)
 
-a small diskless Linux distribution with a musl userspace, immutable root filesystem, dinit and Oil packages. includes work on the [alpenglowed](https://github.com/tschk/alpenglowed) desktop shell and [soliloquy](https://github.com/tschk/soliloquy), an experimental browser-native variant.
+a small diskless Linux distribution with a musl userspace, immutable root filesystem, dinit and Oil packages. includes work on the [alpenglowed](https://github.com/softwarecorporation/alpenglowed) desktop shell and [soliloquy](https://github.com/softwarecorporation/soliloquy), an experimental browser-native variant.
 
 ### [space](https://space.tsc.hk)
 
@@ -35,20 +35,20 @@ an experimental component-based operating system built with Inauguration, SCI co
 ### other
 
 - **subspace** - an experimental statically composed embedded realtime operating system.
-- **[equilibrium](https://github.com/tschk/equilibrium)** — load c-compatible code into rust with one call. auto-detects sources, compiles, exposes as rust modules. `load()` is the primary path. for rust → swift, see [eqswift](https://github.com/tschk/eqswift).
-- **[eqswift](https://github.com/tschk/eqswift)** — Rust-to-Swift binding tooling for exposing Rust APIs to Swift.
-- **[eqts](https://github.com/tschk/eqts)** — one rust api for typescript across node, bun, deno, and webassembly.
-- **[rig](https://github.com/tschk/rig)** — cross-language native dependency manager — detects host language, adds libs via cli, exposes them in-process with equilibrium-ffi.
-- **[apollo](https://github.com/tschk/apollo)** - a local-first Rust AI agent runtime with messaging integrations, provider adapters, tool permissions and plugins.
-- **[telekinesis](https://github.com/tschk/telekinesis)** — ai coding agent cli + tui powered by rotary (rx4) + crepuscularity-tui. [telekinesis.tsc.hk](https://telekinesis.tsc.hk).
-- **[rv8](https://github.com/tschk/rv8)** (roverite) - a custom browser engine built with servo and v8 with in house optimisations.
-- **[rx4](https://github.com/tschk/rotary)** (rotary) — general-purpose agent harness engine and crate in rust owns the loop, tools, providers, sessions, permissions and computer-use (with rs_peekaboo).
-- **[zkr](https://github.com/tschk/zkr)** - evidence-backed temporal memory engine for personal agents.
-- **[praefectus](https://github.com/tschk/praefectus)** - provider-neutral computer-use execution tooling for Rust, with verification and permission boundaries.
-- **[darash](https://github.com/tschk/darash)** - provider-neutral async search client + crate for agents.
-- **[wax](https://github.com/tschk/wax)** (archived) — fast homebrew-compatible package manager in rust. uses homebrew's ecosystem (formulae, bottles, casks) without the ruby/git overhead — compiled, async, parallel installs, lockfiles, and experimental winget/scoop/nix-like support.
+- **[equilibrium](https://github.com/softwarecorporation/equilibrium)** — load c-compatible code into rust with one call. auto-detects sources, compiles, exposes as rust modules. `load()` is the primary path. for rust → swift, see [eqswift](https://github.com/softwarecorporation/eqswift).
+- **[eqswift](https://github.com/softwarecorporation/eqswift)** — Rust-to-Swift binding tooling for exposing Rust APIs to Swift.
+- **[eqts](https://github.com/softwarecorporation/eqts)** — one rust api for typescript across node, bun, deno, and webassembly.
+- **[rig](https://github.com/softwarecorporation/rig)** — cross-language native dependency manager — detects host language, adds libs via cli, exposes them in-process with equilibrium-ffi.
+- **[apollo](https://github.com/softwarecorporation/apollo)** - a local-first Rust AI agent runtime with messaging integrations, provider adapters, tool permissions and plugins.
+- **[telekinesis](https://github.com/softwarecorporation/telekinesis)** — ai coding agent cli + tui powered by rotary (rx4) + crepuscularity-tui. [telekinesis.tsc.hk](https://telekinesis.tsc.hk).
+- **[rv8](https://github.com/softwarecorporation/rv8)** (roverite) - a custom browser engine built with servo and v8 with in house optimisations.
+- **[rx4](https://github.com/softwarecorporation/rotary)** (rotary) — general-purpose agent harness engine and crate in rust owns the loop, tools, providers, sessions, permissions and computer-use (with rs_peekaboo).
+- **[zkr](https://github.com/softwarecorporation/zkr)** - evidence-backed temporal memory engine for personal agents.
+- **[praefectus](https://github.com/softwarecorporation/praefectus)** - provider-neutral computer-use execution tooling for Rust, with verification and permission boundaries.
+- **[darash](https://github.com/softwarecorporation/darash)** - provider-neutral async search client + crate for agents.
+- **[wax](https://github.com/softwarecorporation/wax)** (archived) — fast homebrew-compatible package manager in rust. uses homebrew's ecosystem (formulae, bottles, casks) without the ruby/git overhead — compiled, async, parallel installs, lockfiles, and experimental winget/scoop/nix-like support.
 - **[oil](https://github.com/semitechnological/oil)** – fast system package manager in rust for all major \*nix systems based on wax with linuxbrew support and interop with existing package managers.
-- **[nexnet](https://github.com/tschk/nexnet)** - local-first peer-to-peer social chat with wallet identity and encrypted messaging.
+- **[nexnet](https://github.com/softwarecorporation/nexnet)** - local-first peer-to-peer social chat with wallet identity and encrypted messaging.
 - **atmosphere** — a native sync and ecosystem layer for every device, with local-first and homelab support.
 
 ---
@@ -72,8 +72,8 @@ an experimental component-based operating system built with Inauguration, SCI co
 
 ### browser extensions
 
-- **[rs_vimium](https://github.com/undivisible/rs_vimium)** — a rust rewrite of the [vimium](https://github.com/philc/vimium) browser extension built with the [crepuscularity webextension framework](https://github.com/tschk/crepuscularity).
-- **[anywhere](https://github.com/undivisible/anywhere)** — browser extension that turns ai chat responses into interactive interfaces. renders widgets, panels, forms, charts inside chat via custom response tags, also built with the [crepuscularity webextension framework](https://github.com/tschk/crepuscularity).
+- **[rs_vimium](https://github.com/undivisible/rs_vimium)** — a rust rewrite of the [vimium](https://github.com/philc/vimium) browser extension built with the [crepuscularity webextension framework](https://github.com/softwarecorporation/crepuscularity).
+- **[anywhere](https://github.com/undivisible/anywhere)** — browser extension that turns ai chat responses into interactive interfaces. renders widgets, panels, forms, charts inside chat via custom response tags, also built with the [crepuscularity webextension framework](https://github.com/softwarecorporation/crepuscularity).
 
 ### mobile & desktop
 

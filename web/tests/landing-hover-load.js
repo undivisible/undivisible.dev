@@ -199,7 +199,7 @@ try {
         if (!state || state.name !== key || state.events === "none")
           throw new Error(
             "Card lost ownership or cannot receive pointer input during diagonal approach: " +
-              key,
+              JSON.stringify({ key, point, state, owner, card }),
           );
         if (state.neighbor && state.neighbor !== key) crossedAdjacent++;
         if (
@@ -270,12 +270,21 @@ try {
       "document.querySelector('#project-preview strong')?.textContent === 'alpenglow'",
     );
     const neighbor = await box("[data-project-key=alpenglowed]");
-    await move(neighbor.left + 10, alpenglow.top + 4);
-    await wait(
-      "document.querySelector('#project-preview strong')?.textContent === 'alpenglowed'",
-    );
+    for (let step = 0; step < 20; step++) {
+      pointer = { x: neighbor.left + 10, y: alpenglow.top + 4 + (step % 2) };
+      await cdp("Input.dispatchMouseEvent", { type: "mouseMoved", ...pointer });
+      await Bun.sleep(20);
+    }
+    if (
+      !(await evaluate(
+        "document.querySelector('#project-preview strong')?.textContent === 'alpenglowed'",
+      ))
+    )
+      throw new Error(
+        "Small pointer movements kept restarting neighbor selection",
+      );
     console.log(
-      "PASS stopping on a neighbor selects it instead of trapping the previous owner",
+      "PASS neighbor selects during small pointer movements without restarting intent",
     );
     await move(10, 10);
     await wait("!document.querySelector('#project-preview')");
@@ -314,7 +323,9 @@ try {
     };
     await click(".landing-preview-languages a");
     for (let frame = 0; frame < 100 && !requested; frame++) await Bun.sleep(20);
-    if (requested !== "https://github.com/tschk/alpenglow#languages")
+    if (
+      requested !== "https://github.com/softwarecorporation/alpenglow#languages"
+    )
       throw new Error(
         "Card language link did not receive the real click: " + requested,
       );

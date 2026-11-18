@@ -307,11 +307,11 @@ export default function MachineRoot() {
           <span>
             linux 7.1.3 i686 · v86 · image built from{" "}
             <a
-              href="https://github.com/tschk/alpenglow"
+              href="https://github.com/softwarecorporation/alpenglow"
               target="_blank"
               rel="noopener noreferrer"
             >
-              tschk/alpenglow
+              softwarecorporation/alpenglow
             </a>
           </span>
           <span className="machine-foot-hint">

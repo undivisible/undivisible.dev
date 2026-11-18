@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 import {
   normalizeReadmeBundle,
+  normalizeProjectHref,
   parseLandingReadme,
   parseReadme,
   readmeBundleProjectCount,
@@ -158,7 +159,51 @@ A Linux distro. Its [alpenglowed](https://github.com/tschk/alpenglowed) shell an
   expect(projects.find((project) => project.key === "soliloquy")).toEqual({
     key: "soliloquy",
     name: "soliloquy",
-    href: "https://github.com/tschk/soliloquy",
+    href: "https://github.com/softwarecorporation/soliloquy",
     desc: "Its alpenglowed shell and soliloquy variant.",
   });
+});
+
+test("project links use only verified GitHub migrations and preserve URL suffixes", () => {
+  expect(
+    normalizeProjectHref(
+      "https://github.com/tschk/rotary/tree/main?tab=readme#usage",
+    ),
+  ).toBe(
+    "https://github.com/softwarecorporation/rotary/tree/main?tab=readme#usage",
+  );
+  expect(normalizeProjectHref("https://github.com/tschk/ark-protocol")).toBe(
+    "https://github.com/tschk/ark-protocol",
+  );
+  expect(normalizeProjectHref("https://github.com/tschk/eqts.git")).toBe(
+    "https://github.com/softwarecorporation/eqts.git",
+  );
+  for (const href of [
+    "https://github.com/tschk/unknown-project",
+    "https://github.com/undivisible/rotary",
+    "https://github.com.evil.test/tschk/rotary",
+    "https://rotary.tsc.hk/",
+    "https://www.npmjs.com/package/@tschk/moonshine",
+  ])
+    expect(normalizeProjectHref(href)).toBe(href);
+  expect(normalizeProjectHref("javascript:alert(1)")).toBe("#");
+});
+
+test("bundle normalization preserves inventory, copy and stacks while migrating links", () => {
+  const before = parseReadme(SUBPROJECTS_SNIPPET);
+  const normalized = normalizeReadmeBundle(before);
+  const inauguration = before.utilities.find(
+    (project) => project.key === "inauguration",
+  )!;
+  expect(
+    normalized.utilities.find((project) => project.key === "inauguration"),
+  ).toEqual({
+    ...inauguration,
+    href: "https://github.com/softwarecorporation/inauguration",
+    stack: "Rust.",
+  });
+  expect(normalizeReadmeBundle(normalized)).toEqual(normalized);
+  expect(
+    normalized.utilities.find((project) => project.key === "eqswift")?.href,
+  ).toBe("https://github.com/softwarecorporation/eqswift");
 });

@@ -1,6 +1,7 @@
 import { scrapeGithubRepoLanguages, sleep } from "@/lib/github-repo-languages";
 import {
   normalizeReadmeBundle,
+  normalizeProjectHref,
   parseReadme,
   profileMarkdownUrls,
   type ReadmeBundle,
@@ -30,7 +31,7 @@ export {
 export function githubRepoPathFromHref(href: string): string | undefined {
   let url: URL;
   try {
-    url = new URL(href);
+    url = new URL(normalizeProjectHref(href));
   } catch {
     return undefined;
   }
@@ -92,7 +93,7 @@ export async function fillReadmeBundleMissingStacks(
 }
 
 function projectIdentity(project: ReadmeProject): string {
-  return `${project.key}:${project.href.replace(/\/$/, "").toLowerCase()}`;
+  return `${project.key}:${normalizeProjectHref(project.href).replace(/\/$/, "").toLowerCase()}`;
 }
 
 function applyStackFallbacks(

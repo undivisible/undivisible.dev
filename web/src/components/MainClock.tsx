@@ -10,11 +10,13 @@ export function MainClock({
   now,
   nowArticleOpen,
   onToggleNowArticle,
+  onTimeHoverChange,
 }: {
   dayTheme: HongKongDayTheme;
   now: NowContent;
   nowArticleOpen: boolean;
   onToggleNowArticle?: () => void;
+  onTimeHoverChange?: (hovered: boolean) => void;
 }) {
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
@@ -24,6 +26,10 @@ export function MainClock({
       className="personal-clock"
       aria-label="Time and weather"
       data-time-preview={dayTheme.isScrubbing}
+      onPointerEnter={(event) => {
+        if (event.pointerType !== "touch") onTimeHoverChange?.(true);
+      }}
+      onPointerLeave={() => onTimeHoverChange?.(false)}
     >
       <ClockPanel
         dayTheme={dayTheme}

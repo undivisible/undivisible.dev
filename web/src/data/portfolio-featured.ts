@@ -31,21 +31,21 @@ const templates: Record<PillarKey, PillarTemplate> = {
     displayName: "Space",
     tagline: "An experimental component-based OS.",
     stat: "Boots",
-    hrefFallback: "https://github.com/tschk/space",
+    hrefFallback: "https://github.com/softwarecorporation/space",
   },
   inauguration: {
     eyebrow: "Compiler platform",
     displayName: "Inauguration",
     tagline: "Multiple languages, one intermediate representation.",
     stat: "Research",
-    hrefFallback: "https://github.com/tschk/inauguration",
+    hrefFallback: "https://github.com/softwarecorporation/inauguration",
   },
   alpenglow: {
     eyebrow: "Linux distribution",
     displayName: "Alpenglow",
     tagline: "Diskless, immutable Linux.",
     stat: "Diskless",
-    hrefFallback: "https://github.com/tschk/alpenglow",
+    hrefFallback: "https://github.com/softwarecorporation/alpenglow",
   },
 };
 

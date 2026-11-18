@@ -16,7 +16,7 @@ import { createStaticRenderer } from "@/moonshine/renderer";
 import type { Metadata } from "@/moonshine/next";
 import config from "../moonshine.config";
 import { loadRootEnv } from "./load-root-env";
-import { generateOgBanner } from "./generate-og";
+import { buildOgPage } from "./build-og";
 
 const projectDir = resolve(import.meta.dir, "..");
 const outDir = join(projectDir, "out");
@@ -47,6 +47,7 @@ function clientDefine(): Record<string, string> {
 type ClientEntry = { name: string; entry: string };
 
 const CLIENT_ENTRIES: ClientEntry[] = [
+  { name: "og-banner", entry: join(projectDir, "src/client/og-banner.tsx") },
   { name: "album-theme", entry: join(projectDir, "src/client/album-theme.ts") },
   { name: "home", entry: join(projectDir, "src/client/home.tsx") },
   { name: "not-found", entry: join(projectDir, "src/client/not-found.tsx") },
@@ -213,7 +214,7 @@ async function main(): Promise<void> {
   }
 
   await cp(join(projectDir, "public"), outDir, { recursive: true });
-  await generateOgBanner({ outDir, stylesheet });
+  await buildOgPage({ outDir, stylesheet, entry: clientBundles["og-banner"]! });
 
   const manifest: MoonshineManifest = {
     version: MANIFEST_VERSION,
