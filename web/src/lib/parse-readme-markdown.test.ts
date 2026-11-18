@@ -262,3 +262,103 @@ test("Darash project links prefer the public site without rewriting source subpa
     "https://darash.tsc.hk",
   );
 });
+
+test("public landing parser retains games, private-source links and distinct subspace projects", () => {
+  const projects = parseLandingReadme(`### other
+- **[subspace](https://github.com/softwarecorporation/subspace)** — embedded realtime operating system.
+- **[ark](https://github.com/atechnology-company/ark)** — hosted app platform prototype.
+
+***
+
+## miniapps
+### mobile & desktop
+- **[subspace notes](https://github.com/atechnology-company/subspace)** — a separate note-taking app; not the realtime operating system.
+
+### games & experiments
+- **[autophobia](https://github.com/chertlabs/autophobia)** — a week-long psychological horror.
+- **[duplex](https://github.com/undivisible/duplex)** — a unity game-design project from 2023.
+
+## libraries
+- **[chertlabs engine](https://github.com/chertlabs/engine)** — shared backend for texting games.`);
+  expect(projects.map((project) => project.key)).toEqual([
+    "subspace",
+    "ark",
+    "subspace-notes",
+    "autophobia",
+    "duplex",
+    "chertlabs-engine",
+  ]);
+  expect(
+    projects.find((project) => project.key === "subspace-notes"),
+  ).toMatchObject({
+    name: "subspace notes",
+    href: "https://github.com/atechnology-company/subspace",
+    desc: "a separate note-taking app; not the realtime operating system.",
+    category: "mobile & desktop",
+  });
+  expect(
+    projects.find((project) => project.key === "autophobia")?.category,
+  ).toBe("games & experiments");
+  expect(projects.find((project) => project.key === "ark")?.href).toBe(
+    "https://github.com/atechnology-company/ark",
+  );
+});
+
+test("reviewed project source retains all 44 published inventory additions", async () => {
+  const projects = parseLandingReadme(
+    await Bun.file(new URL("../../../projects.md", import.meta.url)).text(),
+  );
+  const names = [
+    "lyceus",
+    "roundhouse",
+    "sdkkit",
+    "mono",
+    "ark",
+    "arkie",
+    "cupboard",
+    "tofu",
+    "alpenglow rescue",
+    "qr-forge",
+    "atzel",
+    "currant",
+    "experiences",
+    "unthought",
+    "diplomap",
+    "neptune",
+    "arcanbar",
+    "graft mail",
+    "tangent",
+    "hermes-workspaces",
+    "perplexity-mcp-poke",
+    "opencode desktop gpui",
+    "context",
+    "kairo",
+    "tile",
+    "tabyrus",
+    "rover",
+    "unelaborate",
+    "omi v4",
+    "plates",
+    "subspace notes",
+    "bluetooth terminal",
+    "rs_ice",
+    "fridge-agent",
+    "autophobia",
+    "kyu",
+    "strangers",
+    "together",
+    "duplex",
+    "silhouette shader",
+    "tree-sitter-crystal",
+    "tree-sitter-lolcode",
+    "tree-sitter-nim",
+    "chertlabs engine",
+  ];
+  expect(names).toHaveLength(44);
+  for (const name of names) {
+    const matches = projects.filter((project) => project.name === name);
+    expect(matches).toHaveLength(1);
+    expect(matches[0]?.desc).not.toBe("");
+    expect(matches[0]?.href).toStartWith("https://github.com/");
+  }
+});

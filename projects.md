@@ -50,6 +50,15 @@ an experimental component-based operating system built with Inauguration, SCI co
 - **[oil](https://github.com/semitechnological/oil)** – fast system package manager in rust for all major \*nix systems based on wax with linuxbrew support and interop with existing package managers.
 - **[nexnet](https://github.com/softwarecorporation/nexnet)** - local-first peer-to-peer social chat with wallet identity and encrypted messaging.
 - **atmosphere** — a native sync and ecosystem layer for every device, with local-first and homelab support.
+- **[lyceus](https://github.com/softwarecorporation/lyceus)** — experimental research into adaptive, growing model families, including native language models, memory and text diffusion experiments.
+- **[roundhouse](https://github.com/softwarecorporation/roundhouse)** — always-on agentic operations built on rotary, with health checks, permission-gated tools and independent recovery verification.
+- **[sdkkit](https://github.com/softwarecorporation/sdkkit)** — define one sdk contract and generate typed contracts for rust, python and typescript. service implementations and http clients are not generated yet.
+- **[mono](https://github.com/atechnology-company/mono)** — object-centric encrypted replication for browsers and devices, with portable identity, capability-based access and cross-device continuity.
+- **[ark](https://github.com/atechnology-company/ark)** — hosted app platform prototype with a rust control plane, v cli, svelte dashboard and declarative app manifests.
+- **[arkie](https://github.com/arkiecompany/arkie)** — shared ai backend and mcp server for atechnology apps, with per-app tools, prompts and conversation history.
+- **[cupboard](https://github.com/atechnology-company/cupboard)** — headless home hub for lan-first sync of files, photos, clipboard history and app handoff, with native companion apps.
+- **[tofu](https://github.com/atechnology-company/tofu)** — an imessage-first personal agent foundation with a paired rust host, task daemon and approval-gated computer use. not an unattended deployed assistant.
+- **[alpenglow rescue](https://github.com/undivisible/alpenglow-rescue)** — experimental rescue image based on pinned alpenglow, with reproducible virtual-machine storage, network and console checks; hardware repair workflows remain incomplete.
 
 ---
 
@@ -64,11 +73,24 @@ an experimental component-based operating system built with Inauguration, SCI co
 - **[alphabets](https://alphabets.undivisible.dev)** — learn any unicode-supported alphabet through cards, quizzes, and completion tables.
 - **[infrastruct](https://infrastruct.undivisible.dev)** — belief agnostic jurisprudence local ai search engine platform with searx & ddg, transformers.js and browser prompt api.
 - **[akh](https://akh.undivisible.dev)** — islamic uniplatform for when i was previously interested in islam.
+- **[qr-forge](https://github.com/undivisible/qr-forge)** — in-browser qr studio with live previews, palettes, shape masks, logo overlays and png, svg and jpeg export.
+- **[atzel](https://github.com/arkiecompany/atzel)** — financial research dashboard bringing market data, news, economic indicators and sec filings into one interface.
+- **[currant](https://github.com/arkiecompany/currant)** — ai sales agents and job management for trades businesses, from customer conversations and leads to quotes and invoices.
+- **[experiences](https://github.com/atechnology-company/experiences)** — platform and sdk for creating and sharing interactive 3d spaces across web and xr clients.
+- **[unthought](https://github.com/arkiecompany/unthought)** — business platforming project combining domain registration, generated sites, deployment and mail-service integration.
+- **[diplomap](https://github.com/undivisible/DiploMap)** — flask and folium project using interactive maps to explain global conflicts.
 
 ### developer tools
 
 - **[herdr-gui](https://github.com/undivisible/herdr-gui)** - a gui surface for [herdr](https://herdr.dev) built with crepuscularity and [ghostty](https://ghostty.org/)
 - **[incisor](https://github.com/undivisible/incisor)** - a rust + crepuscularity rewrite of balenaetcher to flash os images to sd cards and usbs
+- **[neptune](https://github.com/semicentric/neptune)** — firmware reverse-engineering research toolchain for disassembly, decompilation, rebuilding and vulnerability analysis on hardware you own.
+- **[arcanbar](https://github.com/undivisible/arcanbar)** — polybar-shaped status surface for arcan, with small text-producing modules and external actions.
+- **[graft mail](https://github.com/arkiecompany/graft-mail)** — remote mcp access to existing imap and smtp email accounts, gated by a subscription.
+- **[tangent](https://github.com/undivisible/tangent)** — discord automation for digital product sellers, connecting stripe payments, fulfillment, tickets and ai support.
+- **[hermes-workspaces](https://github.com/undivisible/hermes-workspaces)** — workspace-selection integration for isolated hermes profiles; source-aware gateway command integration remains unfinished.
+- **[perplexity-mcp-poke](https://github.com/undivisible/perplexity-mcp-poke)** — perplexity search and filtered page content exposed through mcp for poke.
+- **[opencode desktop gpui](https://github.com/semitechnological/rs_opencodedesktop)** — a crepuscularity gpui desktop-shell rewrite for opencode, replacing its web-based ui with native rendering.
 
 ### browser extensions
 
@@ -83,6 +105,26 @@ an experimental component-based operating system built with Inauguration, SCI co
 - **[drift](https://github.com/undivisible/drift-wallpaper)** — macos drift screensaver as a live wallpaper on linux, macos, windows. spotify and apple music now playing support.
 - **[vro](https://github.com/undivisible/vro)** — minimal micro inspired text editor written in v.
 - **[ycyestim](https://github.com/undivisible/ycyestim)** — ios controller for ycy yokonex gen 1 and 2 electrostimulation hardware over btle (optional user-owned http/websocket bridge); dual-channel waveforms, presets and programs, safety limits, healthkit and watchos heart-rate adaptive output.
+- **[context](https://github.com/undivisible/context)** — consent-gated macos app that builds a private, cited profile from readable local context using rotary, codex app-server and zkr.
+- **[kairo](https://github.com/semitechnological/kairo)** — macos-first video editor in c++ with a metal renderer, timeline editing and ai-assisted edit planning.
+- **[tile](https://github.com/semitechnological/tile)** — macos tiling window manager with stacking, rectangle-compatible shortcuts and drag-to-snap zones.
+- **[tabyrus](https://github.com/semitechnological/tabyrus)** — system-wide macos autocomplete, grammar checking and code reshaping with local mlx inference.
+- **[rover](https://github.com/semitechnological/rover)** — macos launcher and ai assistant bar with app and file search, clipboard history, a calculator and a keyboard-driven browser.
+- **[unelaborate](https://github.com/undivisible/unelaborate)** — native macos minecraft launcher with isolated instances, mod loaders, mod management and microsoft sign-in.
+- **[omi v4](https://github.com/undivisible/omi-v4)** — proactive assistant spanning pendant, mobile, desktop, web and messaging, with evidence-backed memory and approval-gated desktop actions.
+- **[plates](https://github.com/atechnology-company/plates)** — cross-device assistant clients combining arkie, atmosphere device services and cupboard local storage.
+- **[subspace notes](https://github.com/atechnology-company/subspace)** — a separate note-taking app with handwriting, voice notes and an ai memory service; not the subspace realtime operating system.
+- **[bluetooth terminal](https://github.com/undivisible/bluetooth-terminal)** — swiftui bluetooth scanner and terminal with device connection and signal-strength filtering.
+- **[rs_ice](https://github.com/undivisible/rs_ice)** — in-progress rust rewrite of the ice macos menu-bar manager, with aurorality settings and incomplete upstream feature parity.
+- **[fridge-agent](https://github.com/undivisible/fridge-agent)** — proof of concept for requesting samsung family hub photos and chert-managed facetime calls over imessage; not verified on a real fridge.
+
+### games & experiments
+
+- **[autophobia](https://github.com/chertlabs/autophobia)** — a week-long psychological horror told through imessage and facetime, with six character contacts.
+- **[kyu](https://github.com/chertlabs/kyu)** — a customizable companion you build and text over imessage, backed by the chertlabs texting-games engine.
+- **[strangers](https://github.com/chertlabs/strangers)** — concept for matching strangers over facetime and reconnecting over imessage, without ai personas.
+- **[together](https://github.com/chertlabs/together)** — group facetime project for synchronized camera grids, browser broadcasts and watch parties; working title and undeployed site.
+- **[duplex](https://github.com/undivisible/duplex)** — a unity game-design project from 2023.
 
 ## libraries
 
@@ -103,5 +145,10 @@ an experimental component-based operating system built with Inauguration, SCI co
 - **[tree-sitter-holyc](https://github.com/undivisible/tree-sitter-holyc)** - tree sitter parsing and grammars for the [holiest programming language on earth](https://github.com/Jamesbarford/holyc-lang).
 - **[ark-protocol](https://github.com/arkiecompany/ark-protocol)** - open protocol and reference implementation for exposing many local vps services behind one standardized https/websocket ingress. defines a manifest-based routing layer, adapter apis, and cloudflare-compatible edge integration for multiplexing internal ports through a single public endpoint.
 - **[monoprotocol](https://github.com/atechnology-company/monoprotocol)** — normative draft sync protocol: wire format, crypto (hkdf, aes256gcm), replicated object model, journals, capabilities; rust reference crate on crates.io with golden conformance vectors (json/cbor).
+- **[silhouette shader](https://github.com/undivisible/silhouette-shader)** — original procedural webgl light studies for moonshine, driven by the sun's position at a chosen location, date and time.
+- **[tree-sitter-crystal](https://github.com/undivisible/tree-sitter-crystal)** — experimental tree-sitter grammar for crystal classes, methods and expressions.
+- **[tree-sitter-lolcode](https://github.com/undivisible/tree-sitter-lolcode)** — tree-sitter grammar for lolcode programs, expressions and control flow; not full lolcode 1.2 coverage.
+- **[tree-sitter-nim](https://github.com/undivisible/tree-sitter-nim)** — experimental nim grammar with indentation-aware procedure and function bodies; language coverage remains incomplete.
+- **[chertlabs engine](https://github.com/chertlabs/engine)** — shared rust cloudflare worker backend for texting games, with consent, memory, personas, scheduling and messaging transports.
 
 and yes im scared of uppercase letters

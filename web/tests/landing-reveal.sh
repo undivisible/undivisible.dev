@@ -28,6 +28,8 @@ for viewport in '412 740' '1440 900'; do
   agent-browser eval 'checkLandingViewTransition()'
   agent-browser eval 'if (previewNavigationLeak || document.querySelector("#project-preview")) throw new Error("Preview reopened during More transition")' >/dev/null
   agent-browser eval "window.expectedProjects = $expected" >/dev/null
+  # Enter keyboard modality before focus scrolls the expanded inventory.
+  agent-browser press Tab >/dev/null
   agent-browser eval '(async () => {
     const controls = [...document.querySelectorAll(".landing-all-projects button")];
     const names = controls.map(control => control.textContent.replace(/[\[\]]/g, "").trim());
@@ -46,6 +48,7 @@ for viewport in '412 740' '1440 900'; do
       control.focus();
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       const preview = document.querySelector("#project-preview");
+      if (!preview) throw new Error("Missing keyboard preview: " + project.name);
       const bounds = preview.getBoundingClientRect();
       if (bounds.left < 12 || bounds.top < 12 || bounds.right > innerWidth - 11 || bounds.bottom > innerHeight - 11) throw new Error("Preview escapes viewport: " + project.name);
       if (preview?.querySelector("p").textContent !== project.desc) throw new Error("Preview differs from README: " + project.name + ": " + preview?.querySelector("p").textContent);

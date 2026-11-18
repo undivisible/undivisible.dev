@@ -200,13 +200,15 @@ async function withGithubLanguages(
 }
 
 const LOCAL_NOW = new URL("../public/now.md", import.meta.url);
+const profileReadmeUrl = process.env.PROFILE_README_URL;
 
 let md: string;
 try {
-  md = process.env.PROFILE_README_URL
+  md = profileReadmeUrl
     ? await fetchProfileMarkdown({ urls: profileMarkdownUrls() })
     : await readFile(new URL("../../projects.md", import.meta.url), "utf8");
 } catch (error) {
+  if (profileReadmeUrl) throw error;
   try {
     md = await Bun.file(LOCAL_NOW).text();
     console.warn(
@@ -229,13 +231,16 @@ const bundle = await fillReadmeBundleMissingStacks(withFallbacks);
 let landingProjects: ReadmeProject[];
 let landingMarkdown: string;
 try {
-  landingMarkdown = await fetchProfileMarkdown({
-    urls: [
-      "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md",
-    ],
-  });
+  landingMarkdown = profileReadmeUrl
+    ? md
+    : await fetchProfileMarkdown({
+        urls: [
+          "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md",
+        ],
+      });
   landingProjects = parseLandingReadme(landingMarkdown);
-} catch {
+} catch (error) {
+  if (profileReadmeUrl) throw error;
   console.warn(
     "Profile README unavailable; using the local project-copy fallback",
   );
