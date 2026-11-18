@@ -151,7 +151,7 @@ async function withGithubLanguages(
     enriched.push(
       ...(await Promise.all(
         projects.slice(start, start + 4).map(async (project) => {
-          // Only an explicit README link or a matching GitHub homepage verifies a custom site's repository.
+          // Verified site mappings take precedence over README links and GitHub homepages.
           const repository =
             githubRepoPathFromHref(project.href) ??
             readmeRepos.find(

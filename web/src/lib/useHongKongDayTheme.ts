@@ -729,7 +729,7 @@ function buildLocationLabel(city: string) {
 }
 
 function formatWeatherDisplay(weather: WeatherInfo) {
-  return `KL ${Math.round(weather.temperatureC)}°C ${weather.status}`;
+  return `KUL ${Math.round(weather.temperatureC)}°C ${weather.status}`;
 }
 
 function getFallbackLocationInfo(): LocationInfo {
@@ -1191,7 +1191,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
       location.timeZone !== MELBOURNE_TIME_ZONE,
     weatherDisplay: weather
       ? formatWeatherDisplay(weather)
-      : "KL WEATHER UNAVAILABLE",
+      : "KUL WEATHER UNAVAILABLE",
     weather,
     displayedDate,
     weatherHref: KUALA_LUMPUR_WEATHER_HREF,

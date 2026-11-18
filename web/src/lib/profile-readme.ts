@@ -35,6 +35,9 @@ export function githubRepoPathFromHref(href: string): string | undefined {
   } catch {
     return undefined;
   }
+  if (url.hostname === "darash.tsc.hk" && url.pathname === "/") {
+    return "softwarecorporation/darash";
+  }
   if (url.hostname !== "github.com") return undefined;
   const [owner, repo] = url.pathname.split("/").filter(Boolean);
   if (!owner || !repo) return undefined;

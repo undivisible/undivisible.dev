@@ -28,6 +28,24 @@ test("language repository extraction canonicalizes verified legacy links", () =>
   ).toBe("softwarecorporation/darash");
 });
 
+test("Darash site and source links retain a distinct verified language repository", () => {
+  for (const href of [
+    "https://darash.tsc.hk",
+    "https://darash.tsc.hk/",
+    "https://softwarecorporation.github.io/darash/",
+    "https://github.com/softwarecorporation/darash",
+    "https://github.com/tschk/darash",
+  ])
+    expect(githubRepoPathFromHref(href)).toBe("softwarecorporation/darash");
+  expect(githubRepoPathFromHref("https://darash.tsc.hk/other")).toBeUndefined();
+  expect(
+    githubRepoPathFromHref("https://darash.tsc.hk.evil.test/"),
+  ).toBeUndefined();
+  expect(
+    githubRepoPathFromHref("https://github.com/undivisible/drift-wallpaper"),
+  ).toBe("undivisible/drift-wallpaper");
+});
+
 test("owner migrations retain cached language stacks", () => {
   const previous = parseReadme(
     "### other\n- **[eqts](https://github.com/tschk/eqts)** — Same description.",

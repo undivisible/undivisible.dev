@@ -53,6 +53,8 @@ const CORRECTED_PROJECT_REPOSITORIES = new Map([
   ["websurfx", "undivisible/websurfx"],
   ["stalwart-lite", "arkiecompany/stalwart-lite"],
   ["darash", "softwarecorporation/darash"],
+  ["drift", "undivisible/drift-wallpaper"],
+  ["drift-wallpaper", "undivisible/drift-wallpaper"],
 ]);
 const PROJECT_REPOSITORY_OWNERS = new Set([
   "tschk",
@@ -71,7 +73,7 @@ export function normalizeProjectHref(href: string): string {
     url.hostname === "softwarecorporation.github.io" &&
     /^\/darash\/?$/.test(url.pathname)
   ) {
-    return "https://github.com/softwarecorporation/darash";
+    return "https://darash.tsc.hk";
   }
   if (url.hostname !== "github.com") return href.trim();
   const match = /^\/([^/]+)\/([^/]+)(\/.*)?$/.exec(url.pathname);
@@ -85,6 +87,13 @@ export function normalizeProjectHref(href: string): string {
       ? `softwarecorporation/${repo}`
       : undefined);
   if (!repository) return href.trim();
+  if (
+    repository === "softwarecorporation/darash" &&
+    !/\.git$/i.test(match[2]!) &&
+    (!match[3] || match[3] === "/")
+  ) {
+    return "https://darash.tsc.hk";
+  }
   url.pathname = `/${repository}${/\.git$/i.test(match[2]!) ? ".git" : ""}${match[3] ?? ""}`;
   return url.href;
 }

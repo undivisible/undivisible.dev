@@ -45,7 +45,7 @@ an experimental component-based operating system built with Inauguration, SCI co
 - **[rx4](https://github.com/softwarecorporation/rotary)** (rotary) — general-purpose agent harness engine and crate in rust owns the loop, tools, providers, sessions, permissions and computer-use (with rs_peekaboo).
 - **[zkr](https://github.com/softwarecorporation/zkr)** - evidence-backed temporal memory engine for personal agents.
 - **[praefectus](https://github.com/softwarecorporation/praefectus)** - provider-neutral computer-use execution tooling for Rust, with verification and permission boundaries.
-- **[darash](https://github.com/softwarecorporation/darash)** - provider-neutral async search client + crate for agents.
+- **[darash](https://darash.tsc.hk)** - provider-neutral async search client + crate for agents.
 - **[wax](https://github.com/softwarecorporation/wax)** (archived) — fast homebrew-compatible package manager in rust. uses homebrew's ecosystem (formulae, bottles, casks) without the ruby/git overhead — compiled, async, parallel installs, lockfiles, and experimental winget/scoop/nix-like support.
 - **[oil](https://github.com/semitechnological/oil)** – fast system package manager in rust for all major \*nix systems based on wax with linuxbrew support and interop with existing package managers.
 - **[nexnet](https://github.com/softwarecorporation/nexnet)** - local-first peer-to-peer social chat with wallet identity and encrypted messaging.

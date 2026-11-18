@@ -219,6 +219,8 @@ test("authorized project corrections normalize only verified repository destinat
     ["websurfx", "undivisible/websurfx"],
     ["stalwart-lite", "arkiecompany/stalwart-lite"],
     ["darash", "softwarecorporation/darash"],
+    ["drift", "undivisible/drift-wallpaper"],
+    ["drift-wallpaper", "undivisible/drift-wallpaper"],
   ];
   for (const [name, destination] of destinations) {
     for (const owner of ["tschk", "softwarecorporation", "arkiecompany"]) {
@@ -234,7 +236,7 @@ test("authorized project corrections normalize only verified repository destinat
   }
   expect(
     normalizeProjectHref("https://softwarecorporation.github.io/darash/"),
-  ).toBe("https://github.com/softwarecorporation/darash");
+  ).toBe("https://darash.tsc.hk");
   expect(
     normalizeProjectHref("https://softwarecorporation.github.io/other/"),
   ).toBe("https://softwarecorporation.github.io/other/");
@@ -244,4 +246,19 @@ test("authorized project corrections normalize only verified repository destinat
   expect(
     normalizeProjectHref("https://github.com/arkiecompany/ark-protocol"),
   ).toBe("https://github.com/arkiecompany/ark-protocol");
+});
+
+test("Darash project links prefer the public site without rewriting source subpaths", () => {
+  expect(
+    normalizeProjectHref("https://github.com/softwarecorporation/darash"),
+  ).toBe("https://darash.tsc.hk");
+  expect(normalizeProjectHref("https://github.com/tschk/darash/")).toBe(
+    "https://darash.tsc.hk",
+  );
+  expect(
+    normalizeProjectHref("https://github.com/softwarecorporation/darash.git"),
+  ).toBe("https://github.com/softwarecorporation/darash.git");
+  expect(normalizeProjectHref("https://darash.tsc.hk")).toBe(
+    "https://darash.tsc.hk",
+  );
 });
