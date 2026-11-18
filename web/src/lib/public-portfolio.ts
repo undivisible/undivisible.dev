@@ -22,6 +22,33 @@ export function createPublicPortfolioFilter({
         signal: AbortSignal.timeout(timeoutMs),
         headers: { "User-Agent": "undivisible.dev-public-portfolio" },
       });
+      if (response.status === 429) {
+        // GitHub's page throttle is separate from its anonymous Git transport.
+        const git = await fetchUpstream(
+          `${url.origin}${url.pathname.replace(/\/$/, "")}.git/info/refs?service=git-upload-pack`,
+          {
+            method: "GET",
+            redirect: "manual",
+            signal: AbortSignal.timeout(timeoutMs),
+            headers: { "User-Agent": "undivisible.dev-public-portfolio" },
+          },
+        );
+        await git.body?.cancel();
+        if (git.status === 401 || git.status === 404) {
+          visibility.set(repository, { public: false, at: now() });
+          return false;
+        }
+        if (
+          git.status === 200 &&
+          git.headers
+            .get("Content-Type")
+            ?.startsWith("application/x-git-upload-pack-advertisement")
+        ) {
+          visibility.set(repository, { public: true, at: now() });
+          return true;
+        }
+        throw new Error(`Portfolio public verification failed (${git.status})`);
+      }
       if (response.status === 404 || response.status === 410 || response.ok) {
         const result = response.ok;
         visibility.set(repository, { public: result, at: now() });

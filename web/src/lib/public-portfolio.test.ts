@@ -2,6 +2,30 @@ import { expect, test } from "bun:test";
 import { createPublicPortfolioFilter } from "./public-portfolio";
 import { parseLandingReadme } from "./parse-readme-markdown";
 
+test("page throttling falls back to anonymous Git proof, never to credentials or cached copy", async () => {
+  const filter = createPublicPortfolioFilter({
+    fetchUpstream: async (input, init) => {
+      expect(new Headers(init?.headers).has("Authorization")).toBe(false);
+      if (init?.method === "HEAD") return new Response(null, { status: 429 });
+      expect(String(input)).toContain(".git/info/refs?service=git-upload-pack");
+      return String(input).includes("/public.git/")
+        ? new Response("Git refs", {
+            headers: {
+              "Content-Type": "application/x-git-upload-pack-advertisement",
+            },
+          })
+        : new Response(null, { status: 401 });
+    },
+  });
+  const output = await filter(
+    "## tools\n- **[visible](https://github.com/example/public)** — visible.\n- **[hidden](https://github.com/example/private)** — hidden.",
+  );
+  expect(parseLandingReadme(output).map((project) => project.name)).toEqual([
+    "visible",
+  ]);
+  expect(output).not.toContain("hidden");
+});
+
 test("only explicitly curated, anonymously public repositories survive, including website associations", async () => {
   const filter = createPublicPortfolioFilter({
     fetchUpstream: async (input, init) => {
