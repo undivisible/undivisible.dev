@@ -97,6 +97,17 @@ function head(
     }),
   ];
 
+  if (routeId === "index")
+    children.push(
+      createElement("style", {
+        key: "landing-first-paint",
+        dangerouslySetInnerHTML: {
+          __html:
+            "html{background:#0a0b0e}@media(scripting:enabled){.landing:not(.ascii-text-composed):not(.ascii-text-fallback){visibility:hidden}}",
+        },
+      }),
+    );
+
   if (routeId === "lab") {
     children.push(
       createElement("script", {

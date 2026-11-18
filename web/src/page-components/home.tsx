@@ -9,6 +9,33 @@ import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { landingProjectsFromReadme } from "@/data/readme-projects.generated";
 import { githubLanguageLabel } from "@/lib/github-repo-languages";
 
+function inPreviewCorridor(
+  x: number,
+  y: number,
+  origin: { x: number; y: number },
+  bounds: DOMRect,
+) {
+  const corners: Array<[number, number]> = [
+    [bounds.left - 6, bounds.top - 6],
+    [bounds.right + 6, bounds.top - 6],
+    [bounds.right + 6, bounds.bottom + 6],
+    [bounds.left - 6, bounds.bottom + 6],
+  ];
+  return corners.some(([ax, ay], index) => {
+    const [bx, by] = corners[(index + 1) % corners.length]!;
+    const area =
+      (ax - origin.x) * (by - origin.y) - (ay - origin.y) * (bx - origin.x);
+    if (Math.abs(area) < 0.001) return false;
+    const u =
+      ((x - origin.x) * (by - origin.y) - (y - origin.y) * (bx - origin.x)) /
+      area;
+    const v =
+      ((ax - origin.x) * (y - origin.y) - (ay - origin.y) * (x - origin.x)) /
+      area;
+    return u >= 0 && v >= 0 && u + v <= 1;
+  });
+}
+
 const projects = [
   ...new Map(
     landingProjectsFromReadme.map((project) => [project.key, project]),
@@ -40,10 +67,22 @@ export default function Home() {
   const focusAfterView = useRef(false);
   const previewTrigger = useRef<HTMLButtonElement | null>(null);
   const navigationPending = useRef(false);
+  const hoverOrigin = useRef<{ x: number; y: number } | null>(null);
+  const hoverPoint = useRef({ x: 0, y: 0 });
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+
+  const dismissPreview = () => {
+    clearTimeout(hoverTimer.current);
+    hoverTimer.current = undefined;
+    hoverOrigin.current = null;
+    setPreview(null);
+  };
 
   const changeView = (next: LandingView) => {
     navigationPending.current = true;
-    setPreview(null);
+    dismissPreview();
     previewTrigger.current = null;
     setRequestedView(next);
   };
@@ -101,7 +140,7 @@ export default function Home() {
   useEffect(() => {
     const close = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setPreview(null);
+        dismissPreview();
         if (document.activeElement?.closest(".landing-preview"))
           previewTrigger.current?.focus();
       }
@@ -113,24 +152,66 @@ export default function Home() {
         !previewRef.current?.contains(event.target) &&
         !previewTrigger.current?.contains(event.target)
       )
-        setPreview(null);
+        dismissPreview();
     };
     const dismissOnScroll = () => {
+      clearTimeout(hoverTimer.current);
+      hoverTimer.current = undefined;
       const trigger = previewTrigger.current;
       if (trigger?.matches(":focus-visible")) {
         const bounds = trigger.getBoundingClientRect();
         setPreviewAnchor({ x: bounds.left, y: bounds.bottom });
       } else if (!document.activeElement?.closest("#project-preview"))
-        setPreview(null);
+        dismissPreview();
     };
     window.addEventListener("pointerdown", dismissOutside, true);
     window.addEventListener("scroll", dismissOnScroll, { passive: true });
     return () => {
+      clearTimeout(hoverTimer.current);
       window.removeEventListener("keydown", close);
       window.removeEventListener("pointerdown", dismissOutside, true);
       window.removeEventListener("scroll", dismissOnScroll);
     };
   }, []);
+
+  useEffect(() => {
+    if (!preview || previewInteractive) {
+      hoverOrigin.current = null;
+      return;
+    }
+    const followPointer = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      if (
+        event.target instanceof Node &&
+        (previewRef.current?.contains(event.target) ||
+          previewTrigger.current?.contains(event.target))
+      )
+        return;
+      const bounds = previewRef.current?.getBoundingClientRect();
+      if (
+        bounds &&
+        hoverOrigin.current &&
+        inPreviewCorridor(
+          event.clientX,
+          event.clientY,
+          hoverOrigin.current,
+          bounds,
+        )
+      )
+        return;
+      dismissPreview();
+    };
+    const leaveWindow = (event: PointerEvent) => {
+      if (event.pointerType === "mouse" && !event.relatedTarget)
+        dismissPreview();
+    };
+    window.addEventListener("pointermove", followPointer);
+    window.addEventListener("pointerout", leaveWindow);
+    return () => {
+      window.removeEventListener("pointermove", followPointer);
+      window.removeEventListener("pointerout", leaveWindow);
+    };
+  }, [preview, previewInteractive]);
 
   const project = projects.find((item) => item.key === preview);
   const projectButton = (
@@ -146,16 +227,61 @@ export default function Home() {
       onPointerMove={(event) => {
         // Scrolling a label under a stationary pointer must not replace a keyboard preview.
         if (event.pointerType !== "mouse" || navigationPending.current) return;
-        previewTrigger.current = event.currentTarget;
-        if (preview !== item.key) setPreviewInteractive(false);
-        setPreviewAnchor({ x: event.clientX, y: event.clientY });
-        setPreview(item.key);
+        const bounds = previewRef.current?.getBoundingClientRect();
+        if (
+          previewTrigger.current !== event.currentTarget &&
+          hoverOrigin.current &&
+          bounds &&
+          inPreviewCorridor(
+            event.clientX,
+            event.clientY,
+            hoverOrigin.current,
+            bounds,
+          )
+        )
+          return;
+        hoverOrigin.current = null;
+        hoverPoint.current = { x: event.clientX, y: event.clientY };
+        if (
+          preview === item.key &&
+          previewTrigger.current === event.currentTarget
+        ) {
+          setPreviewAnchor(hoverPoint.current);
+          return;
+        }
+        if (
+          hoverTimer.current &&
+          previewTrigger.current === event.currentTarget
+        )
+          return;
+        clearTimeout(hoverTimer.current);
+        const trigger = event.currentTarget;
+        previewTrigger.current = trigger;
+        setPreview(null);
+        hoverTimer.current = setTimeout(() => {
+          hoverTimer.current = undefined;
+          if (navigationPending.current || !trigger.matches(":hover")) return;
+          setPreviewInteractive(false);
+          setPreviewAnchor(hoverPoint.current);
+          setPreview(item.key);
+        }, 100);
       }}
-      onPointerLeave={() => {
-        if (!previewInteractive) setPreview(null);
+      onPointerLeave={(event) => {
+        if (previewTrigger.current === event.currentTarget) {
+          clearTimeout(hoverTimer.current);
+          hoverTimer.current = undefined;
+        }
+        if (
+          event.pointerType === "mouse" &&
+          !previewInteractive &&
+          previewTrigger.current === event.currentTarget
+        )
+          hoverOrigin.current = hoverPoint.current;
       }}
       onFocus={(event) => {
         if (navigationPending.current) return;
+        clearTimeout(hoverTimer.current);
+        hoverTimer.current = undefined;
         if (
           event.relatedTarget instanceof Element &&
           event.relatedTarget.closest(".landing-preview")
@@ -169,6 +295,8 @@ export default function Home() {
       }}
       onClick={(event) => {
         if (navigationPending.current) return;
+        clearTimeout(hoverTimer.current);
+        hoverTimer.current = undefined;
         previewTrigger.current = event.currentTarget;
         setPreviewInteractive(true);
         if (event.detail > 0)
@@ -193,7 +321,7 @@ export default function Home() {
           (!previewRef.current?.contains(target) &&
             !previewTrigger.current?.contains(target))
         )
-          setPreview(null);
+          dismissPreview();
       }}
     >
       <div className="landing-field" aria-hidden="true">
@@ -202,7 +330,7 @@ export default function Home() {
           ready
           view={requestedView}
           onViewChange={(next) => {
-            setPreview(null);
+            dismissPreview();
             previewTrigger.current = null;
             focusAfterView.current = true;
             setView(next);
@@ -228,8 +356,8 @@ export default function Home() {
                       type="button"
                       className="landing-project"
                       data-back
-                      onPointerEnter={() => setPreview(null)}
-                      onFocus={() => setPreview(null)}
+                      onPointerEnter={dismissPreview}
+                      onFocus={dismissPreview}
                       onClick={() => changeView("home")}
                     >
                       [back]
@@ -273,8 +401,8 @@ export default function Home() {
                   type="button"
                   className="landing-project"
                   data-more
-                  onPointerEnter={() => setPreview(null)}
-                  onFocus={() => setPreview(null)}
+                  onPointerEnter={dismissPreview}
+                  onFocus={dismissPreview}
                   onClick={() => changeView("projects")}
                 >
                   [more]
@@ -308,7 +436,7 @@ export default function Home() {
             type="button"
             className="landing-preview-close"
             onClick={() => {
-              setPreview(null);
+              dismissPreview();
               previewTrigger.current?.focus();
             }}
             aria-label="Close preview"

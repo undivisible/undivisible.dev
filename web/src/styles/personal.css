@@ -2242,9 +2242,6 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   color: #161616;
   box-shadow: 0 4px 24px #0008;
 }
-.landing-preview[data-interactive="false"] {
-  pointer-events: none;
-}
 .landing-preview-languages {
   margin-bottom: 10px;
   padding-right: 18px;

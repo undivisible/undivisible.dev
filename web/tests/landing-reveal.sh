@@ -16,6 +16,8 @@ for viewport in '412 740' '1440 900'; do
   agent-browser wait --fn 'window.landingRevealReady?.()' >/dev/null
   agent-browser eval "(() => { const before = $sample; const after = resolvedCellSample(); if (before.length !== 40 || after.length !== 40 || after.filter(cell => before.includes(cell)).length > 28) throw new Error('Reveal order repeats between loads'); return 'PASS fresh randomized cell order'; })()"
   agent-browser hover '[data-project-key=moonshine]' >/dev/null
+  agent-browser wait '#project-preview' >/dev/null
+  agent-browser mouse move 2 2 >/dev/null
   agent-browser hover '[data-more]' >/dev/null
   agent-browser eval 'if (document.querySelector("#project-preview")) throw new Error("More inherited a project preview")' >/dev/null
   agent-browser eval 'preparePreviewNavigation("[data-more]")' >/dev/null
@@ -66,18 +68,21 @@ for viewport in '412 740' '1440 900'; do
   x=$(printf '%s' "$point" | jq '.data.result.x')
   y=$(printf '%s' "$point" | jq '.data.result.y')
   agent-browser mouse move "$x" "$y" >/dev/null
+  agent-browser wait '#project-preview' >/dev/null
   agent-browser eval "window.hoverPoint = {x: $x, y: $y}; window.hoverCard = document.querySelector('#project-preview').getBoundingClientRect().toJSON()" >/dev/null
   agent-browser mouse move "$((x + 8))" "$y" >/dev/null
   agent-browser eval '(() => {
     const card = document.querySelector("#project-preview");
     const box = card.getBoundingClientRect();
-    if (getComputedStyle(card).pointerEvents !== "none") throw new Error("Passive hover must not block project controls");
+    if (getComputedStyle(card).pointerEvents === "none") throw new Error("Hover preview must accept pointer input");
     if (Math.abs(box.top - hoverPoint.y) > 20) throw new Error("Preview is not beside the pointer");
     if (innerWidth > 650 && Math.abs(box.left - hoverCard.left - 8) > 1) throw new Error("Preview did not track pointer movement");
     return "PASS cursor-adjacent hover, pointer tracking and viewport bounds";
   })()'
   agent-browser press Escape >/dev/null
   agent-browser hover '[data-project-key=alpenglow]' >/dev/null
+  agent-browser wait '#project-preview' >/dev/null
+  agent-browser mouse move 2 2 >/dev/null
   agent-browser hover '[data-back]' >/dev/null
   agent-browser eval 'if (document.querySelector("#project-preview")) throw new Error("back inherited a project preview")' >/dev/null
   agent-browser eval 'preparePreviewNavigation("[data-back]")' >/dev/null

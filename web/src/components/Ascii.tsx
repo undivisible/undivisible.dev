@@ -188,8 +188,13 @@ export default function Ascii({
     const asciiCanvas = asciiCanvasRef.current;
     if (!container || !bgCanvas || !asciiCanvas) return;
 
+    const page = container.closest(".personal-page, .landing");
+    const landing = Boolean(page?.classList.contains("landing"));
     const shader = createAsciiShader(bgCanvas, () => colorUniformsRef.current);
-    if (!shader) return;
+    if (!shader) {
+      page?.classList.add("ascii-text-fallback");
+      return;
+    }
 
     const ctx = asciiCanvas.getContext("2d", { alpha: true });
     const sampleCanvas = document.createElement("canvas");
@@ -198,17 +203,18 @@ export default function Ascii({
     });
     if (!ctx || !sampleCtx) {
       shader.dispose();
+      page?.classList.add("ascii-text-fallback");
       return;
     }
 
-    const page = container.closest(".personal-page, .landing");
-    const landing = Boolean(page?.classList.contains("landing"));
     if (landing) page?.classList.add("ascii-text-composed");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let revealStart: number | undefined;
     let backgroundStart: number | undefined;
     let contentRanks = new Map<number, number>();
     const contentScatter = new Map<number, number>();
+    const numberStarts = new Map<number, number>();
+    let initialNumberEnd = COLOR_START;
     let contentOwners = new Map<number, number>();
     let numberCells = new Map<
       number,
@@ -327,7 +333,9 @@ export default function Ascii({
 
     let width = 0;
     let height = 0;
-    let last = performance.now();
+    let last = landing ? 0 : performance.now();
+    let animationTime = 0;
+    let lastPaint: number | undefined;
     let asciiIntervalMs = 1000 / 15;
     let lastAscii = 0;
     let titleBackgroundColor = "";
@@ -404,12 +412,24 @@ export default function Ascii({
 
     const detachResize = attachStableResize(container, resize);
 
-    const render = (now: number) => {
+    const render = (timestamp: number) => {
       frameRef.current = requestAnimationFrame(render);
 
-      if (document.hidden) {
+      if (
+        document.hidden ||
+        (landing &&
+          revealStart === undefined &&
+          document.fonts.status !== "loaded")
+      ) {
+        lastPaint = undefined;
         return;
       }
+      if (landing) {
+        if (lastPaint !== undefined)
+          animationTime += Math.min(timestamp - lastPaint, 50);
+        lastPaint = timestamp;
+      }
+      const now = landing ? animationTime : timestamp;
 
       if (landing && currentView !== viewRef.current.view) {
         if (dissolveStart === undefined) {
@@ -421,6 +441,7 @@ export default function Ascii({
           viewRef.current.onViewChange?.(currentView);
           dissolveStart = undefined;
           contentScatter.clear();
+          numberStarts.clear();
           revealStart = now - BACKGROUND_DURATION;
           contentDirty = true;
           return;
@@ -436,14 +457,21 @@ export default function Ascii({
             ? 0
             : now - revealStart;
       const dissolving = dissolveStart !== undefined;
-      const revealing = elapsed < REVEAL_DURATION || dissolving;
+      const colorStart = Math.max(COLOR_START, initialNumberEnd);
+      const revealing =
+        landing &&
+        !reducedMotion.matches &&
+        (elapsed < colorStart + 1000 || dissolving);
       const fieldElapsed =
         !landing || reducedMotion.matches
           ? REVEAL_DURATION
           : backgroundStart === undefined
             ? 0
             : now - backgroundStart;
-      const colorProgress = clamp((fieldElapsed - COLOR_START) / 1000, 0, 1);
+      const colorProgress =
+        !landing || reducedMotion.matches
+          ? 1
+          : clamp((fieldElapsed - colorStart) / 1000, 0, 1);
       const colorMix = colorProgress * colorProgress * (3 - 2 * colorProgress);
       asciiCanvas.dataset.revealState = dissolving
         ? "dissolving"
@@ -451,7 +479,7 @@ export default function Ascii({
           ? "background"
           : elapsed < BACKGROUND_DURATION + TYPE_DURATION
             ? "text"
-            : elapsed < COLOR_START
+            : elapsed < colorStart
               ? "numbers"
               : revealing
                 ? "color"
@@ -579,7 +607,7 @@ export default function Ascii({
         shader.resize(width, height, cols, rows);
       }
 
-      shader.render(landing && reducedMotion.matches ? 0 : now);
+      shader.render(landing ? (reducedMotion.matches ? 0 : fieldElapsed) : now);
 
       sampleCtx.clearRect(0, 0, cols, rows);
       sampleCtx.drawImage(bgCanvas, 0, 0, cols, rows);
@@ -687,10 +715,20 @@ export default function Ascii({
               contentChar = undefined;
             } else if (scatter > resolveMix) {
               contentChar = scatter <= glyphMix ? randomGlyph() : undefined;
-            } else if (number) {
-              const start =
-                BACKGROUND_DURATION + (0.48 + scatter * 0.52) * TYPE_DURATION;
-              const progress = clamp((elapsed - start) / NUMBER_DURATION, 0, 1);
+            } else if (number && !reducedMotion.matches) {
+              if (!numberStarts.has(identity)) {
+                numberStarts.set(identity, now);
+                if (fieldElapsed < COLOR_START)
+                  initialNumberEnd = Math.max(
+                    initialNumberEnd,
+                    fieldElapsed + NUMBER_DURATION,
+                  );
+              }
+              const progress = clamp(
+                (now - numberStarts.get(identity)!) / NUMBER_DURATION,
+                0,
+                1,
+              );
               contentChar = String(
                 Math.floor(number.value * progress),
               ).padStart(number.digits, "0")[number.index];
@@ -870,6 +908,7 @@ export default function Ascii({
 
     const visibilityHandler = () => {
       cancelAnimationFrame(frameRef.current);
+      lastPaint = undefined;
       if (!document.hidden) frameRef.current = requestAnimationFrame(render);
     };
     document.addEventListener("visibilitychange", visibilityHandler);

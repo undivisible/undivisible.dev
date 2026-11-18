@@ -1,6 +1,7 @@
 // Observe actual canvas glyphs and colours, not only the animation's state label.
 (() => {
   const frames = [];
+  const firstDigits = new Map();
   let frame;
   const prototype = CanvasRenderingContext2D.prototype;
   const clear = prototype.clearRect;
@@ -53,6 +54,13 @@
       frame.font = this.font;
       if (
         this.globalAlpha === 1 &&
+        /^\d$/.test(text) &&
+        (frame.state === "text" || frame.state === "numbers") &&
+        !firstDigits.has(`${x},${y}`)
+      )
+        firstDigits.set(`${x},${y}`, text);
+      if (
+        this.globalAlpha === 1 &&
         y >= mainBounds.top &&
         y <= mainBounds.bottom
       ) {
@@ -103,6 +111,10 @@
       if (phases.some((phase) => phase !== "complete"))
         throw new Error("Reduced motion must skip typing and colour animation");
     } else {
+      if (frames[0].cells !== 0 || frames[0].text)
+        throw new Error("First painted canvas frame must begin at zero");
+      if ([...firstDigits.values()].some((digit) => digit !== "0"))
+        throw new Error("A numeric cell first appeared above zero");
       if (phases.join() !== "background,text,numbers,color,complete")
         throw new Error("Wrong reveal sequence: " + phases);
       const background = frames.filter((frame) => frame.state === "background");
@@ -206,6 +218,7 @@
     window.previousFont = frames.at(-1)?.font;
     window.previousCellCount = frames.at(-1)?.cells;
     frames.length = 0;
+    firstDigits.clear();
     frame = undefined;
   };
   window.checkLandingViewTransition = (reduced = false) => {
