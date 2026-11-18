@@ -2245,6 +2245,12 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
 .landing-preview[data-interactive="false"] {
   pointer-events: none;
 }
+.landing-preview-languages {
+  margin-bottom: 10px;
+  padding-right: 18px;
+  font-size: 11px;
+  line-height: 16px;
+}
 .landing-preview p {
   margin: 12px 0;
 }

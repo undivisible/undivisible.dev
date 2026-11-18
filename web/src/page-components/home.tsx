@@ -7,6 +7,7 @@ import NowPlaying from "@/components/NowPlaying";
 import { useNowMarkdown } from "@/hooks/use-remote-content";
 import { useHongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { landingProjectsFromReadme } from "@/data/readme-projects.generated";
+import { githubLanguageLabel } from "@/lib/github-repo-languages";
 
 const projects = [
   ...new Map(
@@ -38,9 +39,12 @@ export default function Home() {
   const [previewAnchor, setPreviewAnchor] = useState({ x: 0, y: 0 });
   const focusAfterView = useRef(false);
   const previewTrigger = useRef<HTMLButtonElement | null>(null);
+  const navigationPending = useRef(false);
 
   const changeView = (next: LandingView) => {
+    navigationPending.current = true;
     setPreview(null);
+    previewTrigger.current = null;
     setRequestedView(next);
   };
 
@@ -67,6 +71,7 @@ export default function Home() {
   useEffect(() => {
     if (!focusAfterView.current) return;
     focusAfterView.current = false;
+    navigationPending.current = false;
     pageRef.current
       ?.querySelector<HTMLButtonElement>(
         view === "projects" ? "[data-back]" : "[data-more]",
@@ -102,7 +107,29 @@ export default function Home() {
       }
     };
     window.addEventListener("keydown", close);
-    return () => window.removeEventListener("keydown", close);
+    const dismissOutside = (event: PointerEvent) => {
+      if (
+        event.target instanceof Node &&
+        !previewRef.current?.contains(event.target) &&
+        !previewTrigger.current?.contains(event.target)
+      )
+        setPreview(null);
+    };
+    const dismissOnScroll = () => {
+      const trigger = previewTrigger.current;
+      if (trigger?.matches(":focus-visible")) {
+        const bounds = trigger.getBoundingClientRect();
+        setPreviewAnchor({ x: bounds.left, y: bounds.bottom });
+      } else if (!document.activeElement?.closest("#project-preview"))
+        setPreview(null);
+    };
+    window.addEventListener("pointerdown", dismissOutside, true);
+    window.addEventListener("scroll", dismissOnScroll, { passive: true });
+    return () => {
+      window.removeEventListener("keydown", close);
+      window.removeEventListener("pointerdown", dismissOutside, true);
+      window.removeEventListener("scroll", dismissOnScroll);
+    };
   }, []);
 
   const project = projects.find((item) => item.key === preview);
@@ -118,13 +145,17 @@ export default function Home() {
       aria-controls="project-preview"
       onPointerMove={(event) => {
         // Scrolling a label under a stationary pointer must not replace a keyboard preview.
-        if (event.pointerType !== "mouse") return;
+        if (event.pointerType !== "mouse" || navigationPending.current) return;
         previewTrigger.current = event.currentTarget;
         if (preview !== item.key) setPreviewInteractive(false);
         setPreviewAnchor({ x: event.clientX, y: event.clientY });
         setPreview(item.key);
       }}
+      onPointerLeave={() => {
+        if (!previewInteractive) setPreview(null);
+      }}
       onFocus={(event) => {
+        if (navigationPending.current) return;
         if (
           event.relatedTarget instanceof Element &&
           event.relatedTarget.closest(".landing-preview")
@@ -137,6 +168,7 @@ export default function Home() {
         setPreview(item.key);
       }}
       onClick={(event) => {
+        if (navigationPending.current) return;
         previewTrigger.current = event.currentTarget;
         setPreviewInteractive(true);
         if (event.detail > 0)
@@ -154,6 +186,15 @@ export default function Home() {
       className="landing"
       data-view={view}
       aria-busy={view !== requestedView}
+      onBlurCapture={(event) => {
+        const target = event.relatedTarget;
+        if (
+          !(target instanceof Node) ||
+          (!previewRef.current?.contains(target) &&
+            !previewTrigger.current?.contains(target))
+        )
+          setPreview(null);
+      }}
     >
       <div className="landing-field" aria-hidden="true">
         <Ascii
@@ -161,6 +202,8 @@ export default function Home() {
           ready
           view={requestedView}
           onViewChange={(next) => {
+            setPreview(null);
+            previewTrigger.current = null;
             focusAfterView.current = true;
             setView(next);
             window.scrollTo(0, 0);
@@ -185,6 +228,8 @@ export default function Home() {
                       type="button"
                       className="landing-project"
                       data-back
+                      onPointerEnter={() => setPreview(null)}
+                      onFocus={() => setPreview(null)}
                       onClick={() => changeView("home")}
                     >
                       [back]
@@ -228,6 +273,8 @@ export default function Home() {
                   type="button"
                   className="landing-project"
                   data-more
+                  onPointerEnter={() => setPreview(null)}
+                  onFocus={() => setPreview(null)}
                   onClick={() => changeView("projects")}
                 >
                   [more]
@@ -268,6 +315,18 @@ export default function Home() {
           >
             ×
           </button>
+          <div className="landing-preview-languages">
+            {project.github ? (
+              <a
+                href={`https://github.com/${project.github.repository}#languages`}
+                title="GitHub Linguist language shares"
+              >
+                {githubLanguageLabel(project.github)}
+              </a>
+            ) : (
+              githubLanguageLabel(null)
+            )}
+          </div>
           <strong>{project.name}</strong>
           <p>{project.desc}</p>
           {project.href !== "#" && <a href={project.href}>view project ↗</a>}

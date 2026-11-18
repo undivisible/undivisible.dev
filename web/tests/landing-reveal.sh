@@ -11,11 +11,20 @@ for viewport in '412 740' '1440 900'; do
   agent-browser open "${1:-http://localhost:4321}" >/dev/null
   agent-browser wait --fn 'window.landingRevealReady?.()' >/dev/null
   agent-browser eval 'checkLandingReveal()'
+  sample=$(agent-browser eval 'resolvedCellSample()' --json | jq -c '.data.result')
+  agent-browser reload >/dev/null
+  agent-browser wait --fn 'window.landingRevealReady?.()' >/dev/null
+  agent-browser eval "(() => { const before = $sample; const after = resolvedCellSample(); if (before.length !== 40 || after.length !== 40 || after.filter(cell => before.includes(cell)).length > 28) throw new Error('Reveal order repeats between loads'); return 'PASS fresh randomized cell order'; })()"
+  agent-browser hover '[data-project-key=moonshine]' >/dev/null
+  agent-browser hover '[data-more]' >/dev/null
+  agent-browser eval 'if (document.querySelector("#project-preview")) throw new Error("More inherited a project preview")' >/dev/null
+  agent-browser eval 'preparePreviewNavigation("[data-more]")' >/dev/null
   agent-browser eval 'resetLandingReveal()' >/dev/null
   agent-browser click '[data-more]' >/dev/null
   agent-browser wait '.landing[data-view=projects]' >/dev/null
   agent-browser wait --fn 'window.landingRevealReady?.() && !!document.querySelector("canvas[data-reveal-state=complete]")' >/dev/null
   agent-browser eval 'checkLandingViewTransition()'
+  agent-browser eval 'if (previewNavigationLeak || document.querySelector("#project-preview")) throw new Error("Preview reopened during More transition")' >/dev/null
   agent-browser eval "window.expectedProjects = $expected" >/dev/null
   agent-browser eval '(async () => {
     const controls = [...document.querySelectorAll(".landing-all-projects button")];
@@ -38,7 +47,16 @@ for viewport in '412 740' '1440 900'; do
       const bounds = preview.getBoundingClientRect();
       if (bounds.left < 12 || bounds.top < 12 || bounds.right > innerWidth - 11 || bounds.bottom > innerHeight - 11) throw new Error("Preview escapes viewport: " + project.name);
       if (preview?.querySelector("p").textContent !== project.desc) throw new Error("Preview differs from README: " + project.name + ": " + preview?.querySelector("p").textContent);
-      if (project.href !== "#" && preview.querySelector("a").href !== new URL(project.href).href) throw new Error("Wrong project URL");
+      if (project.href !== "#" && preview.querySelector(":scope > a").href !== new URL(project.href).href) throw new Error("Wrong project URL");
+      const stats = preview.querySelector(".landing-preview-languages");
+      const entries = Object.entries(project.github?.languages ?? {}).sort((a,b) => b[1]-a[1]);
+      const total = entries.reduce((sum, [,bytes]) => sum + bytes, 0);
+      const top = entries.slice(0,3);
+      const other = entries.slice(3).reduce((sum, [,bytes]) => sum + bytes, 0);
+      if (other) top.push(["Other", other]);
+      const label = !project.github ? "GitHub languages: no linked repository" : project.github.languages === null ? "GitHub languages unavailable" : !total ? "GitHub reports no language data" : top.map(([name,bytes]) => name + " " + (bytes/total*100).toFixed(1) + "%").join(" · ");
+      if (stats.textContent !== label) throw new Error("Wrong GitHub language shares: " + project.name);
+      if (project.github && stats.querySelector("a").href !== "https://github.com/" + project.github.repository + "#languages") throw new Error("Stats link has wrong repository");
     }
     return "PASS alphabetical README inventory, Back under B, and every keyboard preview";
   })()'
@@ -59,11 +77,16 @@ for viewport in '412 740' '1440 900'; do
     return "PASS cursor-adjacent hover, pointer tracking and viewport bounds";
   })()'
   agent-browser press Escape >/dev/null
+  agent-browser hover '[data-project-key=alpenglow]' >/dev/null
+  agent-browser hover '[data-back]' >/dev/null
+  agent-browser eval 'if (document.querySelector("#project-preview")) throw new Error("back inherited a project preview")' >/dev/null
+  agent-browser eval 'preparePreviewNavigation("[data-back]")' >/dev/null
   agent-browser eval 'resetLandingReveal()' >/dev/null
   agent-browser click '[data-back]' >/dev/null
   agent-browser wait '.landing[data-view=home]' >/dev/null
   agent-browser wait --fn 'window.landingRevealReady?.() && !!document.querySelector("canvas[data-reveal-state=complete]")' >/dev/null
   agent-browser eval 'checkLandingViewTransition()'
+  agent-browser eval 'if (previewNavigationLeak || document.querySelector("#project-preview")) throw new Error("Preview reopened during back transition")' >/dev/null
   agent-browser eval 'if (!document.activeElement.matches("[data-more]")) throw new Error("Back did not restore keyboard focus")' >/dev/null
 done
 agent-browser set media dark reduced-motion >/dev/null

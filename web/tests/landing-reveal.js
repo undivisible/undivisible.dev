@@ -18,6 +18,7 @@
         cells: 0,
         font: this.font,
         canvas: this.canvas,
+        resolved: [],
       };
       mainBounds = document
         .querySelector(".landing-content")
@@ -54,8 +55,10 @@
         this.globalAlpha === 1 &&
         y >= mainBounds.top &&
         y <= mainBounds.bottom
-      )
+      ) {
         frame.text += text;
+        if (/^[a-z]$/i.test(text)) frame.resolved.push(`${x},${y}`);
+      }
       if (
         this.globalAlpha === 1 &&
         clockBounds?.width &&
@@ -174,6 +177,30 @@
   };
   window.landingRevealReady = () =>
     frames.some((frame) => frame.state === "complete");
+  window.resolvedCellSample = () =>
+    [
+      ...new Set(
+        frames
+          .filter((frame) => frame.state === "text")
+          .flatMap((frame) => frame.resolved),
+      ),
+    ].slice(0, 40);
+  window.preparePreviewNavigation = (selector) => {
+    window.previewNavigationLeak = false;
+    document.querySelector(selector).addEventListener(
+      "click",
+      () => {
+        queueMicrotask(() => {
+          document.querySelector("[data-project-key=alpenglow]")?.focus();
+          requestAnimationFrame(() => {
+            window.previewNavigationLeak =
+              !!document.querySelector("#project-preview");
+          });
+        });
+      },
+      { once: true },
+    );
+  };
   window.resetLandingReveal = () => {
     window.previousCanvas = frames.at(-1)?.canvas;
     window.previousFont = frames.at(-1)?.font;

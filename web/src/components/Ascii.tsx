@@ -20,7 +20,7 @@ interface ShapeState {
 const DEFAULT_COLORS = ["#ffffff", "#cccccc", "#999999", "#666666", "#333333"];
 const FIELD_CHARS = ".,:;-=+*#%&";
 const SHAPE_CHARS = "@#MW8$&NBG";
-// tsc.hk's runtime/src/lib.rs heading transition: mix glyphs, then scatter-resolve.
+// tsc.hk's heading transition, with a fresh random cell order on each transition.
 const TRANSITION_CHARS = "─│┌┐└┘├┤┬┴┼╭╮╯╰╱╲╳○●■□▲△▶▼◆◇◘◙◦★☆♠♣♥♦";
 const BACKGROUND_DURATION = 900;
 const TYPE_DURATION = 1240;
@@ -208,10 +208,11 @@ export default function Ascii({
     let revealStart: number | undefined;
     let backgroundStart: number | undefined;
     let contentRanks = new Map<number, number>();
+    const contentScatter = new Map<number, number>();
     let contentOwners = new Map<number, number>();
     let numberCells = new Map<
       number,
-      { value: number; digits: number; index: number; rank: number }
+      { value: number; digits: number; index: number; firstCell: number }
     >();
     let currentView = viewRef.current.view;
     let dissolveStart: number | undefined;
@@ -411,11 +412,15 @@ export default function Ascii({
       }
 
       if (landing && currentView !== viewRef.current.view) {
-        dissolveStart ??= now;
+        if (dissolveStart === undefined) {
+          dissolveStart = now;
+          contentScatter.clear();
+        }
         if (reducedMotion.matches || now - dissolveStart >= DISSOLVE_DURATION) {
           currentView = viewRef.current.view;
           viewRef.current.onViewChange?.(currentView);
           dissolveStart = undefined;
+          contentScatter.clear();
           revealStart = now - BACKGROUND_DURATION;
           contentDirty = true;
           return;
@@ -556,7 +561,7 @@ export default function Ascii({
               value: Number(digits),
               digits: digits.length,
               index: digit - index,
-              rank: index,
+              firstCell: first,
             });
           index = end;
         }
@@ -652,12 +657,11 @@ export default function Ascii({
               ? undefined
               : sourceChar;
           if (landing && contentChar !== undefined) {
-            const rank = contentRanks.get(owner) ?? 0;
             const number = numberCells.get(owner);
-            const scatter =
-              ((((number?.rank ?? rank) * 7) % Math.max(1, contentRanks.size)) +
-                1) /
-              Math.max(1, contentRanks.size);
+            const identity = number?.firstCell ?? owner;
+            if (!contentScatter.has(identity))
+              contentScatter.set(identity, Math.random());
+            const scatter = contentScatter.get(identity) ?? 0;
             const progress = clamp(
               (elapsed - BACKGROUND_DURATION) / TYPE_DURATION,
               0,

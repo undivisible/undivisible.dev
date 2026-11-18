@@ -1,12 +1,17 @@
 import { readFile } from "node:fs/promises";
 import { parseLandingReadme } from "../src/lib/parse-readme-markdown.ts";
 import {
+  parseGithubLanguageBytes,
+  type GithubLanguageStats,
+} from "../src/lib/github-repo-languages.ts";
+import {
   parseReadme,
   applyReadmeStackFallbacks,
   fillReadmeBundleMissingStacks,
   fetchProfileMarkdown,
   normalizeReadmeBundle,
   profileMarkdownUrls,
+  githubRepoPathFromHref,
   type ReadmeBundle,
   type ReadmeProject,
 } from "../src/lib/profile-readme.ts";
@@ -46,9 +51,11 @@ function previousBundle(): Promise<ReadmeBundle | undefined> {
 
 function emitTs(
   bundle: ReadmeBundle,
-  landingProjects: ReadmeProject[],
+  landingProjects: Array<ReadmeProject & { github: GithubLanguageStats }>,
 ): string {
-  return `export type ReadmeProject = {
+  return `import type { GithubLanguageStats } from "../lib/github-repo-languages";
+
+export type ReadmeProject = {
   key: string;
   name: string;
   href: string;
@@ -67,8 +74,118 @@ export const miniappsFromReadme: ReadmeProject[] = ${JSON.stringify(bundle.minia
 
 export const librariesFromReadme: ReadmeProject[] = ${JSON.stringify(bundle.libraries, null, 2)};
 
-export const landingProjectsFromReadme: ReadmeProject[] = ${JSON.stringify(landingProjects, null, 2)};
+export const landingProjectsFromReadme: Array<ReadmeProject & { github: GithubLanguageStats }> = ${JSON.stringify(landingProjects, null, 2)};
 `;
+}
+
+async function withGithubLanguages(
+  projects: ReadmeProject[],
+  markdown: string,
+) {
+  let token = process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN;
+  if (!token) {
+    try {
+      const auth = Bun.spawnSync(["gh", "auth", "token"], {
+        stdout: "pipe",
+        stderr: "ignore",
+      });
+      if (auth.exitCode === 0) token = auth.stdout.toString().trim();
+    } catch {
+      /* Public API access still works without a local gh installation. */
+    }
+  }
+  const api = async (path: string): Promise<unknown> => {
+    try {
+      const response = await fetch(`https://api.github.com/${path}`, {
+        headers: {
+          "User-Agent": "undivisible.dev-sync/1.0",
+          Accept: "application/vnd.github+json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        signal: AbortSignal.timeout(15000),
+      });
+      return response.ok ? await response.json() : null;
+    } catch {
+      return null;
+    }
+  };
+  const repositories: Array<{ path: string; homepage: string }> = [];
+  for (const owner of ["undivisible", "tschk"]) {
+    for (let page = 1; ; page++) {
+      const data = await api(`users/${owner}/repos?per_page=100&page=${page}`);
+      if (!Array.isArray(data)) break;
+      for (const repo of data) {
+        if (
+          repo &&
+          typeof repo === "object" &&
+          "full_name" in repo &&
+          typeof repo.full_name === "string" &&
+          "homepage" in repo &&
+          typeof repo.homepage === "string"
+        )
+          repositories.push({ path: repo.full_name, homepage: repo.homepage });
+      }
+      if (data.length < 100) break;
+    }
+  }
+  const identity = (name: string) =>
+    name.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const site = (href: string) => {
+    try {
+      const url = new URL(href);
+      return url.host + url.pathname.replace(/\/$/, "");
+    } catch {
+      return null;
+    }
+  };
+  const readmeRepos = [
+    ...markdown.matchAll(
+      /https:\/\/github\.com\/([^/\s)]+\/[^/\s)]+)(?=[/)\s])/g,
+    ),
+  ].map((match) => match[1]!);
+  const enriched: Array<ReadmeProject & { github: GithubLanguageStats }> = [];
+  for (let start = 0; start < projects.length; start += 4) {
+    enriched.push(
+      ...(await Promise.all(
+        projects.slice(start, start + 4).map(async (project) => {
+          // Only an explicit README link or a matching GitHub homepage verifies a custom site's repository.
+          const repository =
+            githubRepoPathFromHref(project.href) ??
+            readmeRepos.find(
+              (path) =>
+                identity(path.split("/")[1] ?? "") === identity(project.key),
+            ) ??
+            repositories.find(
+              (repo) =>
+                identity(repo.path.split("/")[1] ?? "") ===
+                  identity(project.key) &&
+                site(repo.homepage) !== null &&
+                site(repo.homepage) === site(project.href),
+            )?.path;
+          const metadata = repository ? await api(`repos/${repository}`) : null;
+          const publicRepository =
+            metadata &&
+            typeof metadata === "object" &&
+            "private" in metadata &&
+            metadata.private === false;
+          return {
+            ...project,
+            github: repository
+              ? {
+                  repository,
+                  languages: publicRepository
+                    ? parseGithubLanguageBytes(
+                        await api(`repos/${repository}/languages`),
+                      )
+                    : null,
+                }
+              : null,
+          };
+        }),
+      )),
+    );
+  }
+  return enriched;
 }
 
 const LOCAL_NOW = new URL("../public/now.md", import.meta.url);
@@ -99,22 +216,26 @@ const bundle = await fillReadmeBundleMissingStacks(withFallbacks);
 
 // The landing page's full inventory follows the user's profile README, not curated highlights.
 let landingProjects: ReadmeProject[];
+let landingMarkdown: string;
 try {
-  landingProjects = parseLandingReadme(
-    await fetchProfileMarkdown({
-      urls: [
-        "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md",
-      ],
-    }),
-  );
+  landingMarkdown = await fetchProfileMarkdown({
+    urls: [
+      "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md",
+    ],
+  });
+  landingProjects = parseLandingReadme(landingMarkdown);
 } catch {
   console.warn(
     "Profile README unavailable; using the local project-copy fallback",
   );
+  landingMarkdown = md;
   landingProjects = parseLandingReadme(md);
 }
 
-await Bun.write(OUT_FILE, emitTs(bundle, landingProjects));
+await Bun.write(
+  OUT_FILE,
+  emitTs(bundle, await withGithubLanguages(landingProjects, landingMarkdown)),
+);
 
 // Patch email: upstream README still has old address
 const generated = await Bun.file(OUT_FILE.pathname).text();

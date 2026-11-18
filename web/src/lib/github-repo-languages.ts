@@ -6,6 +6,38 @@ const SCRAPE_HEADERS = {
   Accept: "text/html",
 };
 
+export type GithubLanguageStats = {
+  repository: string;
+  languages: Record<string, number> | null;
+} | null;
+
+export function parseGithubLanguageBytes(
+  data: unknown,
+): Record<string, number> | null {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return null;
+  const entries: Array<[string, number]> = [];
+  for (const [name, bytes] of Object.entries(data)) {
+    if (typeof bytes !== "number" || !Number.isSafeInteger(bytes) || bytes < 0)
+      return null;
+    if (bytes > 0) entries.push([name, bytes]);
+  }
+  return Object.fromEntries(entries);
+}
+
+export function githubLanguageLabel(stats: GithubLanguageStats): string {
+  if (!stats) return "GitHub languages: no linked repository";
+  if (!stats.languages) return "GitHub languages unavailable";
+  const entries = Object.entries(stats.languages).sort((a, b) => b[1] - a[1]);
+  const total = entries.reduce((sum, [, bytes]) => sum + bytes, 0);
+  if (!total) return "GitHub reports no language data";
+  const summary = entries.slice(0, 3);
+  const other = entries.slice(3).reduce((sum, [, bytes]) => sum + bytes, 0);
+  if (other) summary.push(["Other", other]);
+  return summary
+    .map(([name, bytes]) => `${name} ${((bytes / total) * 100).toFixed(1)}%`)
+    .join(" · ");
+}
+
 export function parseGithubLanguageHtml(html: string): string | undefined {
   const langs: Array<{ name: string; pct: number }> = [];
   for (const match of html.matchAll(GITHUB_LANG_RE)) {
