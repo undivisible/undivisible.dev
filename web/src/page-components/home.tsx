@@ -15,6 +15,14 @@ function inPreviewCorridor(
   origin: { x: number; y: number },
   bounds: DOMRect,
 ) {
+  const buffer = 16;
+  if (
+    x < Math.min(origin.x, bounds.left) - buffer ||
+    x > Math.max(origin.x, bounds.right) + buffer ||
+    y < Math.min(origin.y, bounds.top) - buffer ||
+    y > Math.max(origin.y, bounds.bottom) + buffer
+  )
+    return false;
   const corners: Array<[number, number]> = [
     [bounds.left - 6, bounds.top - 6],
     [bounds.right + 6, bounds.top - 6],
@@ -32,7 +40,13 @@ function inPreviewCorridor(
     const v =
       ((ax - origin.x) * (y - origin.y) - (ay - origin.y) * (x - origin.x)) /
       area;
-    return u >= 0 && v >= 0 && u + v <= 1;
+    return (
+      u >=
+        (-buffer * Math.hypot(bx - origin.x, by - origin.y)) / Math.abs(area) &&
+      v >=
+        (-buffer * Math.hypot(ax - origin.x, ay - origin.y)) / Math.abs(area) &&
+      u + v <= 1 + (buffer * Math.hypot(bx - ax, by - ay)) / Math.abs(area)
+    );
   });
 }
 
@@ -228,7 +242,7 @@ export default function Home() {
         // Scrolling a label under a stationary pointer must not replace a keyboard preview.
         if (event.pointerType !== "mouse" || navigationPending.current) return;
         const bounds = previewRef.current?.getBoundingClientRect();
-        if (
+        const approaching = Boolean(
           previewTrigger.current !== event.currentTarget &&
           hoverOrigin.current &&
           bounds &&
@@ -237,10 +251,9 @@ export default function Home() {
             event.clientY,
             hoverOrigin.current,
             bounds,
-          )
-        )
-          return;
-        hoverOrigin.current = null;
+          ),
+        );
+        if (!approaching) hoverOrigin.current = null;
         hoverPoint.current = { x: event.clientX, y: event.clientY };
         if (
           preview === item.key &&
@@ -251,26 +264,32 @@ export default function Home() {
         }
         if (
           hoverTimer.current &&
-          previewTrigger.current === event.currentTarget
+          previewTrigger.current === event.currentTarget &&
+          !approaching
         )
           return;
         clearTimeout(hoverTimer.current);
         const trigger = event.currentTarget;
-        previewTrigger.current = trigger;
-        setPreview(null);
-        hoverTimer.current = setTimeout(() => {
-          hoverTimer.current = undefined;
-          if (navigationPending.current || !trigger.matches(":hover")) return;
-          setPreviewInteractive(false);
-          setPreviewAnchor(hoverPoint.current);
-          setPreview(item.key);
-        }, 100);
+        if (!approaching) {
+          previewTrigger.current = trigger;
+          setPreview(null);
+        }
+        hoverTimer.current = setTimeout(
+          () => {
+            hoverTimer.current = undefined;
+            if (navigationPending.current || !trigger.matches(":hover")) return;
+            hoverOrigin.current = null;
+            previewTrigger.current = trigger;
+            setPreviewInteractive(false);
+            setPreviewAnchor(hoverPoint.current);
+            setPreview(item.key);
+          },
+          approaching ? 250 : 100,
+        );
       }}
       onPointerLeave={(event) => {
-        if (previewTrigger.current === event.currentTarget) {
-          clearTimeout(hoverTimer.current);
-          hoverTimer.current = undefined;
-        }
+        clearTimeout(hoverTimer.current);
+        hoverTimer.current = undefined;
         if (
           event.pointerType === "mouse" &&
           !previewInteractive &&

@@ -190,36 +190,43 @@ try {
       );
       const card = await box("#project-preview");
       let fixed;
-      await move(
-        edge === "right" ? card.right - 20 : card.left + 20,
-        card.top + 36,
-        async (point) => {
-          const state = await evaluate(`(() => {
+      const inspect = async (point) => {
+        const state = await evaluate(`(() => {
           const card = document.querySelector('#project-preview');
           return card ? { name: card.querySelector('strong').textContent, box: card.getBoundingClientRect().toJSON(), events: getComputedStyle(card).pointerEvents,
             neighbor: document.elementFromPoint(${point.x}, ${point.y})?.closest('[data-project-key]')?.dataset.projectKey } : null;
         })()`);
-          if (!state || state.name !== key || state.events === "none")
-            throw new Error(
-              "Card lost ownership or cannot receive pointer input during diagonal approach: " +
-                key,
-            );
-          if (state.neighbor && state.neighbor !== key) crossedAdjacent++;
+        if (!state || state.name !== key || state.events === "none")
+          throw new Error(
+            "Card lost ownership or cannot receive pointer input during diagonal approach: " +
+              key,
+          );
+        if (state.neighbor && state.neighbor !== key) crossedAdjacent++;
+        if (
+          point.x < owner.left ||
+          point.x > owner.right ||
+          point.y < owner.top ||
+          point.y > owner.bottom
+        ) {
           if (
-            point.x < owner.left ||
-            point.x > owner.right ||
-            point.y < owner.top ||
-            point.y > owner.bottom
-          ) {
-            if (
-              fixed &&
-              (Math.abs(state.box.left - fixed.left) > 1 ||
-                Math.abs(state.box.top - fixed.top) > 1)
-            )
-              throw new Error("Card moved away during approach");
-            fixed = state.box;
-          }
-        },
+            fixed &&
+            (Math.abs(state.box.left - fixed.left) > 1 ||
+              Math.abs(state.box.top - fixed.top) > 1)
+          )
+            throw new Error("Card moved away during approach");
+          fixed = state.box;
+        }
+      };
+      if (edge === "right")
+        await move(
+          Math.min(card.right - 24, owner.right + 90),
+          owner.bottom - 15,
+          inspect,
+        );
+      await move(
+        edge === "right" ? card.right - 20 : card.left + 20,
+        card.top + 36,
+        inspect,
       );
       if (
         !(await evaluate(
@@ -261,6 +268,14 @@ try {
     await move(alpenglow.left + 4, alpenglow.top + 4);
     await wait(
       "document.querySelector('#project-preview strong')?.textContent === 'alpenglow'",
+    );
+    const neighbor = await box("[data-project-key=alpenglowed]");
+    await move(neighbor.left + 10, alpenglow.top + 4);
+    await wait(
+      "document.querySelector('#project-preview strong')?.textContent === 'alpenglowed'",
+    );
+    console.log(
+      "PASS stopping on a neighbor selects it instead of trapping the previous owner",
     );
     await move(10, 10);
     await wait("!document.querySelector('#project-preview')");
