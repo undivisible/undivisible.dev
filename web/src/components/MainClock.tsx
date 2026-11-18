@@ -26,10 +26,6 @@ export function MainClock({
       className="personal-clock"
       aria-label="Time and weather"
       data-time-preview={dayTheme.isScrubbing}
-      onPointerEnter={(event) => {
-        if (event.pointerType !== "touch") onTimeHoverChange?.(true);
-      }}
-      onPointerLeave={() => onTimeHoverChange?.(false)}
     >
       <ClockPanel
         dayTheme={dayTheme}
@@ -38,6 +34,7 @@ export function MainClock({
         onToggleNowArticle={onToggleNowArticle}
         hydrated={hydrated}
         travelClocks
+        onTimeHoverChange={onTimeHoverChange}
       />
     </div>
   );

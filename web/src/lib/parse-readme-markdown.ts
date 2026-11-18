@@ -43,16 +43,49 @@ const MIGRATED_TSCHK_REPOSITORIES = new Set([
   "zkr",
 ]);
 
+const CORRECTED_PROJECT_REPOSITORIES = new Map([
+  ["oil", "semitechnological/oil"],
+  ["rs_vimium", "undivisible/rs_vimium"],
+  ["anywhere", "undivisible/anywhere"],
+  ["ark", "atechnology-company/ark"],
+  ["arkie", "arkiecompany/arkie"],
+  ["ark-protocol", "arkiecompany/ark-protocol"],
+  ["websurfx", "undivisible/websurfx"],
+  ["stalwart-lite", "arkiecompany/stalwart-lite"],
+  ["darash", "softwarecorporation/darash"],
+]);
+const PROJECT_REPOSITORY_OWNERS = new Set([
+  "tschk",
+  "softwarecorporation",
+  "undivisible",
+  "arkiecompany",
+  "atechnology-company",
+  "semitechnological",
+]);
+
 export function normalizeProjectHref(href: string): string {
   const safe = safeExternalHref(href);
   if (safe === "#") return safe;
   const url = new URL(safe);
+  if (
+    url.hostname === "softwarecorporation.github.io" &&
+    /^\/darash\/?$/.test(url.pathname)
+  ) {
+    return "https://github.com/softwarecorporation/darash";
+  }
   if (url.hostname !== "github.com") return href.trim();
-  const match = /^\/tschk\/([^/]+)(\/.*)?$/i.exec(url.pathname);
+  const match = /^\/([^/]+)\/([^/]+)(\/.*)?$/.exec(url.pathname);
   if (!match) return href.trim();
-  const repo = match[1]!.replace(/\.git$/i, "").toLowerCase();
-  if (!MIGRATED_TSCHK_REPOSITORIES.has(repo)) return href.trim();
-  url.pathname = `/softwarecorporation/${repo}${/\.git$/i.test(match[1]!) ? ".git" : ""}${match[2] ?? ""}`;
+  const owner = match[1]!.toLowerCase();
+  if (!PROJECT_REPOSITORY_OWNERS.has(owner)) return href.trim();
+  const repo = match[2]!.replace(/\.git$/i, "").toLowerCase();
+  const repository =
+    CORRECTED_PROJECT_REPOSITORIES.get(repo) ??
+    (owner === "tschk" && MIGRATED_TSCHK_REPOSITORIES.has(repo)
+      ? `softwarecorporation/${repo}`
+      : undefined);
+  if (!repository) return href.trim();
+  url.pathname = `/${repository}${/\.git$/i.test(match[2]!) ? ".git" : ""}${match[3] ?? ""}`;
   return url.href;
 }
 

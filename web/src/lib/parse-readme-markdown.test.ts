@@ -173,7 +173,7 @@ test("project links use only verified GitHub migrations and preserve URL suffixe
     "https://github.com/softwarecorporation/rotary/tree/main?tab=readme#usage",
   );
   expect(normalizeProjectHref("https://github.com/tschk/ark-protocol")).toBe(
-    "https://github.com/tschk/ark-protocol",
+    "https://github.com/arkiecompany/ark-protocol",
   );
   expect(normalizeProjectHref("https://github.com/tschk/eqts.git")).toBe(
     "https://github.com/softwarecorporation/eqts.git",
@@ -206,4 +206,42 @@ test("bundle normalization preserves inventory, copy and stacks while migrating 
   expect(
     normalized.utilities.find((project) => project.key === "eqswift")?.href,
   ).toBe("https://github.com/softwarecorporation/eqswift");
+});
+
+test("authorized project corrections normalize only verified repository destinations", () => {
+  const destinations = [
+    ["oil", "semitechnological/oil"],
+    ["rs_vimium", "undivisible/rs_vimium"],
+    ["anywhere", "undivisible/anywhere"],
+    ["ark", "atechnology-company/ark"],
+    ["arkie", "arkiecompany/arkie"],
+    ["ark-protocol", "arkiecompany/ark-protocol"],
+    ["websurfx", "undivisible/websurfx"],
+    ["stalwart-lite", "arkiecompany/stalwart-lite"],
+    ["darash", "softwarecorporation/darash"],
+  ];
+  for (const [name, destination] of destinations) {
+    for (const owner of ["tschk", "softwarecorporation", "arkiecompany"]) {
+      expect(
+        normalizeProjectHref(
+          `https://github.com/${owner}/${name}/tree/main?tab=readme#usage`,
+        ),
+      ).toBe(`https://github.com/${destination}/tree/main?tab=readme#usage`);
+    }
+    expect(normalizeProjectHref(`https://github.com/someone/${name}`)).toBe(
+      `https://github.com/someone/${name}`,
+    );
+  }
+  expect(
+    normalizeProjectHref("https://softwarecorporation.github.io/darash/"),
+  ).toBe("https://github.com/softwarecorporation/darash");
+  expect(
+    normalizeProjectHref("https://softwarecorporation.github.io/other/"),
+  ).toBe("https://softwarecorporation.github.io/other/");
+  expect(normalizeProjectHref("https://github.com/arkiecompany/arkie")).toBe(
+    "https://github.com/arkiecompany/arkie",
+  );
+  expect(
+    normalizeProjectHref("https://github.com/arkiecompany/ark-protocol"),
+  ).toBe("https://github.com/arkiecompany/ark-protocol");
 });

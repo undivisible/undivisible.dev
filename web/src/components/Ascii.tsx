@@ -265,6 +265,8 @@ export default function Ascii({
         childList: true,
         characterData: true,
         subtree: true,
+        attributes: true,
+        attributeFilter: ["aria-hidden"],
       });
       contentResize.observe(page);
       for (const event of [

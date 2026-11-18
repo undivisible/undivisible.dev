@@ -15,11 +15,28 @@ for motion in no-preference reduce; do
     const wheel = new WheelEvent("wheel", { deltaY: 100, bubbles: true, cancelable: true });
     if (!document.querySelector(".landing-content").dispatchEvent(wheel)) throw new Error("Page wheel was intercepted");
     if (document.querySelector(".landing-solar")) throw new Error("Page wheel activated solar scene");
+    window.solarOpacities = [];
+    const observer = new MutationObserver(() => {
+      const sky = document.querySelector(".landing-solar");
+      if (!sky) return;
+      observer.disconnect();
+      const start = performance.now();
+      const sample = () => {
+        window.solarOpacities.push(Number(getComputedStyle(sky).opacity));
+        if (performance.now() - start < 600) requestAnimationFrame(sample);
+      };
+      requestAnimationFrame(sample);
+    });
+    observer.observe(document.querySelector(".landing"), { childList: true });
   })()' >/dev/null
   agent-browser hover '[data-time-scrubber]' >/dev/null
   agent-browser wait '.landing-solar canvas' >/dev/null
   agent-browser wait --fn 'document.querySelector(".landing-solar canvas")?.getContext("2d").getImageData(0, 0, 1, 1).data[3] > 0' >/dev/null
   agent-browser eval '(async () => {
+    await new Promise(resolve => setTimeout(resolve, 650));
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduced && !window.solarOpacities.some(opacity => opacity > 0 && opacity < 1)) throw new Error("Solar reveal skipped intermediate frames");
+    if (reduced && window.solarOpacities.some(opacity => opacity !== 1)) throw new Error("Reduced motion animated solar reveal");
     const clock = document.querySelector("[data-time-scrubber]");
     const time = clock.querySelector("a:has(> span) > span:last-child");
     const minute = () => { const [h,m] = time.textContent.split(":").map(Number); return h * 60 + m; };

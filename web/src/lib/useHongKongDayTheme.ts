@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, WheelEvent as ReactWheelEvent } from "react";
+import {
+  buildKualaLumpurWeatherUrl,
+  KUALA_LUMPUR_WEATHER_HREF,
+  parseWeather,
+  type WeatherInfo,
+  type WeatherKind,
+} from "./kuala-lumpur-weather";
 
 const HONG_KONG_TIME_ZONE = "Asia/Hong_Kong";
 const MELBOURNE_TIME_ZONE = "Australia/Melbourne";
@@ -9,7 +16,6 @@ const LOCATION_STORAGE_KEY = "undivisible.dev:ip-location";
 const MINUTES_IN_DAY = 24 * 60;
 const SUNRISE_API_URL = "https://api.sunrise-sunset.org/json";
 const IP_API_URL = "https://ipapi.co/json/";
-const WEATHER_API_URL = "https://api.open-meteo.com/v1/forecast";
 const SUNRISE_API_ATTRIBUTION_URL = "https://sunrise-sunset.org/api";
 const DEFAULT_SOLAR_MINUTES = {
   sunrise: 6 * 60 + 30,
@@ -54,23 +60,6 @@ type SolarTimes = {
 type LocationResponse = {
   city?: string;
   timezone?: string;
-};
-
-type WeatherResponse = {
-  current?: {
-    temperature_2m?: number;
-    weather_code?: number;
-    rain?: number;
-  };
-};
-
-type WeatherKind = "clear" | "cloudy" | "rain" | "storm";
-
-type WeatherInfo = {
-  temperatureC: number;
-  status: string;
-  kind: WeatherKind;
-  rainIntensity: number;
 };
 
 type LocationInfo = {
@@ -128,6 +117,7 @@ export type HongKongDayTheme = {
   showLocalTime: boolean;
   weatherDisplay: string;
   weatherHref: string;
+  weather: WeatherInfo | null;
   /**
    * The wall-clock instant currently being displayed — live, or shifted while
    * the clock is being scrubbed. Format it against any zone or fixed UTC
@@ -738,21 +728,8 @@ function buildLocationLabel(city: string) {
   return city.slice(0, 3).toUpperCase();
 }
 
-function weatherFromCode(code: number): { kind: WeatherKind; status: string } {
-  if (code === 95 || code === 96 || code === 99) {
-    return { kind: "storm", status: "STORMY" };
-  }
-  if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(code)) {
-    return { kind: "rain", status: "RAINY" };
-  }
-  if ([1, 2, 3, 45, 48].includes(code)) {
-    return { kind: "cloudy", status: "CLOUDY" };
-  }
-  return { kind: "clear", status: "CLEAR" };
-}
-
 function formatWeatherDisplay(weather: WeatherInfo) {
-  return `${Math.round(weather.temperatureC)}°C ${weather.status}`;
+  return `KL ${Math.round(weather.temperatureC)}°C ${weather.status}`;
 }
 
 function getFallbackLocationInfo(): LocationInfo {
@@ -833,12 +810,7 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   const [location, setLocation] = useState<LocationInfo>(
     () => initialCachedLocation ?? getFallbackLocationInfo(),
   );
-  const [weather, setWeather] = useState<WeatherInfo>({
-    temperatureC: 24,
-    status: "CLEAR",
-    kind: "clear",
-    rainIntensity: 0,
-  });
+  const [weather, setWeather] = useState<WeatherInfo | null>(null);
   const [displayedMinute, setDisplayedMinute] = useState(() =>
     minuteInZone(new Date(), HONG_KONG_TIME_ZONE),
   );
@@ -864,46 +836,32 @@ export function useHongKongDayTheme(): HongKongDayTheme {
   }, []);
 
   useEffect(() => {
-    let disposed = false;
-    const url = new URL(WEATHER_API_URL);
-    url.searchParams.set("latitude", String(HONG_KONG_COORDS.lat));
-    url.searchParams.set("longitude", String(HONG_KONG_COORDS.lng));
-    url.searchParams.set("current", "temperature_2m,weather_code,rain");
-    url.searchParams.set("timezone", HONG_KONG_TIME_ZONE);
-    logWeather("requesting weather api", url.toString());
+    const controller = new AbortController();
+    const url = buildKualaLumpurWeatherUrl();
+    logWeather("requesting Kuala Lumpur weather api", url);
 
-    void fetch(url.toString())
-      .then((response) => response.json() as Promise<WeatherResponse>)
-      .then((payload) => {
-        if (disposed) {
-          return;
-        }
-        const temperature = payload.current?.temperature_2m;
-        const code = payload.current?.weather_code;
-        const rain = payload.current?.rain ?? 0;
-        if (typeof temperature !== "number" || typeof code !== "number") {
-          logWeather("api response missing weather fields", payload);
-          return;
-        }
-        const parsed = weatherFromCode(code);
-        setWeather({
-          temperatureC: temperature,
-          status: parsed.status,
-          kind: parsed.kind,
-          rainIntensity: rain,
+    const refresh = () =>
+      void fetch(url, { signal: controller.signal })
+        .then((response) => {
+          if (!response.ok) throw new Error(`Weather HTTP ${response.status}`);
+          return response.json() as Promise<unknown>;
+        })
+        .then((payload) => {
+          if (controller.signal.aborted) return;
+          const parsed = parseWeather(payload);
+          setWeather(parsed);
+        })
+        .catch((error: unknown) => {
+          if (controller.signal.aborted) return;
+          setWeather(null);
+          logWeather("Kuala Lumpur weather unavailable", error);
         });
-        logWeather("api success, weather updated", {
-          temperature,
-          code,
-          parsed,
-        });
-      })
-      .catch((error: unknown) => {
-        logWeather("api request failed, keeping fallback", error);
-      });
+    refresh();
+    const timer = window.setInterval(refresh, 15 * 60 * 1000);
 
     return () => {
-      disposed = true;
+      controller.abort();
+      window.clearInterval(timer);
     };
   }, []);
 
@@ -1088,11 +1046,11 @@ export function useHongKongDayTheme(): HongKongDayTheme {
       twilightStrength,
       deepNightStrength,
       midnightStrength,
-      weatherKind: weather.kind,
+      weatherKind: weather?.kind ?? "clear",
       rainIntensity:
-        weather.kind === "rain" || weather.kind === "storm"
+        weather?.kind === "rain" || weather?.kind === "storm"
           ? clamp(Math.max(weather.rainIntensity, 0.5) / 5, 0, 1)
-          : clamp(weather.rainIntensity / 5, 0, 1),
+          : clamp((weather?.rainIntensity ?? 0) / 5, 0, 1),
     }),
     [
       palette.background,
@@ -1105,8 +1063,8 @@ export function useHongKongDayTheme(): HongKongDayTheme {
       twilightStrength,
       deepNightStrength,
       midnightStrength,
-      weather.kind,
-      weather.rainIntensity,
+      weather?.kind,
+      weather?.rainIntensity,
     ],
   );
 
@@ -1231,9 +1189,12 @@ export function useHongKongDayTheme(): HongKongDayTheme {
     showLocalTime:
       location.timeZone !== HONG_KONG_TIME_ZONE &&
       location.timeZone !== MELBOURNE_TIME_ZONE,
-    weatherDisplay: formatWeatherDisplay(weather),
+    weatherDisplay: weather
+      ? formatWeatherDisplay(weather)
+      : "KL WEATHER UNAVAILABLE",
+    weather,
     displayedDate,
-    weatherHref: `https://open-meteo.com/en/forecast?latitude=${HONG_KONG_COORDS.lat}&longitude=${HONG_KONG_COORDS.lng}&current=temperature_2m,weather_code`,
+    weatherHref: KUALA_LUMPUR_WEATHER_HREF,
     hkgClockHref: "https://www.timeanddate.com/worldclock/hong-kong/hong-kong",
     melClockHref: "https://www.timeanddate.com/worldclock/australia/melbourne",
     localClockHref: `https://www.timeanddate.com/worldclock/results.html?query=${encodeURIComponent(location.city)}`,

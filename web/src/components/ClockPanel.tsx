@@ -15,6 +15,7 @@ export function ClockPanel({
   onToggleNowArticle,
   hydrated,
   travelClocks = false,
+  onTimeHoverChange,
 }: {
   dayTheme: HongKongDayTheme;
   now: NowContent;
@@ -22,6 +23,7 @@ export function ClockPanel({
   onToggleNowArticle?: () => void;
   hydrated: boolean;
   travelClocks?: boolean;
+  onTimeHoverChange?: (hovered: boolean) => void;
 }) {
   const clockRef = useRef<HTMLDivElement>(null);
   const [clockHovered, setClockHovered] = useState(false);
@@ -60,15 +62,8 @@ export function ClockPanel({
 
   return (
     <div
-      ref={clockRef}
-      data-time-scrubber="true"
       className="w-fit shrink-0 text-[10px] uppercase tracking-[0.18em] [font-family:var(--font-jetbrains-mono),monospace] sm:text-[11px] sm:tracking-[0.22em]"
       style={{ color: "var(--page-text)" }}
-      onMouseEnter={() => setClockHovered(true)}
-      onMouseLeave={() => {
-        setClockHovered(false);
-        dayTheme.resetScrub();
-      }}
     >
       <div className="mb-2">
         <a
@@ -81,117 +76,23 @@ export function ClockPanel({
           {weatherText}
         </a>
       </div>
-      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <a
-          href={dayTheme.hkgClockHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex flex-wrap items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
-          style={{ color: "var(--page-text)" }}
-        >
-          <span
-            className="w-[3.2rem] shrink-0"
-            style={{ color: "var(--page-text-soft)" }}
-          >
-            {travelClocks ? "HKG/KUL" : "HKG"}
-          </span>
-          <span>{hkgText}</span>
-        </a>
-        {showStatus ? (
-          statusInteractive ? (
-            <button
-              type="button"
-              className={`max-w-full cursor-pointer border-none bg-transparent p-0 text-left lg:underline lg:decoration-dotted lg:underline-offset-4 ${statusClass}`}
-              style={
-                statusActive
-                  ? { color: "#ffffff" }
-                  : { color: "var(--page-text-muted)" }
-              }
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                onToggleNowArticle?.();
-              }}
-            >
-              {now.status}
-            </button>
-          ) : (
-            <span
-              className={`max-w-full ${statusClass}`}
-              style={{ color: "var(--page-text-muted)" }}
-            >
-              {now.status}
-            </span>
-          )
-        ) : null}
-      </div>
-      <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <a
-          href={dayTheme.melClockHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex flex-wrap items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
-          style={{ color: "var(--page-text)" }}
-        >
-          <span
-            className="w-[3.2rem] shrink-0"
-            style={{ color: "var(--page-text-soft)" }}
-          >
-            MEL
-          </span>
-          <span>{melText}</span>
-        </a>
-        <span
-          aria-hidden={!clockHovered && !statusActive}
-          className={`hidden max-w-[10rem] normal-case tracking-normal text-[9px] leading-snug transition-opacity duration-300 ease-out max-lg:inline-block max-lg:opacity-0 lg:inline-block lg:max-w-none ${
-            clockHovered
-              ? "lg:opacity-100"
-              : "lg:pointer-events-none lg:opacity-0"
-          }`}
-          style={{ color: "var(--page-text-muted)" }}
-        >
-          scroll to change time
-        </span>
-      </div>
-      {travelClocks &&
-        [
-          {
-            label: "NYC",
-            zone: "America/New_York",
-            href: "https://www.timeanddate.com/worldclock/usa/new-york",
-          },
-          {
-            label: "TYO",
-            zone: "Asia/Tokyo",
-            href: "https://www.timeanddate.com/worldclock/japan/tokyo",
-          },
-        ].map(({ label, zone, href }) => (
-          <div className="mt-1" key={zone}>
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
-            >
-              <span className="w-[3.2rem] shrink-0">{label}</span>
-              <span>
-                {hydrated
-                  ? formatTimeForZone(dayTheme.displayedDate, zone)
-                  : "--:--:--"}
-              </span>
-            </a>
-          </div>
-        ))}
-      {(travelClocks
-        ? hydrated && !isTravelClockZone(localZone)
-        : dayTheme.showLocalTime) && (
-        <div className="mt-1">
+      <div
+        ref={clockRef}
+        data-time-scrubber="true"
+        onPointerEnter={(event) => {
+          if (event.pointerType === "touch") return;
+          setClockHovered(true);
+          onTimeHoverChange?.(true);
+        }}
+        onPointerLeave={() => {
+          setClockHovered(false);
+          dayTheme.resetScrub();
+          onTimeHoverChange?.(false);
+        }}
+      >
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <a
-            href={
-              travelClocks
-                ? `https://www.timeanddate.com/worldclock/results.html?query=${encodeURIComponent(localZone)}`
-                : dayTheme.localClockHref
-            }
+            href={dayTheme.hkgClockHref}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex flex-wrap items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
@@ -201,12 +102,121 @@ export function ClockPanel({
               className="w-[3.2rem] shrink-0"
               style={{ color: "var(--page-text-soft)" }}
             >
-              {travelClocks ? "LOCAL" : dayTheme.localLabel}
+              {travelClocks ? "HKG/KUL" : "HKG"}
             </span>
-            <span>{localText}</span>
+            <span>{hkgText}</span>
           </a>
+          {showStatus ? (
+            statusInteractive ? (
+              <button
+                type="button"
+                className={`max-w-full cursor-pointer border-none bg-transparent p-0 text-left lg:underline lg:decoration-dotted lg:underline-offset-4 ${statusClass}`}
+                style={
+                  statusActive
+                    ? { color: "#ffffff" }
+                    : { color: "var(--page-text-muted)" }
+                }
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onToggleNowArticle?.();
+                }}
+              >
+                {now.status}
+              </button>
+            ) : (
+              <span
+                className={`max-w-full ${statusClass}`}
+                style={{ color: "var(--page-text-muted)" }}
+              >
+                {now.status}
+              </span>
+            )
+          ) : null}
         </div>
-      )}
+        <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+          <a
+            href={dayTheme.melClockHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex flex-wrap items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
+            style={{ color: "var(--page-text)" }}
+          >
+            <span
+              className="w-[3.2rem] shrink-0"
+              style={{ color: "var(--page-text-soft)" }}
+            >
+              MEL
+            </span>
+            <span>{melText}</span>
+          </a>
+          <span
+            aria-hidden={!clockHovered && !statusActive}
+            className={`hidden max-w-[10rem] normal-case tracking-normal text-[9px] leading-snug transition-opacity duration-300 ease-out max-lg:inline-block max-lg:opacity-0 lg:inline-block lg:max-w-none ${
+              clockHovered
+                ? "lg:opacity-100"
+                : "lg:pointer-events-none lg:opacity-0"
+            }`}
+            style={{ color: "var(--page-text-muted)" }}
+          >
+            scroll to change time
+          </span>
+        </div>
+        {travelClocks &&
+          [
+            {
+              label: "NYC",
+              zone: "America/New_York",
+              href: "https://www.timeanddate.com/worldclock/usa/new-york",
+            },
+            {
+              label: "TYO",
+              zone: "Asia/Tokyo",
+              href: "https://www.timeanddate.com/worldclock/japan/tokyo",
+            },
+          ].map(({ label, zone, href }) => (
+            <div className="mt-1" key={zone}>
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
+              >
+                <span className="w-[3.2rem] shrink-0">{label}</span>
+                <span>
+                  {hydrated
+                    ? formatTimeForZone(dayTheme.displayedDate, zone)
+                    : "--:--:--"}
+                </span>
+              </a>
+            </div>
+          ))}
+        {(travelClocks
+          ? hydrated && !isTravelClockZone(localZone)
+          : dayTheme.showLocalTime) && (
+          <div className="mt-1">
+            <a
+              href={
+                travelClocks
+                  ? `https://www.timeanddate.com/worldclock/results.html?query=${encodeURIComponent(localZone)}`
+                  : dayTheme.localClockHref
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex flex-wrap items-baseline gap-x-2 no-underline transition-opacity hover:opacity-90"
+              style={{ color: "var(--page-text)" }}
+            >
+              <span
+                className="w-[3.2rem] shrink-0"
+                style={{ color: "var(--page-text-soft)" }}
+              >
+                {travelClocks ? "LOCAL" : dayTheme.localLabel}
+              </span>
+              <span>{localText}</span>
+            </a>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

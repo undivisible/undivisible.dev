@@ -2132,6 +2132,19 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   z-index: 0;
   pointer-events: none;
 }
+@media (prefers-reduced-motion: no-preference) {
+  .landing-solar {
+    animation: landing-solar-in 400ms ease-out both;
+  }
+}
+@keyframes landing-solar-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 .landing-solar canvas {
   position: absolute;
   inset: 0;
@@ -2167,11 +2180,14 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
 .landing .personal-clock * {
   font: inherit;
 }
+.landing [data-time-scrubber] {
+  width: min(410px, calc(100vw - 64px));
+}
 .landing .now-playing {
   display: flex;
   width: auto;
   min-height: 0;
-  margin-top: 18px;
+  margin-top: 1lh;
   padding: 0;
   border: 0;
   border-radius: 0;

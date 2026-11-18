@@ -11,12 +11,21 @@ test("language repository extraction canonicalizes verified legacy links", () =>
     githubRepoPathFromHref("https://github.com/tschk/eqts.git/tree/main"),
   ).toBe("softwarecorporation/eqts");
   expect(githubRepoPathFromHref("https://github.com/tschk/ark-protocol")).toBe(
-    "tschk/ark-protocol",
+    "arkiecompany/ark-protocol",
   );
   expect(githubRepoPathFromHref("https://eqts.tsc.hk")).toBeUndefined();
   expect(githubRepoPathFromHref("https://github.com/tschk/unknown")).toBe(
     "tschk/unknown",
   );
+  expect(
+    githubRepoPathFromHref("https://github.com/softwarecorporation/oil"),
+  ).toBe("semitechnological/oil");
+  expect(githubRepoPathFromHref("https://github.com/tschk/websurfx")).toBe(
+    "undivisible/websurfx",
+  );
+  expect(
+    githubRepoPathFromHref("https://softwarecorporation.github.io/darash"),
+  ).toBe("softwarecorporation/darash");
 });
 
 test("owner migrations retain cached language stacks", () => {
