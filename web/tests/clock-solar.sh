@@ -4,6 +4,7 @@ export AGENT_BROWSER_SESSION="clock-solar-$$"
 trap 'agent-browser close >/dev/null 2>&1 || true' EXIT
 agent-browser open "${1:-http://localhost:4321}" >/dev/null
 agent-browser set viewport 1280 800 2 >/dev/null
+agent-browser network route '**/api/profile/now.md' --body '格致' >/dev/null
 for motion in no-preference reduce; do
   if [ "$motion" = reduce ]; then
     agent-browser set media dark reduced-motion >/dev/null
@@ -72,6 +73,15 @@ for motion in no-preference reduce; do
   })()'
   agent-browser mouse move 1200 750 >/dev/null
   agent-browser wait --fn '!document.querySelector(".landing-solar") && document.querySelector(".personal-clock").dataset.timePreview === "false"' >/dev/null
+  agent-browser hover '[data-time-scrubber]' >/dev/null
+  agent-browser wait '.landing-solar canvas' >/dev/null
+  agent-browser hover '[aria-controls=status-translation]' >/dev/null
+  agent-browser wait '#status-translation' >/dev/null
+  agent-browser hover '#status-translation p' >/dev/null
+  agent-browser eval 'if(document.querySelector(".landing-solar"))throw new Error("Portaled translation retained clock ownership");"PASS moving from clock into translation releases the solar scene"'
+  agent-browser click '#status-translation .status-preview-close' >/dev/null
+  agent-browser mouse move 1200 750 >/dev/null
+  agent-browser eval 'if(document.querySelector(".landing-solar"))throw new Error("Closing translation left solar scene active")' >/dev/null
   agent-browser hover '[data-time-scrubber]' >/dev/null
   agent-browser wait '.landing-solar canvas' >/dev/null
   # Keyboard activation while the pointer remains on the clock exercises navigation cleanup.

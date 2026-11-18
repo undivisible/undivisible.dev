@@ -33,9 +33,25 @@ export function ClockPanel({
   useEffect(() => {
     const clock = clockRef.current;
     if (!clock) return;
+    const enter = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      setClockHovered(true);
+      onTimeHoverChange?.(true);
+    };
+    const leave = () => {
+      setClockHovered(false);
+      dayTheme.resetScrub();
+      onTimeHoverChange?.(false);
+    };
     clock.addEventListener("wheel", dayTheme.onClockWheel, { passive: false });
-    return () => clock.removeEventListener("wheel", dayTheme.onClockWheel);
-  }, [dayTheme.onClockWheel]);
+    clock.addEventListener("pointerenter", enter);
+    clock.addEventListener("pointerleave", leave);
+    return () => {
+      clock.removeEventListener("wheel", dayTheme.onClockWheel);
+      clock.removeEventListener("pointerenter", enter);
+      clock.removeEventListener("pointerleave", leave);
+    };
+  }, [dayTheme.onClockWheel, dayTheme.resetScrub, onTimeHoverChange]);
 
   const weatherText =
     hydrated && dayTheme ? dayTheme.weatherDisplay : "KUL WEATHER LOADING";
@@ -71,20 +87,7 @@ export function ClockPanel({
       <div className="mb-2">
         <WeatherPreview dayTheme={dayTheme} label={weatherText} />
       </div>
-      <div
-        ref={clockRef}
-        data-time-scrubber="true"
-        onPointerEnter={(event) => {
-          if (event.pointerType === "touch") return;
-          setClockHovered(true);
-          onTimeHoverChange?.(true);
-        }}
-        onPointerLeave={() => {
-          setClockHovered(false);
-          dayTheme.resetScrub();
-          onTimeHoverChange?.(false);
-        }}
-      >
+      <div ref={clockRef} data-time-scrubber="true">
         <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <a
             href={dayTheme.hkgClockHref}
