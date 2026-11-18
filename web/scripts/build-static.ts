@@ -16,6 +16,7 @@ import { createStaticRenderer } from "@/moonshine/renderer";
 import type { Metadata } from "@/moonshine/next";
 import config from "../moonshine.config";
 import { loadRootEnv } from "./load-root-env";
+import { generateOgBanner } from "./generate-og";
 
 const projectDir = resolve(import.meta.dir, "..");
 const outDir = join(projectDir, "out");
@@ -212,6 +213,7 @@ async function main(): Promise<void> {
   }
 
   await cp(join(projectDir, "public"), outDir, { recursive: true });
+  await generateOgBanner({ outDir, stylesheet });
 
   const manifest: MoonshineManifest = {
     version: MANIFEST_VERSION,

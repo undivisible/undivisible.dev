@@ -82,6 +82,47 @@ function alternateLinks(metadata: Metadata): ReactNode[] {
   return links;
 }
 
+function socialTags(metadata: Metadata): ReactNode[] {
+  const tags: ReactNode[] = [];
+  const add = (
+    attribute: "property" | "name",
+    key: string,
+    value: string | number | undefined,
+  ) => {
+    if (value === undefined) return;
+    tags.push(
+      createElement("meta", {
+        key: `${key}:${tags.length}`,
+        [attribute]: key,
+        content: String(value),
+      }),
+    );
+  };
+  const og = metadata.openGraph;
+  if (og) {
+    for (const field of ["title", "description", "type", "url"] as const) {
+      add("property", `og:${field}`, og[field]);
+    }
+    for (const image of og.images ?? []) {
+      add("property", "og:image", image.url);
+      for (const field of ["width", "height", "type", "alt"] as const) {
+        add("property", `og:image:${field}`, image[field]);
+      }
+    }
+  }
+  const twitter = metadata.twitter;
+  if (twitter) {
+    for (const field of ["card", "title", "description"] as const) {
+      add("name", `twitter:${field}`, twitter[field]);
+    }
+    for (const image of twitter.images ?? []) {
+      add("name", "twitter:image", image.url);
+      add("name", "twitter:image:alt", image.alt);
+    }
+  }
+  return tags;
+}
+
 function head(
   metadata: Metadata,
   options: DocumentOptions,
@@ -188,6 +229,16 @@ function head(
         key: "description",
         name: "description",
         content: metadata.description,
+      }),
+    );
+  }
+  children.push(...socialTags(metadata));
+  if (metadata.alternates?.canonical) {
+    children.push(
+      createElement("link", {
+        key: "canonical",
+        rel: "canonical",
+        href: metadata.alternates.canonical,
       }),
     );
   }

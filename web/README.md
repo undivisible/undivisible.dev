@@ -63,6 +63,27 @@ Type `nexnet` in the desktop launcher to open the Nexnet terminal chat. It reads
 
 ## Deployment
 
+### Social banner
+
+Every static build renders `out/og/home.png` at 1200×630 using the site's real
+`Ascii` component and local JetBrains Mono font: a 67×15 grid with 30px/42px
+regular text. The introduction is composed into the background cells, not overlaid.
+Generation requires `agent-browser` (validated with 0.38.1) and its Chromium
+installation (`agent-browser install`). Missing browser tooling fails the build.
+
+The generator freezes artwork from `public/lastfm-recent.json`, samples it with
+the site's album-palette extractor, and captures a completed reduced-motion frame.
+Missing snapshot, unavailable artwork or extraction failure uses the renderer's
+deterministic default palette. After building, `bun run generate:og --fallback`
+can reproduce that fallback; `bun run generate:og` restores the album version.
+No runtime browser, crawler-side JavaScript or scheduled refresh is required.
+
+Homepage HTML serializes OG and Twitter large-image tags pointing directly at
+`https://undivisible.dev/og/home.png`. Refresh the snapshot and rebuild/deploy to
+update the palette; code-only builds retain the saved snapshot. The stable image
+URL revalidates at the origin, but social platforms maintain their own caches and
+may require a re-scrape before showing a replacement.
+
 `wrangler.production.jsonc` deploys `out/` to Worker `undivisible` in the personal Cloudflare account, serving `undivisible.dev/*`. `wrangler.jsonc` remains the separate `undivisible-next` preview at `next.undivisible.dev`.
 
 For a code-only release preserve the currently approved public Markdown snapshots

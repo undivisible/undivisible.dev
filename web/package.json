@@ -12,6 +12,7 @@
     "sync:agent": "bun run scripts/sync-agent-public.ts",
     "prebuild": "bun run sync:readme && bun run sync:now && bun run sync:resume && bun run sync:lastfm && bun run sync:agent",
     "build": "bun run scripts/build-static.ts",
+    "generate:og": "bun run scripts/generate-og.ts",
     "format": "bunx prettier --check .",
     "lint": "bun run typecheck",
     "serve": "bun run scripts/serve-static.ts",
