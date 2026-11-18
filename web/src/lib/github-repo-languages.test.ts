@@ -21,6 +21,52 @@ test("GitHub language shares come from byte counts, not names or README stacks",
   ).toBe("Rust 45.5% · TypeScript 27.3% · HTML 18.2% · Other 9.1%");
 });
 
+test("tiny GitHub byte shares are grouped honestly instead of rounded to zero", () => {
+  expect(
+    githubLanguageLabel({
+      repository: "tschk/moonshine",
+      languages: {
+        TypeScript: 5152763,
+        Dart: 2092,
+        Shell: 1565,
+        Dockerfile: 843,
+        JavaScript: 138,
+      },
+    }),
+  ).toBe("TypeScript 99.9% · Other <0.1%");
+  expect(
+    githubLanguageLabel({
+      repository: "owner/repo",
+      languages: {
+        Rust: 7000,
+        TypeScript: 2990,
+        Shell: 9,
+        CSS: 1,
+        JavaScript: 0,
+      },
+    }),
+  ).toBe("Rust 70.0% · TypeScript 29.9% · Other 0.1%");
+  expect(
+    githubLanguageLabel({
+      repository: "owner/repo",
+      languages: {
+        Rust: 999,
+        Shell: 1,
+        CSS: 0,
+      },
+    }),
+  ).toBe("Rust 99.9% · Shell 0.1%");
+  expect(
+    githubLanguageLabel({
+      repository: "owner/repo",
+      languages: {
+        Rust: 1000,
+        CSS: 0,
+      },
+    }),
+  ).toBe("Rust 100.0%");
+});
+
 test("missing, empty, and failed GitHub language data stay distinct", () => {
   expect(githubLanguageLabel(null)).toBe(
     "GitHub languages: no linked repository",

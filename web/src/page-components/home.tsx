@@ -468,7 +468,22 @@ export default function Home() {
                 href={`https://github.com/${project.github.repository}#languages`}
                 title="GitHub Linguist language shares"
               >
-                {githubLanguageLabel(project.github)}
+                {githubLanguageLabel(project.github)
+                  .split(" · ")
+                  .map((share, index) => (
+                    <span key={share}>
+                      {index > 0 && " · "}
+                      <span
+                        className={
+                          share.endsWith("%")
+                            ? "landing-preview-language-share"
+                            : undefined
+                        }
+                      >
+                        {share}
+                      </span>
+                    </span>
+                  ))}
               </a>
             ) : (
               githubLanguageLabel(null)

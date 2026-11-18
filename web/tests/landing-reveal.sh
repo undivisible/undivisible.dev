@@ -51,13 +51,18 @@ for viewport in '412 740' '1440 900'; do
       if (preview?.querySelector("p").textContent !== project.desc) throw new Error("Preview differs from README: " + project.name + ": " + preview?.querySelector("p").textContent);
       if (project.href !== "#" && preview.querySelector(":scope > a").href !== new URL(project.href).href) throw new Error("Wrong project URL");
       const stats = preview.querySelector(".landing-preview-languages");
-      const entries = Object.entries(project.github?.languages ?? {}).sort((a,b) => b[1]-a[1]);
+      const entries = Object.entries(project.github?.languages ?? {}).filter(([, bytes]) => bytes > 0).sort((a,b) => b[1]-a[1]);
       const total = entries.reduce((sum, [,bytes]) => sum + bytes, 0);
-      const top = entries.slice(0,3);
-      const other = entries.slice(3).reduce((sum, [,bytes]) => sum + bytes, 0);
+      const top = entries.filter(([, bytes]) => bytes / total >= 0.001).slice(0,3);
+      const other = entries.slice(top.length).reduce((sum, [,bytes]) => sum + bytes, 0);
       if (other) top.push(["Other", other]);
-      const label = !project.github ? "GitHub languages: no linked repository" : project.github.languages === null ? "GitHub languages unavailable" : !total ? "GitHub reports no language data" : top.map(([name,bytes]) => name + " " + (bytes/total*100).toFixed(1) + "%").join(" · ");
+      const label = !project.github ? "GitHub languages: no linked repository" : project.github.languages === null ? "GitHub languages unavailable" : !total ? "GitHub reports no language data" : top.map(([name,bytes]) => name + " " + (bytes/total < 0.001 ? "<0.1" : (bytes/total*100).toFixed(1)) + "%").join(" · ");
       if (stats.textContent !== label) throw new Error("Wrong GitHub language shares: " + project.name);
+      for (const share of stats.querySelectorAll(".landing-preview-language-share")) {
+        const range = document.createRange();
+        range.selectNodeContents(share);
+        if (range.getClientRects().length !== 1) throw new Error("Language percentage separated from its name: " + share.textContent);
+      }
       if (project.github && stats.querySelector("a").href !== "https://github.com/" + project.github.repository + "#languages") throw new Error("Stats link has wrong repository");
     }
     return "PASS alphabetical README inventory, Back under B, and every keyboard preview";

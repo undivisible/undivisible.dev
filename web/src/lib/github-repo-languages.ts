@@ -27,14 +27,23 @@ export function parseGithubLanguageBytes(
 export function githubLanguageLabel(stats: GithubLanguageStats): string {
   if (!stats) return "GitHub languages: no linked repository";
   if (!stats.languages) return "GitHub languages unavailable";
-  const entries = Object.entries(stats.languages).sort((a, b) => b[1] - a[1]);
+  const entries = Object.entries(stats.languages)
+    .filter(([, bytes]) => bytes > 0)
+    .sort((a, b) => b[1] - a[1]);
   const total = entries.reduce((sum, [, bytes]) => sum + bytes, 0);
   if (!total) return "GitHub reports no language data";
-  const summary = entries.slice(0, 3);
-  const other = entries.slice(3).reduce((sum, [, bytes]) => sum + bytes, 0);
+  const summary = entries
+    .filter(([, bytes]) => (bytes / total) * 100 >= 0.1)
+    .slice(0, 3);
+  const other = entries
+    .slice(summary.length)
+    .reduce((sum, [, bytes]) => sum + bytes, 0);
   if (other) summary.push(["Other", other]);
   return summary
-    .map(([name, bytes]) => `${name} ${((bytes / total) * 100).toFixed(1)}%`)
+    .map(([name, bytes]) => {
+      const percentage = (bytes / total) * 100;
+      return `${name} ${percentage < 0.1 ? "<0.1" : percentage.toFixed(1)}%`;
+    })
     .join(" · ");
 }
 
