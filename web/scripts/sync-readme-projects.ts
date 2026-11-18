@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { parseLandingReadme } from "../src/lib/parse-readme-markdown.ts";
 import {
   parseReadme,
   applyReadmeStackFallbacks,
@@ -97,9 +98,9 @@ const withFallbacks = previous
 const bundle = await fillReadmeBundleMissingStacks(withFallbacks);
 
 // The landing page's full inventory follows the user's profile README, not curated highlights.
-let landingReadme: ReadmeBundle;
+let landingProjects: ReadmeProject[];
 try {
-  landingReadme = parseReadme(
+  landingProjects = parseLandingReadme(
     await fetchProfileMarkdown({
       urls: [
         "https://raw.githubusercontent.com/undivisible/undivisible/main/README.md",
@@ -110,14 +111,8 @@ try {
   console.warn(
     "Profile README unavailable; using the local project-copy fallback",
   );
-  landingReadme = parseReadme(md);
+  landingProjects = parseLandingReadme(md);
 }
-const landingProjects = [
-  ...landingReadme.mainProjects,
-  ...landingReadme.utilities,
-  ...landingReadme.miniapps,
-  ...landingReadme.libraries,
-];
 
 await Bun.write(OUT_FILE, emitTs(bundle, landingProjects));
 

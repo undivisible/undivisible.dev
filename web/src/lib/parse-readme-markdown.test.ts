@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 import {
   normalizeReadmeBundle,
+  parseLandingReadme,
   parseReadme,
   readmeBundleProjectCount,
 } from "@/lib/parse-readme-markdown";
@@ -131,4 +132,33 @@ test("standard Markdown separators preserve project categories", () => {
   expect(bundle.utilities.map((project) => project.name)).toEqual(["tool"]);
   expect(bundle.miniapps.map((project) => project.name)).toEqual(["app"]);
   expect(bundle.libraries.map((project) => project.name)).toEqual(["lib"]);
+});
+
+test("landing includes inline README projects without duplicate aliases or outside references", () => {
+  const projects = parseLandingReadme(`
+[hardware](https://github.com/undivisible/undivisible/blob/main/hardware.md)
+### [alpenglow](https://alpenglow.tsc.hk)
+A Linux distro. Its [alpenglowed](https://github.com/tschk/alpenglowed) shell and [soliloquy](https://github.com/tschk/soliloquy) variant.
+### other
+- **[rv8](https://github.com/tschk/rv8)** — a browser.
+- **[telekinesis](https://github.com/tschk/telekinesis)** — agent. [telekinesis.tsc.hk](https://telekinesis.tsc.hk).
+- **[crates download history](https://cratesdownloadhistory.undivisible.dev/)** — charts. [github](https://github.com/undivisible/cratesdownloadhistory).
+## libraries
+- **[rs_poke](https://github.com/undivisible/rs_poke)** — [poke](https://poke.com) SDK, not [upstream](https://github.com/someone/other).
+`);
+  expect(projects.map((project) => project.key).sort()).toEqual([
+    "alpenglow",
+    "alpenglowed",
+    "crates-download-history",
+    "rs_poke",
+    "rv8",
+    "soliloquy",
+    "telekinesis",
+  ]);
+  expect(projects.find((project) => project.key === "soliloquy")).toEqual({
+    key: "soliloquy",
+    name: "soliloquy",
+    href: "https://github.com/tschk/soliloquy",
+    desc: "Its alpenglowed shell and soliloquy variant.",
+  });
 });

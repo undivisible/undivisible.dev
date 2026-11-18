@@ -2232,8 +2232,6 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
 .landing-preview {
   position: fixed;
   z-index: 3;
-  right: 24px;
-  bottom: 24px;
   width: min(360px, calc(100% - 48px));
   max-height: calc(100dvh - 48px);
   overflow: auto;
@@ -2243,6 +2241,9 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   background: #f4f1e8;
   color: #161616;
   box-shadow: 0 4px 24px #0008;
+}
+.landing-preview[data-interactive="false"] {
+  pointer-events: none;
 }
 .landing-preview p {
   margin: 12px 0;
@@ -2260,8 +2261,6 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
 }
 .landing[data-view="projects"] {
   display: block;
-  font-size: 24px;
-  line-height: 36px;
 }
 .landing[data-view="projects"] .landing-status {
   display: none;
@@ -2272,10 +2271,6 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   text-align: left;
 }
 @media (max-width: 650px) {
-  .landing[data-view="projects"] {
-    font-size: 16px;
-    line-height: 24px;
-  }
   .landing[data-view="projects"] .landing-content {
     width: calc(100% - 40px);
     margin: 20px;

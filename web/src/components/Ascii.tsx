@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { layoutAsciiText } from "@/lib/visuals/ascii-text";
 import { createAsciiShader } from "@/lib/visuals/ascii-shader";
 import { personalAsciiGrid } from "@/components/ascii-content";
@@ -20,11 +20,14 @@ interface ShapeState {
 const DEFAULT_COLORS = ["#ffffff", "#cccccc", "#999999", "#666666", "#333333"];
 const FIELD_CHARS = ".,:;-=+*#%&";
 const SHAPE_CHARS = "@#MW8$&NBG";
-const TYPE_DURATION = 1600;
+// tsc.hk's runtime/src/lib.rs heading transition: mix glyphs, then scatter-resolve.
+const TRANSITION_CHARS = "─│┌┐└┘├┤┬┴┼╭╮╯╰╱╲╳○●■□▲△▶▼◆◇◘◙◦★☆♠♣♥♦";
+const BACKGROUND_DURATION = 900;
+const TYPE_DURATION = 1240;
 const NUMBER_DURATION = 600;
-const COLOR_START = TYPE_DURATION + NUMBER_DURATION;
+const COLOR_START = BACKGROUND_DURATION + TYPE_DURATION + NUMBER_DURATION;
 const REVEAL_DURATION = COLOR_START + 1000;
-const DISSOLVE_DURATION = 450;
+const DISSOLVE_DURATION = TYPE_DURATION;
 export type LandingView = "home" | "projects";
 const TOUCH_FIELD_FOREGROUND_WEIGHT = 0.82;
 const TOUCH_FIELD_ALPHA = 0.68;
@@ -177,7 +180,7 @@ export default function Ascii({
   colorUniformsRef.current = colorUniforms;
 
   // ASCII + physics effect — single rAF loop drives both WebGL and ASCII
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!ready) return;
 
     const container = containerRef.current;
@@ -200,8 +203,10 @@ export default function Ascii({
 
     const page = container.closest(".personal-page, .landing");
     const landing = Boolean(page?.classList.contains("landing"));
+    if (landing) page?.classList.add("ascii-text-composed");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let revealStart: number | undefined;
+    let backgroundStart: number | undefined;
     let contentRanks = new Map<number, number>();
     let contentOwners = new Map<number, number>();
     let numberCells = new Map<
@@ -411,13 +416,14 @@ export default function Ascii({
           currentView = viewRef.current.view;
           viewRef.current.onViewChange?.(currentView);
           dissolveStart = undefined;
-          revealStart = undefined;
+          revealStart = now - BACKGROUND_DURATION;
           contentDirty = true;
           return;
         }
       }
       if (revealStart === undefined && document.fonts.status === "loaded")
         revealStart = now;
+      backgroundStart ??= revealStart;
       const elapsed =
         !landing || reducedMotion.matches
           ? REVEAL_DURATION
@@ -426,15 +432,25 @@ export default function Ascii({
             : now - revealStart;
       const dissolving = dissolveStart !== undefined;
       const revealing = elapsed < REVEAL_DURATION || dissolving;
-      const colorProgress = clamp((elapsed - COLOR_START) / 1000, 0, 1);
+      const fieldElapsed =
+        !landing || reducedMotion.matches
+          ? REVEAL_DURATION
+          : backgroundStart === undefined
+            ? 0
+            : now - backgroundStart;
+      const colorProgress = clamp((fieldElapsed - COLOR_START) / 1000, 0, 1);
       const colorMix = colorProgress * colorProgress * (3 - 2 * colorProgress);
       asciiCanvas.dataset.revealState = dissolving
         ? "dissolving"
-        : elapsed < COLOR_START
-          ? "typing"
-          : revealing
-            ? "color"
-            : "complete";
+        : elapsed < BACKGROUND_DURATION
+          ? "background"
+          : elapsed < BACKGROUND_DURATION + TYPE_DURATION
+            ? "text"
+            : elapsed < COLOR_START
+              ? "numbers"
+              : revealing
+                ? "color"
+                : "complete";
 
       // Decorative motion is capped; clocks, scrolling and focus repaint immediately.
       if (
@@ -623,6 +639,11 @@ export default function Ascii({
             ? clamp(0.86 + brightness * 0.1, 0.78, 0.94)
             : clamp(0.52 + brightness * 0.4, 0.52, 0.94);
           const cellIndex = row * cols + col;
+          if (
+            cellIndex >=
+            cols * rows * clamp(fieldElapsed / BACKGROUND_DURATION, 0, 1)
+          )
+            continue;
           if (titleCells.has(cellIndex)) continue;
           const owner = contentOwners.get(cellIndex) ?? cellIndex;
           const sourceChar = contentGlyphs.get(owner);
@@ -633,18 +654,38 @@ export default function Ascii({
           if (landing && contentChar !== undefined) {
             const rank = contentRanks.get(owner) ?? 0;
             const number = numberCells.get(owner);
-            const start =
-              ((number?.rank ?? rank) / Math.max(1, contentRanks.size)) *
-              TYPE_DURATION;
+            const scatter =
+              ((((number?.rank ?? rank) * 7) % Math.max(1, contentRanks.size)) +
+                1) /
+              Math.max(1, contentRanks.size);
+            const progress = clamp(
+              (elapsed - BACKGROUND_DURATION) / TYPE_DURATION,
+              0,
+              1,
+            );
+            const glyphMix = Math.min(progress / 0.5, 1);
+            const resolveMix = clamp((progress - 0.48) / 0.52, 0, 1);
+            const randomGlyph = () =>
+              TRANSITION_CHARS[
+                Math.floor(Math.random() * TRANSITION_CHARS.length)
+              ];
             if (dissolveStart !== undefined) {
-              if (
-                rank / Math.max(1, contentRanks.size) <
-                (now - dissolveStart) / DISSOLVE_DURATION
-              )
+              const outgoing = clamp(
+                (now - dissolveStart) / DISSOLVE_DURATION,
+                0,
+                1,
+              );
+              if (scatter <= clamp((outgoing - 0.48) / 0.52, 0, 1))
                 contentChar = undefined;
-            } else if (elapsed < start) {
+              else if (scatter <= Math.min(outgoing / 0.5, 1))
+                contentChar = randomGlyph();
+            } else if (elapsed < BACKGROUND_DURATION) {
               contentChar = undefined;
+            } else if (scatter > resolveMix) {
+              contentChar = scatter <= glyphMix ? randomGlyph() : undefined;
             } else if (number) {
+              const start =
+                BACKGROUND_DURATION + (0.48 + scatter * 0.52) * TYPE_DURATION;
               const progress = clamp((elapsed - start) / NUMBER_DURATION, 0, 1);
               contentChar = String(
                 Math.floor(number.value * progress),

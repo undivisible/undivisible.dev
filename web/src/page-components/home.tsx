@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Ascii, { type LandingView } from "@/components/Ascii";
 import { MainClock } from "@/components/MainClock";
 import NowPlaying from "@/components/NowPlaying";
@@ -29,10 +29,13 @@ export default function Home() {
   const dayTheme = useHongKongDayTheme();
   const now = useNowMarkdown();
   const [preview, setPreview] = useState<string | null>(null);
+  const [previewInteractive, setPreviewInteractive] = useState(false);
   const [colors, setColors] = useState<string[] | undefined>();
   const [view, setView] = useState<LandingView>("home");
   const [requestedView, setRequestedView] = useState<LandingView>("home");
   const pageRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLElement>(null);
+  const [previewAnchor, setPreviewAnchor] = useState({ x: 0, y: 0 });
   const focusAfterView = useRef(false);
   const previewTrigger = useRef<HTMLButtonElement | null>(null);
 
@@ -40,6 +43,26 @@ export default function Home() {
     setPreview(null);
     setRequestedView(next);
   };
+
+  useLayoutEffect(() => {
+    const card = previewRef.current;
+    if (!card) return;
+    const position = () => {
+      const { width, height } = card.getBoundingClientRect();
+      const x = previewAnchor.x + 16;
+      const y = previewAnchor.y + 16;
+      card.style.left = `${Math.max(12, Math.min(innerWidth - width - 12, x + width > innerWidth - 12 ? previewAnchor.x - width - 16 : x))}px`;
+      card.style.top = `${Math.max(12, Math.min(innerHeight - height - 12, y + height > innerHeight - 12 ? previewAnchor.y - height - 16 : y))}px`;
+    };
+    position();
+    const observer = new ResizeObserver(position);
+    observer.observe(card);
+    window.addEventListener("resize", position);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", position);
+    };
+  }, [preview, previewAnchor]);
 
   useEffect(() => {
     if (!focusAfterView.current) return;
@@ -97,6 +120,8 @@ export default function Home() {
         // Scrolling a label under a stationary pointer must not replace a keyboard preview.
         if (event.pointerType !== "mouse") return;
         previewTrigger.current = event.currentTarget;
+        if (preview !== item.key) setPreviewInteractive(false);
+        setPreviewAnchor({ x: event.clientX, y: event.clientY });
         setPreview(item.key);
       }}
       onFocus={(event) => {
@@ -106,10 +131,16 @@ export default function Home() {
         )
           return;
         previewTrigger.current = event.currentTarget;
+        const bounds = event.currentTarget.getBoundingClientRect();
+        setPreviewInteractive(true);
+        setPreviewAnchor({ x: bounds.left, y: bounds.bottom });
         setPreview(item.key);
       }}
       onClick={(event) => {
         previewTrigger.current = event.currentTarget;
+        setPreviewInteractive(true);
+        if (event.detail > 0)
+          setPreviewAnchor({ x: event.clientX, y: event.clientY });
         setPreview(item.key);
       }}
     >
@@ -156,7 +187,7 @@ export default function Home() {
                       data-back
                       onClick={() => changeView("home")}
                     >
-                      [Back]
+                      [back]
                     </button>
                   ) : (
                     projectButton(entry)
@@ -220,7 +251,9 @@ export default function Home() {
       </main>
       {project && (
         <aside
+          ref={previewRef}
           className="landing-preview"
+          data-interactive={previewInteractive}
           id="project-preview"
           aria-label={`${project.name} preview`}
         >

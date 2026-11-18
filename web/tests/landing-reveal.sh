@@ -20,6 +20,7 @@ for viewport in '412 740' '1440 900'; do
   agent-browser eval '(async () => {
     const controls = [...document.querySelectorAll(".landing-all-projects button")];
     const names = controls.map(control => control.textContent.replace(/[\[\]]/g, "").trim());
+    if (document.querySelector("[data-back]").textContent.trim() !== "[back]") throw new Error("back must be lowercase");
     const sorted = [...names].sort((a, b) => a.localeCompare(b, "en", { sensitivity: "base" }));
     if (JSON.stringify(names) !== JSON.stringify(sorted)) throw new Error("Projects and Back are not alphabetized together");
     for (const control of controls) {
@@ -34,10 +35,28 @@ for viewport in '412 740' '1440 900'; do
       control.focus();
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       const preview = document.querySelector("#project-preview");
+      const bounds = preview.getBoundingClientRect();
+      if (bounds.left < 12 || bounds.top < 12 || bounds.right > innerWidth - 11 || bounds.bottom > innerHeight - 11) throw new Error("Preview escapes viewport: " + project.name);
       if (preview?.querySelector("p").textContent !== project.desc) throw new Error("Preview differs from README: " + project.name + ": " + preview?.querySelector("p").textContent);
       if (project.href !== "#" && preview.querySelector("a").href !== new URL(project.href).href) throw new Error("Wrong project URL");
     }
     return "PASS alphabetical README inventory, Back under B, and every keyboard preview";
+  })()'
+  agent-browser press Escape >/dev/null
+  agent-browser scroll up 10000 >/dev/null
+  point=$(agent-browser eval '(() => { const r = document.querySelector("[data-project-key=akh]").getBoundingClientRect(); return {x: Math.round(r.left + 2), y: Math.round(r.top + r.height / 2)} })()' --json)
+  x=$(printf '%s' "$point" | jq '.data.result.x')
+  y=$(printf '%s' "$point" | jq '.data.result.y')
+  agent-browser mouse move "$x" "$y" >/dev/null
+  agent-browser eval "window.hoverPoint = {x: $x, y: $y}; window.hoverCard = document.querySelector('#project-preview').getBoundingClientRect().toJSON()" >/dev/null
+  agent-browser mouse move "$((x + 8))" "$y" >/dev/null
+  agent-browser eval '(() => {
+    const card = document.querySelector("#project-preview");
+    const box = card.getBoundingClientRect();
+    if (getComputedStyle(card).pointerEvents !== "none") throw new Error("Passive hover must not block project controls");
+    if (Math.abs(box.top - hoverPoint.y) > 20) throw new Error("Preview is not beside the pointer");
+    if (innerWidth > 650 && Math.abs(box.left - hoverCard.left - 8) > 1) throw new Error("Preview did not track pointer movement");
+    return "PASS cursor-adjacent hover, pointer tracking and viewport bounds";
   })()'
   agent-browser press Escape >/dev/null
   agent-browser eval 'resetLandingReveal()' >/dev/null

@@ -440,6 +440,54 @@ export function parseReadme(md: string): ReadmeBundle {
   return { mainHeroQuote, mainProjects, utilities, miniapps, libraries };
 }
 
+/** Include owned projects mentioned in prose, not just headings and list items. */
+export function parseLandingReadme(md: string): ReadmeProject[] {
+  const bundle = parseReadme(md);
+  const projects = [
+    ...bundle.mainProjects,
+    ...bundle.utilities,
+    ...bundle.miniapps,
+    ...bundle.libraries,
+  ];
+  const owners = new Set(
+    projects.flatMap(({ href }) => {
+      const match = /^https:\/\/github\.com\/([^/]+)\//i.exec(href);
+      return match ? [match[1]!.toLowerCase()] : [];
+    }),
+  );
+  for (const paragraph of md.split(/\n\s*\n/)) {
+    for (const match of paragraph.matchAll(
+      /\[([^\]\n]+)\]\((https:\/\/github\.com\/([^/\s]+)\/([^/)\s]+)\/?)(?:\s+[^)]*)?\)/g,
+    )) {
+      const [, name, href, owner, repo] = match;
+      if (!name || !href || !owner || !repo || !owners.has(owner.toLowerCase()))
+        continue;
+      const identity = projectKey(name).replace(/[-_]/g, "");
+      if (
+        projects.some(
+          (project) =>
+            project.href.replace(/\/$/, "") === href.replace(/\/$/, "") ||
+            project.key.replace(/[-_]/g, "") === identity ||
+            project.key.replace(/[-_]/g, "") ===
+              projectKey(repo).replace(/[-_]/g, ""),
+        )
+      )
+        continue;
+      const sentence =
+        paragraph
+          .split(/(?<=[.!?])\s+(?![^(]*\))/)
+          .find((part) => part.includes(match[0])) ?? paragraph;
+      projects.push({
+        key: projectKey(name),
+        name,
+        href: safeExternalHref(href),
+        desc: collapseWs(stripMdLinks(sentence)),
+      });
+    }
+  }
+  return projects;
+}
+
 /** Upstream now line / article — not the GitHub project list (see PROFILE_PROJECT_LIST_MARKDOWN_URL). */
 export const DEFAULT_PROFILE_MARKDOWN_URL =
   "https://raw.githubusercontent.com/undivisible/undivisible/main/now.md";

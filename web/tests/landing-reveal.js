@@ -15,6 +15,9 @@
         text: "",
         chroma: 0,
         hour: "",
+        cells: 0,
+        font: this.font,
+        canvas: this.canvas,
       };
       mainBounds = document
         .querySelector(".landing-content")
@@ -45,6 +48,8 @@
   };
   prototype.fillText = function (text, x, y) {
     if (frame && this.canvas.matches(".landing-field canvas:not(.invisible)")) {
+      frame.cells++;
+      frame.font = this.font;
       if (
         this.globalAlpha === 1 &&
         y >= mainBounds.top &&
@@ -95,9 +100,21 @@
       if (phases.some((phase) => phase !== "complete"))
         throw new Error("Reduced motion must skip typing and colour animation");
     } else {
-      if (phases.join() !== "typing,color,complete")
+      if (phases.join() !== "background,text,numbers,color,complete")
         throw new Error("Wrong reveal sequence: " + phases);
-      const typing = frames.filter((frame) => frame.state === "typing");
+      const background = frames.filter((frame) => frame.state === "background");
+      if (
+        background.some((frame) => frame.text.length) ||
+        !background.some(
+          (frame) =>
+            frame.cells > settled[0].cells * 0.2 &&
+            frame.cells < settled[0].cells * 0.8,
+        )
+      )
+        throw new Error(
+          "Background must type on before any text cells resolve",
+        );
+      const typing = frames.filter((frame) => frame.state === "text");
       if (
         !typing.some(
           (frame) =>
@@ -105,13 +122,19 @@
             frame.text.length < settled[0].text.length / 2,
         )
       )
-        throw new Error("Page text did not progressively type on");
-      const real = settled.at(-1).text;
-      if (typing.some((frame) => !real.startsWith(frame.text)))
+        throw new Error("Page text did not progressively resolve");
+      if (
+        !typing.some((frame) =>
+          /[─│┌┐└┘├┤┬┴┼╭╮╯╰╱╲╳○●■□▲△▶▼◆◇◘◙◦★☆♠♣♥♦]/u.test(frame.text),
+        )
+      )
         throw new Error(
-          "Text must resolve directly from the background, not random replacement copy",
+          "Text cells did not mix tsc.hk-style glyphs before resolving",
         );
-      const hours = typing
+      if (/[─│┌┐└┘├┤┬┴┼╭╮╯╰╱╲╳○●■□▲△▶▼◆◇◘◙◦★☆♠♣♥♦]/u.test(settled.at(-1).text))
+        throw new Error("Scrambled glyphs did not resolve to real copy");
+      const hours = frames
+        .filter((frame) => frame.state === "text" || frame.state === "numbers")
         .map((frame) => frame.hour)
         .filter((hour) => /^\d{2}$/.test(hour))
         .map(Number);
@@ -123,7 +146,7 @@
         throw new Error(
           "Actual clock numbers did not count from zero: " + hours.join(),
         );
-      if (frames.some((frame) => frame.state === "typing" && frame.chroma > 1))
+      if (frames.some((frame) => frame.state === "text" && frame.chroma > 1))
         throw new Error("Colours appeared before text resolved");
       const color = frames.filter((frame) => frame.state === "color");
       if (
@@ -152,10 +175,28 @@
   window.landingRevealReady = () =>
     frames.some((frame) => frame.state === "complete");
   window.resetLandingReveal = () => {
+    window.previousCanvas = frames.at(-1)?.canvas;
+    window.previousFont = frames.at(-1)?.font;
+    window.previousCellCount = frames.at(-1)?.cells;
     frames.length = 0;
     frame = undefined;
   };
   window.checkLandingViewTransition = (reduced = false) => {
+    if (
+      frames.some(
+        (frame) =>
+          frame.canvas !== window.previousCanvas ||
+          frame.font !== window.previousFont ||
+          Math.abs(frame.cells - window.previousCellCount) > 10,
+      )
+    )
+      throw new Error(
+        "Navigation replaced, retyped, or changed the resolution of the persistent background",
+      );
+    if (frames.some((frame) => frame.state === "background"))
+      throw new Error(
+        "Only the copy should transition, not the whole background",
+      );
     const dissolve = frames.filter((frame) => frame.state === "dissolving");
     if (reduced) {
       if (frames.some((frame) => frame.state !== "complete"))
@@ -163,7 +204,10 @@
     } else if (
       !dissolve.length ||
       dissolve.at(-1).text.length >= dissolve[0].text.length / 3 ||
-      !frames.some((frame) => frame.state === "typing")
+      !dissolve.some((frame) =>
+        /[─│┌┐└┘├┤┬┴┼╭╮╯╰╱╲╳○●■□▲△▶▼◆◇◘◙◦★☆♠♣♥♦]/u.test(frame.text),
+      ) ||
+      !frames.some((frame) => frame.state === "text")
     )
       throw new Error(
         "Navigation did not dissolve into background and reveal the next view",
