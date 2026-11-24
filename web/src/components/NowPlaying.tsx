@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { LastFmTrackNormalized } from "../lib/lastfmClient";
+
+const profileUrl = `https://www.last.fm/user/${encodeURIComponent(process.env.NEXT_PUBLIC_LASTFM_USERNAME ?? "undivisible")}`;
 
 function safeUrl(value: string): string | undefined {
   try {
@@ -12,6 +14,62 @@ function safeUrl(value: string): string | undefined {
   } catch {
     return undefined;
   }
+}
+
+function AlbumPreview({ art }: { art: string }) {
+  const imageRef = useRef<HTMLImageElement>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const image = imageRef.current;
+    if (!image) return;
+    let cancelled = false;
+    let frame = 0;
+    const reveal = async () => {
+      if (!image.naturalWidth) return;
+      try {
+        await image.decode();
+      } catch {
+        return;
+      }
+      if (cancelled) return;
+      frame = requestAnimationFrame(() => {
+        frame = requestAnimationFrame(() => {
+          if (!cancelled) setReady(true);
+        });
+      });
+    };
+    image.addEventListener("load", reveal);
+    if (image.complete) void reveal();
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+      image.removeEventListener("load", reveal);
+    };
+  }, [art]);
+
+  return (
+    <div className="now-playing-preview" data-ready={ready}>
+      <img
+        ref={imageRef}
+        className="now-playing-preview-art"
+        src={art}
+        alt=""
+        width={96}
+        height={96}
+        decoding="async"
+      />
+      <div
+        className="now-playing-progress"
+        role="progressbar"
+        aria-label="Playback progress"
+        aria-valuetext="Progress unavailable"
+      >
+        <span className="now-playing-progress-track" aria-hidden="true" />
+        <span className="now-playing-progress-label">progress unavailable</span>
+      </div>
+    </div>
+  );
 }
 
 export default function NowPlaying({ className = "" }: { className?: string }) {
@@ -70,6 +128,7 @@ export default function NowPlaying({ className = "" }: { className?: string }) {
   if (!track) return null;
   const art = safeUrl(track.albumArt ?? "");
   const href = safeUrl(track.trackUrl ?? "");
+  const artistHref = safeUrl(track.artistUrl ?? "");
   return (
     <div
       className={`now-playing ${className}`}
@@ -77,20 +136,15 @@ export default function NowPlaying({ className = "" }: { className?: string }) {
       data-playing={track.isNowPlaying}
       aria-live="polite"
     >
-      {art && (
-        <img
-          className="now-playing-art"
-          src={art}
-          alt=""
-          width={48}
-          height={48}
-          loading="lazy"
-        />
-      )}
       <div className="now-playing-copy">
-        <span className="now-playing-status">
+        <a
+          className="now-playing-status"
+          href={profileUrl}
+          target="_blank"
+          rel="noreferrer"
+        >
           {track.isNowPlaying ? "listening to" : "last played"}
-        </span>
+        </a>
         <a
           className="now-playing-song"
           href={href}
@@ -99,7 +153,14 @@ export default function NowPlaying({ className = "" }: { className?: string }) {
         >
           {track.track}
         </a>
-        <span className="now-playing-artist">{track.artist}</span>
+        <a
+          className="now-playing-artist"
+          href={artistHref}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {track.artist}
+        </a>
         <span
           className="now-playing-palette"
           role="img"
@@ -115,6 +176,7 @@ export default function NowPlaying({ className = "" }: { className?: string }) {
           ))}
         </span>
       </div>
+      {art && <AlbumPreview key={art} art={art} />}
     </div>
   );
 }

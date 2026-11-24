@@ -63,7 +63,7 @@ export function layoutAsciiText({
     if (
       !node.textContent ||
       !parent?.closest("main, header, footer") ||
-      parent.closest("[aria-hidden=true], #personal-name")
+      parent.closest("[aria-hidden=true], #personal-name, .now-playing-preview")
     )
       continue;
     const style = getComputedStyle(parent);

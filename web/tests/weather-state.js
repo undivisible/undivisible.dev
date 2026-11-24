@@ -17,6 +17,16 @@
     );
     if (url.hostname !== "api.open-meteo.com")
       return upstreamFetch(input, init);
+    if (url.searchParams.get("current") === "is_day")
+      return Promise.resolve(
+        Response.json({
+          current: { is_day: 1 },
+          daily: {
+            sunrise: [1794956400, 1795042800],
+            sunset: [1794999600, 1795086000],
+          },
+        }),
+      );
     return new Promise((resolve, reject) => {
       const request = { resolve, reject, url: url.href };
       pending.push(request);

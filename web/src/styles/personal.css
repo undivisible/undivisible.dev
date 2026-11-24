@@ -2131,18 +2131,19 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  opacity: 0;
+}
+.landing-solar[data-active="true"] {
+  opacity: 1;
 }
 @media (prefers-reduced-motion: no-preference) {
   .landing-solar {
-    animation: landing-solar-in 400ms ease-out both;
+    transition: opacity 400ms ease-out;
   }
-}
-@keyframes landing-solar-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
+  @starting-style {
+    .landing-solar[data-active="true"] {
+      opacity: 0;
+    }
   }
 }
 .landing-solar canvas {
@@ -2212,6 +2213,73 @@ body:has(.personal-page.site-fonts-ready:not(.character-field-enabled))
 .landing .now-playing-status {
   color: #ccc;
   text-transform: none;
+}
+.landing .now-playing {
+  align-items: center;
+  gap: 16px;
+  max-width: calc(100vw - 64px);
+}
+.now-playing-preview {
+  display: flex;
+  flex: 0 0 112px;
+  flex-direction: column;
+  gap: 6px;
+  width: 112px;
+  color: inherit;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    visibility 0s linear 180ms;
+}
+.now-playing:focus-within .now-playing-preview[data-ready="true"] {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+@media (hover: hover) {
+  .now-playing:hover .now-playing-preview[data-ready="true"] {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+}
+.now-playing-preview-art {
+  display: block;
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  align-self: center;
+}
+.now-playing-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.now-playing-progress-track {
+  display: block;
+  height: 3px;
+  width: 100%;
+  border-top: 3px dashed var(--page-text, #fff);
+  opacity: 0.7;
+}
+.now-playing-progress-label {
+  font-size: 9px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.landing.ascii-text-composed .now-playing .now-playing-preview * {
+  color: var(--page-text, #fff) !important;
+}
+.now-playing a:focus-visible {
+  outline: 1px solid var(--page-text, #fff);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .now-playing,
+  .now-playing-preview {
+    transition: none;
+  }
 }
 .landing-content {
   grid-area: 2 / 1;

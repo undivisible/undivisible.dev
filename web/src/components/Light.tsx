@@ -94,6 +94,7 @@ export function Light({
   animated?: boolean;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const paintedRef = useRef(false);
   const sceneRef = useRef(scene);
   const lastTimeRef = useRef<number>(0);
   const rainIntensityRef = useRef<number>(0);
@@ -197,6 +198,12 @@ export function Light({
 
     let animFrameId = 0;
     let lastFrameMs = 0;
+    let entrance: Animation | undefined;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onMotionChange = () => {
+      if (reducedMotion.matches) entrance?.cancel();
+    };
+    reducedMotion.addEventListener("change", onMotionChange);
 
     const resize = () => {
       const parent = canvas.parentElement;
@@ -514,6 +521,14 @@ export function Light({
           }
         }
       }
+      if (!paintedRef.current && width > 0 && height > 0) {
+        paintedRef.current = true;
+        if (!reducedMotion.matches)
+          entrance = canvas.animate([{ opacity: 0 }, {}], {
+            duration: 700,
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          });
+      }
     };
 
     resize();
@@ -521,6 +536,8 @@ export function Light({
 
     return () => {
       observer.disconnect();
+      entrance?.cancel();
+      reducedMotion.removeEventListener("change", onMotionChange);
       window.removeEventListener("resize", resizeAndPaint);
       window.cancelAnimationFrame(animFrameId);
     };

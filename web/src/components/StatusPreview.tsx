@@ -16,12 +16,14 @@ export function StatusPreview({
   label,
   title,
   className = "",
+  panelClassName = "",
   children,
 }: {
   id: string;
   label: string;
   title: string;
   className?: string;
+  panelClassName?: string;
   children: ReactNode;
 }) {
   const [mode, setMode] = useState<"hover" | "pinned" | null>(null);
@@ -50,12 +52,16 @@ export function StatusPreview({
       const panel = card.current;
       if (!anchor || !panel) return;
       const bounds = panel.getBoundingClientRect();
-      const top =
-        anchor.bottom + 8 + bounds.height <= innerHeight - 16
-          ? anchor.bottom + 8
-          : anchor.top - bounds.height - 8;
+      const below = innerHeight - anchor.bottom - 24;
+      const above = anchor.top - 24;
+      const opensBelow = bounds.height <= below || below >= above;
+      const available = Math.max(0, opensBelow ? below : above);
+      panel.style.maxHeight = `${available}px`;
+      const top = opensBelow
+        ? anchor.bottom + 8
+        : anchor.top - Math.min(bounds.height, available) - 8;
       panel.style.left = `${Math.max(16, Math.min(anchor.left, innerWidth - bounds.width - 16))}px`;
-      panel.style.top = `${Math.max(16, Math.min(top, innerHeight - bounds.height - 16))}px`;
+      panel.style.top = `${Math.max(16, Math.min(top, innerHeight - Math.min(bounds.height, available) - 16))}px`;
     };
     position();
     const observer = new ResizeObserver(position);
@@ -204,7 +210,7 @@ export function StatusPreview({
             aria-modal="false"
             aria-labelledby={`${id}-title`}
             tabIndex={-1}
-            className="status-preview"
+            className={`status-preview ${panelClassName}`}
             onFocus={() => setMode("pinned")}
             onPointerLeave={(event) => {
               origin.current = { x: event.clientX, y: event.clientY };
@@ -219,7 +225,7 @@ export function StatusPreview({
               if (event.key !== "Tab") return;
               const controls = [
                 ...event.currentTarget.querySelectorAll<HTMLElement>(
-                  "button:not(:disabled), a[href], [tabindex='0']",
+                  "button:not(:disabled), select:not(:disabled), a[href], [tabindex='0']",
                 ),
               ];
               if (
@@ -233,7 +239,7 @@ export function StatusPreview({
                 event.preventDefault();
                 const outside = [
                   ...document.querySelectorAll<HTMLElement>(
-                    "a[href], button:not(:disabled), [tabindex='0']",
+                    "a[href], button:not(:disabled), select:not(:disabled), [tabindex='0']",
                   ),
                 ].filter(
                   (element) =>

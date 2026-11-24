@@ -27,29 +27,37 @@ export function ClockPanel({
   travelClocks?: boolean;
   onTimeHoverChange?: (hovered: boolean) => void;
 }) {
+  const panelRef = useRef<HTMLDivElement>(null);
   const clockRef = useRef<HTMLDivElement>(null);
   const [clockHovered, setClockHovered] = useState(false);
 
   useEffect(() => {
     const clock = clockRef.current;
-    if (!clock) return;
+    const panel = panelRef.current;
+    if (!clock || !panel) return;
     const enter = (event: PointerEvent) => {
       if (event.pointerType === "touch") return;
       setClockHovered(true);
-      onTimeHoverChange?.(true);
     };
     const leave = () => {
       setClockHovered(false);
       dayTheme.resetScrub();
-      onTimeHoverChange?.(false);
     };
+    const previewEnter = (event: PointerEvent) => {
+      if (event.pointerType !== "touch") onTimeHoverChange?.(true);
+    };
+    const previewLeave = () => onTimeHoverChange?.(false);
     clock.addEventListener("wheel", dayTheme.onClockWheel, { passive: false });
     clock.addEventListener("pointerenter", enter);
     clock.addEventListener("pointerleave", leave);
+    panel.addEventListener("pointerenter", previewEnter);
+    panel.addEventListener("pointerleave", previewLeave);
     return () => {
       clock.removeEventListener("wheel", dayTheme.onClockWheel);
       clock.removeEventListener("pointerenter", enter);
       clock.removeEventListener("pointerleave", leave);
+      panel.removeEventListener("pointerenter", previewEnter);
+      panel.removeEventListener("pointerleave", previewLeave);
     };
   }, [dayTheme.onClockWheel, dayTheme.resetScrub, onTimeHoverChange]);
 
@@ -81,6 +89,7 @@ export function ClockPanel({
 
   return (
     <div
+      ref={panelRef}
       className="w-fit shrink-0 text-[10px] uppercase tracking-[0.18em] [font-family:var(--font-jetbrains-mono),monospace] sm:text-[11px] sm:tracking-[0.22em]"
       style={{ color: "var(--page-text)" }}
     >

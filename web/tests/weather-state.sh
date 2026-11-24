@@ -28,14 +28,14 @@ agent-browser eval '(async()=>{
 agent-browser mouse move 1200 750 >/dev/null
 agent-browser focus '[aria-controls=weather-preview]' >/dev/null
 agent-browser press Enter >/dev/null
-agent-browser wait '#weather-preview table' >/dev/null
+agent-browser wait '#weather-preview .weather-hour' >/dev/null
 agent-browser eval '(() => {
   const card=document.querySelector("#weather-preview");
-  if(card.querySelector(".weather-actions a").href!=="https://openweathermap.org/city/1735161") throw new Error("Wrong OpenWeather destination inside forecast");
+  if(!card.querySelector(".weather-actions a").href.startsWith("https://open-meteo.com/en/docs#latitude=3.139&longitude=101.6869")) throw new Error("Wrong city forecast source");
   if(document.activeElement!==card)throw new Error("Keyboard entry did not reach forecast");
-  const rows=[...card.querySelectorAll("tbody tr")].map(row=>[...row.querySelectorAll("td")].map(cell=>cell.textContent));
-  if(rows[0].join()!=="27.3,26.1"||rows[2].join()!=="75,58"||rows[3].join()!=="0.40,0.10")throw new Error("Forecast values misaligned");
-  if(card.querySelector("time").textContent!=="Wed 23:00")throw new Error("Forecast not in Kuala Lumpur time");
+  const hours=[...card.querySelectorAll(".weather-hour")];
+  if(hours.length!==2||!hours[0].textContent.includes("27.3°")||!hours[0].textContent.includes("75% rain")||!hours[0].textContent.includes("0.40 mm")||!hours[1].textContent.includes("26.1°"))throw new Error("Forecast values misaligned");
+  if(hours[0].querySelector("time").textContent!=="Wed 23:00")throw new Error("Forecast not in Kuala Lumpur time");
   if(!card.textContent.includes("last 15 min")||!card.textContent.includes("4.8 km/h"))throw new Error("Stats units missing");
   if(document.querySelector(".landing-solar"))throw new Error("Forecast activated clock scene");
   return "PASS forecast values, MYT timestamps, accumulation units and keyboard entry";

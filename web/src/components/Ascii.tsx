@@ -164,6 +164,7 @@ export default function Ascii({
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const asciiCanvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef<number>(0);
+  const paintedRef = useRef(false);
   const monoFontStackRef = useRef("monospace");
   const viewRef = useRef({ view, onViewChange });
   viewRef.current = { view, onViewChange };
@@ -192,7 +193,11 @@ export default function Ascii({
 
     const page = container.closest(".personal-page, .landing");
     const landing = Boolean(page?.classList.contains("landing"));
-    const shader = createAsciiShader(bgCanvas, () => colorUniformsRef.current);
+    let paintedColors = colorUniformsRef.current;
+    let paletteFrom = paintedColors;
+    let paletteTarget = paintedColors;
+    let paletteStart = 0;
+    const shader = createAsciiShader(bgCanvas, () => paintedColors);
     if (!shader) {
       page?.classList.add("ascii-text-fallback");
       return;
@@ -211,6 +216,11 @@ export default function Ascii({
 
     if (landing) page?.classList.add("ascii-text-composed");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let entrance: Animation | undefined;
+    const onMotionChange = () => {
+      if (reducedMotion.matches) entrance?.cancel();
+    };
+    reducedMotion.addEventListener("change", onMotionChange);
     let revealStart: number | undefined;
     let backgroundStart: number | undefined;
     let contentRanks = new Map<number, number>();
@@ -612,6 +622,23 @@ export default function Ascii({
         shader.resize(width, height, cols, rows);
       }
 
+      if (paletteTarget !== colorUniformsRef.current) {
+        paletteFrom = paintedColors;
+        paletteTarget = colorUniformsRef.current;
+        paletteStart = now;
+      }
+      const paletteProgress = motionReduced
+        ? 1
+        : clamp((now - paletteStart) / 700, 0, 1);
+      const paletteMix =
+        paletteProgress * paletteProgress * (3 - 2 * paletteProgress);
+      paintedColors = paletteTarget.map((color, index) =>
+        color.map(
+          (channel, channelIndex) =>
+            paletteFrom[index][channelIndex] +
+            (channel - paletteFrom[index][channelIndex]) * paletteMix,
+        ),
+      );
       shader.render(landing ? (motionReduced ? 0 : fieldElapsed) : now);
 
       sampleCtx.clearRect(0, 0, cols, rows);
@@ -907,6 +934,14 @@ export default function Ascii({
       page?.classList.toggle("ascii-name-ready", titleBlocks.length > 0);
 
       ctx.globalAlpha = 1;
+      if (!paintedRef.current && width > 0 && height > 0) {
+        paintedRef.current = true;
+        if (!motionReduced)
+          entrance = asciiCanvas.animate([{ opacity: 0 }, { opacity: 1 }], {
+            duration: 700,
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          });
+      }
     };
 
     frameRef.current = requestAnimationFrame(render);
@@ -920,6 +955,8 @@ export default function Ascii({
 
     return () => {
       detachResize();
+      entrance?.cancel();
+      reducedMotion.removeEventListener("change", onMotionChange);
       shader.dispose();
       for (const event of [
         "transitionrun",
@@ -956,7 +993,7 @@ export default function Ascii({
   return (
     <div
       ref={containerRef}
-      className={`relative h-full w-full overflow-hidden transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}
+      className={`relative h-full w-full overflow-hidden ${ready ? "opacity-100" : "opacity-0"}`}
       style={{ background: "transparent" }}
     >
       <canvas

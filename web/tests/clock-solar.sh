@@ -71,6 +71,29 @@ for motion in no-preference reduce; do
     if (window.solarAscii !== document.querySelector(".landing-field canvas:not(.invisible)")) throw new Error("Scrubbing replaced persistent ASCII canvas");
     return "PASS scoped wheel, 5/20 minute notches, pixel/line/page normalization, small-delta accumulation, solar paint and persistent ASCII";
   })()'
+  if [ "$motion" = no-preference ]; then
+    agent-browser eval '(() => {
+      window.retainedSky = document.querySelector(".landing-solar");
+      window.exitSamples = [];
+      const start = performance.now();
+      const sample = () => {
+        const sky = document.querySelector(".landing-solar");
+        exitSamples.push({ active: sky?.dataset.active, opacity: sky ? Number(getComputedStyle(sky).opacity) : null, same: sky === retainedSky });
+        if (performance.now() - start < 1000) requestAnimationFrame(sample);
+      };
+      requestAnimationFrame(sample);
+    })()' >/dev/null
+    agent-browser batch --bail <<'JSON' >/dev/null
+[["mouse", "move", "1200", "750"], ["wait", "100"], ["mouse", "move", "75", "140"]]
+JSON
+    agent-browser wait 700 >/dev/null
+    agent-browser eval '(() => {
+      if (!exitSamples.some(s => s.active === "false" && s.opacity > 0 && s.opacity < 1)) throw new Error("Exit did not fade");
+      if (!exitSamples.some(s => s.active === "true" && s.opacity > 0 && s.opacity < 1)) throw new Error("Re-entry restarted instead of reversing the fade");
+      if (exitSamples.some(s => !s.same)) throw new Error("Re-entry replaced the sky");
+      return "PASS soft exit and uninterrupted same-canvas re-entry";
+    })()'
+  fi
   agent-browser mouse move 1200 750 >/dev/null
   agent-browser wait --fn '!document.querySelector(".landing-solar") && document.querySelector(".personal-clock").dataset.timePreview === "false"' >/dev/null
   agent-browser hover '[data-time-scrubber]' >/dev/null
@@ -78,10 +101,17 @@ for motion in no-preference reduce; do
   agent-browser hover '[aria-controls=status-translation]' >/dev/null
   agent-browser wait '#status-translation' >/dev/null
   agent-browser hover '#status-translation p' >/dev/null
+  agent-browser wait --fn '!document.querySelector(".landing-solar")' >/dev/null
   agent-browser eval 'if(document.querySelector(".landing-solar"))throw new Error("Portaled translation retained clock ownership");"PASS moving from clock into translation releases the solar scene"'
   agent-browser click '#status-translation .status-preview-close' >/dev/null
   agent-browser mouse move 1200 750 >/dev/null
   agent-browser eval 'if(document.querySelector(".landing-solar"))throw new Error("Closing translation left solar scene active")' >/dev/null
+  agent-browser hover '[aria-controls=weather-preview]' >/dev/null
+  agent-browser wait '.landing-solar[data-active=true] canvas' >/dev/null
+  agent-browser eval 'void (window.weatherSky = document.querySelector(".landing-solar canvas"))' >/dev/null
+  agent-browser press Escape >/dev/null
+  agent-browser mouse move 75 140 >/dev/null
+  agent-browser eval 'if(document.querySelector(".landing-solar canvas")!==weatherSky || document.querySelector(".landing-solar").dataset.active!=="true")throw new Error("Weather-to-clock handoff restarted solar scene");"PASS weather hover and same-canvas handoff to times"'
   agent-browser hover '[data-time-scrubber]' >/dev/null
   agent-browser wait '.landing-solar canvas' >/dev/null
   # Keyboard activation while the pointer remains on the clock exercises navigation cleanup.

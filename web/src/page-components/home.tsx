@@ -13,6 +13,7 @@ import { landingProjectsFromReadme } from "@/data/readme-projects.generated";
 import { GithubLanguageBar } from "@/components/GithubLanguageBar";
 import { prepareGithubLanguages } from "@/lib/github-repo-languages";
 import { inPreviewCorridor } from "@/lib/preview-corridor";
+import SocialLink from "@/components/SocialLink";
 
 function distanceToPreview(point: { x: number; y: number }, bounds: DOMRect) {
   return Math.hypot(
@@ -51,6 +52,22 @@ export default function Home() {
   const dayTheme = useHongKongDayTheme();
   const visualEffects = useSiteVisualEffects();
   const [solarPreview, setSolarPreview] = useState(false);
+  const [solarMounted, setSolarMounted] = useState(false);
+  const lastSolarScene = useRef(dayTheme.shader);
+  if (solarPreview) lastSolarScene.current = dayTheme.shader;
+  const solarScene = solarPreview ? dayTheme.shader : lastSolarScene.current;
+  useEffect(() => {
+    if (solarPreview) {
+      setSolarMounted(true);
+      return;
+    }
+    if (!visualEffects) {
+      setSolarMounted(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setSolarMounted(false), 400);
+    return () => window.clearTimeout(timer);
+  }, [solarPreview, visualEffects]);
   const now = useNowMarkdown();
   const [preview, setPreview] = useState<string | null>(null);
   const [previewInteractive, setPreviewInteractive] = useState(false);
@@ -81,6 +98,7 @@ export default function Home() {
   const changeView = (next: LandingView) => {
     navigationPending.current = true;
     setSolarPreview(false);
+    setSolarMounted(false);
     dayTheme.resetScrub();
     dismissPreview();
     previewTrigger.current = null;
@@ -342,13 +360,14 @@ export default function Home() {
           dismissPreview();
       }}
     >
-      {solarPreview && (
+      {solarMounted && (
         <div
           className="landing-solar"
+          data-active={solarPreview}
           aria-hidden="true"
-          style={{ background: dayTheme.shader.base }}
+          style={{ background: solarScene.base }}
         >
-          <Light scene={dayTheme.shader} animated={visualEffects} />
+          <Light scene={solarScene} animated={visualEffects} />
         </div>
       )}
       <div className="landing-field" aria-hidden="true">
@@ -358,6 +377,7 @@ export default function Home() {
           view={requestedView}
           onViewChange={(next) => {
             setSolarPreview(false);
+            setSolarMounted(false);
             dayTheme.resetScrub();
             dismissPreview();
             previewTrigger.current = null;
@@ -471,12 +491,26 @@ export default function Home() {
             </p>
             <nav aria-label="Links">
               <a href="https://next.undivisible.dev/">[ enter the OS ↗ ]</a>{" "}
-              <a href="mailto:max@tsc.hk">[ email ↗ ]</a>{" "}
-              <a href="https://github.com/undivisible">[ github ↗ ]</a>{" "}
-              <a href="https://x.com/makethings4ppl">[ x ↗ ]</a>{" "}
-              <a href="https://www.instagram.com/ihatemaxcarter/">
-                [ instagram ↗ ]
-              </a>
+              <SocialLink
+                label="email"
+                value="max@tsc.hk"
+                href="mailto:max@tsc.hk"
+              />{" "}
+              <SocialLink
+                label="github"
+                value="undivisible"
+                href="https://github.com/undivisible"
+              />{" "}
+              <SocialLink
+                label="x"
+                value="ihatemaxcarter"
+                href="https://x.com/ihatemaxcarter"
+              />{" "}
+              <SocialLink
+                label="instagram"
+                value="ihatemaxcarter"
+                href="https://www.instagram.com/ihatemaxcarter/"
+              />
             </nav>
           </>
         )}
