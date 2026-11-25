@@ -43,8 +43,32 @@ agent-browser eval '(() => {
   if(card.textContent.toLowerCase().includes("rain totals and chance cover"))throw new Error("Removed carousel helper copy returned");
   if(getComputedStyle(card.querySelector(".weather-forecast")).maskImage==="none")throw new Error("Carousel edge fades missing");
   if(document.querySelector(".landing-solar"))throw new Error("Forecast activated clock scene");
+  if(!card.querySelector(".weather-solar-marker")||card.querySelectorAll(".weather-solar-times time").length!==2||!card.querySelector(".weather-solar-diagram").getAttribute("aria-label").includes("Sun above the horizon"))throw new Error("Daylight graph lost sun position or local solar times");
   return "PASS forecast values, MYT timestamps, accumulation units and keyboard entry";
 })()'
+for size in "1280 800" "390 844" "320 740"; do
+  read -r width height <<< "$size"
+  agent-browser set viewport "$width" "$height" 2 >/dev/null
+  agent-browser eval '(async () => {
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const card=document.querySelector("#weather-preview"), tabs=card.querySelector("[role=tablist]"), close=card.querySelector(".status-preview-close"), panel=card.querySelector("[role=tabpanel]");
+    const c=card.getBoundingClientRect(), t=tabs.getBoundingClientRect(), x=close.getBoundingClientRect(), p=panel.getBoundingClientRect();
+    if(getComputedStyle(card).padding!=="0px"||Math.abs(t.top-c.top-1)>1||Math.abs(t.left-c.left-1)>1||Math.abs(x.top-t.top)>1||Math.abs(t.right-x.left)>1||Math.abs(p.top-t.bottom)>1||Math.abs(p.left-t.left)>1||Math.abs(p.right-x.right)>1)throw new Error("Window tabs/close/page are not edge-to-edge in one header row");
+    if(x.width<44||x.height<44||x.right>innerWidth||x.top<0||x.bottom>innerHeight)throw new Error("Close target clipped or too small");
+    if(card.textContent.includes("model forecast, not a station reading")||card.textContent.includes("Icons by"))throw new Error("Bottom explanatory text returned");
+    if(document.documentElement.scrollWidth>innerWidth)throw new Error("Page overflows narrow width");
+    card.scrollTop=card.scrollHeight;
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const pinned=close.getBoundingClientRect();
+    if(Math.abs(pinned.top-card.getBoundingClientRect().top-1)>1||document.elementFromPoint(pinned.left+pinned.width/2,pinned.top+pinned.height/2)!==close)throw new Error("Close is unreachable after scrolling weather page");
+    return `PASS edge-to-edge window, shared tab/close row, no footer copy or overflow at ${innerWidth}px`;
+  })()'
+  agent-browser click '#weather-preview .status-preview-close' >/dev/null
+  agent-browser eval 'if(document.querySelector("#weather-preview")||document.activeElement?.getAttribute("aria-controls")!=="weather-preview")throw new Error("Close control failed to dismiss and restore trigger focus")' >/dev/null
+  agent-browser click '[aria-controls=weather-preview]' >/dev/null
+  agent-browser wait '#weather-preview .weather-hour' >/dev/null
+done
+agent-browser set viewport 1280 800 2 >/dev/null
 agent-browser focus '#weather-city-kl' >/dev/null
 agent-browser press ArrowRight >/dev/null
 agent-browser wait --fn 'weatherFixture.pending.length === 1' >/dev/null
@@ -55,6 +79,11 @@ agent-browser eval '(() => {
   weatherFixture.complete(200,{current:{time:1795011300,is_day:0,temperature_2m:18,weather_code:0,rain:0},daily:{sunrise:[1794956400,1795042800],sunset:[1794999600,1795086000]}});
 })()' >/dev/null
 agent-browser wait --fn 'document.querySelector("#weather-city-panel .weather-reading")?.textContent.includes("18°C")' >/dev/null
+agent-browser eval '(() => {
+  const card=document.querySelector("#weather-preview");
+  if(card.querySelector(".weather-solar-marker")||!card.querySelector(".weather-solar-state").textContent.includes("sun below horizon")||card.querySelectorAll(".weather-solar-times time").length!==2)throw new Error("Night graph fabricated a sun position or lost solar times");
+  return "PASS distinct daytime sun and honest below-horizon night graph with sunrise/sunset";
+})()'
 agent-browser press Tab >/dev/null
 agent-browser eval 'if(document.activeElement?.id!=="weather-city-panel")throw new Error("Tab did not leave the tablist for its panel")' >/dev/null
 agent-browser focus '#weather-city-hk' >/dev/null
