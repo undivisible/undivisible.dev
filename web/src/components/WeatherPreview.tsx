@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import type { HongKongDayTheme } from "@/lib/useHongKongDayTheme";
 import { WEATHER_CITIES, cityScene, weatherIcon } from "@/lib/weather-cities";
 import { useWeatherCity } from "@/lib/useWeatherCity";
@@ -46,6 +46,25 @@ export function WeatherPreview({
         : null,
     [solar, weather],
   );
+  const [forecast, setForecast] = useState<HTMLDivElement | null>(null);
+  useLayoutEffect(() => {
+    const element = forecast;
+    if (!element) return;
+    const update = () => {
+      element.dataset.fadeStart = String(element.scrollLeft > 1);
+      element.dataset.fadeEnd = String(
+        element.scrollLeft + element.clientWidth < element.scrollWidth - 1,
+      );
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    element.addEventListener("scroll", update, { passive: true });
+    return () => {
+      observer.disconnect();
+      element.removeEventListener("scroll", update);
+    };
+  }, [forecast, city, weather]);
   const raining = weather?.kind === "rain" || weather?.kind === "storm";
   const time = (milliseconds: number, date = false) =>
     new Intl.DateTimeFormat("en-GB", {
@@ -195,8 +214,8 @@ export function WeatherPreview({
                 </dd>
               </div>
             </dl>
-            {solar && scene && (
-              <div className="weather-solar-scene">
+            <div className="weather-solar-scene">
+              {scene && (
                 <div className="weather-scene" aria-hidden="true">
                   <Light
                     key={city.id}
@@ -209,19 +228,16 @@ export function WeatherPreview({
                     className="weather-scene-canvas"
                   />
                 </div>
-                <WeatherSolarGraph
-                  solar={solar}
-                  progress={scene.sunProgress}
-                  formatTime={time}
-                />
-              </div>
-            )}
+              )}
+              <WeatherSolarGraph city={city} formatTime={time} />
+            </div>
             <div className="weather-forecast-heading">
               <h3>next {weather.hourly.length} hours</h3>
               {actions}
             </div>
             {weather.hourly.length ? (
               <div
+                ref={setForecast}
                 className="weather-forecast"
                 tabIndex={0}
                 role="region"
